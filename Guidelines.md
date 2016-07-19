@@ -932,7 +932,7 @@ DateValue:
 A `DateLiteral` using the `Iso8601Literal` production is relatively straightforward. Here is an example of an object with a property named `creationDate` that is set to February 13, 2015, at 1:15 p.m. UTC:
 
 ```json
-{ "creationDate" : "2015-02-15T13:15Z" }
+{ "creationDate" : "2015-02-13T13:15Z" }
 ```
 
 The `StructuredDateLiteral` consists of a `DateKind` and an accompanying `DateValue` whose valid values (and their interpretation) depend on the `DateKind`. The following table describes the valid combinations and their meaning:
