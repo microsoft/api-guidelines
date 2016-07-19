@@ -1346,7 +1346,7 @@ Content-Type: application/json
   "value": [
     {
           "subscriptionId": "1234-5678-1111-2222",
-          "context": "subscription context that was specificed at setup",
+          "context": "subscription context that was specified at setup",
           "resourceUrl": "https://api.contoso.com/v1.0/databases/db1",
           "userId" : "contoso.com/user@contoso.com"
           "tenantId" : "contoso.com"
@@ -1676,7 +1676,7 @@ An example that may be returned using Application-Only principal bearer token:
 ### 14.8 SECURITY
 All service URLs must be HTTPS (that is, all inbound calls MUST be HTTPS). Services that deal with Web Hooks MUST accept HTTPS.  
 
-We recommend that services that allow client defined Web Hook Callback URls SHOULD NOT transmit data over HTTP. This is because information can be inadvertently exposed via client, network, server logs and other mechanisms.
+We recommend that services that allow client defined Web Hook Callback URLs SHOULD NOT transmit data over HTTP. This is because information can be inadvertently exposed via client, network, server logs and other mechanisms.
 
 However, there are scenarios where the above recommendations cannot be followed due to client endpoint or software limitations.  Consequently, services MAY allow web hook URLs that are HTTP.  
 
@@ -1762,7 +1762,7 @@ App Server -> -Client : Redirect to DB Authorization endpoint with authorization
 Client -> +DB Auth : Redirected authorization request
 Client <--> DB Auth : Authorization UX
 DB Auth -> -Client : Redirect back to App Server with code
-Client -> +App Server : Ridirect request back to access server with access code
+Client -> +App Server : Redirect request back to access server with access code
 App Server -> +DB Auth : Request tokens with access code
 note right of DB Service: Cache that this User ID provided access to App ID
 DB Auth -> -App Server : Response with access, refresh, and ID tokens
@@ -1813,7 +1813,7 @@ note over Developer, Automation, App Server, DB Portal, DB App Registration, DB 
 Client -> +App Server : Request access to DB protected information
 App Server -> -Client : Redirect to DB Authorization endpoint with authorization request
 Client -> +DB Auth : Redirected authorization request
-Client <--> DB Auth : Athorization UX
+Client <--> DB Auth : Authorization UX
 DB Auth -> -Client : Redirect back to App Server with code
 Client -> +App Server : Ridirect request back to access server with access code
 App Server -> +DB Auth : Request tokens with access code
