@@ -498,7 +498,7 @@ Because browser preflight response caches are notoriously weak, the additional r
   - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
 
-In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP services, take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_) and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP here: [http://www.json-p.org/](http://www.json-p.org/).
+In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP services, take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_) and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
 
 ## 9 COLLECTIONS
 ### 9.1 ITEM KEYS
