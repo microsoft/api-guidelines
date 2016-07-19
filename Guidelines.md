@@ -1,4 +1,4 @@
-# Microsoft REST API Guidelines 2.3
+# Microsoft REST API Guidelines
 ## Microsoft REST API Guidelines Working Group
 
  | | |
