@@ -87,8 +87,8 @@ Pull requests serve as the primary mechanism by which contributions are proposed
 Be prepared to address feedback on your pull request and iterate if necessary.
 
 [code-of-conduct]: CODE_OF_CONDUCT.md
-[new-issue]: https://github.com/Microsoft/OneAPI/issues/new
-[issue-search]: https://github.com/Microsoft/OneAPI/issues
+[new-issue]: https://github.com/Microsoft/api-guidelines/issues/new
+[issue-search]: https://github.com/Microsoft/api-guidelines/issues
 [white-house-api-guidelines]: https://github.com/WhiteHouse/api-standards/blob/master/README.md
 [topic-branch]: http://www.git-scm.com/book/en/v2/Git-Branching-Branching-Workflows#Topic-Branches
 [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
