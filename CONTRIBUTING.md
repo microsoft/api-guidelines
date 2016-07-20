@@ -1,5 +1,5 @@
-# Contributing to the Microsoft REST API Guidelines
-The Microsoft REST API Guidelines is a Microsoft-wide initiative to develop consistent design guidelines for REST APIs. The initiative requires input and feedback from a variety of individuals both inside and outside of Microsoft.
+# Contributing to the Microsoft HTTP API Guidelines
+The Microsoft HTTP API Guidelines is a Microsoft-wide initiative to develop consistent design guidelines for HTTP APIs. The initiative requires input and feedback from a variety of individuals both inside and outside of Microsoft.
 
 To provide feedback, please follow the guidance in this document. Please note that these are just guidelines, not rules. Use your best judgment and feel free to propose changes to anything in this repository, including the contribution guidance.
 
@@ -12,12 +12,12 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 ## Creating issues
 - You can [create an issue][new-issue], but before doing that please read the bullets below and include as many details as possible.
 - Perform a [cursory search][issue-search] to see if a similar issue has already been submitted.
-- Reference the version of the Microsoft REST API Guidelines you are using.
+- Reference the version of the Microsoft HTTP API Guidelines you are using.
 - Include the guidance you expected and other places you've seen that guidance, e.g. [White House Web API Standards][white-house-api-guidelines].
 - Include sample requests and responses whenever possible.
 
 ### Related repositories
-This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
+This is the repository for Microsoft HTTP API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
 
 ## Recommended setup for contributing
 - Install [Atom][atom]

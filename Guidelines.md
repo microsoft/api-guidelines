@@ -1,5 +1,5 @@
-# Microsoft REST API Guidelines
-## Microsoft REST API Guidelines Working Group
+# Microsoft HTTP API Guidelines
+## Microsoft HTTP API Guidelines Working Group
 
  | | |
 ---------------------------- | -------------------------------------- | ----------------------------------------
@@ -13,18 +13,18 @@ Document editors: John Gossman (C+E), Chris Mullins (ASG), Gareth Jones (ASG), R
 
 
 
-# MICROSOFT REST API GUIDELINES
+# MICROSOFT HTTP API GUIDELINES
 ## 1 ABSTRACT
-The Microsoft REST API Guidelines, as a design principle, encourages application developers to have resources accessible to them via a RESTful HTTP interface. To provide the smoothest possible experience for developers on platforms following the Microsoft REST API Guidelines, REST APIs SHOULD follow consistent design guidelines to make using them easy and intuitive.  
+The Microsoft HTTP API Guidelines, as a design principle, encourages application developers to have resources accessible to them via a HTTP interface. To provide the smoothest possible experience for developers on platforms following the Microsoft HTTP API Guidelines, HTTP APIs SHOULD follow consistent design guidelines to make using them easy and intuitive.  
 
-This document establishes the guidelines Microsoft REST APIs SHOULD follow so RESTful interfaces are developed consistently.
+This document establishes the guidelines Microsoft HTTP APIs SHOULD follow so HTTP interfaces are developed consistently.
 
 ## 2 TABLE OF CONTENTS
 <!-- TOC depthFrom:1 depthTo:3 withLinks:1 updateOnSave:1 orderedList:0 -->
 
-- [Microsoft REST API Guidelines 2.3](#microsoft-rest-api-guidelines-23)
-	- [Microsoft REST API Guidelines Working Group](#microsoft-rest-api-guidelines-working-group)
-- [MICROSOFT REST API GUIDELINES](#microsoft-rest-api-guidelines)
+- [Microsoft HTTP API Guidelines 2.3](#microsoft-http-api-guidelines-23)
+	- [Microsoft HTTP API Guidelines Working Group](#microsoft-http-api-guidelines-working-group)
+- [MICROSOFT HTTP API GUIDELINES](#microsoft-http-api-guidelines)
 	- [1 ABSTRACT](#1-abstract)
 	- [2 TABLE OF CONTENTS](#2-table-of-contents)
 	- [3 INTRODUCTION](#3-introduction)
@@ -44,7 +44,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [6.1    IGNORE RULE](#61-ignore-rule)
 		- [6.2    VARIABLE ORDER RULE](#62-variable-order-rule)
 		- [6.3    SILENT FAIL RULE](#63-silent-fail-rule)
-	- [7    REST CONSISTENCY FUNDAMENTALS](#7-rest-consistency-fundamentals)
+	- [7    HTTP API CONSISTENCY FUNDAMENTALS](#7-rest-consistency-fundamentals)
 		- [7.1    URL STRUCTURE](#71-url-structure)
 		- [7.2    URL LENGTH](#72-url-length)
 		- [7.3    CANONICAL IDENTIFIER](#73-canonical-identifier)
@@ -78,7 +78,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [10.5    USING A DELTA LINK](#105-using-a-delta-link)
 	- [11    JSON STANDARDIZATIONS](#11-json-standardizations)
 		- [11.1    JSON FORMATTING STANDARDIZATION FOR PRIMITIVE TYPES](#111-json-formatting-standardization-for-primitive-types)
-		- [11.2    REST GUIDELINES FOR DATES AND TIMES](#112-rest-guidelines-for-dates-and-times)
+		- [11.2    HTTP API GUIDELINES FOR DATES AND TIMES](#112-rest-guidelines-for-dates-and-times)
 		- [11.3    JSON SERIALIZATION OF DATES AND TIMES](#113-json-serialization-of-dates-and-times)
 		- [11.4    DURATIONS](#114-durations)
 		- [11.5    INTERVALS](#115-intervals)
@@ -110,21 +110,21 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 <!-- /TOC -->
 
 ## 3 INTRODUCTION
-Developers access most Microsoft Cloud Platform resources via RESTful HTTP interfaces. Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to REST operations over HTTP. Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment. Thus a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+Developers access most Microsoft Cloud Platform resources via HTTP interfaces. Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to REST operations over HTTP. Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment. Thus a goal of these guidelines is to ensure Microsoft HTTP APIs can be easily and consistently consumed by any client with basic HTTP support.
 
-To provide the smoothest possible experience for developers, it's important to have these REST APIs follow consistent design guidelines, thus making using them easy and intuitive. This document establishes the guidelines to be followed by Microsoft REST API developers for developing such RESTful interfaces consistently.
+To provide the smoothest possible experience for developers, it's important to have these HTTP APIs follow consistent design guidelines, thus making using them easy and intuitive. This document establishes the guidelines to be followed by Microsoft HTTP API developers for developing such RESTful interfaces consistently.
 
 The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
 
 These guidelines aim to achieve the following:
-- Define consistent practices and patterns for all REST endpoints across Microsoft.
-- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large.
-- Make accessing Microsoft Services via REST interfaces easy for all application developers.
-- Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
-- Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
+- Define consistent practices and patterns for all HTTP endpoints across Microsoft.
+- Adhere as closely as possible to accepted HTTP best practices in the industry at-large.
+- Make accessing Microsoft Services via HTTP interfaces easy for all application developers.
+- Allow service developers to leverage the prior work of other services to implement, test and document HTTP endpoints defined consistently.
+- Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own HTTP endpoint design.
 
 ### 3.1 RECOMMENDED READING
-Understanding the philosophy behind good RESTful design is critical for developing good HTTP-based services. If you are new to RESTful design, here are some good resources:
+Understanding the philosophy behind good HTTP API design is critical for developing good HTTP-based services. If you are new to HTTP API design, here are some good resources:
 
 [RFC 2616][rfc-2616] -- Defines the spec for HTTP/1.1, and is the authoritative resource for its semantics.
 
@@ -134,9 +134,9 @@ Understanding the philosophy behind good RESTful design is critical for developi
 
 ## 4 INTERPRETING THE GUIDELINES
 ### 4.1 APPLICATION OF THE GUIDELINES
-These guidelines are applicable to any REST API exposed publicly by Microsoft or any partner service. Private or internal APIs SHOULD also try to follow these guidelines because internal services tend to eventually be exposed publicly.  Consistency is valuable to not only external customers but also internal service consumers, and these guidelines offer best practices useful for any service.
+These guidelines are applicable to any HTTP API exposed publicly by Microsoft or any partner service. Private or internal APIs SHOULD also try to follow these guidelines because internal services tend to eventually be exposed publicly.  Consistency is valuable to not only external customers but also internal service consumers, and these guidelines offer best practices useful for any service.
 
-There are legitimate reasons for exemption from these guidelines. Obviously a REST service that implements or must interoperate with some externally defined REST API must be compatible with that API and not necessarily these guidelines. Some services MAY also have special performance needs that require a different format, such as a binary protocol.
+There are legitimate reasons for exemption from these guidelines. Obviously a HTTP service that implements or must interoperate with some externally defined HTTP API must be compatible with that API and not necessarily these guidelines. Some services MAY also have special performance needs that require a different format, such as a binary protocol.
 
 ### 4.2 GUIDELINES FOR EXISTING SERVICES AND VERSIONING OF SERVICES
 We do not recommend making a breaking change to a service that pre-dates these guidelines simply for compliance sake. The service SHOULD try to become compliant at the next version release when compatibility is being broken anyway. When a service adds a new API, that API SHOULD be consistent with the other APIs of the same version. So if a service was written against version 1.0 of the guidelines, new APIs added incrementally to the service SHOULD also follow version 1.0. The service can then upgrade to align with the latest version of the guidelines at the service's next major release.
@@ -149,7 +149,7 @@ The keywords "MUST," "MUST NOT," "REQUIRED," "SHALL," "SHALL NOT," "SHOULD," "SH
 This work is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 ## 5 TAXONOMY
-As part of onboarding to Microsoft REST API Guidelines, services MUST comply with the taxonomy defined below.
+As part of onboarding to Microsoft HTTP API Guidelines, services MUST comply with the taxonomy defined below.
 
 ### 5.1 ERRORS
 Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_ rejecting that data. Examples include invalid credentials, incorrect parameters, unknown version IDs, or similar. These are generally "4xx" HTTP error codes and are the result of a client passing incorrect or invalid data.
@@ -173,7 +173,7 @@ Services that expose long operations MUST track "Time to Complete" metrics aroun
 For a Long Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed. Long Running faults MUST roll up as Faults into the overall Availability metrics.
 
 ## 6 CLIENT GUIDANCE
-To ensure the best possible experience for clients talking to a REST service, clients SHOULD adhere to the following best practices:
+To ensure the best possible experience for clients talking to a HTTP service, clients SHOULD adhere to the following best practices:
 
 ### 6.1 IGNORE RULE
 For loosely coupled clients where the exact shape of the data is not known before the call, if the server returns something the client wasn't expecting, the client MUST safely ignore it.   
@@ -186,7 +186,7 @@ Clients MUST NOT rely on the order in which data appears in JSON service respons
 ### 6.3 SILENT FAIL RULE
 Clients requesting OPTIONAL server functionality (such as optional headers) MUST be resilient to the server ignoring that particular functionality.
 
-## 7 REST CONSISTENCY FUNDAMENTALS
+## 7 HTTP API CONSISTENCY FUNDAMENTALS
 ### 7.1 URL STRUCTURE
 Humans SHOULD be able to easily read and construct URLs.  
 
@@ -231,7 +231,7 @@ https://api.contoso.com/v1.0/people/7011042402/inbox
 ### 7.4 SUPPORTED VERBS
 Operations MUST use the proper HTTP verbs whenever possible, and operation idempotency MUST be respected.
 
-Below is a list of verbs that Microsoft REST services SHOULD support. Not all resources will support all verbs, but all resources using the verbs below MUST conform to their usage.  
+Below is a list of verbs that Microsoft HTTP API services SHOULD support. Not all resources will support all verbs, but all resources using the verbs below MUST conform to their usage.  
 
 Verb    | Description                                                                                                                | Is Idempotent
 ------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
@@ -266,7 +266,7 @@ Where "server321" is the service-allocated server name.
 Services MAY also return the full metadata for the created item in the response.
 
 #### 7.4.2 PATCH
-PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
+PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft HTTP API Guidelines compliant APIs SHOULD support PATCH.  
 
 #### 7.4.3 CREATING RESOURCES VIA PATCH (UPSERT SEMANTICS)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
@@ -289,7 +289,7 @@ Where {help} is the URL to a documentation resource.
 For examples on use of OPTIONS, see [preflighting CORS cross-domain calls][cors-preflight].
 
 ### 7.5 STANDARD REQUEST HEADERS
-The table of request headers below SHOULD be used by Microsoft REST API Guidelines services. Using these headers is not mandated, but if used they MUST be used consistently.
+The table of request headers below SHOULD be used by Microsoft HTTP API Guidelines services. Using these headers is not mandated, but if used they MUST be used consistently.
 
 All header values MUST follow the rules set forth in [RFC2616][rfc-2616]; see "[token][rfc-2616-token]."  
 
@@ -298,7 +298,7 @@ Header                            | Type                                  | Desc
 Authorization                     | String                                           | Authorization header for the request
 Date                              | Date                                             | Timestamp of the request in [RFC 3339][rfc-3339] format
 Accept                            | Content type                                     | The requested content type for the response such as: <ul><li>application/xml</li><li>text/xml</li><li>application/json</li><li>text/javascript (for JSONP)</li></ul>Per the HTTP guidelines, this is just a hint and responses MAY have a different content type, such as a blob fetch where a successful response will just be the blob stream as the payload. For services following OData, the preference order specified in OData SHOULD be followed.
-Accept-Encoding                   | Gzip, deflate                                    | REST endpoints SHOULD support GZIP and DEFLATE encoding, when applicable. For very large resources, services MAY ignore and return uncompressed data.
+Accept-Encoding                   | Gzip, deflate                                    | HTTP API endpoints SHOULD support GZIP and DEFLATE encoding, when applicable. For very large resources, services MAY ignore and return uncompressed data.
 Accept-Language                   | "en", "es", etc.                                 | Specifies the preferred language for the response. Services are not required to support this, but if a service supports localization it MUST do so through the Accept-Language header.
 Accept-Charset                    | Charset type like "UTF-8"                        | Default is UTF-8, but services SHOULD be able to handle ISO-8859-1.
 Content-Type                      | Content type                                     | Mime type of request body (PUT/POST/PATCH)
@@ -372,7 +372,7 @@ Accept: application/json
 ```
 
 #### 7.10.2 ERROR CONDITION RESPONSES
-For nonsuccess conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services. This allows building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses. The following is based on the OData v4 JSON spec. However, it is very generic and does not require specific OData constructs. APIs SHOULD use this format even if they are not using other OData constructs.
+For nonsuccess conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft HTTP API Guidelines services. This allows building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses. The following is based on the OData v4 JSON spec. However, it is very generic and does not require specific OData constructs. APIs SHOULD use this format even if they are not using other OData constructs.
 
 The error response MUST be a single JSON object. This object MUST have a name/value pair named "error." The value MUST be a JSON object.
 
@@ -461,7 +461,7 @@ Services SHOULD be able to be accessed from simple HTTP tools such as curl witho
 Service developer portals SHOULD provide the equivalent of "Get Developer Token" to facilitate experimentation and curl support.
 
 ## 8 CORS
-Services compliant with the Microsoft REST API Guidelines MUST support [CORS (Cross Origin Resource Sharing)][cors]. Services SHOULD support an allowed origin of CORS * and enforce authorization through valid OAuth tokens. Services SHOULD NOT support user credentials with origin validation. There MAY be exceptions for special cases.
+Services compliant with the Microsoft HTTP API Guidelines MUST support [CORS (Cross Origin Resource Sharing)][cors]. Services SHOULD support an allowed origin of CORS * and enforce authorization through valid OAuth tokens. Services SHOULD NOT support user credentials with origin validation. There MAY be exceptions for special cases.
 
 ### 8.1 CLIENT GUIDANCE
 Web developers usually don't need to do anything special to take advantage of CORS. All of the handshake steps happen invisibly as part of the standard XMLHttpRequest calls they make.
@@ -727,9 +727,9 @@ Conditional AND | and      | Logical And
 Conditional OR  | or       | Logical Or
 
 ### 9.8 PAGINATION
-RESTful APIs that return collections MAY return partial sets. Consumers of these services MUST expect partial result sets and correctly page through to retrieve an entire set.
+HTTP APIs that return collections MAY return partial sets. Consumers of these services MUST expect partial result sets and correctly page through to retrieve an entire set.
 
-There are two forms of pagination that MAY be supported by RESTful APIs. Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads. Client-driven paging enables clients to request only the number of resources that it can use at a given time.
+There are two forms of pagination that MAY be supported by HTTP APIs. Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads. Client-driven paging enables clients to request only the number of resources that it can use at a given time.
 
 Sorting and Filtering parameters MUST be consistent across pages, because both client- and server-side paging is fully compatible with both filtering and sorting.
 
@@ -807,7 +807,7 @@ If the query contains a filter, the response MUST include only changes to entiti
 - Re-evaluate the query and compare it to original set of results; every entry uniquely in the current set MUST be returned as an Add operation, and every entry uniquely in the original set MUST be returned as a "remove" operation.
 - Each entity that previously did not match the criteria but matches it now MUST be returned as an "add"; conversely, each entity that previously matched the query but no longer does MUST be returned as a "@removed" entry.
 - Entities that have changed MUST be included in the set using their standard representation.
-- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend teams coordinate with the Microsoft REST API Guidelines Working Group on extensions to help maintain consistency.
+- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend teams coordinate with the Microsoft HTTP API Guidelines Working Group on extensions to help maintain consistency.
 
 The delta link MUST NOT encode any client top or skip value.
 
@@ -875,7 +875,7 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 ### 11.1 JSON FORMATTING STANDARDIZATION FOR PRIMITIVE TYPES
 Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627].
 
-### 11.2 REST GUIDELINES FOR DATES AND TIMES
+### 11.2 HTTP API GUIDELINES FOR DATES AND TIMES
 #### 11.2.1 PRODUCING DATES
 Services MUST produce dates using the `DateLiteral` format, and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise. Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED and ECMAScript clients are explicitly unsupported. (Non-Normative statement: When deciding which particular `DateKind` to standardize on, the approximate order of preference is `E, C, U, W, O, X, I, T`. This optimizes for ECMAScript, .NET, and C++ programmers, in that order.)
 
@@ -997,17 +997,17 @@ For example, "P3Y6M4DT12H30M5S" represents a duration of "three years, six month
 For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "2008-03-01T13:00:00Z," use "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M."
 
 ## 12 VERSIONING
-**All APIs compliant with the Microsoft REST API Guidelines MUST support explicit versioning.** It's critical that clients can count on services to be stable over time, and it's critical that services can add features and make changes.
+**All APIs compliant with the Microsoft HTTP API Guidelines MUST support explicit versioning.** It's critical that clients can count on services to be stable over time, and it's critical that services can add features and make changes.
 
 ### 12.1 VERSIONING FORMATS
-Services are versioned using a Major.Minor versioning scheme. Services MAY opt for a "Major" only version scheme in which case the ".0" is implied and all other rules in this section apply. Two options for specifying the version of a REST API request are supported:
+Services are versioned using a Major.Minor versioning scheme. Services MAY opt for a "Major" only version scheme in which case the ".0" is implied and all other rules in this section apply. Two options for specifying the version of a HTTP API request are supported:
 - Embedded in the path of the request URL, at the end of the service root: `https://api.contoso.com/v1.0/products/users`
 - As a query string parameter of the URL: `https://api.contoso.com/products/users?api-version=1.0`
 
 Guidance for choosing between the two options is as follows:
 1. Services co-located behind a DNS endpoint MUST use the same versioning mechanism.
-2. In this scenario, a consistent user experience across the endpoint is paramount. The Microsoft REST API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
-3. Services that guarantee the stability of their REST API's URL paths, even through future versions of the API, MAY adopt the query string parameter mechanism. This means the naming and structure of the relationships described in the API cannot evolve after the API ships, even across versions with breaking changes.
+2. In this scenario, a consistent user experience across the endpoint is paramount. The Microsoft HTTP API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
+3. Services that guarantee the stability of their HTTP API's URL paths, even through future versions of the API, MAY adopt the query string parameter mechanism. This means the naming and structure of the relationships described in the API cannot evolve after the API ships, even across versions with breaking changes.
 4. Services that cannot ensure URL path stability across future versions MUST embed the version in the URL path.
 
 Certain bedrock services such as Microsoft's Azure Active Directory may be exposed behind multiple endpoints. Such services MUST support the versioning mechanisms of each endpoint, even if that means supporting multiple versioning mechanisms.
@@ -1551,7 +1551,7 @@ If the subscription was successfully created, the service MUST respond with the 
 Property Name      | Required | Notes
 ------------------ | -------- | -------------------------------------------------------------------------------------------
 id                 | Yes      | Unique ID of the new subscription that can be used later to update/delete the subscription.
-expirationDateTime | No       | Uses existing Microsoft REST API Guidelines defined time formats.
+expirationDateTime | No       | Uses existing Microsoft HTTP API Guidelines defined time formats.
 
 Creation of subscriptions SHOULD be idempotent. The combination of properties scoped to the auth token, provides a uniqueness constraint.
 
@@ -1685,10 +1685,10 @@ Furthermore, services that allow client defined HTTP web hooks callback URLs SHO
 For example, services may not want to require developers to generate certificates to onboard. Services might only enable this on test accounts.  
 
 ## 15 UNSUPPORTED REQUESTS
-RESTful API clients MAY request functionality that is currently unsupported. RESTful APIs MUST respond to valid but unsupported requests consistent with this section.
+HTTP API clients MAY request functionality that is currently unsupported. HTTP APIs MUST respond to valid but unsupported requests consistent with this section.
 
 ### 15.1 ESSENTIAL GUIDANCE
-RESTful APIs will often choose to limit functionality that can be performed by clients. For instance, auditing systems allow records to be created but not modified or deleted. Similarly, some APIs will expose collections but require or otherwise limit filtering and ordering criteria, or MAY not support client-driven pagination.
+HTTP APIs will often choose to limit functionality that can be performed by clients. For instance, auditing systems allow records to be created but not modified or deleted. Similarly, some APIs will expose collections but require or otherwise limit filtering and ordering criteria, or MAY not support client-driven pagination.
 
 ### 15.2 FEATURE ALLOW LIST
 If a service does not support any of the below API features, then an error response MUST be provided if the feature is requested by a caller. The features are:
@@ -1700,7 +1700,7 @@ If a service does not support any of the below API features, then an error respo
 - Providing $delta tokens, such as: `https://api.contoso.com/v1.0/people?$delta`
 
 #### 15.2.1 ERROR RESPONSE
-Services MUST provide an error response if a caller requests an unsupported feature found in the feature allow list. The error response MUST be an HTTP status code from the 4xx series, indicating that the request cannot be fulfilled. Unless a more specific error status is appropriate for the given request, services SHOULD return "400 Bad Request" and an error payload conforming to the error response guidance provided in the Microsoft REST API Guidelines. Services SHOULD include enough detail in the response message for a developer to determine exactly what portion of the request is not supported.
+Services MUST provide an error response if a caller requests an unsupported feature found in the feature allow list. The error response MUST be an HTTP status code from the 4xx series, indicating that the request cannot be fulfilled. Unless a more specific error status is appropriate for the given request, services SHOULD return "400 Bad Request" and an error payload conforming to the error response guidance provided in the Microsoft HTTP API Guidelines. Services SHOULD include enough detail in the response message for a developer to determine exactly what portion of the request is not supported.
 
 Example:
 
