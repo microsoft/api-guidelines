@@ -1357,7 +1357,7 @@ Content-Type: application/json
           "subscriptionId": "1234-5678-1111-2222",
           "context": "subscription context that was specified at setup",
           "resourceUrl": "https://api.contoso.com/v1.0/databases/db1",
-          "userId" : "contoso.com/user@contoso.com"
+          "userId" : "contoso.com/user@contoso.com",
           "tenantId" : "contoso.com"
     }
   ]
