@@ -1298,7 +1298,7 @@ Accept: application/json
 Server responds that results are still not ready and optionally provides a recommendation to wait 30 seconds.
 
 ```http
-HTTP/1.1 200 Ok
+HTTP/1.1 200 OK
 Retry-After: 30
 
 {
