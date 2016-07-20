@@ -1298,8 +1298,8 @@ Server responds that results are still not ready and optionally provides a recom
 HTTP/1.1 200 Ok
 Retry-After: 30
 {
-    "createdDateTime": "2015-06-19T12-01-03.4Z",
-    "status": "running"
+  "createdDateTime": "2015-06-19T12-01-03.4Z",
+  "status": "running"
 }
 ```
 
@@ -1354,11 +1354,11 @@ Content-Type: application/json
 {
   "value": [
     {
-          "subscriptionId": "1234-5678-1111-2222",
-          "context": "subscription context that was specified at setup",
-          "resourceUrl": "https://api.contoso.com/v1.0/databases/db1",
-          "userId" : "contoso.com/user@contoso.com",
-          "tenantId" : "contoso.com"
+      "subscriptionId": "1234-5678-1111-2222",
+      "context": "subscription context that was specified at setup",
+      "resourceUrl": "https://api.contoso.com/v1.0/databases/db1",
+      "userId" : "contoso.com/user@contoso.com",
+      "tenantId" : "contoso.com"
     }
   ]
 }
@@ -1491,12 +1491,13 @@ For a firehose subscription, a concrete example of this may look like:
 
 ```json
 {
-  "value": [        {
-          "subscriptionId": "32b8cbd6174ab18b",
-          "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files?$delta",
-          "userId" : "<User GUID>",
-          "tenantId" : "<Tenant Id>"
-        }
+  "value": [
+    {
+      "subscriptionId": "32b8cbd6174ab18b",
+      "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files?$delta",
+      "userId" : "<User GUID>",
+      "tenantId" : "<Tenant Id>"
+    }
   ]
 }
 ```
@@ -1507,21 +1508,21 @@ For a per-user subscription, a concrete example of this may look like:
 {
   "value": [
     {
-          "subscriptionId": "32b8cbd6174ab183",
-          "clientState": "clientOriginatedOpaqueToken",
-          "expirationDateTime": "2016-02-04T11:23Z",
-          "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files/$delta",
-          "userId" : "<User GUID>",
-          "tenantId" : "<Tenant Id>"
-        },
+      "subscriptionId": "32b8cbd6174ab183",
+      "clientState": "clientOriginatedOpaqueToken",
+      "expirationDateTime": "2016-02-04T11:23Z",
+      "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files/$delta",
+      "userId" : "<User GUID>",
+      "tenantId" : "<Tenant Id>"
+    },
     {
-        "subscriptionId": "97b391179fa22",
-        "clientState ": "clientOriginatedOpaqueToken",
-        "expirationDateTime": "2016-02-04T11:23Z",
-        "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files/$delta",
-        "userId" : "<User GUID>",
-        "tenantId" : "<Tenant Id>"
-        }
+      "subscriptionId": "97b391179fa22",
+      "clientState ": "clientOriginatedOpaqueToken",
+      "expirationDateTime": "2016-02-04T11:23Z",
+      "resource": "https://api.contoso.com/v1.0/users/user@contoso.com/files/$delta",
+      "userId" : "<User GUID>",
+      "tenantId" : "<Tenant Id>"
+    }
   ]
 }
 ```
@@ -1600,10 +1601,10 @@ Below is an example using an Application-Only principal where the application is
 POST https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
 Authorization: Bearer {ApplicationPrincipalBearerToken}
 
- {
-   "resource": "All.Files",
-   "notificationUrl": "https://contoso.com/myCallbacks",
-   "clientState": "clientOriginatedOpaqueToken"
+{
+  "resource": "All.Files",
+  "notificationUrl": "https://contoso.com/myCallbacks",
+  "clientState": "clientOriginatedOpaqueToken"
 }
 ```
 
