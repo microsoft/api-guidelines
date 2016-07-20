@@ -1139,6 +1139,7 @@ Services MAY enable POST requests for entity creation.
 
 ```http
 POST https://api.contoso.com/v1.0/databases/
+
 {
   "fileName": "someFile.db",
   "color": "red"
@@ -1173,6 +1174,7 @@ Service response says the database has been created, but indicates the request i
 HTTP/1.1 201 Created
 Location: https://api.contoso.com/v1.0/databases/db1
 Operation-Location: https://api.contoso.com/v1.0/operations/123
+
 {
   "databaseName": "db1",
   "color": "red",
@@ -1272,6 +1274,7 @@ Client invokes the restart action:
 ```http
 POST https://api.contoso.com/v1.0/databases HTTP/1.1
 Accept: application/json
+
 {
   "fromFile": "myFile.db",
   "color": "red"
@@ -1297,6 +1300,7 @@ Server responds that results are still not ready and optionally provides a recom
 ```http
 HTTP/1.1 200 Ok
 Retry-After: 30
+
 {
   "createdDateTime": "2015-06-19T12-01-03.4Z",
   "status": "running"
@@ -1315,6 +1319,7 @@ Server responds with a "status:succeeded" operation that includes the resource l
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
+
 {
   "createdDateTime": "2015-06-19T12-01-03.45Z",
   "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
@@ -1351,6 +1356,7 @@ The target URL receives a push notification when the operation is complete.
 ```http
 HTTP/1.1 200 OK
 Content-Type: application/json
+
 {
   "value": [
     {
