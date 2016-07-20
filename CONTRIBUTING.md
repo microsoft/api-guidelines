@@ -86,7 +86,7 @@ Pull requests serve as the primary mechanism by which contributions are proposed
 
 Be prepared to address feedback on your pull request and iterate if necessary.
 
-[code-of-conduct]: CODE_OF_CONDUCT.md
+[code-of-conduct]: https://opensource.microsoft.com/codeofconduct/
 [new-issue]: https://github.com/Microsoft/api-guidelines/issues/new
 [issue-search]: https://github.com/Microsoft/api-guidelines/issues
 [white-house-api-guidelines]: https://github.com/WhiteHouse/api-standards/blob/master/README.md
