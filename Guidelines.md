@@ -322,6 +322,7 @@ Custom headers MUST NOT be required for the basic operation of a given API.
 Some of the guidelines in this document prescribe the use of nonstandard HTTP headers. In addition, some services MAY need to add extra functionality, which is exposed via HTTP headers. The following guidelines help maintain consistency across usage of custom headers.
 
 Headers that are not standard HTTP headers MUST have one of two formats:
+
 1. A generic format for headers that are registered as "provisional" with IANA ([RFC 3864][rfc-3864])
 2. A scoped format for headers that are too usage-specific for registration
 
@@ -333,6 +334,7 @@ Some headers pose challenges for some scenarios such as AJAX clients, especially
 Not all headers make sense as query parameters, including most standard HTTP headers.
 
 The criteria for considering when to accept headers as parameters are:
+
 1. Any custom headers MUST be also accepted as parameters.
 2. Required standard headers MAY be accepted as parameters.
 3. Required headers with security sensitivity (e.g., Authorization header) MIGHT NOT be appropriate as parameters; the service owner SHOULD evaluate these on a case-by-case basis.
@@ -789,6 +791,7 @@ Content-Type: application/json
 
 ### 9.9 COMPOUND COLLECTION OPERATIONS
 Filtering, Sorting and Pagination operations MAY all be performed against a given collection. When these operations are performed together, the evaluation order MUST be:
+
 1. **Filtering**. This includes all range expressions performed as an AND operation.
 2. **Sorting**. The potentially filtered list is sorted according to the sort criteria.
 3. **Pagination**. The materialized paginated view is presented over the filtered, sorted list. This applies to both server-driven pagination and client-driven pagination.
@@ -1005,6 +1008,7 @@ Services are versioned using a Major.Minor versioning scheme. Services MAY opt f
 - As a query string parameter of the URL: `https://api.contoso.com/products/users?api-version=1.0`
 
 Guidance for choosing between the two options is as follows:
+
 1. Services co-located behind a DNS endpoint MUST use the same versioning mechanism.
 2. In this scenario, a consistent user experience across the endpoint is paramount. The Microsoft REST API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
 3. Services that guarantee the stability of their REST API's URL paths, even through future versions of the API, MAY adopt the query string parameter mechanism. This means the naming and structure of the relationships described in the API cannot evolve after the API ships, even across versions with breaking changes.
@@ -1064,6 +1068,7 @@ Changes to the contract of an API are considered a breaking change. Changes that
 Teams MAY define backwards compatibility as their business needs require. For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible. Office 365 has a looser definition of backwards compatibility and allows JSON fields to be added to responses.
 
 Clear examples of breaking changes:
+
 1. Removing or renaming APIs or API parameters
 2. Changes in behavior for an existing API
 3. Changes in Error Codes and Fault Contracts
@@ -1075,6 +1080,7 @@ The applicable changes described [in this section of the OData V4 spec][odata-br
 
 ## 13 LONG RUNNING OPERATIONS
 Long running operations, sometimes called async operations, tend to mean different things to different people. This section sets forth guidance around different types of long running operations, and describes the wire protocols and best practices for these types of operations.
+
 1. One or more clients MUST be able to monitor and operate on the same resource at the same time.
 2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long running operation should itself leverage principles of the web. i.e. well defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long running operation
 3. Long running operations SHOULD work for clients looking to "Fire and Forget" and for clients looking to actively monitor and act upon results.
@@ -1190,6 +1196,7 @@ Note that "Completed Operations" is a goal state (see below), and may actually b
 
 #### 13.2.5    OPERATION RESOURCE
 An operation is a user addressable resource that tracks a stepwise long running operation. Operations MUST support GET semantics. The GET operation against an operation MUST return:
+
 1. The operation resource, it's state, and any extended state relevant to the particular API.
 2. 200 OK as the response code.
 
@@ -1200,6 +1207,7 @@ Services MAY support operation cancellation by exposing DELETE on the operation.
 Services that do not support operation cancellation MUST return a 405 Method Not Allowed in the event of a DELETE.
 
 Operations MUST support the following states:
+
 1. NotStarted
 2. Running
 3. Succeeded. Terminal State.
@@ -1210,6 +1218,7 @@ Services MAY add additional states, such as "Cancelled" or "Partially Completed"
 Services that support additional states should consider this list of canonical names and avoid creating new names if possible: Cancelling, Cancelled, Aborting, Aborted, Tombstone, Deleting, Deleted.  
 
 An operation MUST contain, and provide in the GET response, the following information:
+
 1. The timestamp when the operation was created.
 2. A timestamp for when the current state was entered.
 3. The operation state (notstarted / running / completed).
@@ -1387,6 +1396,7 @@ The approach set forth is chosen due to its simplicity, broad applicability, and
 
 ### 14.2 PRINCIPLES
 The core principles for services that support web hooks are:
+
 1. Services MUST implement at least a poke/pull model. In the poke/pull model, a notification is sent to a client, and clients then send a request to get the current state or the record of change since their last notification. This approach avoids complexities around message ordering, missed messages, and change sets.  Services MAY add more data to provide rich notifications.
 2. Services MUST implement the challenge/response protocol for configuring callback URLs.
 3. Services SHOULD have a recommended age-out period, with flexibility for services to vary based on scenario.
@@ -1395,21 +1405,25 @@ The core principles for services that support web hooks are:
 
 ### 14.3 TYPES OF SUBSCRIPTIONS
 There are two subscription types, and services MAY implement either, both, or none. The supported subscription types are:
+
 1. Firehose subscriptions – a subscription is manually created for the subscribing application, typically in an app registration portal.  Notifications of activity that any users have consented to the app receiving are sent to this single subscription.
 2. Per-resource subscriptions – the subscribing application uses code to programmatically create a subscription at runtime for some user-specific entity(s).
 
 Services that support both subscription types SHOULD provide differentiated developer experiences for the two types:
+
 1. Firehose – Services MUST NOT require developers to create code except to directly verify and respond to notifications.  Services MUST provide administrative UI for subscription management.  Services SHOULD NOT assume that end users are aware of the subscription, only the subscribing application's functionality.
 2. Per-user – Services MUST provide an API for developers to create and manage subscriptions as part of their app as well as verifying and responding to notifications.  Services MAY expect end users to be aware of subscriptions and MUST allow end users to revoke subscriptions where they were created directly in response to user actions.
 
 ### 14.4 CALL SEQUENCES
 The call sequence for a firehose subscription MUST follow the diagram below.  It shows manual registration of application and subscription, and then the end user making use of one of the service's APIs.  At this part of the flow, two things MUST be stored:
+
 1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope.)
 2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.
 
 The final part of the sequence is the notification flow itself.
 
 Non-normative implementation guidance:  A resource in the service changes and the service needs to run the following logic:
+
 1. Determine the set of users who have access to the resource, and could thus expect apps to receive notifications about it on their behalf.
 2. See which of those users have consented to receiving notifications and from which apps.
 3. See which apps have registered a firehose subscription.
@@ -1420,12 +1434,14 @@ It should be noted that the act of user consent and the act of setting up a fire
 ![Firehose subscription setup][websequencediagram-firehose-subscription-setup]
 
 For a per-user subscription, app registration is either manual or automated.  The call flow for a per-user subscription MUST follow the diagram below.  It shows the end user making use of one of the service's APIs, and again, the same two things MUST be stored:
+
 1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope).   
 2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.  
 
 In this case, the subscription is set up programmatically using the end-user's token from the subscribing application. The app MUST store the ID of the registered subscription alongside the user tokens.
 
 Non normative implementation guidance: In the final part of the sequence, when an item of data in the service changes and the service needs to run the following logic:
+
 1. Find the set of subscriptions that correspond via resource to the data that changed.
 2. For subscriptions created under an app+user token, send a notification to the app per subscription with the subscription ID and user id of the subscription-creator.
 - For subscriptions created with an app only token, check that the owner of the changed data or any user that has visibility of the changed data has consented to notifications to the application, and if so send a set of notifications per user id to the app per subscription with the subscription ID.
@@ -1453,6 +1469,7 @@ Services MAY perform additional validations on URL ownership.
 
 ### 14.6 RECEIVING NOTIFICATIONS
 Services SHOULD send notifications in response to service data change that do not include details of the changes themselves, but include enough information for the subscribing application to respond appropriately to the following process:
+
 1. Applications MUST identify the correct cached OAuth token to use for a callback
 2. Applications MAY look up any previous delta token for the relevant scope of change
 3. Applications MUST determine the URL to call to perform the relevant query for the new state of the service, which MAY be a delta query.
