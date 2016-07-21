@@ -1839,7 +1839,7 @@ App Server -> -Client : Redirect to DB Authorization endpoint with authorization
 Client -> +DB Auth : Redirected authorization request
 Client <--> DB Auth : Authorization UX
 DB Auth -> -Client : Redirect back to App Server with code
-Client -> +App Server : Ridirect request back to access server with access code
+Client -> +App Server : Redirect request back to access server with access code
 App Server -> +DB Auth : Request tokens with access code
 note right of DB Service: Cache that this User ID provided access to App ID
 DB Auth -> -App Server : Response with access, refresh, and ID tokens
