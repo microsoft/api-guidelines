@@ -219,7 +219,6 @@ Services that can generate URLs longer than 2,083 characters MUST make accommoda
 
  * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
  * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
- * [https://boutell.com/newfaq/misc/urllength.html](https://boutell.com/newfaq/misc/urllength.html)
  
 Also note that some technology stacks have hard and adjustable url limits, so keep this in mind as you design your services.
 
