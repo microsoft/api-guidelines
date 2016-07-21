@@ -590,7 +590,7 @@ And once executed again, would likely lead to another resource:
 
 ```http
 201 Created
-Location: https://someservice/v1.0/people/124
+Location: https://api.contoso.com/v1.0/people/124
 ```
 
 While a PUT request would require the indication of the collection item with the corresponding key instead:
