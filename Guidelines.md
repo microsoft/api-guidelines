@@ -44,7 +44,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [6.1    Ignore rule](#61-ignore-rule)
 		- [6.2    Variable order rule](#62-variable-order-rule)
 		- [6.3    Silent fail rule](#63-silent-fail-rule)
-	- [7    REST consistency fundamentals](#7-rest-consistency-fundamentals)
+	- [7    Consistency fundamentals](#7-consistency-fundamentals)
 		- [7.1    URL structure](#71-url-structure)
 		- [7.2    URL length](#72-url-length)
 		- [7.3    Canonical identifier](#73-canonical-identifier)
@@ -78,7 +78,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [10.5    Using a delta link](#105-using-a-delta-link)
 	- [11    JSON standardizations](#11-json-standardizations)
 		- [11.1    JSON formatting standardization for primitive types](#111-json-formatting-standardization-for-primitive-types)
-		- [11.2    REST guidelines for dates and times](#112-rest-guidelines-for-dates-and-times)
+		- [11.2    Guidelines for dates and times](#112-guidelines-for-dates-and-times)
 		- [11.3    JSON serialization of dates and times](#113-json-serialization-of-dates-and-times)
 		- [11.4    Durations](#114-durations)
 		- [11.5    Intervals](#115-intervals)
@@ -186,7 +186,7 @@ Clients MUST NOT rely on the order in which data appears in JSON service respons
 ### 6.3 Silent fail rule
 Clients requesting OPTIONAL server functionality (such as optional headers) MUST be resilient to the server ignoring that particular functionality.
 
-## 7 REST consistency fundamentals
+## 7 Consistency fundamentals
 ### 7.1 URL structure
 Humans SHOULD be able to easily read and construct URLs.  
 
@@ -878,7 +878,7 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 ### 11.1 JSON formatting standardization for primitive types
 Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627].
 
-### 11.2 REST guidelines for dates and times
+### 11.2 Guidelines for dates and times
 #### 11.2.1 Producing dates
 Services MUST produce dates using the `DateLiteral` format, and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise. Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED and ECMAScript clients are explicitly unsupported. (Non-Normative statement: When deciding which particular `DateKind` to standardize on, the approximate order of preference is `E, C, U, W, O, X, I, T`. This optimizes for ECMAScript, .NET, and C++ programmers, in that order.)
 
