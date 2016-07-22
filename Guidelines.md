@@ -273,7 +273,7 @@ Services MAY also return the full metadata for the created item in the response.
 #### 7.4.2 PATCH
 PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
 
-#### 7.4.3 Creating resources via PATCH (UPSERT sementics)
+#### 7.4.3 Creating resources via PATCH (UPSERT semantics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
 
 Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice-versa, the client MAY specify precondition HTTP headers in the request. The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
