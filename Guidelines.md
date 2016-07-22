@@ -281,7 +281,7 @@ OPTIONS allows a client to retrieve information about an object, at a minimum by
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
 ```http
-Link: {help}; rel="help"
+Link: <{help}>; rel="help"
 ```
 
 Where {help} is the URL to a documentation resource.
