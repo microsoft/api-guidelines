@@ -48,7 +48,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [7.1    URL structure](#71-url-structure)
 		- [7.2    URL length](#72-url-length)
 		- [7.3    Canonical identifier](#73-canonical-identifier)
-		- [7.4    Supported verbs](#74-supported-verbs)
+		- [7.4    Supported methods](#74-supported-methods)
 		- [7.5    Standard request headers](#75-standard-request-headers)
 		- [7.6    Standard response headers](#76-standard-response-headers)
 		- [7.7    Custom headers](#77-custom-headers)
@@ -228,12 +228,12 @@ An example of a URL containing a canonical identifier is:
 https://api.contoso.com/v1.0/people/7011042402/inbox
 ```
 
-### 7.4 Supported verbs
-Operations MUST use the proper HTTP verbs whenever possible, and operation idempotency MUST be respected.
+### 7.4 Supported methods
+Operations MUST use the proper HTTP methods whenever possible, and operation idempotency MUST be respected.
 
-Below is a list of verbs that Microsoft REST services SHOULD support. Not all resources will support all verbs, but all resources using the verbs below MUST conform to their usage.  
+Below is a list of methods that Microsoft REST services SHOULD support. Not all resources will support all methods, but all resources using the methods below MUST conform to their usage.  
 
-Verb    | Description                                                                                                                | Is Idempotent
+Method    | Description                                                                                                                | Is Idempotent
 ------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
 GET     | Return the current value of an object                                                                                      | True
 PUT     | Replace an object, or create a named object, when applicable                                                               | True
@@ -266,7 +266,7 @@ Where "server321" is the service-allocated server name.
 Services MAY also return the full metadata for the created item in the response.
 
 #### 7.4.2 PATCH
-PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
+PATCH has been standardized by IETF as the method to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
 
 #### 7.4.3 Creating resources via PATCH (UPSERT sementics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
@@ -276,7 +276,7 @@ Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4 Options and link headers
-OPTIONS allows a client to retrieve information about an object, at a minimum by returning the Allow header denoting the valid method verbs for this resource.  
+OPTIONS allows a client to retrieve information about an object, at a minimum by returning the Allow header denoting the valid methods for this resource.  
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
