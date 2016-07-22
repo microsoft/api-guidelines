@@ -240,18 +240,18 @@ Below is a list of verbs that Microsoft REST services SHOULD support. Not all re
 
 Verb    | Description                                                                                                                | Is Idempotent
 ------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
-GET     | Return the current value of an object                                                                                      | True
-PUT     | Replace an object, or create a named object, when applicable                                                               | True
-DELETE  | Delete an object                                                                                                           | True
-POST    | Create a new object based on the data provided, or submit a command                                                        | False
-HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
-PATCH   | Apply a partial update to an object                                                                                        | False
+GET     | Return the current value of an resource                                                                                      | True
+PUT     | Replace a resource, or create a named resource, when applicable                                                               | True
+DELETE  | Delete a resource                                                                                                           | True
+POST    | Create a new resource based on the data provided, or submit a command                                                        | False
+HEAD    | Return metadata of an resource for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
+PATCH   | Apply a partial update to a resource                                                                                        | False
 OPTIONS | Get information about a request; see below for details.                                                                    | True
 
 <small>Table 1</small>
 
 #### 7.4.1 POST
-POST operations SHOULD support the Location response header to specify the location of any created object that was not explicitly named, via the Location header.
+POST operations SHOULD support the Location response header to specify the location of any created resource that was not explicitly named, via the Location header.
 
 As an example, imagine a service that allows creation of hosted servers, which will be named by the service:
 
@@ -271,7 +271,7 @@ Where "server321" is the service-allocated server name.
 Services MAY also return the full metadata for the created item in the response.
 
 #### 7.4.2 PATCH
-PATCH has been standardized by IETF as the verb to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
+PATCH has been standardized by IETF as the verb to be used for updating an existing resource incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
 
 #### 7.4.3 Creating resources via PATCH (UPSERT semantics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
@@ -281,7 +281,7 @@ Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4 Options and link headers
-OPTIONS allows a client to retrieve information about an object, at a minimum by returning the Allow header denoting the valid method verbs for this resource.  
+OPTIONS allows a client to retrieve information about an resource, at a minimum by returning the Allow header denoting the valid method verbs for this resource.  
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
