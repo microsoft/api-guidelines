@@ -215,7 +215,12 @@ The HTTP 1.1 protocol, defined in RFC 2616, in section [3.2.1][rfc-2616-3-2-1], 
 
 > The HTTP protocol does not place any a priori limit on the length of a URL. Servers MUST be able to handle the URL of any resource they serve, and SHOULD be able to handle URLs of unbounded length if they provide GET-based forms that could generate such URLs. A server SHOULD return 414 (Request-URL Too Long) status if a URL is longer than the server can handle.
 
-Services that can generate URLs longer than 2,083 characters MUST make accommodations for Internet Explorer, as described in [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/).
+Services that can generate URLs longer than 2,083 characters MUST make accommodations for the clients they wish to support. Here are some sources for determining what target clients support:
+
+ * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
+ * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
+ 
+Also note that some technology stacks have hard and adjustable url limits, so keep this in mind as you design your services.
 
 ### 7.3 Canonical identifier
 In addition to friendly URLs, resources that can be moved or be renamed SHOULD expose a URL that contains a unique stable identifier. It MAY be necessary to interact with the service to obtain a stable URL from the friendly name for the resource, as in the case of the "/my" shortcut used by some services.
