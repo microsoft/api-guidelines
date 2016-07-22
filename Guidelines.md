@@ -240,11 +240,11 @@ Below is a list of verbs that Microsoft REST services SHOULD support. Not all re
 
 Verb    | Description                                                                                                                | Is Idempotent
 ------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
-GET     | Return the current value of an resource                                                                                      | True
+GET     | Return the current value of a resource                                                                                      | True
 PUT     | Replace a resource, or create a named resource, when applicable                                                               | True
 DELETE  | Delete a resource                                                                                                           | True
 POST    | Create a new resource based on the data provided, or submit a command                                                        | False
-HEAD    | Return metadata of an resource for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
+HEAD    | Return metadata of a resource for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
 PATCH   | Apply a partial update to a resource                                                                                        | False
 OPTIONS | Get information about a request; see below for details.                                                                    | True
 
