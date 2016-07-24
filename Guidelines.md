@@ -1134,7 +1134,7 @@ Services MAY enable PUT requests for entity creation.
 PUT https://api.contoso.com/v1.0/databases/db1
 ```
 
-In this scenario the _databases_ segment is processing the PUT operation.
+In this scenario the _operations_ segment is processing the PUT operation.
 
 ```http
 HTTP/1.1 202 Accepted
