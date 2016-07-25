@@ -283,7 +283,7 @@ Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4 Options and link headers
-OPTIONS allows a client to retrieve information about an resource, at a minimum by returning the Allow header denoting the valid method verbs for this resource.  
+OPTIONS allows a client to retrieve information about a resource, at a minimum by returning the Allow header denoting the valid method verbs for this resource.  
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
@@ -507,7 +507,7 @@ Because browser preflight response caches are notoriously weak, the additional r
   - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
 
-In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP services, take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_) and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
+In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP, services take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_), and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
 
 ## 9 Collections
 ### 9.1 Item keys
@@ -1462,7 +1462,7 @@ Non normative implementation guidance: In the final part of the sequence, when a
   ![User subscription setup][websequencediagram-user-subscription-setup]
 
 ### 14.5 Verifying subscriptions
-When subscriptions change either programmatically or in response to change via administrative UI portals, the subscribing service need to be protected from malicious or unexpected calls from services pushing potentially large volumes of notification traffic.
+When subscriptions change either programmatically or in response to change via administrative UI portals, the subscribing service needs to be protected from malicious or unexpected calls from services pushing potentially large volumes of notification traffic.
 
 For all subscriptions, whether firehose or per-user, services MUST send a verification request as part of creation or modification via portal UI or API request, before sending any other notifications.
 
@@ -1481,7 +1481,7 @@ If any challenge request does not receive the prescribed response within 5 secon
 Services MAY perform additional validations on URL ownership.
 
 ### 14.6 Receiving notifications
-Services SHOULD send notifications in response to service data change that do not include details of the changes themselves, but include enough information for the subscribing application to respond appropriately to the following process:
+Services SHOULD send notifications in response to service data changes that do not include details of the changes themselves, but include enough information for the subscribing application to respond appropriately to the following process:
 
 1. Applications MUST identify the correct cached OAuth token to use for a callback
 2. Applications MAY look up any previous delta token for the relevant scope of change
@@ -1556,14 +1556,14 @@ subscriptionId     | The id of the subscription due to which this notification h
 clientState        | Services MUST provide the *clientState* field if it was provided at subscription creation time.
 expirationDateTime | Services MUST provide the *expirationDateTime* field if the subscription has one.
 resource           | Services MUST provide the resource field. This URL MUST be considered opaque by the subscribing application.  In the case of a richer notification it MAY be subsumed by message content that implicitly contains the resource URL to avoid duplication.<br/>If a service is providing this data as part of a more detailed data packet, then it need not be duplicated.
-userId             | Services MUST provide this field or user-scoped resources.  In the case of user-scoped resources, the unique identifier for the user should be used.<br/>In the case of resources shared between a specific set of users, multiple notifications must be sent, passing the unique identifier of each user.<br/>For tenant-scoped resources, the user id of the subscription should be used.
+userId             | Services MUST provide this field for user-scoped resources.  In the case of user-scoped resources, the unique identifier for the user should be used.<br/>In the case of resources shared between a specific set of users, multiple notifications must be sent, passing the unique identifier of each user.<br/>For tenant-scoped resources, the user id of the subscription should be used.
 tenantId           | Services that wish to support cross-tenant requests SHOULD provide this field. Services that provide notifications on tenant-scoped data MUST send this field.
 
 ### 14.7 Managing subscriptions programmatically
 For per-user subscriptions, an API MUST be provided to create and manage subscriptions. The API must support at least the operations described here.
 
 #### 14.7.1 Creating subscriptions
-A client creates a subscription by issuing a POST request against the subscription resource. The subscription namespace is client-defined via the POST operation.
+A client creates a subscription by issuing a POST request against the subscriptions resource. The subscription namespace is client-defined via the POST operation.
 
 ```
 https://api.contoso.com/apiVersion/$subscriptions
@@ -1577,7 +1577,7 @@ resource        | Yes      | Resource path to watch.
 notificationUrl | Yes      | The target web hook URL.
 clientState     | No       | Opaque string passed back to the client on all notifications. Callers may choose to use this to provide tagging mechanisms.
 
-If the subscription was successfully created, the service MUST respond with the status code 201 CREATED and a body containing at least the following properties, in the same order as the request array, of the subscription:
+If the subscription was successfully created, the service MUST respond with the status code 201 CREATED and a body containing at least the following properties:
 
 Property Name      | Required | Notes
 ------------------ | -------- | -------------------------------------------------------------------------------------------
@@ -1586,7 +1586,7 @@ expirationDateTime | No       | Uses existing Microsoft REST API Guidelines defi
 
 Creation of subscriptions SHOULD be idempotent. The combination of properties scoped to the auth token, provides a uniqueness constraint.
 
-Below is an example request using a User + Application principal to subscribe to notifications from a file. In this example, the user specified "file1" as the context they wanted passed on all notifications:
+Below is an example request using a User + Application principal to subscribe to notifications from a file:
 
 ```http
 POST https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1608,7 +1608,7 @@ The service SHOULD respond to such a message with a response format minimally li
 }
 ```
 
-Below is an example using an Application-Only principal where the application is watching all files to which it's authorized. When created the user specified "allFiles" as the context to be passed on all notifications.
+Below is an example using an Application-Only principal where the application is watching all files to which it's authorized:
 
 ```http
 POST https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1662,10 +1662,10 @@ DELETE https://api.contoso.com/files/v1.0/$subscriptions/{id} HTTP 1.1
 Authorization: Bearer {UserPrincipalBearerToken}
 ```
 
-As with update, the service MUST return 204 NO RESPONSE for a successful delete, and an error status code and body object to indicate failure.
+As with update, the service MUST return `204 No Content` for a successful delete, or an error body and status code to indicate failure.
 
 #### 14.7.4 Enumerating subscriptions
-To get a list of active subscriptions, clients issue a GET request against the subscriptions entity set using a User + Application or Application-Only bearer token:
+To get a list of active subscriptions, clients issue a GET request against the subscriptions resource using a User + Application or Application-Only bearer token:
 
 ```http
 GET https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1709,11 +1709,9 @@ All service URLs must be HTTPS (that is, all inbound calls MUST be HTTPS). Servi
 
 We recommend that services that allow client defined Web Hook Callback URLs SHOULD NOT transmit data over HTTP. This is because information can be inadvertently exposed via client, network, server logs and other mechanisms.
 
-However, there are scenarios where the above recommendations cannot be followed due to client endpoint or software limitations.  Consequently, services MAY allow web hook URLs that are HTTP.  
+However, there are scenarios where the above recommendations cannot be followed due to client endpoint or software limitations.  Consequently, services MAY allow web hook URLs that are HTTP. Another example is that services may not want to require developers to generate certificates during onboarding. In this case, services might allow HTTP web hook URLs to be used on test accounts.
 
-Furthermore, services that allow client defined HTTP web hooks callback URLs SHOULD be compliant with privacy policy specified by engineering leadership. This will typically include recommending that clients prefer SSL connections and adhere to special precautions to ensure that logs and other service data collection are properly handled.
-
-For example, services may not want to require developers to generate certificates to onboard. Services might only enable this on test accounts.  
+Furthermore, services that allow client defined HTTP web hooks callback URLs SHOULD be compliant with the privacy policy specified by engineering leadership. This will typically include recommending that clients prefer SSL connections and adhere to special precautions to ensure that logs and other service data collection are properly handled.  
 
 ## 15 Unsupported requests
 RESTful API clients MAY request functionality that is currently unsupported. RESTful APIs MUST respond to valid but unsupported requests consistent with this section.
