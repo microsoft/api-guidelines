@@ -1709,6 +1709,8 @@ All service URLs must be HTTPS (that is, all inbound calls MUST be HTTPS). Servi
 
 We recommend that services that allow client defined Web Hook Callback URLs SHOULD NOT transmit data over HTTP. This is because information can be inadvertently exposed via client, network, server logs and other mechanisms.
 
+However, there are scenarios where the above recommendations cannot be followed due to client endpoint or software limitations.  Consequently, services MAY allow web hook URLs that are HTTP.  
+
 Furthermore, services that allow client defined HTTP web hooks callback URLs SHOULD be compliant with privacy policy specified by engineering leadership. This will typically include recommending that clients prefer SSL connections and adhere to special precautions to ensure that logs and other service data collection are properly handled.
 
 For example, services may not want to require developers to generate certificates to onboard. Services might only enable this on test accounts.  
