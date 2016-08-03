@@ -240,7 +240,7 @@ https://api.contoso.com/v1.0/people/7011042402/inbox
 ```
 
 ### 7.4 Supported methods
-Operations MUST use the proper HTTP methods whenever possible, and operation idempotency MUST be respected.
+Operations MUST use the proper HTTP methods whenever possible, and operation idempotency MUST be respected. HTTP methods are frequently referred to as the HTTP verbs. The terms are synonymous in this context, however the HTTP specification uses the term method.
 
 Below is a list of methods that Microsoft REST services SHOULD support. Not all resources will support all methods, but all resources using the methods below MUST conform to their usage.  
 
