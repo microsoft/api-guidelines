@@ -44,7 +44,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [6.1    Ignore rule](#61-ignore-rule)
 		- [6.2    Variable order rule](#62-variable-order-rule)
 		- [6.3    Silent fail rule](#63-silent-fail-rule)
-	- [7    REST consistency fundamentals](#7-rest-consistency-fundamentals)
+	- [7    Consistency fundamentals](#7-consistency-fundamentals)
 		- [7.1    URL structure](#71-url-structure)
 		- [7.2    URL length](#72-url-length)
 		- [7.3    Canonical identifier](#73-canonical-identifier)
@@ -78,7 +78,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 		- [10.5    Using a delta link](#105-using-a-delta-link)
 	- [11    JSON standardizations](#11-json-standardizations)
 		- [11.1    JSON formatting standardization for primitive types](#111-json-formatting-standardization-for-primitive-types)
-		- [11.2    REST guidelines for dates and times](#112-rest-guidelines-for-dates-and-times)
+		- [11.2    Guidelines for dates and times](#112-guidelines-for-dates-and-times)
 		- [11.3    JSON serialization of dates and times](#113-json-serialization-of-dates-and-times)
 		- [11.4    Durations](#114-durations)
 		- [11.5    Intervals](#115-intervals)
@@ -110,23 +110,27 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 <!-- /TOC -->
 
 ## 3 Introduction
-Developers access most Microsoft Cloud Platform resources via RESTful HTTP interfaces. Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to REST operations over HTTP. Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment. Thus a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+Developers access most Microsoft Cloud Platform resources via HTTP interfaces. Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to HTTP requests. Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment. Thus a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
 
-To provide the smoothest possible experience for developers, it's important to have these REST APIs follow consistent design guidelines, thus making using them easy and intuitive. This document establishes the guidelines to be followed by Microsoft REST API developers for developing such RESTful interfaces consistently.
+To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive. This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
 
 The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
 
 These guidelines aim to achieve the following:
-- Define consistent practices and patterns for all REST endpoints across Microsoft.
-- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large.
+- Define consistent practices and patterns for all API endpoints across Microsoft.
+- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large.*
 - Make accessing Microsoft Services via REST interfaces easy for all application developers.
 - Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
 - Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
 
-### 3.1 Recommended reading
-Understanding the philosophy behind good RESTful design is critical for developing good HTTP-based services. If you are new to RESTful design, here are some good resources:
+*Note: The guidelines are designed to align with building services which comply with the REST architectural style, though they do not address or require building services that follow the REST constraints. The term "REST" is used throughout this document to mean services that are in the spirit of REST rather than adhering to REST by the book.*
 
-[RFC 2616][rfc-2616] -- Defines the spec for HTTP/1.1, and is the authoritative resource for its semantics.
+### 3.1 Recommended reading
+Understanding the philosophy behind the REST Architectural Style is recommended for developing good HTTP-based services. If you are new to RESTful design, here are some good resources:
+
+[REST Dissertation][fielding] -- The chapter on REST in Roy Fielding's dissertation on Network Architecture, "Architectural Styles and the Design of Network-based Software Architectures"
+
+[RFC 7231][rfc-7231] -- Defines the specification for HTTP/1.1 semantics, and is considered the authoritative resource.
 
 [REST in Practice][rest-in-practice] -- Book on the fundamentals of REST.
 
@@ -186,7 +190,7 @@ Clients MUST NOT rely on the order in which data appears in JSON service respons
 ### 6.3 Silent fail rule
 Clients requesting OPTIONAL server functionality (such as optional headers) MUST be resilient to the server ignoring that particular functionality.
 
-## 7 REST consistency fundamentals
+## 7 Consistency fundamentals
 ### 7.1 URL structure
 Humans SHOULD be able to easily read and construct URLs.  
 
@@ -211,11 +215,18 @@ https://api.contoso.com/v1.0/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
 ### 7.2 URL length
-The HTTP 1.1 protocol, defined in RFC 2616, in section [3.2.1][rfc-2616-3-2-1], defines no URL length limit. From the RFC:
+The HTTP 1.1 message format, defined in RFC 7230, in section [3.1.1][rfc-7230-3-1-1], defines no length limit on the Request Line, which includes the target URL. From the RFC:
 
-> The HTTP protocol does not place any a priori limit on the length of a URL. Servers MUST be able to handle the URL of any resource they serve, and SHOULD be able to handle URLs of unbounded length if they provide GET-based forms that could generate such URLs. A server SHOULD return 414 (Request-URL Too Long) status if a URL is longer than the server can handle.
+> HTTP does not place a predefined limit on the length of a
+   request-line. [...] A server that receives a request-target longer than any URI it wishes to parse MUST respond
+   with a 414 (URI Too Long) status code.
 
-Services that can generate URLs longer than 2,083 characters MUST make accommodations for Internet Explorer, as described in [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/).
+Services that can generate URLs longer than 2,083 characters MUST make accommodations for the clients they wish to support. Here are some sources for determining what target clients support:
+
+ * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
+ * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
+ 
+Also note that some technology stacks have hard and adjustable url limits, so keep this in mind as you design your services.
 
 ### 7.3 Canonical identifier
 In addition to friendly URLs, resources that can be moved or be renamed SHOULD expose a URL that contains a unique stable identifier. It MAY be necessary to interact with the service to obtain a stable URL from the friendly name for the resource, as in the case of the "/my" shortcut used by some services.
@@ -246,7 +257,7 @@ OPTIONS | Get information about a request; see below for details.               
 <small>Table 1</small>
 
 #### 7.4.1 POST
-POST operations SHOULD support the Location response header to specify the location of any created object that was not explicitly named, via the Location header.
+POST operations SHOULD support the Location response header to specify the location of any created resource that was not explicitly named, via the Location header.
 
 As an example, imagine a service that allows creation of hosted servers, which will be named by the service:
 
@@ -268,7 +279,7 @@ Services MAY also return the full metadata for the created item in the response.
 #### 7.4.2 PATCH
 PATCH has been standardized by IETF as the method to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]). Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.  
 
-#### 7.4.3 Creating resources via PATCH (UPSERT sementics)
+#### 7.4.3 Creating resources via PATCH (UPSERT semantics)
 Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH. Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data. Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties MAY be inadvertently removed. Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
 
 Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice-versa, the client MAY specify precondition HTTP headers in the request. The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
@@ -276,12 +287,12 @@ Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4 Options and link headers
-OPTIONS allows a client to retrieve information about an object, at a minimum by returning the Allow header denoting the valid methods for this resource.  
+OPTIONS allows a client to retrieve information about a resource, at a minimum by returning the Allow header denoting the valid method methods for this resource.  
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
 ```http
-Link: {help}; rel="help"
+Link: <{help}>; rel="help"
 ```
 
 Where {help} is the URL to a documentation resource.
@@ -291,7 +302,7 @@ For examples on use of OPTIONS, see [preflighting CORS cross-domain calls][cors-
 ### 7.5 Standard request headers
 The table of request headers below SHOULD be used by Microsoft REST API Guidelines services. Using these headers is not mandated, but if used they MUST be used consistently.
 
-All header values MUST follow the rules set forth in [RFC2616][rfc-2616]; see "[token][rfc-2616-token]."  
+All header values MUST follow the syntax rules set forth in the specification where the header field is defined. Many HTTP headers are defined in [RFC7231][rfc-7231], however a complete list of approved headers can be found in the [IANA Header Registry][IANA-headers]."  
 
 Header                            | Type                                  | Description
 --------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -393,6 +404,31 @@ The value for the "innererror" name/value pair MUST be an object. The contents o
 Error responses MAY contain [annotations][odata-json-annotations] in any of their JSON objects.
 
 We recommend that for any transient errors that may be retried, services SHOULD include a Retry-After HTTP header indicating the minimum number of seconds that clients SHOULD wait before attempting the operation again.
+
+##### ErrorResponse : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`error` | Error | ✔ | The error object.
+
+##### Error : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`code` | String (enumerated) | ✔ | One of a server-defined set of error codes.
+`message` | String | ✔ | A human-readable representation of the error.
+`target` | String |  | The target of the error.
+`details` | Error[] |  | An array of details about specific errors that led to this reported error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+
+##### InnerError : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`code` | String |  | A more specific error code than was provided by the containing error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+
+##### Examples
 
 Example of "innererror":
 
@@ -500,7 +536,7 @@ Because browser preflight response caches are notoriously weak, the additional r
   - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
 
-In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP services, take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_) and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
+In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access. In JSONP, services take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_), and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name. More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
 
 ## 9 Collections
 ### 9.1 Item keys
@@ -878,7 +914,7 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 ### 11.1 JSON formatting standardization for primitive types
 Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627].
 
-### 11.2 REST guidelines for dates and times
+### 11.2 Guidelines for dates and times
 #### 11.2.1 Producing dates
 Services MUST produce dates using the `DateLiteral` format, and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise. Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED and ECMAScript clients are explicitly unsupported. (Non-Normative statement: When deciding which particular `DateKind` to standardize on, the approximate order of preference is `E, C, U, W, O, X, I, T`. This optimizes for ECMAScript, .NET, and C++ programmers, in that order.)
 
@@ -1072,7 +1108,7 @@ Clear examples of breaking changes:
 1. Removing or renaming APIs or API parameters
 2. Changes in behavior for an existing API
 3. Changes in Error Codes and Fault Contracts
-4. Anything that would violate the [Principal of Least Astonishment][principal-of-least-astonishment]
+4. Anything that would violate the [Principle of Least Astonishment][principle-of-least-astonishment]
 
 Services MUST explicitly define their definition of a breaking change, especially with regard to adding new fields to JSON responses and adding new API arguments with default fields. Services that are co-located behind a DNS Endpoint with other services MUST be consistent in defining contract extensibility.
 
@@ -1381,7 +1417,7 @@ Operation-Location: http://api.contoso.com/v1.0/operations/123
 Retry-After: 60
 ```
 
-Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 2616][rfc-2616-14]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
+Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
 
 ### 13.3 Retention policy for operation results
 In some situations, the result of a long running operation is not a resource that can be addressed. For example, if you invoke a long running Action that returns a Boolean (rather than a resource). In these situations, the Location header points to a place where the Boolean result can be retrieved.
@@ -1455,7 +1491,7 @@ Non normative implementation guidance: In the final part of the sequence, when a
   ![User subscription setup][websequencediagram-user-subscription-setup]
 
 ### 14.5 Verifying subscriptions
-When subscriptions change either programmatically or in response to change via administrative UI portals, the subscribing service need to be protected from malicious or unexpected calls from services pushing potentially large volumes of notification traffic.
+When subscriptions change either programmatically or in response to change via administrative UI portals, the subscribing service needs to be protected from malicious or unexpected calls from services pushing potentially large volumes of notification traffic.
 
 For all subscriptions, whether firehose or per-user, services MUST send a verification request as part of creation or modification via portal UI or API request, before sending any other notifications.
 
@@ -1474,7 +1510,7 @@ If any challenge request does not receive the prescribed response within 5 secon
 Services MAY perform additional validations on URL ownership.
 
 ### 14.6 Receiving notifications
-Services SHOULD send notifications in response to service data change that do not include details of the changes themselves, but include enough information for the subscribing application to respond appropriately to the following process:
+Services SHOULD send notifications in response to service data changes that do not include details of the changes themselves, but include enough information for the subscribing application to respond appropriately to the following process:
 
 1. Applications MUST identify the correct cached OAuth token to use for a callback
 2. Applications MAY look up any previous delta token for the relevant scope of change
@@ -1549,14 +1585,14 @@ subscriptionId     | The id of the subscription due to which this notification h
 clientState        | Services MUST provide the *clientState* field if it was provided at subscription creation time.
 expirationDateTime | Services MUST provide the *expirationDateTime* field if the subscription has one.
 resource           | Services MUST provide the resource field. This URL MUST be considered opaque by the subscribing application.  In the case of a richer notification it MAY be subsumed by message content that implicitly contains the resource URL to avoid duplication.<br/>If a service is providing this data as part of a more detailed data packet, then it need not be duplicated.
-userId             | Services MUST provide this field or user-scoped resources.  In the case of user-scoped resources, the unique identifier for the user should be used.<br/>In the case of resources shared between a specific set of users, multiple notifications must be sent, passing the unique identifier of each user.<br/>For tenant-scoped resources, the user id of the subscription should be used.
+userId             | Services MUST provide this field for user-scoped resources.  In the case of user-scoped resources, the unique identifier for the user should be used.<br/>In the case of resources shared between a specific set of users, multiple notifications must be sent, passing the unique identifier of each user.<br/>For tenant-scoped resources, the user id of the subscription should be used.
 tenantId           | Services that wish to support cross-tenant requests SHOULD provide this field. Services that provide notifications on tenant-scoped data MUST send this field.
 
 ### 14.7 Managing subscriptions programmatically
 For per-user subscriptions, an API MUST be provided to create and manage subscriptions. The API must support at least the operations described here.
 
 #### 14.7.1 Creating subscriptions
-A client creates a subscription by issuing a POST request against the subscription resource. The subscription namespace is client-defined via the POST operation.
+A client creates a subscription by issuing a POST request against the subscriptions resource. The subscription namespace is client-defined via the POST operation.
 
 ```
 https://api.contoso.com/apiVersion/$subscriptions
@@ -1570,7 +1606,7 @@ resource        | Yes      | Resource path to watch.
 notificationUrl | Yes      | The target web hook URL.
 clientState     | No       | Opaque string passed back to the client on all notifications. Callers may choose to use this to provide tagging mechanisms.
 
-If the subscription was successfully created, the service MUST respond with the status code 201 CREATED and a body containing at least the following properties, in the same order as the request array, of the subscription:
+If the subscription was successfully created, the service MUST respond with the status code 201 CREATED and a body containing at least the following properties:
 
 Property Name      | Required | Notes
 ------------------ | -------- | -------------------------------------------------------------------------------------------
@@ -1579,7 +1615,7 @@ expirationDateTime | No       | Uses existing Microsoft REST API Guidelines defi
 
 Creation of subscriptions SHOULD be idempotent. The combination of properties scoped to the auth token, provides a uniqueness constraint.
 
-Below is an example request using a User + Application principal to subscribe to notifications from a file. In this example, the user specified "file1" as the context they wanted passed on all notifications:
+Below is an example request using a User + Application principal to subscribe to notifications from a file:
 
 ```http
 POST https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1601,7 +1637,7 @@ The service SHOULD respond to such a message with a response format minimally li
 }
 ```
 
-Below is an example using an Application-Only principal where the application is watching all files to which it's authorized. When created the user specified "allFiles" as the context to be passed on all notifications.
+Below is an example using an Application-Only principal where the application is watching all files to which it's authorized:
 
 ```http
 POST https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1655,10 +1691,10 @@ DELETE https://api.contoso.com/files/v1.0/$subscriptions/{id} HTTP 1.1
 Authorization: Bearer {UserPrincipalBearerToken}
 ```
 
-As with update, the service MUST return 204 NO RESPONSE for a successful delete, and an error status code and body object to indicate failure.
+As with update, the service MUST return `204 No Content` for a successful delete, or an error body and status code to indicate failure.
 
 #### 14.7.4 Enumerating subscriptions
-To get a list of active subscriptions, clients issue a GET request against the subscriptions entity set using a User + Application or Application-Only bearer token:
+To get a list of active subscriptions, clients issue a GET request against the subscriptions resource using a User + Application or Application-Only bearer token:
 
 ```http
 GET https://api.contoso.com/files/v1.0/$subscriptions HTTP 1.1
@@ -1870,16 +1906,17 @@ note right of App Server: Update status and cache new "since" token
 
 === End Text ===
 ```
-
-[rfc-2616]: http://www.ietf.org/rfc/rfc2616.txt
+[fielding]: https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
+[IANA-headers]: http://www.iana.org/assignments/message-headers/message-headers.xhtml
+[rfc7231-7-1-1-1]: https://tools.ietf.org/html/rfc7231#section-7.1.1.1
+[rfc-7230-3-1-1]: https://tools.ietf.org/html/rfc7230#section-3.1.1
+[rfc-7231]: https://tools.ietf.org/html/rfc7231
 [rest-in-practice]: http://www.amazon.com/REST-Practice-Hypermedia-Systems-Architecture/dp/0596805829/
 [rest-on-wikipedia]: http://en.wikipedia.org/wiki/Representational_state_transfer
-[rfc-2616-3-2-1]: http://tools.ietf.org/html/rfc2616#section-3.2.1
 [rfc-5789]: http://tools.ietf.org/html/rfc5789
 [rfc-5988]: http://tools.ietf.org/html/rfc5988
 [rfc-3339]: https://tools.ietf.org/html/rfc3339
 [cors-preflight]: http://www.w3.org/TR/cors/#resource-preflight-requests
-[rfc-2616-token]: http://tools.ietf.org/html/rfc2616#page-14
 [rfc-3864]: http://www.ietf.org/rfc/rfc3864.txt
 [odata-json-annotations]: http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Instance_Annotations
 [cors]: http://www.w3.org/TR/access-control/
@@ -1897,8 +1934,7 @@ note right of App Server: Update status and cache new "since" token
 [wikipedia-iso8601-durations]: http://en.wikipedia.org/wiki/ISO_8601#Durations
 [wikipedia-iso8601-intervals]: http://en.wikipedia.org/wiki/ISO_8601#Time_intervals
 [wikipedia-iso8601-repeatingintervals]: http://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals
-[principal-of-least-astonishment]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
+[principle-of-least-astonishment]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
 [odata-breaking-changes]: http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209
-[rfc-2616-14]: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 [websequencediagram-firehose-subscription-setup]: http://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDogTWFudWFsAIFzEQoKCgCDAgo8LS0-AIIqCiA6IExvZ2luIGludG8Agj8JAII1ECBVWCAKACoKLT4gKwCCWBM6AIQGBU5hbWUgZXRjLgCDFQ4AGxJDb25maXJtAIEBCEFjY2VzcyBUb2tlbgoKAIM3EyAtPiAtAINkCQBnBklEAIEMCwCBVQUAhQIMAIR3CmNvcGllcwArCACCIHAAhHMMAIMKDwCDABg6IHdlYmhvb2sgcgCCeg4AgnUSAIVQDToAhXYHZXIAgwgGAIcTBgBECVVSTCwgU2NvcGUAhzIGSUQKTgCGPQwAhhwNIACDBh4AHhEAgxEPbgCBagwAgxwNAIMaDiAAgx0MbWF5IGNvcHkALREAhVtqAIZHB0F1dGhvcml6AIY7BwCGXQctPiArAIEuDVJlcXVlc3QgYQCFOQZ0byBEQiBwcm90ZWN0ZWQgaW5mb3IAiiQGCgCDBQstPiAtAIctCVJlZGlyZWN0ADYHAGwNIGVuZHBvaW50AIoWBmEADw1yAHYGAIEQDACJVAcASwtlZAAYHgCICAgAMAcAcA4AhGoGAE0FAIEdFmJhY2sgdG8AhF8NaXRoIGNvZGUAghoaaQCBagcAgToHAD0JAII-B3MAPgsAglEHAEsFAIIzDgCBXw0Agn8GdG9rZW5zACcSAI0_BXJpZ2h0IG9mAItpDUNhY2hlIHRoYXQgdGhpcyBVc2VyIElEIHByb3ZpZGVkAINNCwCIZgoAggcJAIN7D3Nwb25zAI0_BwCECgYsIHJlZnJlc2gsIGFuZCBJRACBHAcAgQMPAIYADQCBDAcAgUUGYnkAjFkFIElEAIQkG3R1cm4AhF4MIHRvIGMAjR8FAIwRagCJVw1GbG93AIYqCQCMaQgAgmoKaGFuZ2UAj3YFAIFXBWRhdGEgLSB0eXBpY2FsIHZpYQCQDgVyYWN0aW5nAJAPBgCJQQt2aWEAjnsHCgCPNgogAIhDEACKZw0AkFMFAIkBDwCDDAUAgkYWKwBNCwCHWApjAIEyBQCHRg0AhWUHYWNoAIQeDACEfwVhbmQgInNpbmNlIgCFEQYAkSQOAIR3CgCNfwcAhHQFAIpQEACBUgsAhFAcAII8BWFuZCBuZXcAYRQAhFUTOiBVcGRhdGUgc3RhdHUAgSkGAIFDBQAxEwoKCg&s=mscgen
 [websequencediagram-user-subscription-setup]: http://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDoAgWwRCgphbHQAgyUIAIEHBiByABQMICAAgxsLPC0tPgCDTws6IENvbmZpZ3VyZQogIACDaAsgLT4gKwCCWBMAegZOYW1lIGV0Yy4AhAgFAIMaDQAfEgBdBXJtAIQ_BUFjY2VzcyBUb2tlAIETBgCDOxIgLT4gLQCBFgxBcHAgSUQAhHwIY3JldACBGxAtPgCFFgsgOiBFbWJlZAAkFGVsc2UgTWFudWFsAIIEJACEbQkgOiBMb2dpbiBpbnRvAIUBCQCBKRFVWACGGAUALQoAgh8mAIIZKwCBCAcAgjoNAIIsHACGLwkAgj8IAIESDgCECAYAh1ELAIdFCmNvcGllcwAuCGVuZACEeGoAhWQHQXV0aG9yaXoAhV8HAIV6By0-ICsAg2ANUmVxdWVzdCBhAIRVBnRvIERCIHByb3RlY3RlZCBpbmZvcgCJQQYKAIQaCy0-IC0AhkoJUmVkaXJlY3QANgcAbA0gZW5kcG9pbnQAiTMGYQAPDXIAdgYAgRAMAIhxBwBLC2VkABgeAIRjCAAwB0EAcQxVWAoASQgAgRwWYmFjayB0bwCFdAwAilwFY29kZQCCGRppAIFpBwCBOQcAPQkAgj0HcwA-CwCCUAcASwUAgjIOAIFeDQCCfgZ0b2tlbnMAJxIAjFsFcmlnaHQgb2YAiwUNQ2FjaGUgdGhhdCB0aGlzIFVzZXIgSUQgcHJvdmlkZWQAg0wLAIU6BwCCBAwAg3oPc3BvbnMAjFsHAIQJBiwgcmVmcmVzaCwgYW5kIElEAIEcBwCBAw8AiDENAIEMBwCBRQZieQCLdQUgSUQAhCMbdHVybgCEXQwgdG8gYwCMOwUKCgCLL2oAjXUMAIwTDwCPNQotPisAjhwQOgCORQdlcgCMVwYAg3YIZWJob29rIFVSTCwgU2NvcGUAkAEGSUQAjwoOAI5rDSAAi2UKAINFBQCLYw0AHBEAgzUOOiBuAIE2DABgCACDCB1oZQCBaQ5JRACDYwUAahIAghB4RmxvdwCJMwkAjE0IAIV0CmhhbmdlAJIcBQCEYQVkYXRhIC0gdHlwaWNhbCB2aWEAkjQFcmFjdGluZwCSNQYAjV8LdmlhAJEhBwoAkVwKIACNfhAAhAsNAJJ5BQCCWQ8AhhYFAIVQFisATQsAimEKYwCBMgUAik8NAIhvB2FjaACHKAwAiAkFYW5kICJzaW5jZSIAiBsGAJNKDgCIAQoAhB0cAIFSCwCHWhwAgjwFYW5kIG5ldwBhFACHXxM6IFVwZGF0ZSBzdGF0dQCBKQYAgUMFADETCgoK&s=mscgen
