@@ -287,7 +287,7 @@ Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4 Options and link headers
-OPTIONS allows a client to retrieve information about a resource, at a minimum by returning the Allow header denoting the valid method methods for this resource.  
+OPTIONS allows a client to retrieve information about a resource, at a minimum by returning the Allow header denoting the valid methods for this resource.  
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
