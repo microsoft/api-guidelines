@@ -128,13 +128,13 @@ These guidelines aim to achieve the following:
 ### 3.1 Recommended reading
 Understanding the philosophy behind the REST Architectural Style is recommended for developing good HTTP-based services. If you are new to RESTful design, here are some good resources:
 
+[REST on Wikipedia][rest-on-wikipedia] -- Overview of common definitions and core ideas behind REST.
+
 [REST Dissertation][fielding] -- The chapter on REST in Roy Fielding's dissertation on Network Architecture, "Architectural Styles and the Design of Network-based Software Architectures"
 
 [RFC 7231][rfc-7231] -- Defines the specification for HTTP/1.1 semantics, and is considered the authoritative resource.
 
 [REST in Practice][rest-in-practice] -- Book on the fundamentals of REST.
-
-[REST on Wikipedia][rest-on-wikipedia] -- Overview of common definitions and core ideas behind REST.
 
 ## 4 Interpreting the guidelines
 ### 4.1 Application of the guidelines
