@@ -577,14 +577,8 @@ GET https://api.contoso.com/v1.0/people/123/addresses
 ```json
 {
   "value": [
-    {
-      "id": 123,
-      "name": "John",
-      "addresses": [
-        {"street":"1st Avenue","city":"Seattle"},
-        {"street":"124th Ave NE","city":"Redmond"}
-      ]
-    }
+    { "street": "1st Avenue", "city": "Seattle" },
+    { "street": "124th Ave NE", "city": "Redmond" }
   ]
 }
 ```
