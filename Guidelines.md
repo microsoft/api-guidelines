@@ -246,7 +246,7 @@ https://api.contoso.com/v1.0/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
 ### 7.2 URL length
-The HTTP 1.1 message format, defined in RFC 7230, in section [3.1.1][rfc-7230-3-1-1], defines no length limit on the Request Line, which includes the target URl.
+The HTTP 1.1 message format, defined in RFC 7230, in section [3.1.1][rfc-7230-3-1-1], defines no length limit on the Request Line, which includes the target URL.
 From the RFC:
 
 > HTTP does not place a predefined limit on the length of a
@@ -1073,8 +1073,8 @@ DateLiteral:
   StructuredDateLiteral
 
 Iso8601Literal:
-A string literal as defined in http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15. Note that the full grammar for ISO 8601 (such as "basic format" without separators) is not supported.
-All dates default to UTC unless specified otherwise.
+  A string literal as defined in http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15. Note that the full grammar for ISO 8601 (such as "basic format" without separators) is not supported.
+  All dates default to UTC unless specified otherwise.
 
 StructuredDateLiteral:
   { DateKindProperty , DateValueProperty }

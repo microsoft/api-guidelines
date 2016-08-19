@@ -32,6 +32,7 @@ This is the repository for Microsoft REST API Guidelines documentation only. Ple
 - Retain only essential headers for understanding the example
 - Use valid (e.g., member names quoted), pretty-printed JSON with a 2 space indent
 - Minimize JSON payloads by using ellipses
+- Write one sentence per line.
 
 ### Example
 #### Request
