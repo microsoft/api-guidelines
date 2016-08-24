@@ -2077,7 +2077,8 @@ Service owners adding such terms SHOULD propose additions to this document.
  givenName     |
  jobTitle      |
  kind          |  
- idlastModifiedDateTime |
+ id            |
+ lastModifiedDateTime |
  location      |
  memberOf      |
  message       |
