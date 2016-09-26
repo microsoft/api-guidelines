@@ -1998,12 +1998,151 @@ Content-Type: application/json
 }
 ```
 
-## 16 Appendix
-### 16.1 Sequence diagram notes
+## 16 Batch writes
+
+TODO -- TOC
+
+Services MAY support creating, updating, or deleting multiple resources in a single request.
+A service that supports batch operations MUST also support UPSERT semantics.
+A batch write is sent as a PATCH operation against the collection containing the resources to be written.
+The shape of the request payload matches the shape of the response payload from querying the collection.
+
+### 16.1 Semantics
+
+Each resource in a batch request payload is executed independently, as if it were part of an individual request.
+All parameters corresponding to the addressed resource MUST be described within its payload.
+All request headers and parameters passed outside of a resource's payload are assumed to apply to all resources in the batch.
+Clients MUST NOT send any headers or parameters in a batch request that only apply to a single resource (eg. `If-Match`, etc.).
+
+For each resource in the payload:
+
+- If the `id` property is specified, the operation is treated as a PATCH request directly against that resource.
+- If the `id` property isn't specified, the operation is treated as a POST request against the collection.
+- If the `eTag` property is specified on a resource, the value is used as a precondition, as if it were specified in the `If-Match` header on a direct request to the resource.
+- If the `@removed` annotation is specified on a resource, the operation is treated as a DELETE request against that resource.
+- If the `@op.name` annotation is specified on a resource, the operation is treated as a POST, invoking the `name` operation with the property's body as the payload.
+
+### 16.2 Response
+
+The response payload has the same shape as a query against the collection, returning only the requested resources.
+The resources in the response are returned in corresponding order to the resources in the request.
+Failed operations return an error object instead of a resource of the collection's type.
+Clients can recognize an error from the presence of an `error` property at the top level of the resource.
+
+### 16.3 Example
+
+```json
+PATCH https://api.consoso.com/v1.0/people HTTP/1.1
+Content-Type: application/json
+
+{
+  "value": [
+    {
+      "id": "12345",
+      "officeNumber": "34/3184",
+      "eTag": "abc123"
+    },
+    {
+      "id": "31439",
+      "officeNumber": "34/3184",
+    },
+    {
+      "name": "Lisa Huang",
+      "officeNumber": "34/3135"
+    },
+    {
+      "id": "8572",
+      "@removed": {}
+    },
+    {
+      "id": "8156",
+      "@op.sendAlert": {
+        "text": "api latency has increased by 5%"
+      }
+    }
+  ]
+}
+```
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "value": [
+    {
+      "id": "12345",
+      "name": "Cindy Schultz",
+      "officeNumber": "34/3184",
+      "eTag": "abc124"
+    },
+    {
+      "error": {
+        "code": "invalidRequest",
+        "message": "Office nuber 34/3184 is already occupied by Cindy Schultz",
+        "innererror": {
+          "code": "officeAlreadyOccupied"
+        }
+      }
+    },
+    {
+      "id": "125568",
+      "name": "Lisa Huang",
+      "officeNumber": "34/3135"
+    },
+    {
+      "id": "8572",
+      "@removed": {}
+    },
+    {
+      "id": "8156",
+      "@op.sendAlert": {
+        "messageId": "55283920",
+        "deliveredTo": "mobilePhone"
+      }
+    }
+  ]
+}
+```
+
+### 16.4 Query-based batch operations
+
+Services MAY support batch updates or deletes against all members of a collection matching a specified query.
+Services supporting 
+
+#### Example
+
+In this example, all records for employees in building number 35 are updated to building number 34.
+
+```json
+PATCH https://api.contoso.com/v1.0/employees?$filter=buildingNumber eq 35 HTTP/1.1
+Content-Type: application/json
+
+{
+  "buildingNumber": 34
+}
+```
+
+```http
+HTTP/1.1 204 No Content
+```
+
+In this example, all red widgets are deleted.
+
+```http
+DELETE https://api.contoso.com/v1.0/widgets?$filter=color eq 'red' HTTP/1.1
+```
+
+```http
+HTTP/1.1 204 No Content
+```
+
+
+## 17 Appendix
+### 17.1 Sequence diagram notes
 All sequence diagrams in this document are generated using the WebSequenceDiagrams.com web site.
 To generate them, paste the text below into the web tool.
 
-#### 16.1.1 Push notifications, per user flow
+#### 17.1.1 Push notifications, per user flow
 
 ```
 === Being Text ===
@@ -2058,7 +2197,7 @@ note right of App Server: Update status and cache new "since" token
 === End Text ===
 ```
 
-#### 16.1.2 Push notifications, firehose flow
+#### 17.1.2 Push notifications, firehose flow
 
 ```
 === Being Text ===
@@ -2124,6 +2263,7 @@ note right of App Server: Update status and cache new "since" token
 
 === End Text ===
 ```
+
 [fielding]: https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
 [IANA-headers]: http://www.iana.org/assignments/message-headers/message-headers.xhtml
 [rfc7231-7-1-1-1]: https://tools.ietf.org/html/rfc7231#section-7.1.1.1
