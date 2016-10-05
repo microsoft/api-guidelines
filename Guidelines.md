@@ -1522,7 +1522,17 @@ Notifications MAY be aggregated and sent in batches. Applications MUST be prepar
 
 The service MUST send all Web Hook data notifications as POST requests.
 
-Services MUST allow for a 30-second timeout for notifications. If a timeout occurs or the application responds with a 5xx response, then the service SHOULD retry the notification with exponential back-off. All other responses will be ignored.  
+Services MUST allow for a 30-second timeout for notifications. 
+If a timeout occurs or the application responds with a 5xx response, then the service SHOULD retry the notification.
+The retries SHOULD be done using exponential backoff, where the first retry occurs after 1 minute, and subsequent retries should double the interval each time.
+A service should retry a maximum of 10 times. 
+This backoff algorithm will cause the last retry to be after an interval of approximately 8.5 hours, with a total elapsed time of approximately 17 hours. 
+
+New notification events, for the same recipient, that occur during this retry period SHOULD be aggregated into a single notification.
+
+If the response contains a Retry-After header that is greater than interval determined by the backoff algorithm, then the Retry-After value SHOULD be respected. 
+
+A service MAY allow a 410 response to allow clients to request unsubscription.   
 
 The service MUST NOT follow 301/302 redirect requests.
 
