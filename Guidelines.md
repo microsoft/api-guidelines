@@ -1717,7 +1717,7 @@ Applications MUST be prepared to receive multiple events inside a single push no
 
 The service MUST send all Web Hook data notifications as POST requests.
 
-Services MUST allow for a 30-second timeout for notifications. 
+Services MUST allow for a 30-second request timeout for notifications for the initial subscription verification callback and then 10 secs for subsequent, regular notifications. 
 If a timeout occurs or the application responds with a 5xx response, then the service SHOULD retry the notification.
 The retries SHOULD be done using exponential backoff, where the first retry occurs after 1 minute, and subsequent retries should double the interval each time.
 A service should retry a maximum of 10 times. 
@@ -1727,8 +1727,8 @@ New notification events, for the same recipient, that occur during this retry pe
 
 If the response contains a Retry-After header that is greater than interval determined by the backoff algorithm, then the Retry-After value SHOULD be respected. 
 
-A service MAY allow a 410 response to allow clients to request unsubscription.
-The service MUST NOT follow 301/302 redirect requests.
+If a service enables clients to unsubscribe from a webhook by returning a status code, it SHOULD use 410 to achieve this.
+The service MUST NOT follow 3XX redirect requests.
 
 #### 14.6.1 Notification payload
 The basic format for notification payloads is a list of events, each containing the id of the subscription whose referenced resources have changed, the type of change, the resource that should be consumed to identify the exact details of the change and sufficient identity information to look up the token required to call that resource.
