@@ -104,8 +104,14 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 	- [15    Unsupported requests](#15-unsupported-requests)
 		- [15.1    Essential guidance](#151-essential-guidance)
 		- [15.2    Feature allow list](#152-feature-allow-list)
-	- [16     Appendix](#16-appendix)
-		- [16.1    Sequence diagram notes](#161-sequence-diagram-notes)
+  - [16    Batch operations](#16-batch-operations)
+    - [16.1    Semantics](#161-semantics)
+    - [16.2    Response](#162-response)
+    - [16.3    Example](#163-example)
+    - [16.4    References and dependencies](#164-references-and-dependencies)
+    - [16.5    Advanced query options](#165-advanced-query-options)
+	- [17    Appendix](#17-appendix)
+		- [17.1    Sequence diagram notes](#161-sequence-diagram-notes)
 	
 
 <!-- /TOC -->
@@ -626,6 +632,7 @@ Services used by interactive Web clients where performance is critical SHOULD av
 - For POST calls, prefer simple Content-Types in the set of ("application/x-www-form-urlencoded," "multipart/form-data," "text/plain") where applicable. Any other Content-Type will induce a preflight request.
   - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
+  - Services sensitive to preflight costs SHOULD consider using [batch-operation-syntax](#16-Batch-operations) to reduce the preflight count to one.
 
 In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access.
 In JSONP, services take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_), and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name.
@@ -1998,14 +2005,28 @@ Content-Type: application/json
 }
 ```
 
-## 16 Batch writes
+## 16 Batch operations
 
-TODO -- TOC
+Services MAY support operations against multiple resources in a single request.
+A service that supports batch writes MUST also support UPSERT semantics, as described earlier.
+A batch operation is sent as a POST request against a service endpoint containing the resources to be acted upon.
+The shape of the request payload matches the shape of the response payload from querying the same resource.
+There is a one-to-one correspondence between the elements in a batch request payload and segments in the endpoint URL.
+For example, consider a service whose API endpoint `/v1.0` has a collection called `/files`, a collection called `/people`, and a singleton resource called `/status`.
+A batch request against this endpoint would be a JSON object with array properties called `files` and `people`, and a complex type property for `status`.
 
-Services MAY support creating, updating, or deleting multiple resources in a single request.
-A service that supports batch operations MUST also support UPSERT semantics.
-A batch write is sent as a PATCH operation against the collection containing the resources to be written.
-The shape of the request payload matches the shape of the response payload from querying the collection.
+Example:
+
+```json
+POST /v1.0
+Content-Type: application/json
+
+{
+  "files": [ { "id": "4567", "description": "sunset" } ],
+  "people": [ { "id": "12345", "phone": "206-555-9616" } ],
+  "status": { "health": 50 }
+}
+```
 
 ### 16.1 Semantics
 
@@ -2016,27 +2037,44 @@ Clients MUST NOT send any headers or parameters in a batch request that only app
 
 For each resource in the payload:
 
-- If the `id` property is specified, the operation is treated as a PATCH request directly against that resource.
-- If the `id` property isn't specified, the operation is treated as a POST request against the collection.
+- In a collection, if the `id` property is not specified, the operation is treated as an insert into the collection, as if it were POSTed against the collection.
+- In a collection, if the `id` property is specified, the operation is treated as an update against the resource, as if it were PATCHed directly.
+  - If `id` is the only property specified, the operation is treated as a GET against the resource (same as the result returned from a no-op PATCH).
 - If the `eTag` property is specified on a resource, the value is used as a precondition, as if it were specified in the `If-Match` header on a direct request to the resource.
 - If the `@removed` annotation is specified on a resource, the operation is treated as a DELETE request against that resource.
-- If the `@op.name` annotation is specified on a resource, the operation is treated as a POST, invoking the `name` operation with the property's body as the payload.
+- If a property corresponds to the name of a function or action, the operation is treated as an invocation of that function or action, with the property's body as the payload.
 
 ### 16.2 Response
 
-The response payload has the same shape as a query against the collection, returning only the requested resources.
+The response payload has the same shape as the query against the same endpoint, returning only the requested resources.
 The resources in the response are returned in corresponding order to the resources in the request.
-Failed operations return an error object instead of a resource of the collection's type.
+Failed operations return an error object instead of the expected resource.
 Clients can recognize an error from the presence of an `error` property at the top level of the resource.
+If the request succeeds in its entirety, the server returns `200 OK`.
+If the request fails in its entirety before processing any resources in the payload, the server returns an error HTTP response code with associated error body.
+If the request executes operations against some resources and they did not all return successfully, the server returns `207 Multi-Status`.
 
 ### 16.3 Example
 
+In the following example, several resources under the `people` and `files` collections are acted upon.
+
+- The first one is a read, having only the `id` specified.
+- The second is an update, conditional on the provided `eTag` matching.
+- The third is an update with no precondition.
+- The fourth is a create, having no `id` specified.
+- The fifth is a delete, having the `@removed` annotation specified.
+- The sixth is an invocation of the `sendAlert` function.
+- The seventh (in `files`) is a conditional update, specifying a new name and the expected eTag.
+
 ```json
-PATCH https://api.consoso.com/v1.0/people HTTP/1.1
+POST https://api.consoso.com/v1.0 HTTP/1.1
 Content-Type: application/json
 
 {
-  "value": [
+  "people": [
+    {
+      "id": "42562",
+    },
     {
       "id": "12345",
       "officeNumber": "34/3184",
@@ -2056,19 +2094,33 @@ Content-Type: application/json
     },
     {
       "id": "8156",
-      "@op.sendAlert": {
+      "sendAlert": {
         "text": "api latency has increased by 5%"
       }
     }
+  ],
+  "files": [
+    {
+      "id": "f273hfa!575",
+      "name": "newname.jpg",
+      "eTag": "5u2dj"
+    },
   ]
 }
 ```
 
 ```json
-HTTP/1.1 200 OK
+HTTP/1.1 207 Multi-Status
 Content-Type: application/json
+
 {
-  "value": [
+  "people": [
+    {
+      "id": "42562",
+      "name": "Ankur Jain",
+      "officeNumber": "34/2216",
+      "eTag": "jfj762"
+    },
     {
       "id": "12345",
       "name": "Cindy Schultz",
@@ -2095,47 +2147,170 @@ Content-Type: application/json
     },
     {
       "id": "8156",
-      "@op.sendAlert": {
+      "sendAlert": {
         "messageId": "55283920",
         "deliveredTo": "mobilePhone"
       }
     }
+  ],
+  "files": [
+    {
+      "id": "f273hfa!575",
+      "name": "newname.jpg",
+      "eTag": "5u2dk"
+    },
   ]
 }
 ```
 
-### 16.4 Query-based batch operations
+### 16.4 References and dependencies
 
-Services MAY support batch updates or deletes against all members of a collection matching a specified query.
-Services supporting 
+Resources in a batch request may reference data from the results of operations in the batch.
+Data is referenced using [Json Pointer][rfc-6901] syntax, relative to the response payload, with a `propertyName@responsePointer` property.
+Referencing another resource in this manner implicitly specifies a dependency on the other resource being processed successfully.
+Servers MAY process resources in a batch in any order or degree of parallelism, but MUST honor dependencies.
+If an operation against a resource fails, then any antecedent operations that depend on the failed resource MUST fail with an error indicating that a dependency failed.
+In addition to implicit dependencies specified through references, clients MAY specify explicit dependencies with the `@dependsOnResponse` annotation.
+The value of the `@dependsOnResponse` annotation is an array of Json Pointer response references.
 
 #### Example
 
-In this example, all records for employees in building number 35 are updated to building number 34.
+In the following example, a new employee, Alice, is added to an organization.
+As part of this, her profile photo is uploaded, and she is assigned as an officemate to Bob (whose office number needs to be looked up).
+Finally, dependent on the successful processing of the prior requests, the `daysSinceLastHire` property under `status` is updated.
 
 ```json
-PATCH https://api.contoso.com/v1.0/employees?$filter=buildingNumber eq 35 HTTP/1.1
+POST https://api.consoso.com/v1.0 HTTP/1.1
 Content-Type: application/json
 
 {
-  "buildingNumber": 34
+  "files": [
+    {
+      "name": "alice.jpg",
+      "content@sourceUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAA==",
+    }
+  ],
+  "people": [
+    {
+      "id": "bob@contoso.com"
+    },
+    {
+      "name": "Alice Lee",
+      "email": "alice@contoso.com",
+      "officeNumber@responsePointer": "/people/0/officeNumber",
+      "badgePhoto@responsePointer": "/files/0/id"
+    }
+  ],
+  "status": {
+    "daysSinceLastHire": 0,
+    "@dependsOnResponse": [ "/people/1" ]
+  }
 }
 ```
 
-```http
-HTTP/1.1 204 No Content
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "files": [
+    {
+      "id": "f273hfa!575",
+      "name": "alice.jpg",
+      "eTag": "5u2dj",
+      "createdDateTime": "2016-10-05T21:10:59Z",
+      "url": "https://people.contoso.com/download/employees_alice_123.jpg"
+    }
+  ],
+  "people": [
+    {
+      "id": "bob@contoso.com",
+      "email": "bob@contoso.com",
+      "name": "Bob Lopez",
+      "officeNumber": "33/1161",
+      "badgePhoto@url": "https://people.contoso.com/download/employees_bob_9957.jpg"
+    },
+    {
+      "id": "alice@contoso.com",
+      "email": "alice@contoso.com",
+      "name": "Alice Lee",
+      "officeNumber": "33/1161",
+      "badgePhoto@url": "https://people.contoso.com/download/employees_alice_123.jpg"
+    },
+  ],
+  "status": {
+    "daysSinceLastHire": 0
+  }
+}
 ```
 
-In this example, all red widgets are deleted.
+### 16.5 Advanced query options
 
-```http
-DELETE https://api.contoso.com/v1.0/widgets?$filter=color eq 'red' HTTP/1.1
+Query options such as paging limits and custom projections may be specified in a batch request.
+The `select`, `expand`, and `top` directives are specified as instance annotations against the corresponding properties.
+The `files` collection receives an update, with a specified `select` statement to shape the response.
+
+#### Example
+
+In the following example, the `people` collection is queried with a client-specified paging limit and custom projection.
+The `status` resource is retrieved, again with a specified `select` statement.
+
+```json
+POST https://api.consoso.com/v1.0 HTTP/1.1
+Content-Type: application/json
+
+{
+  "files@select": "id,eTag",
+  "files": [
+    {
+      "name": "alice.jpg",
+      "content@sourceUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAA==",
+    }
+  ],
+  "people@select": "id,name",
+  "people@expand": "manager(select=id,name)",
+  "people@top": "2",
+  "status@select": "health"
+}
 ```
 
-```http
-HTTP/1.1 204 No Content
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+{
+  "files": [
+    {
+      "id": "f273hfa!575",
+      "eTag": "5u2dj"
+    }
+  ],
+  "people@nextLink": "https://api.contoso.com/v1.0/people?skipToken=adf23572fahsdfads",
+  "people": [
+    {
+      "id": "bob@contoso.com",
+      "name": "Bob Lopez",
+    },
+    {
+      "id": "alice@contoso.com",
+      "name": "Alice Lee",
+    }
+  ],
+  "status": {
+    "health": 90
+  }
+}
 ```
 
+In this example, the server returned a `nextLink` to continue paging through the `people` collection.
+The caller may choose to follow the link with a `GET`, or supply the annotation on a subsequent batch POST, as shown below.
+
+```json
+POST https://api.consoso.com/v1.0 HTTP/1.1
+Content-Type: application/json
+
+{
+  "people@nextLink": "https://api.contoso.com/v1.0/people?skipToken=adf23572fahsdfads"
+}
+```
 
 ## 17 Appendix
 ### 17.1 Sequence diagram notes
@@ -2275,6 +2450,7 @@ note right of App Server: Update status and cache new "since" token
 [rfc-5988]: http://tools.ietf.org/html/rfc5988
 [rfc-3339]: https://tools.ietf.org/html/rfc3339
 [rfc-5322-3-3]: https://tools.ietf.org/html/rfc5322#section-3.3
+[rfc-6901]: https://tools.ietf.org/html/rfc6901
 [cors-preflight]: http://www.w3.org/TR/cors/#resource-preflight-requests
 [rfc-3864]: http://www.ietf.org/rfc/rfc3864.txt
 [odata-json-annotations]: http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Instance_Annotations
