@@ -438,7 +438,7 @@ Accept: application/json
 
 #### 7.10.2 Error condition responses
 
-Developers should be able to write one piece of code that handles errors consistently across different services following these API Guidelines.
+Developers should be able to write one piece of code that handles errors consistently across different services that follow these API Guidelines.
 This allows simple and reliable infrastructure for handling exceptions as a separate flow from successful responses.
 Services should be able to provide detailed information to clients through error responses, and be able to add new error codes in the future without breaking existing clients.
 
@@ -451,8 +451,8 @@ The error response MUST be a single JSON object, having a property named `error`
 | `error`  | Error | ✔        | The error object.
 
 
-Non-error resources MUST NOT contain a property called `error`.
-This allows apps to easily determine whether a response is a success or a failure by checking whether the response object has an `error` property.
+Non-error resources SHOULD NOT contain a property called `error`.
+This allows apps to easily determine whether a response is a success or a failure by checking whether the response object has an `error` property, without relying on the HTTP status code.
 
 The error object MUST contain at least the properties `code` and `message`.
 It MAY also contain one or more of the following optional properties: `innererror`, `target`, and `details`.
@@ -475,21 +475,20 @@ More detailed values can be returned in an `innererror` object (see below).
 
 | Code                      | Description
 |:--------------------------|:-------------------------------------------------
-| **accessDenied**          | The caller doesn't have permission to perform the action.
-| **activityLimitReached**  | The app or user has been throttled.
+| **acceptedForProcessing** | The request has not completed, but has been accepted for future processing. Services SHOULD support the [Long-running-operation protocol](#13-long-running-operations)
+| **accessDenied**          | The current caller doesn't have permission to perform the action; usually due to ACLs, policies, or other factors under user control.
+| **activityLimitReached**  | The caller has been temporarily throttled due to excessive activity. Services SHOULD include a Retry-After header.
 | **generalException**      | An unspecified error has occurred.
-| **invalidRequest**        | The request is malformed or incorrect.
-| **itemNotFound**          | The resource could not be found.
+| **invalidRequest**        | The request is malformed or syntactically incorrect.
+| **itemNotFound**          | The requested resource could not be found.
 | **nameAlreadyExists**     | The specified item name already exists.
-| **notAllowed**            | The action is not allowed by the system.
-| **notSupported**          | The request is not supported by the system.
+| **notAllowed**            | The action is not permitted by the system for any caller; usually due to a semantic violation of the data model, not a matter of permissions.
+| **notSupported**          | The request is not supported by the system; usually due to a feature not having been implemented.
 | **resourceModified**      | The resource being updated has changed since the caller last read it, usually an eTag mismatch.
-| **resourceMoved**         | ???????????
-| **resyncRequired**        | The delta token is no longer valid, and the app must reset the sync state.
-| **serviceNotAvailable**   | The service is not available. Try the request again after a delay. There may be a Retry-After header.
-| **quotaLimitReached**     | The user has reached their quota limit.
+| **resyncRequired**        | The caller's delta session is no longer valid; the app must reset its sync state and start again from the beginning.
+| **serviceNotAvailable**   | The service is temporarily unavailable. Clients MAY try the request again after a delay. Services SHOULD return a Retry-After header.
+| **quotaLimitReached**     | The user has consumed all available resources. The request will not succeed until the user frees up resources or purchases more.
 | **unauthenticated**       | The caller is not authenticated.
-
 
 ##### InnerError : Object
 
@@ -504,20 +503,20 @@ More detailed values can be returned in an `innererror` object (see below).
 Services often have a large variety of distinct error codes, not all of which are interesting to all clients.
 Services also often add new error codes to help clients provide better experiences.
 Changing an error code returned to a client to a brand new value will likely break the client.
-This is why adding values to the base error code set is considered a breaking change.
+This is why adding values to the base error code set above is considered a breaking change.
 
 Instead, services SHOULD only introduce new error codes within the `innererror` chain.
 Clients who wish to handle more detailed error codes than the top-level base codes MUST traverse the `innererror` chain and choose the most detailed error they understand, ignoring any unrecognized ones.
 
 ##### Example
 
-1) A service starts out returning `invalidRequest` for all invalid inputs, driving the client to return a generic error.
-2) Over time, telemetry shows that the error commonly happens to users changing their password.
-3) A new error code is added--`passwordError`--and new client versions provide the user with help choosing a new password.
-3) To avoid breaking old clients, the new code is returned as an `innererror`, with the outermost `code` remaining `invalidRequest`.
-4) Later on, it is discovered that password errors are usually caused either by failure to confirm the new password, or failure to choose one of sufficient complexity.
-5) Two new `innererror` codes are added--`passwordDoesNotMeetPolicy` and `passwordConfirmationDoesNotMatch`--along with corresponding logic in a new client version.
-5) Later still, a new code is added under `passwordDoesNotMeetPolicy` to give special treatment to the common case of reusing a previous password. 
+1. A service starts out returning `invalidRequest` for all invalid inputs, driving the client to return a generic error.
+2. Over time, telemetry shows that the error commonly happens to users changing their password.
+3. A new error code is added--`passwordError`--and new client versions provide the user with help choosing a new password.
+3. To avoid breaking old clients, the new code is returned as an `innererror`, with the outermost `code` remaining `invalidRequest`.
+4. Later, it is discovered that password errors are usually caused either by failure to confirm the new password, or failure to choose one of sufficient complexity.
+5. Two new `innererror` codes are added--`passwordDoesNotMeetPolicy` and `passwordConfirmationDoesNotMatch`--along with corresponding logic in a new client version.
+5. Later still, a new code is added under `passwordDoesNotMeetPolicy` to give special treatment to the common case of reusing a previous password.
 
 The final error object looks like this:
 
@@ -544,92 +543,54 @@ The final error object looks like this:
 }
 ```
 
-
-###############################aklsdfjkladsjflksdjf
-
 InnerError objects MAY include custom server-defined properties or annotations, as in the example above.
 Error types with custom server-defined properties SHOULD be declared in the service's metadata document.
 
 We recommend that for any transient errors that may be retried, services SHOULD include a Retry-After HTTP header indicating the minimum number of seconds that clients SHOULD wait before attempting the operation again.
 
-The `code` property contains one of 14 possible values.
-All clients must be prepared to handle any one of these errors.
+#### Using Details
 
+Services that need to return multiple errors in the same response may do so by populating the `details` array.
+Services SHOULD use InnerError semantics to avoid breaking changes in detail error codes.
 
-More detailed error codes appear in the `innererror` objects (see below), and are defined by the service.
+##### Example
 
-##### InnerError : Object
-
-| Property     | Type       | Required | Description
-|--------------|------------|----------|------------
-| `code`       | String     |          | A more specific error code than was provided by the containing error.
-| `innererror` | InnerError |          | An object containing more specific information than the current object about the error.
-
-
-
-##### Examples
-
-Example of "innererror":
+In this example there were multiple problems with the request, with each individual error listed in "details."
 
 ```json
 {
   "error": {
-    "code": "BadArgument",
-    "message": "Previous passwords may not be reused",
-    "target": "password",
-    "innererror": {
-      "code": "PasswordError",
-      "innererror": {
-        "code": "PasswordDoesNotMeetPolicy",
-        "minLength": "6",
-        "maxLength": "64",
-        "characterTypes": ["lowerCase","upperCase","number","symbol"],
-        "minDistinctCharacterTypes": "2",
-        "innererror": {
-          "code": "PasswordReuseNotAllowed"
-        }
-      }
-    }
-  }
-}
-```
-
-In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innererror."
-The "PasswordReuseNotAllowed" code may have been added by the service at a later date, having previously only returned "PasswordDoesNotMeetPolicy."
-Existing clients do not break when the new error code is added, but new clients MAY take advantage of it.
-The "PasswordDoesNotMeetPolicy" error also includes additional name/value pairs that allow the client to determine the server's configuration, validate the user's input programmatically, or present the server's constraints to the user within the client's own localized messaging.
-
-Example of "details":
-
-```json
-{
-  "error": {
-    "code": "BadArgument",
+    "code": "invalidRequest",
     "message": "Multiple errors in ContactInfo data",
     "target": "ContactInfo",
     "details": [
       {
-        "code": "NullValue",
+        "code": "nullValue",
         "target": "PhoneNumber",
         "message": "Phone number must not be null"
       },
       {
-        "code": "NullValue",
+        "code": "nullValue",
         "target": "LastName",
         "message": "Last name must not be null"
       },
       {
-        "code": "MalformedValue",
+        "code": "malformedValue",
         "target": "Address",
-        "message": "Address is not valid"
+        "message": "Address is not valid",
+        "innererror": {
+          "code": "addressDoesNotMatchPostalRecords",
+          "suggestion": "1 Microsoft Way, Redmond WA 98052-6399"
+        }
       }
     ]
   }
 }
 ```
 
-In this example there were multiple problems with the request, with each individual error listed in "details."
+#### Reference detail error codes
 
+For consistency services SHOULD try to use one of the following error codes, if applicable, before creating a new one.
 
 | Code                               | Description
 |:-----------------------------------|:----------------------------------------
