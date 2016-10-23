@@ -2037,9 +2037,16 @@ Clients MUST NOT send any headers or parameters in a batch request that only app
 
 For each resource in the payload:
 
-- In a collection, if the `id` property is not specified, the operation is treated as an insert into the collection, as if it were POSTed against the collection.
-- In a collection, if the `id` property is specified, the operation is treated as an update against the resource, as if it were PATCHed directly.
-  - If `id` is the only property specified, the operation is treated as a GET against the resource (same as the result returned from a no-op PATCH).
+- If the `id` property is specified, the operation is targeted against the identified resource.
+- If the `id` property is not specified:
+  - For a singleton, the operation targets the referenced resource in the schema.
+  - In a collection, the operation targets the resource that would be targeted upon a POST to the collection (usually an insert).
+- If the `@conflictBehavior` annotation is specified on a resource, the following values yield the specified behaviors:
+  - `update` (default): An existing resource is updated with the specified values, or a new resource is created.
+  - `overwrite`: An existing resource is replaced with a new one with the specified values, or a new resource is created.
+  - `createNew`: If an existing resource exists, a new one is created that does not conflict with the existing one (eg. with a new server-chosen name).
+  - `fail`: If an existing resource exists, the operation fails.
+- If no properties to update are specified (eg. the only specified property is `id`), the operation is treated as a GET against the resource.
 - If the `eTag` property is specified on a resource, the value is used as a precondition, as if it were specified in the `If-Match` header on a direct request to the resource.
 - If the `@removed` annotation is specified on a resource, the operation is treated as a DELETE request against that resource.
 - If a property corresponds to the name of a function or action, the operation is treated as an invocation of that function or action, with the property's body as the payload.
@@ -2061,7 +2068,7 @@ In the following example, several resources under the `people` and `files` colle
 - The first one is a read, having only the `id` specified.
 - The second is an update, conditional on the provided `eTag` matching.
 - The third is an update with no precondition.
-- The fourth is a create, having no `id` specified.
+- The fourth is a create, having no `id` specified, along with a `@conflictBehavior` mandating failure if a matching record already exists.
 - The fifth is a delete, having the `@removed` annotation specified.
 - The sixth is an invocation of the `sendAlert` function.
 - The seventh (in `files`) is a conditional update, specifying a new name and the expected eTag.
@@ -2086,6 +2093,7 @@ Content-Type: application/json
     },
     {
       "name": "Lisa Huang",
+      "@conflictBehavior": "fail",
       "officeNumber": "34/3135"
     },
     {
@@ -2163,7 +2171,7 @@ Content-Type: application/json
 }
 ```
 
-### 16.4 References and dependencies
+### 16.4 References, dependencies, and transactions
 
 Resources in a batch request may reference data from the results of operations in the batch.
 Data is referenced using [Json Pointer][rfc-6901] syntax, relative to the response payload, with a `propertyName@responsePointer` property.
@@ -2172,11 +2180,18 @@ Servers MAY process resources in a batch in any order or degree of parallelism, 
 If an operation against a resource fails, then any antecedent operations that depend on the failed resource MUST fail with an error indicating that a dependency failed.
 In addition to implicit dependencies specified through references, clients MAY specify explicit dependencies with the `@dependsOnResponse` annotation.
 The value of the `@dependsOnResponse` annotation is an array of Json Pointer response references.
+Servers that do not support references or dependencies MUST throw an error if the `@responsePointer` or `@dependsOnResponse` annotations are specified.  
+
+Resources in a batch may be grouped into *transactions* by assigning them a `@transactionId` property of the same value.
+If the `@transactionId` annotation is specified, all resources with a matching value for this property MUST either succeed or fail together.
+If one resource in a transaction fails, all of the other resources in the transaction MUST NOT incur any side-effects.
+Servers that do not support transactions MUST throw an error if the `@transactionId` annotation is specified.
 
 #### Example
 
 In the following example, a new employee, Alice, is added to an organization.
 As part of this, her profile photo is uploaded, and she is assigned as an officemate to Bob (whose office number needs to be looked up).
+These operations take place inside a transaction, such that only both writes succeed or none of them succeed.
 Finally, dependent on the successful processing of the prior requests, the `daysSinceLastHire` property under `status` is updated.
 
 ```json
@@ -2188,6 +2203,7 @@ Content-Type: application/json
     {
       "name": "alice.jpg",
       "content@sourceUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAA==",
+      "@transactionId": "abc123"
     }
   ],
   "people": [
@@ -2197,6 +2213,7 @@ Content-Type: application/json
     {
       "name": "Alice Lee",
       "email": "alice@contoso.com",
+      "@transactionId": "abc123",
       "officeNumber@responsePointer": "/people/0/officeNumber",
       "badgePhoto@responsePointer": "/files/0/id"
     }
