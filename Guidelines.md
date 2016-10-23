@@ -461,7 +461,7 @@ It MAY also contain one or more of the following optional properties: `innererro
 
 | Property     | Type       | Required | Description
 |--------------|------------|----------|------------
-| `code`       | String     | ✔        | One of a fixed set of error code strings (see below). All clients MUST be able to handle all of them. Adding a new one is a breaking change. See below.
+| `code`       | String     | ✔        | One of a fixed set of error code strings, corresponding to a basic subset of HTTP status codes. All clients MUST be able to handle all of them. Adding a new one is a breaking change. See below.
 | `message`    | String     | ✔        | A human-readable representation of the error intended for the developer, not the end user. It SHOULD NOT be localized for the end user, as that could make it unreadable to the developer who may be logging it. Clients MUST NOT code against the `message` property.
 | `innererror` | InnerError |          | An object containing more specific information about the error. Allows services to specify more specific error codes than the fixed set in the top-level `code`. See below.
 | `target`     | String     |          | The target of the error (eg. the name of the property with an invalid value).
@@ -470,25 +470,29 @@ It MAY also contain one or more of the following optional properties: `innererro
 The error object MAY also contain additional custom properties or [annotations][odata-json-annotations] defined by the service.
 Services wishing to expose a suitable error message for end users MUST do so through a custom property or annotation.
 
-The `code` property SHOULD contain one of the values from the following table.
+The `code` property SHOULD contain one of the values from the following table, and correspond to the associated HTTP status codes.
+If an unlisted HTTP status code is used, the `code` value SHOULD be **invalidRequest** for client errors or **generalException** for server errors.
 More detailed values can be returned in an `innererror` object (see below).
 
-| Code                      | Description
-|:--------------------------|:-------------------------------------------------
-| **acceptedForProcessing** | The request has not completed, but has been accepted for future processing. Services SHOULD support the [Long-running-operation protocol](#13-long-running-operations)
-| **accessDenied**          | The current caller doesn't have permission to perform the action; usually due to ACLs, policies, or other factors under user control.
-| **activityLimitReached**  | The caller has been temporarily throttled due to excessive activity. Services SHOULD include a Retry-After header.
-| **generalException**      | An unspecified error has occurred.
-| **invalidRequest**        | The request is malformed or syntactically incorrect.
-| **itemNotFound**          | The requested resource could not be found.
-| **nameAlreadyExists**     | The specified item name already exists.
-| **notAllowed**            | The action is not permitted by the system for any caller; usually due to a semantic violation of the data model, not a matter of permissions.
-| **notSupported**          | The request is not supported by the system; usually due to a feature not having been implemented.
-| **resourceModified**      | The resource being updated has changed since the caller last read it, usually an eTag mismatch.
-| **resyncRequired**        | The caller's delta session is no longer valid; the app must reset its sync state and start again from the beginning.
-| **serviceNotAvailable**   | The service is temporarily unavailable. Clients MAY try the request again after a delay. Services SHOULD return a Retry-After header.
-| **quotaLimitReached**     | The user has consumed all available resources. The request will not succeed until the user frees up resources or purchases more.
-| **unauthenticated**       | The caller is not authenticated.
+*Note: the wording of the error code strings may differ from the nominal HTTP status descriptions.*
+*This is to align more with common scenarios for how these codes are used (eg. unauthenticated instead of unauthorized for 401).*
+*The Status Description in the HTTP header SHOULD remain the nominal one corresponding to the status code, not the `code` value below.*
+
+| HTTP Status | Code                      | Description
+|:------------|:--------------------------|------------------------------------
+| 202         | **acceptedForProcessing** | The request has not completed, but has been accepted for future processing. Services SHOULD support the [Long-running-operation protocol](#13-long-running-operations)
+| 400, etc.   | **invalidRequest**        | The request is malformed or syntactically incorrect.
+| 401         | **unauthenticated**       | The caller is not authenticated.
+| 403         | **accessDenied**          | The current caller doesn't have permission to perform the action; usually due to ACLs, policies, or other factors under user control.
+| 404         | **itemNotFound**          | The requested resource could not be found.
+| 409 or 412  | **conflict**              | The requested write cannot happen due to a conflict with existing state (eg. name already existing, parent not yet existing, resource differing from expected state). 412 is used specifically when the conflict is a failed HTTP precondition (eg. If-Match header).
+| 410         | **noLongerAvailable**     | A previously-available resource is no longer valid (eg. the caller's delta session is no longer usable). The app must reset its state and obtain a new resource.
+| 422         | **notAllowed**            | The action is not permitted by the system for any caller; usually due to a semantic violation of the data model, not a matter of permissions.
+| 429         | **activityLimitReached**  | The caller has been temporarily throttled due to excessive activity. Services SHOULD include a Retry-After header.
+| 500, etc.   | **serverError**           | An unspecified server error has occurred. Clients MAY try the request again after a delay. Services SHOULD return a Retry-After header.
+| 501         | **notSupported**          | The request is not supported by the system; usually due to a feature not having been implemented.
+| 503         | **serviceNotAvailable**   | The service is temporarily unavailable. Clients MAY try the request again after a delay. Services SHOULD return a Retry-After header.
+| 507         | **quotaLimitReached**     | The user has consumed all available resources. The request will not succeed until the user frees up resources or purchases more.
 
 ##### InnerError : Object
 
@@ -592,42 +596,45 @@ In this example there were multiple problems with the request, with each individ
 
 For consistency services SHOULD try to use one of the following error codes, if applicable, before creating a new one.
 
-| Code                               | Description
-|:-----------------------------------|:----------------------------------------
-| **cannotSnapshotTree**             | Failed to get a consistent snapshot of data to return due to concurrent updates. Try again later.
-| **entityTagDoesNotMatch**          | ETag does not match the current item's value.
-| **fragmentLengthMismatch**         | Declared total size for this fragment is different from that of the upload session.
-| **fragmentOutOfOrder**             | Uploaded fragment is out of order.
-| **fragmentOverlap**                | Uploaded fragment overlaps with existing data.
-| **invalidAcceptType**              | Invalid accept type.
-| **invalidParameterFormat**         | Invalid parameter format.
-| **invalidPath**                    | Name contains invalid characters.
-| **invalidQueryOption**             | Invalid query option.
-| **invalidStartIndex**              | Invalid start index.
-| **malformedEntityTag**             | ETag header is malformed. ETags must be quoted strings.
-| **maxFileSizeExceeded**            | Max file size exceeded.
-| **maxFolderCountExceeded**         | Max limit on number of Folders is reached.
-| **maxFragmentLengthExceeded**      | Max size exceeded for an uploaded file fragment.
-| **maxItemCountExceeded**           | Max limit on number of items is reached.
-| **maxQueryLengthExceeded**         | Max query length exceeded.
-| **parameterIsTooLong**             | Parameter exceeds maximum value.
-| **parameterIsTooSmall**            | Parameter is smaller then minimum value.
-| **pathIsTooLong**                  | Path exceeds maximum length.
-| **pathTooDeep**                    | Folder hierarchy depth limit reached.
-| **propertyCannotBeUpdated**        | Property not updatable.
-| **resyncApplyDifferences**         | Resync required. Replace any local items with the server's version (including deletes) if you're sure that the service was up to date with your local changes when you last synchronized. Upload any local changes that the server doesn't know about.
-| **resyncRequired**                 | Resync is required.
-| **resyncUploadDifferences**        | Resync required. Upload any local items that the service did not return, and upload any items that differ from the server's version (keeping both copies if you're not sure which one is more up-to-date).
-| **serviceNotAvailable**            | The server is unable to process the current request.
-| **serviceReadOnly**                | Resource is temporarily read-only.
-| **throttledRequest**               | Too many requests.
-| **tooManyTermsInQuery**            | Too many terms in the query.
-| **totalAffectedItemCountExceeded** | Operation is not allowed because the number of affected items exceeds threshold.
-| **truncationNotAllowed**           | Data truncation is not allowed.
-| **uploadSessionFailed**            | Upload session failed.
-| **uploadSessionIncomplete**        | Upload session incomplete.
-| **uploadSessionNotFound**          | Upload session not found.
-| **virusSuspicious**                | This document is suspicious and may have a virus.
+
+| Code                               | Base Code                | HTTP Status | Description
+|:-----------------------------------|:-------------------------|-------------|--------------------
+| **cannotSnapshotTree**             | **serverError**          | 500         | Failed to get a consistent snapshot of data to return due to concurrent updates. Try again later.
+| **entityTagDoesNotMatch**          | **conflict**             | 412 or 409  | ETag does not match the current item's value. Use 412 if an HTTP precondition header like If-Match is specified. If the precondition is specified another way, use 409.
+| **fragmentLengthMismatch**         | **invalidRequest**       | 400         | Declared total size for this fragment is different from that of the upload session.
+| **fragmentOutOfOrder**             | **invalidRequest**       | 400         | Uploaded fragment is out of order.
+| **fragmentOverlap**                | **invalidRequest**       | 400         | Uploaded fragment overlaps with existing data.
+| **generalException**               | **serverError**          | 500         | An unspecified error has occurred.
+| **invalidAcceptType**              | **invalidRequest**       | 406         | Invalid accept type.
+| **invalidParameterFormat**         | **invalidRequest**       | 400         | Invalid parameter format.
+| **invalidPath**                    | **invalidRequest**       | 400         | Name contains invalid characters.
+| **invalidQueryOption**             | **invalidRequest**       | 400         | Invalid query option.
+| **invalidStartIndex**              | **invalidRequest**       | 400         | Invalid start index.
+| **malformedEntityTag**             | **invalidRequest**       | 400         | ETag header is malformed. ETags must be quoted strings.
+| **maxFileSizeExceeded**            | **invalidRequest**       | 400         | Max file size exceeded.
+| **maxFolderCountExceeded**         | **invalidRequest**       | 400         | Max limit on number of Folders is reached.
+| **maxFragmentLengthExceeded**      | **invalidRequest**       | 400         | Max size exceeded for an uploaded file fragment.
+| **maxItemCountExceeded**           | **invalidRequest**       | 400         | Max limit on number of items is reached.
+| **maxQueryLengthExceeded**         | **invalidRequest**       | 400         | Max query length exceeded.
+| **nameAlreadyExists**              | **conflict**             | 409         | The specified item name already exists.
+| **parameterIsTooLong**             | **invalidRequest**       | 400         | Parameter exceeds maximum value.
+| **parameterIsTooSmall**            | **invalidRequest**       | 400         | Parameter is smaller then minimum value.
+| **pathIsTooLong**                  | **notAllowed**           | 422         | Path exceeds maximum length.
+| **pathTooDeep**                    | **notAllowed**           | 422         | Folder hierarchy depth limit reached.
+| **propertyCannotBeUpdated**        | **notAllowed**           | 422         | Property not updatable.
+| **resourceModified**               | **conflict**             | 409         | The resource being updated has changed since the caller last read it; usually an eTag mismatch. Also see **entityTagDoesNotMatch**.
+| **resyncRequired**                 | **noLongerAvailable**    | 410         | Resync required. Reset local state and begin a new delta session.
+| **resyncApplyDifferences**         | **resyncRequired**       | 410         | Resync required. Replace any local items with the server's version (including deletes) if you're sure that the service was up to date with your local changes when you last synchronized. Upload any local changes that the server doesn't know about.
+| **resyncUploadDifferences**        | **resyncRequired**       | 410         | Resync required. Upload any local items that the service did not return, and upload any items that differ from the server's version (keeping both copies if you're not sure which one is more up-to-date).
+| **serviceReadOnly**                | **serviceNotAvailable**  | 503         | Resource is temporarily read-only.
+| **throttledRequest**               | **activityLimitReached** | 429         | Too many requests.
+| **tooManyTermsInQuery**            | **invalidRequest**       | 400         | Too many terms in the query.
+| **totalAffectedItemCountExceeded** | **notAllowed**           | 422         | Operation is not allowed because the number of affected items exceeds threshold.
+| **truncationNotAllowed**           | **notAllowed**           | 422         | Data truncation is not allowed.
+| **uploadSessionFailed**            | **serverError**          | 500         | Upload session failed.
+| **uploadSessionIncomplete**        | **conflict**             | 409         | Upload session incomplete.
+| **uploadSessionNotFound**          | **noLongerAvailable**    | 410         | Upload session not found.
+| **malwareSuspected**               | **accessDenied**         | 403         | This resource is suspected of having malware.
 
 
 ### 7.11 HTTP Status Codes
