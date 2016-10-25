@@ -484,7 +484,7 @@ More detailed values can be returned in an `innererror` object (see below).
 | 400, etc.   | **invalidRequest**        | The request is malformed or syntactically incorrect.
 | 401         | **unauthenticated**       | The caller is not authenticated.
 | 403         | **accessDenied**          | The current caller doesn't have permission to perform the action; usually due to ACLs, policies, or other factors under user control.
-| 404         | **itemNotFound**          | The requested resource could not be found.
+| 404         | **notFound**              | The requested resource could not be found.
 | 409 or 412  | **conflict**              | The requested write cannot happen due to a conflict with existing state (eg. name already existing, parent not yet existing, resource differing from expected state). 412 is used specifically when the conflict is a failed HTTP precondition (eg. If-Match header).
 | 410         | **noLongerAvailable**     | A previously-available resource is no longer valid (eg. the caller's delta session is no longer usable). The app must reset its state and obtain a new resource.
 | 422         | **notAllowed**            | The action is not permitted by the system for any caller; usually due to a semantic violation of the data model, not a matter of permissions.
