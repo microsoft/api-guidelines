@@ -20,12 +20,10 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
 
 ## Recommended setup for contributing
-- Install [Atom][atom]
-- Install [atom-beautify package][atom-beautify]
+- Install [Atom][atom], [VS Code][vscode], or your favorite editor
 - Install [markdown-toc package][markdown-toc]
 
 ## Documentation styleguide
-- Always prettify markdown with [atom-beautify][atom-beautify] before committing
 - Use [GitHub-flavored markdown][gfm]
 - Use syntax-highlighted examples liberally
 - Trim trailing empty lines from HTTP requests
@@ -97,3 +95,4 @@ Be prepared to address feedback on your pull request and iterate if necessary.
 [atom-beautify]: https://atom.io/packages/atom-beautify
 [atom]: http://atom.io
 [markdown-toc]: https://atom.io/packages/markdown-toc
+[vscode]: https://code.visualstudio.com/

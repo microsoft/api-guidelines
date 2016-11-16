@@ -360,7 +360,7 @@ Many HTTP headers are defined in [RFC7231][rfc-7231], however a complete list of
 Header                            | Type                                  | Description
 --------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Authorization                     | String                                           | Authorization header for the request
-Date                              | Date                                             | Timestamp of the request in [RFC 3339][rfc-3339] format
+Date                              | Date                                             | Timestamp of the request, based on the client's clock, in [RFC 5322][rfc-5322-3-3] date and time format.  The server SHOULD NOT make any assumptions about the accuracy of the client's clock.  This header MAY be included in the request, but MUST be in this format when supplied.  Greenwich Mean Time (GMT) MUST be used as the time zone reference for this header when it is provided.  For example: `Wed, 24 Aug 2016 18:41:30 GMT`.  Note that GMT is exactly equal to UTC (Coordinated Universal Time) for this purpose.
 Accept                            | Content type                                     | The requested content type for the response such as: <ul><li>application/xml</li><li>text/xml</li><li>application/json</li><li>text/javascript (for JSONP)</li></ul>Per the HTTP guidelines, this is just a hint and responses MAY have a different content type, such as a blob fetch where a successful response will just be the blob stream as the payload. For services following OData, the preference order specified in OData SHOULD be followed.
 Accept-Encoding                   | Gzip, deflate                                    | REST endpoints SHOULD support GZIP and DEFLATE encoding, when applicable. For very large resources, services MAY ignore and return uncompressed data.
 Accept-Language                   | "en", "es", etc.                                 | Specifies the preferred language for the response. Services are not required to support this, but if a service supports localization it MUST do so through the Accept-Language header.
@@ -374,7 +374,7 @@ Services SHOULD return the following response headers, except where noted in the
 
 Response Header    | Required                                      | Description
 ------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Date               | All responses                                 | The date the request was processed, in [RFC 3339][rfc-3339] format
+Date               | All responses                                 | Timestamp the response was processed, based on the server's clock, in [RFC 5322][rfc-5322-3-3] date and time format.  This header MUST be included in the response.  Greenwich Mean Time (GMT) MUST be used as the time zone reference for this header.  For example: `Wed, 24 Aug 2016 18:41:30 GMT`. Note that GMT is exactly equal to UTC (Coordinated Universal Time) for this purpose.
 Content-Type       | All responses                                 | The content type
 Content-Encoding   | All responses                                 | GZIP or DEFLATE, as appropriate
 Preference-Applied | When specified in request                     | Whether a preference indicated in the Prefer request header was applied
@@ -2231,6 +2231,7 @@ note right of App Server: Update status and cache new "since" token
 [rfc-5789]: http://tools.ietf.org/html/rfc5789
 [rfc-5988]: http://tools.ietf.org/html/rfc5988
 [rfc-3339]: https://tools.ietf.org/html/rfc3339
+[rfc-5322-3-3]: https://tools.ietf.org/html/rfc5322#section-3.3
 [cors-preflight]: http://www.w3.org/TR/cors/#resource-preflight-requests
 [rfc-3864]: http://www.ietf.org/rfc/rfc3864.txt
 [odata-json-annotations]: http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Instance_Annotations
