@@ -1,7 +1,7 @@
 # Microsoft REST API Guidelines
 ## Microsoft REST API Guidelines Working Group
 
- | | |
+Name | Name | Name |
 ---------------------------- | -------------------------------------- | ----------------------------------------
 Dave Campbell (CTO C+E)      | Rick Rashid (CTO ASG)                  | John Shewchuk (Technical Fellow, TED HQ)
 Mark Russinovich (CTO Azure) | Steve Lucco (Technical Fellow, DevDiv) | Murali Krishnaprasad (Azure App Plat)
