@@ -583,7 +583,7 @@ In this example there were multiple problems with the request, with each individ
 Standard HTTP Status Codes SHOULD be used; see the HTTP Status Code definitions for more information.
 
 ### 7.12 Client library optional
-Developers MUST be able to develop on a wide variety of platforms and languages, such as Windows, MacOS, Linux, C#, Python, Node.js, and Ruby.
+Developers MUST be able to develop on a wide variety of platforms and languages, such as Windows, macOS, Linux, C#, Python, Node.js, and Ruby.
 
 Services SHOULD be able to be accessed from simple HTTP tools such as curl without significant effort.
 
