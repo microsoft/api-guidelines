@@ -908,8 +908,11 @@ Content-Type: application/json
 ```
 
 #### 9.8.2 Client-driven paging
-Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset.
+Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset into the collection.
+
 The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a continuation token.
+
+When both _$top_ and _$skip_ are given by a client, the server SHOULD first apply _$skip_ and then _$top_ on the collection.
 
 Note: If the server can't honor _$top_ and/or _$skip_, the server MUST return an error to the client informing about it instead of just ignoring the query options.
 This will avoid the risk of the client making assumptions about the data returned.
