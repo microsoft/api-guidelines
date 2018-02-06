@@ -1338,13 +1338,10 @@ In this scenario the _databases_ segment is processing the PUT operation.
 
 ```http
 HTTP/1.1 202 Accepted
-Operation-Location: https://api.contoso.com/v1.0/operations/123
+Location: https://api.contoso.com/v1.0/operations/123
 ```
 
-For services that need to return a 201 Created here, use the hybrid flow described below.
-
-The 202 Accepted should return no body.
-The 201 Created case should return the body of the target resource.
+For services that need to return a partially created response here, use the hybrid flow described below.
 
 #### 13.2.2 POST
 Services MAY enable POST requests for entity creation.
@@ -1360,7 +1357,7 @@ POST https://api.contoso.com/v1.0/databases/
 
 ```http
 HTTP/1.1 202 Accepted
-Operation-Location: https://api.contoso.com/v1.0/operations/123
+Location: https://api.contoso.com/v1.0/operations/123
 ```
 
 #### 13.2.3 POST, hybrid model
@@ -1381,13 +1378,13 @@ Accept: application/json
 }
 ```
 
-Service response says the database has been created, but indicates the request is not completed by including the Operation-Location header.
-In this case the status property in the response payload also indicates the operation has not fully completed.
+Service response says the database is being created at the URL provided in the Content-Location header, but indicates the request is not completed by including a 202 status code and Location header pointing to an operation resource.
+The response body includes the incomplete representation of the resource that will eventually exist at the URL in the Content-Location header.
 
 ```http
-HTTP/1.1 201 Created
-Location: https://api.contoso.com/v1.0/databases/db1
-Operation-Location: https://api.contoso.com/v1.0/operations/123
+HTTP/1.1 202 Accepted
+Content-Location: https://api.contoso.com/v1.0/databases/db1
+Location: https://api.contoso.com/v1.0/operations/123
 
 {
   "databaseName": "db1",
@@ -1491,7 +1488,7 @@ Services MAY choose to delete tombstones after a service defined period of time.
 #### 13.2.7 The typical flow, polling
 - Client invokes a stepwise operation by invoking an action using POST
 - The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting the number of seconds specified in the Retry-After header.
-- Client polls the location until receiving a 200 OK response from the server.
+- Client polls the location until receiving a response that indicates the stepwise long running operation is complete.
 
 ##### 13.2.7.1 Example of the typical flow, polling
 Client invokes the restart action:
@@ -1510,7 +1507,7 @@ The server response indicates the request has been created.
 
 ```http
 HTTP/1.1 202 Accepted
-Operation-Location: https://api.contoso.com/v1.0/operations/123
+Location: https://api.contoso.com/v1.0/operations/123
 ```
 
 Client waits for a period of time then invokes another request to try to get the operation status.
@@ -1572,7 +1569,7 @@ The server response indicates the request has been accepted.
 
 ```http
 HTTP/1.1 202 Accepted
-Operation-Location: https://api.contoso.com/v1.0/operations/123
+Location: https://api.contoso.com/v1.0/operations/123
 ```
 
 The caller ignores all the headers in the return.
@@ -1603,7 +1600,7 @@ The HTTP specification allows the Retry-After header to alternatively specify a 
 
 ```http
 HTTP/1.1 202 Accepted
-Operation-Location: http://api.contoso.com/v1.0/operations/123
+Location: http://api.contoso.com/v1.0/operations/123
 Retry-After: 60
 ```
 
