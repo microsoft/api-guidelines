@@ -2106,7 +2106,7 @@ All sequence diagrams in this document are generated using the WebSequenceDiagra
 #### 17.1.1 Push notifications, per user flow
 
 ```
-=== Being Text ===
+=== Begin Text ===
 note over Developer, Automation, App Server:
      An App Developer like MovieMaker
      Wants to integrate with primary service like Dropbox
@@ -2161,7 +2161,7 @@ note right of App Server: Update status and cache new "since" token
 #### 17.1.2 Push notifications, firehose flow
 
 ```
-=== Being Text ===
+=== Begin Text ===
 note over Developer, Automation, App Server:
      An App Developer like MovieMaker
      Wants to integrate with primary service like Dropbox
