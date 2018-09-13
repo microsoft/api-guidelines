@@ -1002,7 +1002,7 @@ Content-Type: application/json
   "value":[
     { "id": "1", "name": "Matt"},
     { "id": "2", "name": "Mark"},
-    { "id": "3", "name": "John"},
+    { "id": "3", "name": "John"}
   ],
   "@deltaLink": "{opaqueUrl}"
 }
