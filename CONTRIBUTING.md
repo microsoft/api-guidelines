@@ -1,4 +1,4 @@
-# Contributing to the Microsoft REST API Guidelines
+# Contributing to REST API Guidelines
 The Microsoft REST API Guidelines is a Microsoft-wide initiative to develop consistent design guidelines for REST APIs. The initiative requires input and feedback from a variety of individuals both inside and outside of Microsoft.
 
 To provide feedback, please follow the guidance in this document. Please note that these are just guidelines, not rules. Use your best judgment and feel free to propose changes to anything in this repository, including the contribution guidance.
@@ -15,13 +15,6 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 - Reference the version of the Microsoft REST API Guidelines you are using.
 - Include the guidance you expected and other places you've seen that guidance, e.g. [White House Web API Standards][white-house-api-guidelines].
 - Include sample requests and responses whenever possible.
-
-### Related repositories
-This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
-
-## Recommended setup for contributing
-- Install [Atom][atom], [VS Code][vscode], or your favorite editor
-- Install [markdown-toc package][markdown-toc]
 
 ## Documentation styleguide
 - Use [GitHub-flavored markdown][gfm]
@@ -74,12 +67,6 @@ Content-Type: application/json
 }
 ```
 
-## Commit messages
-- Use the present tense: "Change ...", not "Changed ..."
-- Use the imperative mood: "Change ...", not "Changes ..."
-- Limit the first line to 72 characters or less
-- Reference issues and pull requests liberally
-
 ## Pull requests
 Pull requests serve as the primary mechanism by which contributions are proposed and accepted. We recommend creating a [topic branch][topic-branch] and sending a pull request to the `master` branch from the topic branch. For additional guidance, read through the [GitHub Flow Guide][github-flow-guide].
 
@@ -96,3 +83,16 @@ Be prepared to address feedback on your pull request and iterate if necessary.
 [atom]: http://atom.io
 [markdown-toc]: https://atom.io/packages/markdown-toc
 [vscode]: https://code.visualstudio.com/
+
+
+## Commit messages
+- Use the present tense: "Change ...", not "Changed ..."
+- Use the imperative mood: "Change ...", not "Changes ..."
+- Limit the first line to 72 characters or less
+- Reference issues and pull requests liberally
+### Related repositories
+This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
+
+## Recommended setup for contributing
+- Install [Atom][atom], [VS Code][vscode], or your favorite editor
+- Install [markdown-toc package][markdown-toc]
