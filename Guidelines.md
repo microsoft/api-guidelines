@@ -2245,7 +2245,7 @@ note right of App Server: Update status and cache new "since" token
 [iso-8601]: http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
 [clr-time]: https://msdn.microsoft.com/en-us/library/System.DateTime(v=vs.110).aspx
 [ecmascript-time]: http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.1
-[ole-date]: https://docs.microsoft.com/en-us/windows/desktop/api/oleauto/nf-oleauto-varianttimetodosdatetime
+[ole-date]: https://docs.microsoft.com/en-us/windows/desktop/api/oleauto/nf-oleauto-varianttimetosystemtime
 [ticks-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
 [unix-time]: https://msdn.microsoft.com/en-us/library/1f4c8f33.aspx
 [windows-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
