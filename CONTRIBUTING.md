@@ -1,7 +1,7 @@
 # Contributing to the Microsoft REST API Guidelines
 The Microsoft REST API Guidelines is a Microsoft-wide initiative to develop consistent design guidelines for REST APIs. The initiative requires input and feedback from a variety of individuals both inside and outside of Microsoft.
 
-To provide feedback, please follow the guidance in this document. Please note that these are just guidelines, not rules. Use your best judgment and feel free to propose changes to anything in this repository, including the contribution guidance.
+To provide feedback please follow the guidance in this document. Please note that these are just guidelines, not rules. Use your best judgment and feel free to propose changes to anything in this repository, including the contribution guidance.
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 - [Creating issues](#creating-issues)
@@ -20,7 +20,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
 
 ## Recommended setup for contributing
-- Install [Atom][atom], [VS Code][vscode], or your favorite editor
+- Install [Atom][atom], [VS Code][vscode], or your favourite editor
 - Install [markdown-toc package][markdown-toc]
 
 ## Documentation styleguide
