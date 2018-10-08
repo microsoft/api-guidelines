@@ -206,7 +206,7 @@ Private or internal APIs SHOULD also try to follow these guidelines because inte
  Consistency is valuable to not only external customers but also internal service consumers, and these guidelines offer best practices useful for any service.
 
 There are legitimate reasons for exemption from these guidelines.
-Obviously a REST service that implements or must interoperate with some externally defined REST API must be compatible with that API and not necessarily these guidelines.
+Obviously, a REST service that implements or must interoperate with some externally defined REST API must be compatible with that API and not necessarily these guidelines.
 Some services MAY also have special performance needs that require a different format, such as a binary protocol.
 
 ### 4.2. Guidelines for existing services and versioning of services
