@@ -179,12 +179,12 @@ The benefits of consistency accrue in aggregate as well; consistency allows team
 
 These guidelines aim to achieve the following:
 - Define consistent practices and patterns for all API endpoints across Microsoft.
-- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large.*
+- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large. [\*]
 - Make accessing Microsoft Services via REST interfaces easy for all application developers.
 - Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
 - Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
 
-*Note: The guidelines are designed to align with building services which comply with the REST architectural style, though they do not address or require building services that follow the REST constraints.
+[\*] Note: The guidelines are designed to align with building services which comply with the REST architectural style, though they do not address or require building services that follow the REST constraints.
 The term "REST" is used throughout this document to mean services that are in the spirit of REST rather than adhering to REST by the book.*
 
 ### 3.1. Recommended reading
@@ -252,7 +252,7 @@ Services that expose long operations MUST track "Time to Complete" metrics aroun
 
 ### 5.5. Long running API faults
 For a Long Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed.
-Long Running faults MUST roll up as Faults into the overall Availability metrics.
+Long Running faults MUST roll up as faults into the overall Availability metrics.
 
 ## 6. Client guidance
 To ensure the best possible experience for clients talking to a REST service, clients SHOULD adhere to the following best practices:
