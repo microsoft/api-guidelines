@@ -516,7 +516,7 @@ Services can avoid breaking changes by adding new error codes to "innererror" in
 The value for the "message" name/value pair MUST be a human-readable representation of the error.
 It is intended as an aid to developers and is not suitable for exposure to end users.
 Services wanting to expose a suitable message for end users MUST do so through an [annotation][odata-json-annotations] or custom property.
-Services SHOULD NOT localize "message" for the end user, because doing so MAY make the value unreadable to the app developer who may be logging the value, as well as make the value less searchable on the Internet.
+Services SHOULD NOT localize "message" for the end user, because doing so might make the value unreadable to the app developer who may be logging the value, as well as make the value less searchable on the Internet.
 
 The value for the "target" name/value pair is the target of the particular error (e.g., the name of the property in error).
 
