@@ -81,7 +81,7 @@ Content-Type: application/json
 - Reference issues and pull requests liberally
 
 ## Pull requests
-Pull requests serve as the primary mechanism by which contributions are proposed and accepted. We recommend creating a [topic branch][topic-branch] and sending a pull request to the `master` branch from the topic branch. For additional guidance, read through the [GitHub Flow Guide][github-flow-guide].
+Pull requests serve as the primary mechanism by which contributions are proposed and accepted. We recommend creating a [topic branch][topic-branch] and sending a pull request to the `vNext` branch from the topic branch. For additional guidance, read through the [GitHub Flow Guide][github-flow-guide].
 
 Be prepared to address feedback on your pull request and iterate if necessary.
 
