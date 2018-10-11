@@ -1715,7 +1715,7 @@ When a caller has made too many calls
 4. Services MAY return RateLimit headers that document the limit or quota that has been exceeded
 5. Services MAY return RateLimit-Limit: the number of calls the client is allowed to make in a time window
 6. Services MAY return RateLimit-Remaining: the number of calls remaining in the time window
-7. Services MAY return RateLimit-Reset: the number of calls the client is allowed to make in a time window
+7. Services MAY return RateLimit-Reset: the time at which the current rate limit window resets
 8. Services MAY return other service specific RateLimit headers as appropriate for more detailed information or specific limits or quotas
 
 #### 14.4.3. Overloaded services
