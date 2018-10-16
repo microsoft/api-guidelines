@@ -245,14 +245,14 @@ Calls that fail as the result of a service fast-failing requests (often for its 
 ### 5.3. Latency
 Latency is defined as how long a particular API call takes to complete, measured as closely to the client as possible.
 This metric applies to both synchronous and asynchronous APIs in the same way.
-For long running calls, the latency is measured on the initial request and measures how long that call (not the overall operation) takes to complete.
+For long-running calls, the latency is measured on the initial request and measures how long that call (not the overall operation) takes to complete.
 
 ### 5.4. Time to complete
 Services that expose long operations MUST track "Time to Complete" metrics around those operations.
 
-### 5.5. Long running API faults
-For a Long Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed.
-Long Running faults MUST roll up as faults into the overall Availability metrics.
+### 5.5. Long-running API faults
+For a Long-Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed.
+Long-Running faults MUST roll up as faults into the overall Availability metrics.
 
 ## 6. Client guidance
 To ensure the best possible experience for clients talking to a REST service, clients SHOULD adhere to the following best practices:
@@ -430,7 +430,7 @@ ETag               | When the requested resource has an entity tag | The ETag re
 ### 7.7. Custom headers
 Custom headers MUST NOT be required for the basic operation of a given API.
 
-Some of the guidelines in this document prescribe the use of nonstandard HTTP headers.
+Some of the guidelines in this document prescribe the use of non-standard HTTP headers.
 In addition, some services MAY need to add extra functionality, which is exposed via HTTP headers.
 The following guidelines help maintain consistency across usage of custom headers.
 
