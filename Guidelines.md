@@ -210,7 +210,7 @@ Obviously, a REST service that implements or must interoperate with some externa
 Some services MAY also have special performance needs that require a different format, such as a binary protocol.
 
 ### 4.2. Guidelines for existing services and versioning of services
-We do not recommend making a breaking change to a service that pre-dates these guidelines simply for compliance sake.
+We do not recommend making a breaking change to a service that predates these guidelines simply for compliance sake.
 The service SHOULD try to become compliant at the next version release when compatibility is being broken anyway.
 When a service adds a new API, that API SHOULD be consistent with the other APIs of the same version.
 So if a service was written against version 1.0 of the guidelines, new APIs added incrementally to the service SHOULD also follow version 1.0. The service can then upgrade to align with the latest version of the guidelines at the service's next major release.
