@@ -2242,7 +2242,7 @@ Service owners adding such terms SHOULD propose additions to this document.
 
 ## 18. Appendix
 ### 18.1. Sequence diagram notes
-All sequence diagrams in this document are generated using the WebSequenceDiagrams.com web site. To generate them, paste the text below into the web tool.
+All sequence diagrams in this document are generated using the [WebSequenceDiagrams.com](https://www.websequencediagrams.com/) web site. To generate them, paste the text below into the web tool.
 
 #### 18.1.1. Push notifications, per user flow
 
