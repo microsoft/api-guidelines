@@ -20,16 +20,16 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
 
 ## Recommended setup for contributing
-- Install [Atom][atom], [VS Code][vscode], or your favorite editor
-- Install [markdown-toc package][markdown-toc]
+- Install [Atom][atom], [VS Code][vscode], or your favorite editor.
+- Install [markdown-toc package][markdown-toc].
 
-## Documentation styleguide
-- Use [GitHub-flavored markdown][gfm]
-- Use syntax-highlighted examples liberally
-- Trim trailing empty lines from HTTP requests
-- Retain only essential headers for understanding the example
-- Use valid (e.g., member names quoted), pretty-printed JSON with a 2 space indent
-- Minimize JSON payloads by using ellipses
+## Documentation style guide
+- Use [GitHub-flavored markdown][gfm].
+- Use syntax-highlighted examples liberally.
+- Trim trailing empty lines from HTTP requests.
+- Retain only essential headers for understanding the example.
+- Use valid (e.g. member names quoted), pretty-printed JSON with a 2 space indent.
+- Minimize JSON payloads by using ellipses.
 - Write one sentence per line.
 
 ### Example
