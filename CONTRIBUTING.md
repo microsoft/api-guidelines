@@ -50,9 +50,9 @@ Content-Type: application/json
   "@nextLink":"http://services.odata.org/V4/TripPinServiceRW/People?$skiptoken=8",
   "value":[
     {
-      "userName":"russellwhyte",
+      "userName":"russellwhite",
       "firstName":"Russell",
-      "lastName":"Whyte",
+      "lastName":"White",
       "emails":[
         "Russell@example.com",
         "Russell@contoso.com"
