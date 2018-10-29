@@ -346,6 +346,7 @@ POST    | Create a new object based on the data provided, or submit a command   
 HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
 PATCH   | Apply a partial update to an object                                                                                        | False
 OPTIONS | Get information about a request; see below for details.                                                                    | True
+TRACE   | Performs a message loop-back test along the path to the target resource.                                                   |True
 
 <small>Table 1</small>
 
