@@ -69,7 +69,6 @@ Content-Type: application/json
       ],
       "gender":"Male",
     },
-    ...
   ]
 }
 ```
