@@ -168,14 +168,12 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 
 ## 3. Introduction
 Developers access most Microsoft Cloud Platform resources via HTTP interfaces.
-Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to HTTP requests.
-Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
-Thus a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+Although each service typically provides language-specific frameworks to wrap their APIs, all operations eventually boil down to HTTP requests as Microsoft aims to support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
 
-To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive.
-This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
+To provide the smoothest possible experience for developers, it's important to have all APIs follow consistent design guidelines, which makes using them easy and intuitive.
+This document sets out the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently, which means our REST APIs can be easily and consistently consumed by any client with basic HTTP support.
 
-The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
+In addition to ensuring developers can use Microsoft's APIs on any plaform, consistency allows teams within the company to leverage common code, patterns, documentation and design decisions.
 
 These guidelines aim to achieve the following:
 - Define consistent practices and patterns for all API endpoints across Microsoft.
