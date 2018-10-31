@@ -452,7 +452,7 @@ Companies are often filtering the incoming or outgoing requests via proxy server
 in such a way that requests get changed or even manipulated.
 Custom headers are a common case to get filtered even though they are not meant to be. 
 
-Avoiding custom headers for basic operations is a easy way to prevent getting into this situation in the first place.
+Avoiding custom headers for basic operations is an easy way to prevent getting into this situation in the first place.
 This should always be considered in the designing process.
 
 ### 7.8. Specifying headers as query parameters
