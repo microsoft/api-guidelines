@@ -199,6 +199,8 @@ If you are new to RESTful design, here are some good resources:
 
 [REST in Practice][rest-in-practice] -- Book on the fundamentals of REST.
 
+[REST Fundamentals][rest-in-fundamentals] -- Another book on the fundamentals of REST.
+
 ## 4. Interpreting the guidelines
 ### 4.1. Application of the guidelines
 These guidelines are applicable to any REST API exposed publicly by Microsoft or any partner service.
@@ -259,7 +261,7 @@ To ensure the best possible experience for clients talking to a REST service, cl
 
 ### 6.1. Ignore rule
 For loosely coupled clients where the exact shape of the data is not known before the call, if the server returns something the client wasn't expecting, the client MUST safely ignore it.
-  
+
 Some services MAY add fields to responses without changing versions numbers.
 Services that do so MUST make this clear in their documentation and clients MUST ignore unknown fields.
 
@@ -314,7 +316,7 @@ Here are some sources for determining what target clients support:
 
  * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
  * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
- 
+
 Also note that some technology stacks have hard and adjustable url limits, so keep this in mind as you design your services.
 
 ### 7.3. Canonical identifier
@@ -1121,7 +1123,7 @@ The Web has coalesced around the [ECMAScript subset of ISO 8601 date formats (IS
 For those cases, this document defines a JSON serialization format that can be used to unambiguously represent dates in different formats.
 Other serialization formats (such as XML) could be derived from this format.
 
-#### 11.3.1. The `DateLiteral` format 
+#### 11.3.1. The `DateLiteral` format
 Dates represented in JSON are serialized using the following grammar.
 Informally, a `DateValue` is either an ISO 8601-formatted string or a JSON object containing two properties named `kind` and `value` that together define a point in time.
 The following is not a context-free grammar; in particular, the interpretation of `DateValue` depends on the value of `DateKind`, but this minimizes the number of productions required to describe the format.
@@ -1672,7 +1674,7 @@ Operations SHOULD transition to "tombstone" for an additional period of time pri
 
 ## 14. Throttling, Quotas, and Limits
 ### 14.1. Principles
-Services should be as responsive as possible, so as not to block callers. 
+Services should be as responsive as possible, so as not to block callers.
 As a rule of thumb any API call that is expected to take longer than 0.5 seconds in the 99th percentile, should consider using the Long-running Operations pattern for those calls.
 Obviously, services cannot guarantee these response times in the face of potentially unlimited load from callers. Services should therefore design and document call request limits for clients, and respond with appropriate, actionable errors and error messages if these limits are exceeded.
 Services should respond quickly with an error when they are generally overloaded, rather than simply respond slowly.
@@ -1694,7 +1696,7 @@ The Retry-After header is the standard way for responding to clients who are bei
 It is also common, but optional, in the case of limits and quotas (but not overall system load) to respond with header describing the limit that was exceeded.
 However, services across Microsoft and the industry use a wide range of different headers for this purpose.
 We recommend using three headers to describe the limit, the number of calls remaining under the limit, and the time when the limit will reset.
-However, other headers may be appropriate for specific types of limits. In all cases these must be documented. 
+However, other headers may be appropriate for specific types of limits. In all cases these must be documented.
 
 ### 14.4. Service Guidance
 Services should choose time windows as appropriate for the SLAs or business objectives.
@@ -1762,7 +1764,7 @@ See: https://docs.microsoft.com/en-us/azure/architecture/best-practices/transien
 Ideally, 429 and 503 returns are so low cost that even clients that retry immediately can be handled.
 In these cases, if possible the service team should make an effort to contact or fix the client.
 If it is a known partner, a bug or incident should be filed.
-In extreme cases it may be necessary to use DoS style protections such as blocking the caller. 
+In extreme cases it may be necessary to use DoS style protections such as blocking the caller.
 
 ## 15. Push notifications via webhooks
 ### 15.1. Scope
@@ -2371,6 +2373,7 @@ note right of App Server: Update status and cache new "since" token
 [rfc-7230-3-1-1]: https://tools.ietf.org/html/rfc7230#section-3.1.1
 [rfc-7231]: https://tools.ietf.org/html/rfc7231
 [rest-in-practice]: http://www.amazon.com/REST-Practice-Hypermedia-Systems-Architecture/dp/0596805829/
+[rest-in-fundamentals]:https://www.amazon.com/gp/product/1449358063/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&tag=whatpixel-20&camp=1789&creative=9325&linkCode=as2&creativeASIN=1449358063&linkId=dbdf2a5bc40a1f19cf9ff9d0bfefcddf
 [rest-on-wikipedia]: http://en.wikipedia.org/wiki/Representational_state_transfer
 [rfc-5789]: http://tools.ietf.org/html/rfc5789
 [rfc-5988]: http://tools.ietf.org/html/rfc5988
