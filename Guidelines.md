@@ -445,14 +445,15 @@ These two formats are described below.
 #### 7.7.1 Proxy server and custom headers
 
 One of the reasons why custom headers are not advised to be used are certain company restrictions. 
-Even if the implementation is clear to developers and all customers are using the provided custom headers correctly
+Even if the implementation is clear to developers and all customers are using the provided custom headers correctly,
 once it is installed in production it might cause unexpected issues. 
 
 Companies are often filtering the incoming or outgoing requests via proxy server which can be configured 
 in such a way that requests get changed or even manipulated.
 Custom headers are a common case to get filtered even though they are not meant to be. 
-Avoiding custom headers for basic operations is a easy way to prevent getting into this situation in the first place
-and should be considered in the designing process.
+
+Avoiding custom headers for basic operations is a easy way to prevent getting into this situation in the first place.
+This should always be considered in the designing process.
 
 ### 7.8. Specifying headers as query parameters
 Some headers pose challenges for some scenarios such as AJAX clients, especially when making cross-domain calls where adding headers MAY not be supported.
