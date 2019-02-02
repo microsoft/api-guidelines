@@ -1541,7 +1541,7 @@ Services MAY choose to delete tombstones after a service defined period of time.
 #### 13.2.7. The typical flow, polling
 - Client invokes a stepwise operation by invoking an action using POST
 - The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting the number of seconds specified in the Retry-After header.
-- Client polls the location until receiving a 200 OK response from the server.
+- Client polls the location until receiving a 200 response with a terminal operation state. 
 
 ##### Example of the typical flow, polling
 Client invokes the restart action:
