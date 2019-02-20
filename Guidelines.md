@@ -195,7 +195,7 @@ If you are new to RESTful design, here are some good resources:
 
 [REST Dissertation][fielding] -- The chapter on REST in Roy Fielding's dissertation on Network Architecture, "Architectural Styles and the Design of Network-based Software Architectures"
 
-[RFC 7231][rfc-7231] -- Defines the specification for HTTP/1.1 semantics, and is considered the authoritative resource.
+[RFC 7231][rfc-] -- Defines the specification for HTTP/1.1 semantics, and is considered the authoritative resource.
 
 [REST in Practice][rest-in-practice] -- Book on the fundamentals of REST.
 
@@ -1659,7 +1659,7 @@ Operation-Location: http://api.contoso.com/v1.0/operations/123
 Retry-After: 60
 ```
 
-Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
+Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
 
 ### 13.3. Retention policy for operation results
 In some situations, the result of a long running operation is not a resource that can be addressed.
