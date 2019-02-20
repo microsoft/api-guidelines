@@ -1096,7 +1096,9 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 
 ## 11. JSON standardizations
 ### 11.1. JSON formatting standardization for primitive types
-Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627].
+Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627]. 
+
+**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SIZE_INTEGER` (2^53-1). If the service is expected to return larger integer values, consider returning the value as a string. 
 
 ### 11.2. Guidelines for dates and times
 #### 11.2.1. Producing dates
