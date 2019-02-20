@@ -1096,9 +1096,9 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 
 ## 11. JSON standardizations
 ### 11.1. JSON formatting standardization for primitive types
-Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627]. 
+Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259]. 
 
-**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SIZE_INTEGER` (2^53-1). If the service is expected to return larger integer values, consider returning the value as a string. 
+**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability adn avoid data loss.
 
 ### 11.2. Guidelines for dates and times
 #### 11.2.1. Producing dates
@@ -1659,7 +1659,7 @@ Operation-Location: http://api.contoso.com/v1.0/operations/123
 Retry-After: 60
 ```
 
-Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
+Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
 
 ### 13.3. Retention policy for operation results
 In some situations, the result of a long running operation is not a resource that can be addressed.
