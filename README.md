@@ -1,5 +1,10 @@
 # Microsoft REST API Guidelines
-The [Microsoft REST API Guidelines](Guidelines.md), as a design principle, encourages application developers to have resources accessible to them via a RESTful HTTP interface. To provide the smoothest possible experience for developers on platforms following the Microsoft REST API Guidelines, REST APIs SHOULD follow [consistent design guidelines](Guidelines.md#7-consistency-fundamentals) to make using them easy and intuitive.
+The [Microsoft REST API Guidelines](Guidelines.md) are Microsoft's internal company-wide REST API design guidelines.
+Teams at Microsoft typically reference this document when setting API design policy.
+They may additionally create documents specific to their team, adding further guidance or making adjustments as appropriate to their circumstances.
+
+We publish these guidelines here with the aim of fostering dialogue and learning in the API community at large.
+We further hope that these guidelines may encourage other organizations to create guidelines that are appropriate for them and in turn, if they are able, to publish theirs.
 
 ## Code of Conduct
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.

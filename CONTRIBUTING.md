@@ -5,6 +5,7 @@ To provide feedback, please follow the guidance in this document. Please note th
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 - [Creating issues](#creating-issues)
+- [Recommended setup for contributing](#recommended-setup-for-contributing)
 - [Documentation styleguide](#documentation-styleguide)
 - [Commit messages](#commit-messages)
 - [Pull requests](#pull-requests)
@@ -20,6 +21,8 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 This is the repository for Microsoft REST API Guidelines documentation only. Please ensure that you are opening issues in the right repository.
 
 ## Recommended setup for contributing
+- Fork this repository on GitHub
+- Install [Git][git] to your computer and clone your new forked repository
 - Install [Atom][atom], [VS Code][vscode], or your favorite editor
 - Install [markdown-toc package][markdown-toc]
 
@@ -96,3 +99,4 @@ Be prepared to address feedback on your pull request and iterate if necessary.
 [atom]: http://atom.io
 [markdown-toc]: https://atom.io/packages/markdown-toc
 [vscode]: https://code.visualstudio.com/
+[git]: https://git-scm.com/
