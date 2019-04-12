@@ -251,7 +251,7 @@ For long running calls, the latency is measured on the initial request and measu
 Services that expose long operations MUST track "Time to Complete" metrics around those operations.
 
 ### 5.5. Long running API faults
-For a Long Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed.
+For a Long Running API, it's possible for both the initial request which begins the operation and the request which retrieves the results to technically work (each passing back a 200) but for the underlying operation to have failed.
 Long Running faults MUST roll up as faults into the overall Availability metrics.
 
 ## 6. Client guidance
