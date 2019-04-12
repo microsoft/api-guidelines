@@ -5,6 +5,7 @@ To provide feedback, please follow the guidance in this document. Please note th
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 - [Creating issues](#creating-issues)
+- [Recommended setup for contributing](#recommended-setup-for-contributing)
 - [Documentation styleguide](#documentation-styleguide)
 - [Commit messages](#commit-messages)
 - [Pull requests](#pull-requests)
