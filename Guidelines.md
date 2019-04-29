@@ -1098,7 +1098,7 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 ### 11.1. JSON formatting standardization for primitive types
 Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259]. 
 
-**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability adn avoid data loss.
+**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability and avoid data loss.
 
 ### 11.2. Guidelines for dates and times
 #### 11.2.1. Producing dates
