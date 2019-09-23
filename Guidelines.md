@@ -550,7 +550,7 @@ Property | Type | Required | Description
 
 Property | Type | Required | Description
 -------- | ---- | -------- | -----------
-`code` | String (enumerated) | ✔ | One of a server-defined set of error codes.
+`code` | String | ✔ | One of a server-defined set of error codes.
 `message` | String | ✔ | A human-readable representation of the error.
 `target` | String |  | The target of the error.
 `details` | Error[] |  | An array of details about specific errors that led to this reported error.
