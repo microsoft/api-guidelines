@@ -18,7 +18,7 @@ Document editors: John Gossman (C+E), Chris Mullins (ASG), Gareth Jones (ASG), R
 The Microsoft REST API Guidelines, as a design principle, encourages application developers to have resources accessible to them via a RESTful HTTP interface.
 To provide the smoothest possible experience for developers on platforms following the Microsoft REST API Guidelines, REST APIs SHOULD follow consistent design guidelines to make using them easy and intuitive.
 
-This document establishes the guidelines Microsoft REST APIs SHOULD follow so RESTful interfaces are developed consistently.
+This document establishes the guidelines Microsoft REST APIs SHOULD follow, so RESTful interfaces are developed consistently.
 
 ## 2. Table of contents
 <!-- TOC depthFrom:2 depthTo:4 orderedList:false updateOnSave:false withLinks:true -->
@@ -175,16 +175,16 @@ Thus, a goal of these guidelines is to ensure Microsoft REST APIs can be easily 
 To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive.
 This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
 
-The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
+The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation, and design decisions.
 
 These guidelines aim to achieve the following:
 - Define consistent practices and patterns for all API endpoints across Microsoft.
-- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large. [\*]
-- Make accessing Microsoft Services via REST interfaces easy for all application developers.
-- Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
-- Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
+- Adhere as strictly as possible to accepted REST/HTTP best practices in the industry at-large. [\*]
+- Make accessing Microsoft Services via REST interfaces accessible for all application developers.
+- Allow service developers to leverage the prior work of other services to implement, test, and document REST endpoints defined consistently.
+- Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their REST endpoint design.
 
-[\*] Note: The guidelines are designed to align with building services which comply with the REST architectural style, though they do not address or require building services that follow the REST constraints.
+[\*] Note: The guidelines are designed to align with building services that comply with the REST architectural style, though they do not address or require building services that follow the REST constraints.
 The term "REST" is used throughout this document to mean services that are in the spirit of REST rather than adhering to REST by the book.*
 
 ### 3.1. Recommended reading
@@ -195,18 +195,18 @@ If you are new to RESTful design, here are some good resources:
 
 [REST Dissertation][fielding] -- The chapter on REST in Roy Fielding's dissertation on Network Architecture, "Architectural Styles and the Design of Network-based Software Architectures"
 
-[RFC 7231][rfc-7231] -- Defines the specification for HTTP/1.1 semantics, and is considered the authoritative resource.
+[RFC 7231][rfc-7231] -- Defines the specification for HTTP/1.1 semantics and is considered the authoritative resource.
 
 [REST in Practice][rest-in-practice] -- Book on the fundamentals of REST.
 
 ## 4. Interpreting the guidelines
 ### 4.1. Application of the guidelines
-These guidelines are applicable to any REST API exposed publicly by Microsoft or any partner service.
-Private or internal APIs SHOULD also try to follow these guidelines because internal services tend to eventually be exposed publicly.
+These guidelines apply to any REST API exposed publicly by Microsoft or any partner service.
+Private or internal APIs SHOULD also try to follow these guidelines because internal services tend to be exposed publicly eventually.
  Consistency is valuable to not only external customers but also internal service consumers, and these guidelines offer best practices useful for any service.
 
 There are legitimate reasons for exemption from these guidelines.
-Obviously, a REST service that implements or must interoperate with some externally defined REST API must be compatible with that API and not necessarily these guidelines.
+A REST service that implements or must interoperate with some externally defined REST API must be compatible with that API and not necessarily these guidelines.
 Some services MAY also have special performance needs that require a different format, such as a binary protocol.
 
 ### 4.2. Guidelines for existing services and versioning of services
@@ -227,32 +227,32 @@ To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0
 As part of onboarding to Microsoft REST API Guidelines, services MUST comply with the taxonomy defined below.
 
 ### 5.1. Errors
-Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_  rejecting that data.
+Errors, or more specifically, Service Errors, are defined as a client passing invalid data to the service and the service _correctly_  rejecting that data.
 Examples include invalid credentials, incorrect parameters, unknown version IDs, or similar.
 These are generally "4xx" HTTP error codes and are the result of a client passing incorrect or invalid data.
 
 Errors do _not_ contribute to overall API availability.
 
 ### 5.2. Faults
-Faults, or more specifically Service Faults, are defined as the service failing to correctly return in response to a valid client request.
+Faults, or more specifically, Service Faults, are defined as the service failing to return in response to a valid client request correctly.
 These are generally "5xx" HTTP error codes.
 
 Faults _do_ contribute to the overall API availability.
 
-Calls that fail due to rate limiting or quota failures MUST NOT count as faults.
-Calls that fail as the result of a service fast-failing requests (often for its own protection) do count as faults.
+Calls that fail due to rate-limiting or quota failures MUST NOT count as faults.
+Calls that fail as the result of a service fast-failing requests (often for its protection) do count as faults.
 
 ### 5.3. Latency
-Latency is defined as how long a particular API call takes to complete, measured as closely to the client as possible.
+Latency is defined as how long a particular API call takes to complete, measured as close to the client as possible.
 This metric applies to both synchronous and asynchronous APIs in the same way.
-For long running calls, the latency is measured on the initial request and measures how long that call (not the overall operation) takes to complete.
+For long-running calls, the latency is measured on the initial request and measures how long that call (not the overall operation) takes to complete.
 
 ### 5.4. Time to complete
 Services that expose long operations MUST track "Time to Complete" metrics around those operations.
 
-### 5.5. Long running API faults
-For a Long Running API, it's possible for both the initial request which begins the operation and the request which retrieves the results to technically work (each passing back a 200) but for the underlying operation to have failed.
-Long Running faults MUST roll up as faults into the overall Availability metrics.
+### 5.5. Long-running API faults
+For a Long-Running API, it's possible for both the initial request, which begins the operation and the request, which retrieves the results to work technically (each passing back a 200) but for the underlying operation to have failed.
+Long-Running faults MUST roll up as faults into the overall Availability metrics.
 
 ## 6. Client guidance
 To ensure the best possible experience for clients talking to a REST service, clients SHOULD adhere to the following best practices:
@@ -261,13 +261,13 @@ To ensure the best possible experience for clients talking to a REST service, cl
 For loosely coupled clients where the exact shape of the data is not known before the call, if the server returns something the client wasn't expecting, the client MUST safely ignore it.
   
 Some services MAY add fields to responses without changing versions numbers.
-Services that do so MUST make this clear in their documentation and clients MUST ignore unknown fields.
+Services that do so MUST make this clear in their documentation, and clients MUST ignore unknown fields.
 
 ### 6.2. Variable order rule
 Clients MUST NOT rely on the order in which data appears in JSON service responses.
 For example, clients SHOULD be resilient to the reordering of fields within a JSON object.
 When supported by the service, clients MAY request that data be returned in a specific order.
-For example, services MAY support the use of the _$orderBy_ querystring parameter to specify the order of elements within a JSON array.
+For example, services MAY support the use of the _$orderBy_ query string parameter to specify the order of elements within a JSON array.
 Services MAY also explicitly specify the ordering of some elements as part of the service contract.
 For example, a service MAY always return a JSON object's "type" information as the first field in an object to simplify response parsing on the client.
 Clients MAY rely on ordering behavior explicitly identified by the service.
@@ -277,7 +277,7 @@ Clients requesting OPTIONAL server functionality (such as optional headers) MUST
 
 ## 7. Consistency fundamentals
 ### 7.1. URL structure
-Humans SHOULD be able to easily read and construct URLs.
+Humans SHOULD be able to read and construct URLs easily.
 
 This facilitates discovery and eases adoption on platforms without a well-supported client library.
 
@@ -315,7 +315,7 @@ Here are some sources for determining what target clients support:
  * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
  * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
  
-Also note that some technology stacks have hard and adjustable URL limits, so keep this in mind as you design your services.
+Also, note that some technology stacks have hard and adjustable URL limits, so keep this in mind as you design your services.
 
 ### 7.3. Canonical identifier
 In addition to friendly URLs, resources that can be moved or be renamed SHOULD expose a URL that contains a unique stable identifier.
@@ -332,7 +332,7 @@ https://api.contoso.com/v1.0/people/7011042402/inbox
 ### 7.4. Supported methods
 Operations MUST use the proper HTTP methods whenever possible, and operation idempotency MUST be respected.
 HTTP methods are frequently referred to as the HTTP verbs.
-The terms are synonymous in this context, however the HTTP specification uses the term method.
+The terms are synonymous in this context. However, the HTTP specification uses the term method.
 
 Below is a list of methods that Microsoft REST services SHOULD support.
 Not all resources will support all methods, but all resources using the methods below MUST conform to their usage.
@@ -352,7 +352,7 @@ OPTIONS | Get information about a request; see below for details.               
 #### 7.4.1. POST
 POST operations SHOULD support the Location response header to specify the location of any created resource that was not explicitly named, via the Location header.
 
-As an example, imagine a service that allows creation of hosted servers, which will be named by the service:
+As an example, imagine a service that allows the creation of hosted servers, which will be named by the service:
 
 ```http
 POST http://api.contoso.com/account1/servers
@@ -370,22 +370,22 @@ Where "server321" is the service-allocated server name.
 Services MAY also return the full metadata for the created item in the response.
 
 #### 7.4.2. PATCH
-PATCH has been standardized by IETF as the method to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]).
+IETF has standardized PATCH as the method to be used for updating an existing object incrementally (see [RFC 5789][rfc-5789]).
 Microsoft REST API Guidelines compliant APIs SHOULD support PATCH.
 
 #### 7.4.3. Creating resources via PATCH (UPSERT semantics)
-Services that allow callers to specify key values on create SHOULD support UPSERT semantics, and those that do MUST support creating resources using PATCH.
+Services that allow callers to specify key values on creating SHOULD support UPSERT semantics and those that do MUST support creating resources using PATCH.
 Because PUT is defined as a complete replacement of the content, it is dangerous for clients to use PUT to modify data.
-Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties could be inadvertently removed.
-Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
+Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource. Therefore such properties could be inadvertently removed.
+Services MAY optionally support PUT to update existing resources. Still, if they do, they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
 
 Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice versa, the client MAY specify precondition HTTP headers in the request.
-The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
+The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it includes an If-None-Match header with a value of "*".
 
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
 
 #### 7.4.4. Options and link headers
-OPTIONS allows a client to retrieve information about a resource, at a minimum by returning the Allow header denoting the valid methods for this resource.
+OPTIONS allows a client to retrieve information about a resource, at a minimum, by returning the Allow header denoting the valid methods for this resource.
 
 In addition, services SHOULD include a Link header (see [RFC 5988][rfc-5988]) to point to documentation for the resource in question:
 
@@ -398,19 +398,19 @@ Where {help} is the URL to a documentation resource.
 For examples on use of OPTIONS, see [preflighting CORS cross-domain calls][cors-preflight].
 
 ### 7.5. Standard request headers
-The table of request headers below SHOULD be used by Microsoft REST API Guidelines services.
-Using these headers is not mandated, but if used they MUST be used consistently.
+Microsoft REST API Guidelines services SHOULD use the table of request headers below.
+Using these headers is not mandated, but if used, they MUST be used consistently.
 
-All header values MUST follow the syntax rules set forth in the specification where the header field is defined.
-Many HTTP headers are defined in [RFC7231][rfc-7231], however a complete list of approved headers can be found in the [IANA Header Registry][IANA-headers]."
+All header values MUST follow the syntax rules outlined in the specification where the header field is defined.
+Many HTTP headers are defined in [RFC7231][rfc-7231]. However, a complete list of approved headers can be found in the [IANA Header Registry][IANA-headers]."
 
 Header                            | Type                                  | Description
 --------------------------------- | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 Authorization                     | String                                           | Authorization header for the request
-Date                              | Date                                             | Timestamp of the request, based on the client's clock, in [RFC 5322][rfc-5322-3-3] date and time format.  The server SHOULD NOT make any assumptions about the accuracy of the client's clock.  This header MAY be included in the request, but MUST be in this format when supplied.  Greenwich Mean Time (GMT) MUST be used as the time zone reference for this header when it is provided.  For example: `Wed, 24 Aug 2016 18:41:30 GMT`.  Note that GMT is exactly equal to UTC (Coordinated Universal Time) for this purpose.
+Date                              | Date                                             | Timestamp of the request, based on the client's clock, in [RFC 5322][rfc-5322-3-3] date and time format.  The server SHOULD NOT make any assumptions about the accuracy of the client's clock.  This header MAY be included in the request but MUST be in this format when supplied.  Greenwich Mean Time (GMT) MUST be used as the time zone reference for this header when it is provided.  For example: `Wed, 24 Aug 2016 18:41:30 GMT`.  Note that GMT is exactly equal to UTC (Coordinated Universal Time) for this purpose.
 Accept                            | Content type                                     | The requested content type for the response such as: <ul><li>application/xml</li><li>text/xml</li><li>application/json</li><li>text/javascript (for JSONP)</li></ul>Per the HTTP guidelines, this is just a hint and responses MAY have a different content type, such as a blob fetch where a successful response will just be the blob stream as the payload. For services following OData, the preference order specified in OData SHOULD be followed.
 Accept-Encoding                   | Gzip, deflate                                    | REST endpoints SHOULD support GZIP and DEFLATE encoding, when applicable. For very large resources, services MAY ignore and return uncompressed data.
-Accept-Language                   | "en", "es", etc.                                 | Specifies the preferred language for the response. Services are not required to support this, but if a service supports localization it MUST do so through the Accept-Language header.
+Accept-Language                   | "en", "es", etc.                                 | Specifies the preferred language for the response. Services are not required to support this, but if a service supports localization, it MUST do so through the Accept-Language header.
 Accept-Charset                    | Charset type like "UTF-8"                        | Default is UTF-8, but services SHOULD be able to handle ISO-8859-1.
 Content-Type                      | Content type                                     | Mime type of request body (PUT/POST/PATCH)
 Prefer                            | return=minimal, return=representation            | If the return=minimal preference is specified, services SHOULD return an empty body in response to a successful insert or update. If return=representation is specified, services SHOULD return the created or updated resource in the response. Services SHOULD support this header if they have scenarios where clients would sometimes benefit from responses, but sometimes the response would impose too much of a hit on bandwidth.
@@ -425,14 +425,14 @@ Date               | All responses                                 | Timestamp t
 Content-Type       | All responses                                 | The content type
 Content-Encoding   | All responses                                 | GZIP or DEFLATE, as appropriate
 Preference-Applied | When specified in request                     | Whether a preference indicated in the Prefer request header was applied
-ETag               | When the requested resource has an entity tag | The ETag response-header field provides the current value of the entity tag for the requested variant. Used with If-Match, If-None-Match and If-Range to implement optimistic concurrency control.
+ETag               | When the requested resource has an entity tag | The ETag response-header field provides the current value of the entity tag for the requested variant. Used with If-Match, If-None-Match, and If-Range to implement optimistic concurrency control.
 
 ### 7.7. Custom headers
 Custom headers MUST NOT be required for the basic operation of a given API.
 
 Some of the guidelines in this document prescribe the use of nonstandard HTTP headers.
-In addition, some services MAY need to add extra functionality, which is exposed via HTTP headers.
-The following guidelines help maintain consistency across usage of custom headers.
+Besides, some services MAY need to add extra functionality, which is exposed via HTTP headers.
+The following guidelines help maintain consistency across the usage of custom headers.
 
 Headers that are not standard HTTP headers MUST have one of two formats:
 
@@ -449,7 +449,7 @@ Not all headers make sense as query parameters, including most standard HTTP hea
 
 The criteria for considering when to accept headers as parameters are:
 
-1. Any custom headers MUST be also accepted as parameters.
+1. Any custom headers MUST also be accepted as parameters.
 2. Required standard headers MAY be accepted as parameters.
 3. Required headers with security sensitivity (e.g., Authorization header) MIGHT NOT be appropriate as parameters; the service owner SHOULD evaluate these on a case-by-case basis.
 
@@ -457,7 +457,7 @@ The one exception to this rule is the Accept header.
 It's common practice to use a scheme with simple names instead of the full functionality described in the HTTP specification for Accept.
 
 ### 7.9. PII parameters
-Consistent with their organization's privacy policy, clients SHOULD NOT transmit personally identifiable information (PII) parameters in the URL (as part of path or query string) because this information can be inadvertently exposed via client, network, and server logs and other mechanisms.
+Consistent with their organization's privacy policy, clients SHOULD NOT transmit personally identifiable information (PII) parameters in the URL (as part of the path or query string) because this information can be inadvertently exposed via the client, network, and server logs and other mechanisms.
 
 Consequently, a service SHOULD accept PII parameters transmitted as headers.
 
@@ -477,9 +477,9 @@ JSON property names SHOULD be camelCased.
 Services SHOULD provide JSON as the default encoding.
 
 #### 7.10.1. Clients-specified response format
-In HTTP, response format SHOULD be requested by the client using the Accept header.
+In HTTP, the response format SHOULD be requested by the client using the Accept header.
 This is a hint, and the server MAY ignore it if it chooses to, even if this isn't typical of well-behaved servers.
-Clients MAY send multiple Accept headers and the service MAY choose one of them.
+Clients MAY send multiple Accept headers, and the service MAY choose one of them.
 
 The default response format (no Accept header provided) SHOULD be application/json, and all services MUST support application/json.
 
@@ -494,7 +494,7 @@ Accept: application/json
 
 #### 7.10.2. Error condition responses
 For non-success conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services.
-This allows building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses.
+This allows the building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses.
 The following is based on the OData v4 JSON spec.
 However, it is very generic and does not require specific OData constructs.
 APIs SHOULD use this format even if they are not using other OData constructs.
@@ -514,27 +514,27 @@ Introducing a new value for "code" that is visible to existing clients is a brea
 Services can avoid breaking changes by adding new error codes to "innererror" instead.
 
 The value for the "message" name/value pair MUST be a human-readable representation of the error.
-It is intended as an aid to developers and is not suitable for exposure to end users.
-Services wanting to expose a suitable message for end users MUST do so through an [annotation][odata-json-annotations] or custom property.
-Services SHOULD NOT localize "message" for the end user, because doing so might make the value unreadable to the app developer who may be logging the value, as well as make the value less searchable on the Internet.
+It is intended as an aid to developers and is not suitable for exposure to end-users.
+Services wanting to expose a suitable message for end-users MUST do so through an [annotation][odata-json-annotations] or custom property.
+Services SHOULD NOT localize "message" for the end-user, because doing so might make the value unreadable to the app developer who may be logging the value, as well as make the value less searchable on the Internet.
 
 The value for the "target" name/value pair is the target of the particular error (e.g., the name of the property in error).
 
-The value for the "details" name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for "code" and "message," and MAY contain a name/value pair for "target," as described above.
+The value for the "details" name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for "code" and "message." It MAY contain a name/value pair for "target," as described above.
 The objects in the "details" array usually represent distinct, related errors that occurred during the request.
-See example below.
+See the example below.
 
 The value for the "innererror" name/value pair MUST be an object.
 The contents of this object are service-defined.
 Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innererror." Each nested "innererror" object represents a higher level of detail than its parent.
 When evaluating errors, clients MUST traverse through all of the nested "innererrors" and choose the deepest one that they understand.
-This scheme allows services to introduce new error codes anywhere in the hierarchy without breaking backwards compatibility, so long as old error codes still appear.
+This scheme allows services to introduce new error codes anywhere in the hierarchy without breaking backward compatibility, so long as old error codes still appear.
 The service MAY return different levels of depth and detail to different callers.
 For example, in development environments, the deepest "innererror" MAY contain internal information that can help debug the service.
 To guard against potential security concerns around information disclosure, services SHOULD take care not to expose too much detail unintentionally.
 Error objects MAY also include custom server-defined name/value pairs that MAY be specific to the code.
 Error types with custom server-defined properties SHOULD be declared in the service's metadata document.
-See example below.
+See the example below.
 
 Error responses MAY contain [annotations][odata-json-annotations] in any of their JSON objects.
 
@@ -590,7 +590,7 @@ Example of "innererror":
 }
 ```
 
-In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innererror."
+In this example, the most basic error code is "BadArgument," but for interested clients, there are more specific error codes in "innererror."
 The "PasswordReuseNotAllowed" code may have been added by the service at a later date, having previously only returned "PasswordDoesNotMeetPolicy."
 Existing clients do not break when the new error code is added, but new clients MAY take advantage of it.
 The "PasswordDoesNotMeetPolicy" error also includes additional name/value pairs that allow the client to determine the server's configuration, validate the user's input programmatically, or present the server's constraints to the user within the client's own localized messaging.
@@ -624,7 +624,7 @@ Example of "details":
 }
 ```
 
-In this example there were multiple problems with the request, with each individual error listed in "details."
+In this example, there were multiple problems with the request, with each error listed in "details."
 
 ### 7.11. HTTP Status Codes
 Standard HTTP Status Codes SHOULD be used; see the HTTP Status Code definitions for more information.
@@ -637,7 +637,7 @@ Services SHOULD be able to be accessed from simple HTTP tools such as curl witho
 Service developer portals SHOULD provide the equivalent of "Get Developer Token" to facilitate experimentation and curl support.
 
 ## 8. CORS
-Services compliant with the Microsoft REST API Guidelines MUST support [CORS (Cross Origin Resource Sharing)][cors].
+Services compliant with the Microsoft REST API Guidelines MUST support [CORS (Cross-Origin Resource Sharing)][cors].
 Services SHOULD support an allowed origin of CORS * and enforce authorization through valid OAuth tokens.
 Services SHOULD NOT support user credentials with origin validation.
 There MAY be exceptions for special cases.
@@ -653,20 +653,20 @@ Because the CORS protocol can trigger preflight requests that add additional rou
 The spirit behind CORS is to avoid preflight for any simple cross-domain requests that old non-CORS-capable browsers were able to make.
 All other requests require preflight.
 
-A request is "simple" and avoids preflight if its method is GET, HEAD or POST, and if it doesn't contain any request headers besides Accept, Accept-Language and Content-Language.
+A request is "simple" and avoids preflight if its method is GET, HEAD, or POST, and if it doesn't contain any request headers besides Accept, Accept-Language, and Content-Language.
 For POST requests, the Content-Type header is also allowed, but only if its value is "application/x-www-form-urlencoded," "multipart/form-data" or "text/plain."
 For any other headers or values, a preflight request will happen.
 
 ### 8.2. Service guidance
- At minimum, services MUST:
+ At a minimum, services MUST:
 - Understand the Origin request header that browsers send on cross-domain requests, and the Access-Control-Request-Method request header that they send on preflight OPTIONS requests that check for access.
 - If the Origin header is present in a request:
   - If the request uses the OPTIONS method and contains the Access-Control-Request-Method header, then it is a preflight request intended to probe for access before the actual request. Otherwise, it is an actual request. For preflight requests, beyond performing the steps below to add headers, services MUST perform no additional processing and MUST return a 200 OK. For non-preflight requests, the headers below are added in addition to the request's regular processing.
-  - Add an Access-Control-Allow-Origin header to the response, containing the same value as the Origin request header. Note that this requires services to dynamically generate the header value. Resources that do not require cookies or any other form of [user credentials][cors-user-credentials] MAY respond with a wildcard asterisk (*) instead. Note that the wildcard is acceptable here only, and not for any of the other headers described below.
+  - Add an Access-Control-Allow-Origin header to the response, containing the same value as the Origin request header. Note that this requires services to generate the header value dynamically. Resources that do not require cookies or any other form of [user credentials][cors-user-credentials] MAY respond with a wildcard asterisk (*) instead. Note that the wildcard is acceptable here only, and not for any of the other headers described below.
   - If the caller requires access to a response header that is not in the set of [simple response headers][cors-simple-headers] (Cache-Control, Content-Language, Content-Type, Expires, Last-Modified, Pragma), then add an Access-Control-Expose-Headers header containing the list of additional response header names the client should have access to.
   - If the request requires cookies, then add an Access-Control-Allow-Credentials header set to "true."
-  - If the request was a preflight request (see first bullet), then the service MUST:
-    - Add an Access-Control-Allow-Headers response header containing the list of request header names the client is permitted to use. This list need only contain headers that are not in the set of [simple request headers][cors-simple-headers] (Accept, Accept-Language, Content-Language). If there are no restrictions on headers the service accepts, the service MAY simply return the same value as the Access-Control-Request-Headers header sent by the client.
+  - If the request was preflight (see the first bullet), then the service MUST:
+    - Add an Access-Control-Allow-Headers response header containing the list of request header names the client is permitted to use. This list need only contain headers that are not in the set of [simple request headers][cors-simple-headers] (Accept, Accept-Language, Content-Language). If there are no restrictions on headers the service accepts, the service MAY return the same value as the Access-Control-Request-Headers header sent by the client.
     - Add an Access-Control-Allow-Methods response header containing the list of HTTP methods the caller is permitted to use.
 
 Add an Access-Control-Max-Age pref response header containing the number of seconds for which this preflight response is valid (and hence can be avoided before subsequent actual requests). Note that while it is customary to use a large value like 2592000 (30 days), many browsers self-impose a much lower limit (e.g., five minutes).
@@ -680,11 +680,11 @@ Services used by interactive Web clients where performance is critical SHOULD av
   - Services that require cookie-based authentication MUST use a "dynamic canary" to secure all APIs that accept cookies.
 
 - For POST calls, prefer simple Content-Types in the set of ("application/x-www-form-urlencoded," "multipart/form-data," "text/plain") where applicable. Any other Content-Type will induce a preflight request.
-  - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
+  - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, following recommendations, most POST requests will require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
 
-In addition, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access.
-In JSONP, services take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_), and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name.
+Also, when appropriate services MAY support the JSONP pattern for simple, GET-only cross-domain access.
+In JSONP, services take a parameter indicating the format (_$format=json_) and a parameter indicating a callback (_$callback=someFunc_) and return a text/javascript document containing the JSON response wrapped in a function call with the indicated name.
 More on JSONP at Wikipedia: [JSONP](https://en.wikipedia.org/wiki/JSONP).
 
 ## 9. Collections
@@ -697,7 +697,7 @@ Collections that support durable identifiers MAY support delta queries.
 Collections are represented in JSON using standard array notation.
 
 ### 9.3. Collection URL patterns
-Collections are located directly under the service root when they are top level, or as a segment under another resource when scoped to that resource.
+Collections are located directly under the service root when they are top-level, or as a segment under another resource when scoped to that resource.
 
 For example:
 
@@ -713,9 +713,9 @@ GET https://{serviceRoot}/{collection}/{id}
 ```
 
 Where:
-- {serviceRoot} – the combination of host (site URL) + the root path to the service
+- {serviceRoot} – the combination of the host (site URL) + the root path to the service
 - {collection} – the name of the collection, unabbreviated, pluralized
-- {id} – the value of the unique id property. When using the "/" pattern this MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+- {id} – the value of the unique id property. When using the "/" pattern, this MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
 
 #### 9.3.1. Nested collections and properties
 Collection items MAY contain other collections.
@@ -835,12 +835,12 @@ GET https://api.contoso.com/v1.0/people?$filter=name eq 'david'&$orderBy=hireDat
 Will return all people whose name is David sorted in ascending order by hireDate.
 
 #### 9.6.1. Interpreting a sorting expression
-Sorting parameters MUST be consistent across pages, as both client and server-side paging is fully compatible with sorting.
+Sorting parameters MUST be consistent across pages, as both client and server-side paging are fully compatible with sorting.
 
 If a service does not support sorting by a property named in a _$orderBy_ expression, the service MUST respond with an error message as defined in the Responding to Unsupported Requests section.
 
 ### 9.7. Filtering
-The _$filter_ querystring parameter allows clients to filter a collection of resources that are addressed by a request URL.
+The _$filter_ query string parameter allows clients to filter a collection of resources that are addressed by a request URL.
 The expression specified with _$filter_ is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.
 Resources for which the expression evaluates to false or to null, or which reference properties that are unavailable due to permissions, are omitted from the response.
 
@@ -886,7 +886,7 @@ Example: all products with a name not equal to 'Milk'
 GET https://api.contoso.com/v1.0/products?$filter=name ne 'Milk'
 ```
 
-Example: all products with the name 'Milk' that also have a price less than 2.55:
+Example: all products with the name 'Milk' that also have a price of less than 2.55:
 
 ```http
 GET https://api.contoso.com/v1.0/products?$filter=name eq 'Milk' and price lt 2.55
@@ -898,7 +898,7 @@ Example: all products that either have the name 'Milk' or have a price less than
 GET https://api.contoso.com/v1.0/products?$filter=name eq 'Milk' or price lt 2.55
 ```
 
-Example 54: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
+Example 54: all products that have the name 'Milk' or 'Eggs' and have a price of less than 2.55:
 
 ```http
 GET https://api.contoso.com/v1.0/products?$filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
@@ -926,11 +926,11 @@ Operators in the same category have equal precedence:
 RESTful APIs that return collections MAY return partial sets.
 Consumers of these services MUST expect partial result sets and correctly page through to retrieve an entire set.
 
-There are two forms of pagination that MAY be supported by RESTful APIs.
+RESTful APIs MAY support two forms of pagination.
 Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads.
 Client-driven paging enables clients to request only the number of resources that it can use at a given time.
 
-Sorting and Filtering parameters MUST be consistent across pages, because both client- and server-side paging is fully compatible with both filtering and sorting.
+Sorting and Filtering parameters MUST be consistent across pages because both client- and server-side paging is fully compatible with both filtering and sorting.
 
 #### 9.8.1. Server-driven paging
 Paginated responses MUST indicate a partial result by including a continuation token in the response.
@@ -959,7 +959,7 @@ Clients MAY use _$top_ and _$skip_ query parameters to specify a number of resul
 
 The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a continuation token.
 
-When both _$top_ and _$skip_ are given by a client, the server SHOULD first apply _$skip_ and then _$top_ on the collection.
+When a client gives both _$top_ and _$skip_, the server SHOULD first apply _$skip_ and then _$top_ on the collection.
 
 Note: If the server can't honor _$top_ and/or _$skip_, the server MUST return an error to the client informing about it instead of just ignoring the query options.
 This will avoid the risk of the client making assumptions about the data returned.
@@ -983,7 +983,7 @@ Content-Type: application/json
 **Stable order prerequisite:** Both forms of paging depend on the collection of items having a stable order.
 The server MUST supplement any specified order criteria with additional sorts (typically by key) to ensure that items are always ordered consistently.
 
-**Missing/repeated results:** Even if the server enforces a consistent sort order, results MAY be missing or repeated based on creation or deletion of other resources.
+**Missing/repeated results:** Even if the server enforces a consistent sort order, results MAY be missing or repeated based on the creation or deletion of other resources.
 Clients MUST be prepared to deal with these discrepancies.
 The server SHOULD always encode the record ID of the last read record, helping the client in the process of managing repeated/missing results.
 
@@ -999,7 +999,7 @@ If a server paginates an embedded collection, it MUST include additional continu
 **Recordset count:** Developers who want to know the full number of records across all pages, MAY include the query parameter _$count=true_ to tell the server to include the count of items in the response.
 
 ### 9.9. Compound collection operations
-Filtering, Sorting and Pagination operations MAY all be performed against a given collection.
+Filtering, Sorting, and Pagination operations MAY all be performed against a given collection.
 When these operations are performed together, the evaluation order MUST be:
 
 1. **Filtering**. This includes all range expressions performed as an AND operation.
@@ -1012,17 +1012,17 @@ Services MAY choose to support delta queries.
 ### 10.1. Delta links
 Delta links are opaque, service-generated links that the client uses to retrieve subsequent changes to a result.
 
-At a conceptual level delta links are based on a defining query that describes the set of results for which changes are being tracked.
+At a conceptual level, delta links are based on a defining query that describes the set of results for which changes are being tracked.
 The delta link encodes the collection of entities for which changes are being tracked, along with a starting point from which to track changes.
 
 If the query contains a filter, the response MUST include only changes to entities matching the specified criteria.
 The key principles of the Delta Query are:
-- Every item in the set MUST have a persistent identifier. That identifier SHOULD be represented as "id". This identifier is a service defined opaque string that MAY be used by the client to track object across calls.
+- Every item in the set MUST have a persistent identifier. That identifier SHOULD be represented as "id". This identifier is a service defined opaque string that MAY be used by the client to track the object across calls.
 - The delta MUST contain an entry for each entity that newly matches the specified criteria, and MUST contain a "@removed" entry for each entity that no longer matches the criteria.
-- Re-evaluate the query and compare it to original set of results; every entry uniquely in the current set MUST be returned as an Add operation, and every entry uniquely in the original set MUST be returned as a "remove" operation.
-- Each entity that previously did not match the criteria but matches it now MUST be returned as an "add"; conversely, each entity that previously matched the query but no longer does MUST be returned as a "@removed" entry.
+- Re-evaluate the query and compare it to the original set of results; every entry uniquely in the current set MUST be returned as an Add operation, and every entry uniquely in the original set MUST be returned as a "remove" operation.
+- Each entity that previously did not match the criteria but matches it now MUST be returned as an "add"; conversely, each entity that previously matched the query but no longer did MUST be returned as a "@removed" entry.
 - Entities that have changed MUST be included in the set using their standard representation.
-- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend teams coordinate with the Microsoft REST API Guidelines Working Group on extensions to help maintain consistency.
+- Services MAY add additional metadata to the "@removed" node, such as a reason for removal, or a "removed at" timestamp. We recommend that teams coordinate with the Microsoft REST API Guidelines Working Group on extensions to help maintain consistency.
 
 The delta link MUST NOT encode any client top or skip value.
 
@@ -1055,7 +1055,7 @@ Content-Type: application/json
 }
 ```
 
-Note: If the collection is paginated the deltaLink will only be present on the final page but MUST reflect any changes to the data returned across all pages.
+Note: If the collection is paginated, the deltaLink will only be present on the final page but MUST reflect any changes to the data returned across all pages.
 
 ### 10.4. Contents of a delta link response
 Added/Updated entries MUST appear as regular JSON objects, with regular item properties.
@@ -1066,7 +1066,7 @@ Items removed from the set MUST be represented using only their "id" and an "@re
 
 ### 10.5. Using a delta link
 The client requests changes by invoking the GET method on the delta link.
-The client MUST use the delta URL as is -- in other words the client MUST NOT modify the URL in any way (e.g., parsing it and adding additional query string parameters).
+The client MUST use the delta URL as is -- in other words, the client MUST NOT modify the URL in any way (e.g., parsing it and adding additional query string parameters).
 In this example:
 
 ```http
@@ -1087,7 +1087,7 @@ Content-Type: application/json
 }
 ```
 
-The results of a request against the delta link may span multiple pages but MUST be ordered by the service across all pages in such a way as to ensure a deterministic result when applied in order to the response that contained the delta link.
+The results of a request against the delta link may span multiple pages but MUST be ordered by the service across all pages in such a way as to ensure a deterministic result when applied to the response that contained the delta link.
 
 If no changes have occurred, the response is an empty collection that contains a delta link for subsequent changes if requested.
 This delta link MAY be identical to the delta link resulting in the empty collection of changes.
@@ -1098,11 +1098,11 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 ### 11.1. JSON formatting standardization for primitive types
 Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259]. 
 
-**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability and avoid data loss.
+**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string to maximize interoperability and avoid data loss.
 
 ### 11.2. Guidelines for dates and times
 #### 11.2.1. Producing dates
-Services MUST produce dates using the `DateLiteral` format, and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise.
+Services MUST produce dates using the `DateLiteral` format and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise.
 Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED, and ECMAScript clients are explicitly unsupported.
 (Non-Normative statement: When deciding which particular `DateKind` to standardize on, the approximate order of preference is `E, C, U, W, O, X, I, T`.
 This optimizes for ECMAScript, .NET, and C++ programmers, in that order.)
@@ -1120,7 +1120,7 @@ Any widening of the `DateLiteral` formats accepted by the service is NOT conside
 Round-tripping serialized dates with JSON is a hard problem.
 Although ECMAScript supports literals for most built-in types, it does not define a literal format for dates.
 The Web has coalesced around the [ECMAScript subset of ISO 8601 date formats (ISO 8601)][iso-8601], but there are situations where this format is not desirable.
-For those cases, this document defines a JSON serialization format that can be used to unambiguously represent dates in different formats.
+For those cases, this document defines a JSON serialization format that can be used to represent dates in different formats unambiguously.
 Other serialization formats (such as XML) could be derived from this format.
 
 #### 11.3.1. The `DateLiteral` format 
@@ -1245,7 +1245,7 @@ For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "
 
 ### 12.1. Versioning formats
 Services are versioned using a Major.Minor versioning scheme.
-Services MAY opt for a "Major" only version scheme in which case the ".0" is implied and all other rules in this section apply.
+Services MAY opt for a "Major" only version scheme in which case the ".0" is implied, and all other rules in this section apply.
 Two options for specifying the version of a REST API request are supported:
 - Embedded in the path of the request URL, at the end of the service root: `https://api.contoso.com/v1.0/products/users`
 - As a query string parameter of the URL: `https://api.contoso.com/products/users?api-version=1.0`
@@ -1253,7 +1253,7 @@ Two options for specifying the version of a REST API request are supported:
 Guidance for choosing between the two options is as follows:
 
 1. Services co-located behind a DNS endpoint MUST use the same versioning mechanism.
-2. In this scenario, a consistent user experience across the endpoint is paramount. The Microsoft REST API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
+2. In this scenario, consistent user experience across the endpoint is paramount. The Microsoft REST API Guidelines Working Group recommends that new top-level DNS endpoints are not created without explicit conversations with your organization's leadership team.
 3. Services that guarantee the stability of their REST API's URL paths, even through future versions of the API, MAY adopt the query string parameter mechanism. This means the naming and structure of the relationships described in the API cannot evolve after the API ships, even across versions with breaking changes.
 4. Services that cannot ensure URL path stability across future versions MUST embed the version in the URL path.
 
@@ -1268,7 +1268,7 @@ Group version numbers are well known, and services SHOULD reject any unrecognize
 
 Internally, services will take a Group Version and map it to the appropriate Major.Minor version.
 
-The Group Version format is defined as YYYY-MM-DD, for example 2012-12-07 for December 7, 2012. This Date versioning format applies only to Group Versions and SHOULD NOT be used as an alternative to Major.Minor versioning.
+The Group Version format is defined as YYYY-MM-DD, for example, 2012-12-07 for December 7, 2012. This Date versioning format applies only to Group Versions and SHOULD NOT be used as an alternative to Major.Minor versioning.
 
 ##### Examples of group versioning
 
@@ -1305,7 +1305,7 @@ PUT http://api.contoso.com/acct1/c1/b2?api-version=2011-12-07
 ### 12.2. When to version
 Services MUST increment their version number in response to any breaking API change.
 See the following section for a detailed discussion of what constitutes a breaking change.
-Services MAY increment their version number for nonbreaking changes as well, if desired.
+Services MAY increment their version number for nonbreaking changes as well if desired.
 
 Use a new major version number to signal that support for existing clients will be deprecated in the future.
 When introducing a new major version, services MUST provide a clear upgrade path for existing clients and develop a plan for deprecation that is consistent with their business group's policies.
@@ -1315,11 +1315,11 @@ Online documentation of versioned services MUST indicate the current support sta
 
 ### 12.3. Definition of a breaking change
 Changes to the contract of an API are considered a breaking change.
-Changes that impact the backwards compatibility of an API are a breaking change.
+Changes that impact the backward compatibility of an API are a breaking change.
 
-Teams MAY define backwards compatibility as their business needs require.
-For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible.
-Office 365 has a looser definition of backwards compatibility and allows JSON fields to be added to responses.
+Teams MAY define backward compatibility as their business needs require.
+For example, Azure defines the addition of a new JSON field in response to being not backward compatible.
+Office 365 has a looser definition of backward compatibility and allows JSON fields to be added to responses.
 
 Clear examples of breaking changes:
 
@@ -1328,27 +1328,27 @@ Clear examples of breaking changes:
 3. Changes in Error Codes and Fault Contracts
 4. Anything that would violate the [Principle of Least Astonishment][principle-of-least-astonishment]
 
-Services MUST explicitly define their definition of a breaking change, especially with regard to adding new fields to JSON responses and adding new API arguments with default fields.
+Services MUST explicitly define their definition of a breaking change, especially concerning adding new fields to JSON responses and adding new API arguments with default fields.
 Services that are co-located behind a DNS Endpoint with other services MUST be consistent in defining contract extensibility.
 
 The applicable changes described [in this section of the OData V4 spec][odata-breaking-changes] SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
 
-## 13. Long running operations
-Long running operations, sometimes called async operations, tend to mean different things to different people.
-This section sets forth guidance around different types of long running operations, and describes the wire protocols and best practices for these types of operations.
+## 13. Long-running operations
+Long-running operations, sometimes called async operations, tend to mean different things to different people.
+This section sets forth guidance around different types of long-running operations and describes the wire protocols and best practices for these types of operations.
 
 1. One or more clients MUST be able to monitor and operate on the same resource at the same time.
-2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long running operation should itself leverage principles of the web. i.e. well-defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long running operation
-3. Long running operations SHOULD work for clients looking to "Fire and Forget" and for clients looking to actively monitor and act upon results.
-4. Cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a cancelled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
+2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long-running operation should itself leverage principles of the web. i.e., well-defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long-running operation
+3. Long-running operations SHOULD work for clients looking to "Fire and Forget" and for clients looking to monitor and act upon results actively.
+4. Cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a canceled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
-### 13.1. Resource based long running operations (RELO)
-Resource based modeling is where the status of an operation is encoded in the resource and the wire protocol used is the standard synchronous protocol.
-In this model state transitions are well defined and goal states are similarly defined.
+### 13.1. Resource-based long-running operations (RELO)
+Resource-based modeling is where the status of an operation is encoded in the resource, and the wire protocol used is the standard synchronous protocol.
+In this model, state transitions are well defined, and goal states are similarly defined.
 
-_This is the preferred model for long running operations and should be used wherever possible._ Avoiding the complexity and mechanics of the LRO Wire Protocol makes things simpler for our users and tooling chain.
+_This is the preferred model for long-running operations and should be used wherever possible._ Avoiding the complexity and mechanics of the LRO Wire Protocol makes things simpler for our users and tooling chain.
 
-An example may be a machine reboot, where the operation itself completes synchronously but the GET operation on the virtual machine resource would have a "state: Rebooting", "state: Running" that could be queried at any time.
+An example may be a machine reboot, where the operation itself completes synchronously, but the GET operation on the virtual machine resource would have a "state: Rebooting", "state: Running" that could be queried at any time.
 
 This model MAY integrate Push Notifications.
 
@@ -1359,24 +1359,24 @@ For example, a user that wants to create a database named "db1" could call:
 PUT https://api.contoso.com/v1.0/databases/db1
 ```
 
-In this scenario the databases segment is processing the PUT operation.
+In this scenario, the segment of the database is processing the PUT operation.
 
 Services MAY also use the hybrid defined below.
 
-### 13.2. Stepwise long running operations
+### 13.2. Stepwise long-running operations
 A stepwise operation is one that takes a long, and often unpredictable, length of time to complete, and doesn't offer state transition modeled in the resource.
-This section outlines the approach that services should use to expose such long running operations.
+This section outlines the approach that services should use to expose such long-running operations.
 
 Service MAY expose stepwise operations.
 
-> Stepwise Long Running Operations are sometimes called "Async" operations.
-This causes confusion, as it mixes elements of platforms ("Async / await", "promises", "futures") with elements of API operation.
+> Stepwise Long-Running Operations are sometimes called "Async" operations.
+This confuses, as it mixes elements of platforms ("Async / await", "promises", "futures") with elements of API operation.
 This document uses the term "Stepwise Long Running Operation" or often just "Stepwise Operation" to avoid confusion over the word "Async".
 
 Services MUST perform as much synchronous validation as practical on stepwise requests.
-Services MUST prioritize returning errors in a synchronous way, with the goal of having only "Valid" operations processed using the long running operation wire protocol.
+Services MUST prioritize returning errors synchronously, to have only "Valid" operations processed using the long-running operation wire protocol.
 
-For an API that's defined as a Stepwise Long Running Operation the service MUST go through the Stepwise Long Running Operation flow even if the operation can be completed immediately.
+For an API that's defined as a Stepwise Long Running Operation, the service MUST go through the Stepwise Long Running Operation flow even if the operation can be completed immediately.
 In other words, APIs must adopt and stick with an LRO pattern and not change patterns based on circumstance.
 
 #### 13.2.1. PUT
@@ -1386,7 +1386,7 @@ Services MAY enable PUT requests for entity creation.
 PUT https://api.contoso.com/v1.0/databases/db1
 ```
 
-In this scenario the _databases_ segment is processing the PUT operation.
+In this scenario, the _databases_ segment is processing the PUT operation.
 
 ```http
 HTTP/1.1 202 Accepted
@@ -1417,7 +1417,7 @@ Operation-Location: https://api.contoso.com/v1.0/operations/123
 
 #### 13.2.3. POST, hybrid model
 Services MAY respond synchronously to POST requests to collections that create a resource even if the resources aren't fully created when the response is generated.
-In order to use this pattern, the response MUST include a representation of the incomplete resource and an indication that it is incomplete.
+To use this pattern, the response MUST include a representation of the incomplete resource and an indication that it is incomplete.
 
 For example:
 
@@ -1433,8 +1433,8 @@ Accept: application/json
 }
 ```
 
-Service response says the database has been created, but indicates the request is not completed by including the Operation-Location header.
-In this case the status property in the response payload also indicates the operation has not fully completed.
+Service response says the database has been created but indicates the request is not completed by including the Operation-Location header.
+In this case, the status property in the response payload also indicates the operation has not fully completed.
 
 ```http
 HTTP/1.1 201 Created
@@ -1462,22 +1462,22 @@ Not Started Operations | Operation Creation Time
 Running Operations     | Operation Creation Time
 Completed Operations   | Operation Creation Time
 
-Note that "Completed Operations" is a goal state (see below), and may actually be any of several different states such as "successful", "cancelled", "failed" and so forth.
+Note that "Completed Operations" is a goal state (see below), and may be any of several different states such as "successful", "canceled", "failed" and so forth.
 
 #### 13.2.5. Operation resource
-An operation is a user addressable resource that tracks a stepwise long running operation.
+An operation is a user addressable resource that tracks a long-running stepwise operation.
 Operations MUST support GET semantics.
 The GET operation against an operation MUST return:
 
-1. The operation resource, it's state, and any extended state relevant to the particular API.
+1. The operation resource, it's states, and any extended state relevant to the particular API.
 2. 200 OK as the response code.
 
 Services MAY support operation cancellation by exposing DELETE on the operation.
-If supported DELETE operations MUST be idempotent.
+If supported, DELETE operations MUST be idempotent.
 
 > Note: From an API design perspective, cancellation does not explicitly mean rollback.
 On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc.
-Following a cancelled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
+Following a canceled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
 Services that do not support operation cancellation MUST return a 405 Method Not Allowed in the event of a DELETE.
 
@@ -1498,7 +1498,7 @@ An operation MUST contain, and provide in the GET response, the following inform
 2. A timestamp for when the current state was entered.
 3. The operation state (notstarted / running / completed).
 
-Services MAY add additional, API specific, fields into the operation.
+Services MAY add additional, API specific fields into the operation.
 The operation status JSON returned looks like:
 
 ```json
@@ -1510,7 +1510,7 @@ The operation status JSON returned looks like:
 ```
 
 ##### Percent complete
-Sometimes it is impossible for services to know with any accuracy when an operation will complete.
+Sometimes services can't know with any accuracy when an operation will complete.
 Which makes using the Retry-After header problematic.
 In that case, services MAY include, in the operationStatus JSON, a percent complete field.
 
@@ -1522,7 +1522,7 @@ In that case, services MAY include, in the operationStatus JSON, a percent compl
 }
 ```
 
-In this example the server has indicated to the client that the long running operation is 50% complete.
+In this example, the server has indicated to the client that the long-running operation is 50% complete.
 
 ##### Target resource location
 For operations that result in, or manipulate, a resource the service MUST include the target resource location in the status upon operation completion.
@@ -1538,15 +1538,15 @@ For operations that result in, or manipulate, a resource the service MUST includ
 
 #### 13.2.6. Operation tombstones
 Services MAY choose to support tombstoned operations.
-Services MAY choose to delete tombstones after a service defined period of time.
+Services MAY choose to delete tombstones after a service defined time.
 
 #### 13.2.7. The typical flow, polling
-- Client invokes a stepwise operation by invoking an action using POST
-- The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting the number of seconds specified in the Retry-After header.
-- Client polls the location until receiving a 200 response with a terminal operation state. 
+- The client invokes a stepwise operation by invoking an action using POST
+- The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting for the number of seconds specified in the Retry-After header.
+- The client polls the location until receiving a 200 response with a terminal operation state. 
 
 ##### Example of the typical flow, polling
-Client invokes the restart action:
+The client invokes the restart action:
 
 ```http
 POST https://api.contoso.com/v1.0/databases HTTP/1.1
@@ -1565,14 +1565,14 @@ HTTP/1.1 202 Accepted
 Operation-Location: https://api.contoso.com/v1.0/operations/123
 ```
 
-Client waits for a period of time then invokes another request to try to get the operation status.
+The client waits for some time then invokes another request to try to get the operation status.
 
 ```http
 GET https://api.contoso.com/v1.0/operations/123
 Accept: application/json
 ```
 
-Server responds that results are still not ready and optionally provides a recommendation to wait 30 seconds.
+The server responds that results are still not ready and optionally provides a recommendation to wait 30 seconds.
 
 ```http
 HTTP/1.1 200 OK
@@ -1584,14 +1584,14 @@ Retry-After: 30
 }
 ```
 
-Client waits the recommended 30 seconds and then invokes another request to get the results of the operation.
+The client waits the recommended 30 seconds and then invokes another request to get the results of the operation.
 
 ```http
 GET https://api.contoso.com/v1.0/operations/123
 Accept: application/json
 ```
 
-Server responds with a "status:succeeded" operation that includes the resource location.
+The server responds with a "status:succeeded" operation that includes the resource location.
 
 ```http
 HTTP/1.1 200 OK
@@ -1606,13 +1606,13 @@ Content-Type: application/json
 ```
 
 #### 13.2.8. The typical flow, push notifications
-1. Client invokes a long running operation by invoking an action using POST. The client has a push notification already setup on the parent resource.
+1. The client invokes a long-running operation by invoking an action using POST. The client has a push notification already set up on the parent resource.
 2. The service indicates the request has been started by responding with a 202 Accepted status code. The client ignores everything else.
-3. Upon completion of the overall operation the service pushes a notification via the subscription on the parent resource.
+3. Upon completion of the overall operation, the service pushes a notification via the subscription on the parent resource.
 4. The client retrieves the operation result via the resource URL.
 
 ##### Example of the typical flow, push notifications existing subscription
-Client invokes the backup action.
+The client invokes the backup action.
 The client already has a push notification subscription setup for db1.
 
 ```http
@@ -1649,9 +1649,9 @@ Content-Type: application/json
 ```
 
 #### 13.2.9. Retry-After
-In the examples above the Retry-After header indicates the number of seconds that the client should wait before trying to get the result from the URL identified by the location header.
+In the examples above, the Retry-After header indicates the number of seconds that the client should wait before trying to get the result from the URL identified by the location header.
 
-The HTTP specification allows the Retry-After header to alternatively specify a HTTP date, so clients should be prepared to handle this as well.
+The HTTP specification allows the Retry-After header to alternatively specify an HTTP date, so clients should be prepared to handle this as well.
 
 ```http
 HTTP/1.1 202 Accepted
@@ -1662,41 +1662,41 @@ Retry-After: 60
 Note: The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
 
 ### 13.3. Retention policy for operation results
-In some situations, the result of a long running operation is not a resource that can be addressed.
-For example, if you invoke a long running Action that returns a Boolean (rather than a resource).
+In some situations, the result of a long-running operation is not a resource that can be addressed.
+For example, if you invoke a long-running Action that returns a Boolean (rather than a resource).
 In these situations, the Location header points to a place where the Boolean result can be retrieved.
 
 Which begs the question: "How long should operation results be retained?"
 
 A recommended minimum retention time is 24 hours.
 
-Operations SHOULD transition to "tombstone" for an additional period of time prior to being purged from the system.
+Operations SHOULD transition to "tombstone" for an additional period before being purged from the system.
 
 ## 14. Throttling, Quotas, and Limits
 ### 14.1. Principles
 Services should be as responsive as possible, so as not to block callers. 
-As a rule of thumb any API call that is expected to take longer than 0.5 seconds in the 99th percentile, should consider using the Long-running Operations pattern for those calls.
-Obviously, services cannot guarantee these response times in the face of potentially unlimited load from callers. Services should therefore design and document call request limits for clients, and respond with appropriate, actionable errors and error messages if these limits are exceeded.
+As a rule of thumb, any API call that is expected to take longer than 0.5 seconds in the 99th percentile, should consider using the Long-running Operations pattern for those calls.
+Services cannot guarantee these response times in the face of a potentially unlimited load from callers. Services should, therefore, design and document call request limits for clients, and respond with appropriate, actionable errors and error messages if these limits are exceeded.
 Services should respond quickly with an error when they are generally overloaded, rather than simply respond slowly.
 Finally, many services will have quotas on calls, perhaps a number of operations per hour or day, usually related to a service plan or price.
-When these quotas are exceeded services must also provide immediate, actionable errors.
-Quotas and Limits should be scoped to a customer unit: a subscription, a tenant, an application, a plan, or without any other identification a range of ip addresses…as appropriate to the service goals so that the load is properly shared and one unit is not interfering with another.
+When these quotas are exceeded, services must also provide immediate, actionable errors.
+Quotas and Limits should be scoped to a customer unit: a subscription, a tenant, an application, a plan, or without any other identification, a range of IP addresses…as appropriate to the service goals so that the load is appropriately shared and one unit is not interfering with another.
 
 ### 14.2. Return Codes (429 vs 503)
 HTTP specifies two return codes for these scenarios: '429 Too Many Requests' and '503 Service Unavailable'.
-Services should use 429 for cases where clients are making too many calls and can fix the situation by changing their call pattern.
-Services should respond with 503 in cases where general load or other problems outside the control of the individual callers is responsible for the service becoming slow.
-In all cases, services should also provide information suggesting how long the callers should wait before trying in again.
+Services should use 429 for cases where clients are making too many calls and can fix the situation by changing their call patterns.
+Services should respond with 503 in cases where general load or other problems outside the control of the individual callers are responsible for the service becoming slow.
+In all cases, services should also provide information suggesting how long the callers should wait before trying it again.
 Clients should respect these headers and also implement other transient fault handling techniques.
 However, there may be clients that simply retry immediately upon failure, potentially increasing the load on the service.
-To handle this, services should design so that returning 429 or 503 is as inexpensive as possible, either by putting in special fastpath code, or ideally by depending on a common frontdoor or load balancer that provides this functionality.
+To handle this, services should design so that returning 429 or 503 is as inexpensive as possible, either by putting in special fast-path code or ideally by depending on a common frontdoor or load balancer that provides this functionality.
 
 ### 14.3. Retry-After and RateLimit Headers
 The Retry-After header is the standard way for responding to clients who are being throttled.
-It is also common, but optional, in the case of limits and quotas (but not overall system load) to respond with header describing the limit that was exceeded.
+It is also common, but optional, in the case of limits and quotas (but not overall system load) to respond with a header describing the limit that was exceeded.
 However, services across Microsoft and the industry use a wide range of different headers for this purpose.
 We recommend using three headers to describe the limit, the number of calls remaining under the limit, and the time when the limit will reset.
-However, other headers may be appropriate for specific types of limits. In all cases these must be documented. 
+However, other headers may be appropriate for specific types of limits. In all cases, these must be documented. 
 
 ### 14.4. Service Guidance
 Services should choose time windows as appropriate for the SLAs or business objectives.
@@ -1706,7 +1706,7 @@ In the case of Quotas, the Retry-After time and time window may be very long (ho
 1. Services MUST respond quickly in all circumstances, even when under load.
 2. Calls that take longer than 1s to respond in the 99th percentile SHOULD use the Long-Running Operation pattern
 3. Calls that take longer than 0.5s to respond in the 99th percentile should strongly consider the LRO pattern
-4. Services SHOULD NOT introduce sleeps, pauses, etc. that block callers or are not actionable (“tar-pitting”).
+4. Services SHOULD NOT introduce sleep, pauses, etc. that block callers or are not actionable (“tar-pitting”).
 
 #### 14.4.2. Rate Limits and Quotas
 When a caller has made too many calls
@@ -1718,7 +1718,7 @@ When a caller has made too many calls
 5. Services MAY return RateLimit-Limit: the number of calls the client is allowed to make in a time window
 6. Services MAY return RateLimit-Remaining: the number of calls remaining in the time window
 7. Services MAY return RateLimit-Reset: the time at which the window resets in UTC epoch seconds
-8. Services MAY return other service specific RateLimit headers as appropriate for more detailed information or specific limits or quotas
+8. Services MAY return other service-specific RateLimit headers as appropriate for more detailed information or specific limits or quotas
 
 #### 14.4.3. Overloaded services
 When services are generally overloaded and  load shedding
@@ -1761,14 +1761,14 @@ Callers include all users of the API: tools, portals, other services, not just u
 See: https://docs.microsoft.com/en-us/azure/architecture/best-practices/transient-faults
 
 ### 14.6. Handling callers that ignore Retry-After headers
-Ideally, 429 and 503 returns are so low cost that even clients that retry immediately can be handled.
-In these cases, if possible the service team should make an effort to contact or fix the client.
+Ideally, 429 and 503 returns are such a low cost that even clients that retry immediately can be handled.
+In these cases, if possible, the service team should make an effort to contact or fix the client.
 If it is a known partner, a bug or incident should be filed.
-In extreme cases it may be necessary to use DoS style protections such as blocking the caller. 
+In extreme cases, it may be necessary to use DoS style protections such as blocking the caller. 
 
 ## 15. Push notifications via webhooks
 ### 15.1. Scope
-Services MAY implement push notifications via web hooks.
+Services MAY implement push notifications via webhooks.
 This section addresses the following key scenario:
 
 > Push notification via HTTP Callbacks, often called Web Hooks, to publicly-addressable servers.
@@ -1777,16 +1777,16 @@ The approach set forth is chosen due to its simplicity, broad applicability, and
 It's intended as a minimal set of requirements and as a starting point for additional functionality.
 
 ### 15.2. Principles
-The core principles for services that support web hooks are:
+The core principles for services that support webhooks are:
 
-1. Services MUST implement at least a poke/pull model. In the poke/pull model, a notification is sent to a client, and clients then send a request to get the current state or the record of change since their last notification. This approach avoids complexities around message ordering, missed messages, and change sets.  Services MAY add more data to provide rich notifications.
+1. Services MUST implement at least a poke/pull model. In the poke/pull model, a notification is sent to a client, and clients then send a request to get the current state or the record of change since their last notification. This approach avoids complexities around message ordering, missed messages, and changesets.  Services MAY add more data to provide rich notifications.
 2. Services MUST implement the challenge/response protocol for configuring callback URLs.
-3. Services SHOULD have a recommended age-out period, with flexibility for services to vary based on scenario.
+3. Services SHOULD have a recommended age-out period, with flexibility for services to varying based on the scenario.
 4. Services SHOULD allow subscriptions that are raising successful notifications to live forever and SHOULD be tolerant of reasonable outage periods.
 5. Firehose subscriptions MUST be delivered only over HTTPS. Services SHOULD require other subscription types to be HTTPS. See the "Security" section for more details.
 
 ### 15.3. Types of subscriptions
-There are two subscription types, and services MAY implement either, both, or none.
+There are two subscription types, and services MAY implement either both or none.
 The supported subscription types are:
 
 1. Firehose subscriptions – a subscription is manually created for the subscribing application, typically in an app registration portal.  Notifications of activity that any users have consented to the app receiving are sent to this single subscription.
@@ -1794,20 +1794,20 @@ The supported subscription types are:
 
 Services that support both subscription types SHOULD provide differentiated developer experiences for the two types:
 
-1. Firehose – Services MUST NOT require developers to create code except to directly verify and respond to notifications.  Services MUST provide administrative UI for subscription management.  Services SHOULD NOT assume that end users are aware of the subscription, only the subscribing application's functionality.
-2. Per-user – Services MUST provide an API for developers to create and manage subscriptions as part of their app as well as verifying and responding to notifications.  Services MAY expect end users to be aware of subscriptions and MUST allow end users to revoke subscriptions where they were created directly in response to user actions.
+1. Firehose – Services MUST NOT require developers to create code except to verify and respond to notifications directly.  Services MUST provide administrative UI for subscription management.  Services SHOULD NOT assume that end users are aware of the subscription, only the subscribing application's functionality.
+2. Per-user – Services MUST provide an API for developers to create and manage subscriptions as part of their app as well as verifying and responding to notifications.  Services MAY expect end-users to be aware of subscriptions and MUST allow end-users to revoke subscriptions where they were created directly in response to user actions.
 
 ### 15.4. Call sequences
 The call sequence for a firehose subscription MUST follow the diagram below.
-It shows manual registration of application and subscription, and then the end user making use of one of the service's APIs.
+It shows manual registration of application and subscription, and then the end-user making use of one of the service's APIs.
 At this part of the flow, two things MUST be stored:
 
 1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope.)
-2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.
+2. The subscribing application MUST store the end user's tokens to call back for details once notified of changes.
 
 The final part of the sequence is the notification flow itself.
 
-Non-normative implementation guidance:  A resource in the service changes and the service needs to run the following logic:
+Non-normative implementation guidance:  A resource in the service changes, and the service needs to run the following logic:
 
 1. Determine the set of users who have access to the resource, and could thus expect apps to receive notifications about it on their behalf.
 2. See which of those users have consented to receiving notifications and from which apps.
@@ -1821,19 +1821,19 @@ Services SHOULD send notifications with setup processed in either order.
 
 For a per-user subscription, app registration is either manual or automated.
 The call flow for a per-user subscription MUST follow the diagram below.
-It shows the end user making use of one of the service's APIs, and again, the same two things MUST be stored:
+It shows the end-user making use of one of the service's APIs, and again, the same two things MUST be stored:
 
 1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope).   
-2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.  
+2. The subscribing application MUST store the end user's tokens to call back for details once notified of changes.  
 
-In this case, the subscription is set up programmatically using the end-user's token from the subscribing application.
+In this case, the subscription is set up programmatically using the end-users token from the subscribing application.
 The app MUST store the ID of the registered subscription alongside the user tokens.
 
-Non normative implementation guidance: In the final part of the sequence, when an item of data in the service changes and the service needs to run the following logic:
+Non-normative implementation guidance: In the final part of the sequence, when an item of data in the service changes and the service needs to run the following logic:
 
 1. Find the set of subscriptions that correspond via resource to the data that changed.
 2. For subscriptions created under an app+user token, send a notification to the app per subscription with the subscription ID and user id of the subscription-creator.
-- For subscriptions created with an app only token, check that the owner of the changed data or any user that has visibility of the changed data has consented to notifications to the application, and if so send a set of notifications per user id to the app per subscription with the subscription ID.
+- For subscriptions created with an app-only token, check that the owner of the changed data or any user that has visibility of the changed data has consented to notifications to the application, and if so, send a set of notifications per user id to the app per subscription with the subscription ID.
 
   ![User subscription setup][websequencediagram-user-subscription-setup]
 
@@ -1850,7 +1850,7 @@ ClientState: clientOriginatedOpaqueToken (if provided by client on subscription-
 Content-Length: 0
 ```
 
-For the subscription to be set up, the application MUST respond with 200 OK to this request, with the _validationToken_ value as the sole entity body.
+For the subscription to be set up, the application MUST respond with 200 OK to this request, with the _validationToken_ value as the sole entity-body.
 Note that if the _notificationUrl_ contains query parameters, the _validationToken_ parameter must be appended with an `&`.
 
 If any challenge request does not receive the prescribed response within 5 seconds of sending the request, the service MUST return an error, MUST NOT create the subscription, and MUST NOT send further requests or notifications to _notificationUrl_.
@@ -1864,7 +1864,7 @@ Services SHOULD send notifications in response to service data changes that do n
 2. Applications MAY look up any previous delta token for the relevant scope of change
 3. Applications MUST determine the URL to call to perform the relevant query for the new state of the service, which MAY be a delta query.
 
-Services that are providing notifications that will be relayed to end users MAY choose to add more detail to notification packets in order to reduce incoming call load on their service.
+Services that are providing notifications that will be relayed to end users MAY choose to add more detail to notification packets to reduce incoming call load on their service.
  Such services MUST be clear that notifications are not guaranteed to be delivered and may be lossy or out of order.
 
 Notifications MAY be aggregated and sent in batches.
@@ -1923,7 +1923,7 @@ For a per-user subscription, a concrete example of this may look like:
 
 Following is a detailed description of the JSON payload.
 
-A notification item consists a top-level object that contains an array of events, each of which identified the subscription due to which this notification is being sent.
+A notification item consists of a top-level object that contains an array of events, each of which identified the subscription due to which this notification is being sent.
 
 Field | Description
 ----- | --------------------------------------------------------------------------------------------------
@@ -1968,8 +1968,8 @@ Property Name      | Required | Notes
 id                 | Yes      | Unique ID of the new subscription that can be used later to update/delete the subscription.
 expirationDateTime | No       | Uses existing Microsoft REST API Guidelines defined time formats.
 
-Creation of subscriptions SHOULD be idempotent.
-The combination of properties scoped to the auth token, provides a uniqueness constraint.
+The creation of subscriptions SHOULD be idempotent.
+The combination of properties scoped to the auth-token provides a uniqueness constraint.
 
 Below is an example request using a User + Application principal to subscribe to notifications from a file:
 
@@ -2097,13 +2097,13 @@ An example that may be returned using Application-Only principal bearer token:
 ### 15.8. Security
 All service URLs must be HTTPS (that is, all inbound calls MUST be HTTPS). Services that deal with Web Hooks MUST accept HTTPS.
 
-We recommend that services that allow client defined Web Hook Callback URLs SHOULD NOT transmit data over HTTP.
-This is because information can be inadvertently exposed via client, network, server logs and other mechanisms.
+We recommend that services that allow client-defined Web Hook Callback URLs SHOULD NOT transmit data over HTTP.
+This is because information can be inadvertently exposed via a client, network, server logs, and other mechanisms.
 
 However, there are scenarios where the above recommendations cannot be followed due to client endpoint or software limitations.
-Consequently, services MAY allow web hook URLs that are HTTP.
+Consequently, services MAY allow webhook URLs that are HTTP.
 
-Furthermore, services that allow client defined HTTP web hooks callback URLs SHOULD be compliant with privacy policy specified by engineering leadership.
+Furthermore, services that allow client-defined HTTP webhooks callback URLs SHOULD be compliant with privacy policy specified by engineering leadership.
 This will typically include recommending that clients prefer SSL connections and adhere to special precautions to ensure that logs and other service data collection are properly handled.
 
 For example, services may not want to require developers to generate certificates to onboard.
@@ -2114,12 +2114,12 @@ RESTful API clients MAY request functionality that is currently unsupported.
 RESTful APIs MUST respond to valid but unsupported requests consistent with this section.
 
 ### 16.1. Essential guidance
-RESTful APIs will often choose to limit functionality that can be performed by clients.
+RESTful APIs will often choose to limit the functionality that can be performed by clients.
 For instance, auditing systems allow records to be created but not modified or deleted.
 Similarly, some APIs will expose collections but require or otherwise limit filtering and ordering criteria, or MAY not support client-driven pagination.
 
 ### 16.2. Feature allow list
-If a service does not support any of the below API features, then an error response MUST be provided if the feature is requested by a caller.
+If a service does not support any of the below API features, then an error response MUST be provided if a caller requests the feature.
 The features are:
 - Key Addressing in a collection, such as: `https://api.contoso.com/v1.0/people/user1@contoso.com`
 - Filtering a collection by a property value, such as: `https://api.contoso.com/v1.0/people?$filter=name eq 'david'`
@@ -2155,17 +2155,17 @@ Content-Type: application/json
 
 ## 17. Naming guidelines
 ### 17.1. Approach
-Naming policies should aid developers in discovering functionality without having to constantly refer to documentation.
-Use of common patterns and standard conventions greatly aids developers in correctly guessing common property names and meanings.
-Services SHOULD use verbose naming patterns and SHOULD NOT use abbreviations other than acronyms that are the dominant mode of expression in the domain being represented by the API, (e.g. Url).
+Naming policies should aid developers in discovering functionality without having to refer to documentation constantly.
+The use of common patterns and standard conventions greatly aids developers in correctly guessing common property names and meanings.
+Services SHOULD use verbose naming patterns and SHOULD NOT use abbreviations other than acronyms that are the dominant mode of expression in the domain being represented by the API (e.g., Url).
 
 ### 17.2. Casing
-- Acronyms SHOULD follow the casing conventions as though they were regular words (e.g. Url).
+- Acronyms SHOULD follow the casing conventions as though they were regular words (e.g., Url).
 - All identifiers including namespaces, entityTypes, entitySets, properties, actions, functions and enumeration values SHOULD use lowerCamelCase.
 - HTTP headers are the exception and SHOULD use standard HTTP convention of Capitalized-Hyphenated-Terms.
 
 ### 17.3. Names to avoid
-Certain names are so overloaded in API domains that they lose all meaning or clash with other common usages in domains that cannot be avoided when using REST APIs, such as OAUTH.
+Certain names are so overloaded in API domains that they lose all meaning or clash with other common usages in domains that cannot be avoided when using REST APIs, such as OAuth.
 Services SHOULD NOT use the following names:
 - Context
 - Scope
@@ -2173,35 +2173,35 @@ Services SHOULD NOT use the following names:
 
 ### 17.4. Forming compound names
 - Services SHOULD avoid using articles such as 'a', 'the', 'of' unless needed to convey meaning.
-	- e.g. names such as aUser, theAccount, countOfBooks SHOULD NOT be used, rather user, account, bookCount SHOULD be preferred.
+    - e.g., names such as aUser, theAccount, countOfBooks SHOULD NOT be used, rather user, account, bookCount SHOULD be preferred.
 - Services SHOULD add a type to a property name when not doing so would cause ambiguity about how the data is represented or would cause the service not to use a common property name.
-- When adding a type to a property name, services MUST add the type at the end, e.g. createdDateTime.
+- When adding a type to a property name, services MUST add the type at the end, e.g., createdDateTime.
 
 ### 17.5. Identity properties
 - Services MUST use string types for identity properties.
 - For OData services, the service MUST use the OData @id property to represent the canonical identifier of the resource.
 - Services MAY use the simple 'id' property to represent a local or legacy primary key value for a resource.
-- Services SHOULD use the name of the relationship postfixed with 'Id' to represent a foreign key to another resource, e.g. subscriptionId.
-	- The content of this property SHOULD be the canonical ID of the referenced resource.
+- Services SHOULD use the name of the relationship postfixed with 'Id' to represent a foreign key to another resource, e.g., subscriptionId.
+    - The content of this property SHOULD be the canonical ID of the referenced resource.
 
 ### 17.6. Date and time properties
 
 - For properties requiring both date and time, services MUST use the suffix 'DateTime'.
-- For properties requiring only date information without specifying time, services MUST use the suffix 'Date', e.g. birthDate.
-- For properties requiring only time information without specifying date, services MUST use the suffix 'Time', e.g. appointmentStartTime.
+- For properties requiring only date information without specifying the time, services MUST use the suffix 'Date', e.g., birthDate.
+- For properties requiring only time information without specifying the date, services MUST use the suffix 'Time', e.g., appointmentStartTime.
 
 ### 17.7. Name properties
 - For the overall name of a resource typically shown to users, services MUST use the property name 'displayName'.
-- Services MAY use other common naming properties, e.g. givenName, surname, signInName.
+- Services MAY use other common naming properties, e.g., givenName, surname, signInName.
 
 ### 17.8. Collections and counts
 - Services MUST name collections as plural nouns or plural noun phrases using correct English.
-- Services MAY use simplified English for nouns that have plurals not in common verbal usage.
-	- e.g. schemas MAY be used instead of schemata.
+- Services MAY use simplified English for nouns that have plurals, not in common verbal usage.
+    - e.g., schemas MAY be used instead of schemata.
 - Services MUST name counts of resources with a noun or noun phrase suffixed with 'Count'.
 
 ### 17.9. Common property names
-Where services have a property, whose data matches the names below, the service MUST use the name from this table.
+Where services have a property whose data matches the names below, the service MUST use the name from this table.
 This table will grow as services add terms that will be more commonly used.
 Service owners adding such terms SHOULD propose additions to this document.
 
@@ -2255,7 +2255,7 @@ note over Developer, Automation, App Server:
      Wants to integrate with primary service like Dropbox
 end note
 note over DB Portal, DB App Registration, DB Notifications, DB Auth, DB Service: The primary service like Dropbox
-note over Client: The end users' browser or installed app
+note over Client: The end-users browser or installed app
 
 note over Developer, Automation, App Server, DB Portal, DB App Registration, DB Notifications, Client : Manual App Registration
 
@@ -2310,7 +2310,7 @@ note over Developer, Automation, App Server:
      Wants to integrate with primary service like Dropbox
 end note
 note over DB Portal, DB App Registration, DB Notifications, DB Auth, DB Service: The primary service like Dropbox
-note over Client: The end users' browser or installed app
+note over Client: The end-users browser or installed app
 
 note over Developer, Automation, App Server, DB Portal, DB App Registration, DB Notifications, Client : App Registration
 
