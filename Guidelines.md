@@ -898,7 +898,7 @@ Example: all products that either have the name 'Milk' or have a price less than
 GET https://api.contoso.com/v1.0/products?$filter=name eq 'Milk' or price lt 2.55
 ```
 
-Example 54: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
+Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```http
 GET https://api.contoso.com/v1.0/products?$filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
