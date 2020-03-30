@@ -170,7 +170,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 Developers access most Microsoft Cloud Platform resources via HTTP interfaces.
 Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to HTTP requests.
 Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
-Thus a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+Thus, a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
 
 To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive.
 This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
@@ -210,7 +210,7 @@ Obviously, a REST service that implements or must interoperate with some externa
 Some services MAY also have special performance needs that require a different format, such as a binary protocol.
 
 ### 4.2. Guidelines for existing services and versioning of services
-We do not recommend making a breaking change to a service that pre-dates these guidelines simply for compliance sake.
+We do not recommend making a breaking change to a service that predates these guidelines simply for the sake of compliance.
 The service SHOULD try to become compliant at the next version release when compatibility is being broken anyway.
 When a service adds a new API, that API SHOULD be consistent with the other APIs of the same version.
 So if a service was written against version 1.0 of the guidelines, new APIs added incrementally to the service SHOULD also follow version 1.0. The service can then upgrade to align with the latest version of the guidelines at the service's next major release.
@@ -227,7 +227,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by/4.
 As part of onboarding to Microsoft REST API Guidelines, services MUST comply with the taxonomy defined below.
 
 ### 5.1. Errors
-Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_ rejecting that data.
+Errors, or more specifically Service Errors, are defined as a client passing invalid data to the service and the service _correctly_  rejecting that data.
 Examples include invalid credentials, incorrect parameters, unknown version IDs, or similar.
 These are generally "4xx" HTTP error codes and are the result of a client passing incorrect or invalid data.
 
@@ -251,7 +251,7 @@ For long running calls, the latency is measured on the initial request and measu
 Services that expose long operations MUST track "Time to Complete" metrics around those operations.
 
 ### 5.5. Long running API faults
-For a Long Running API, it's possible for both the initial request to begin the operation and the request to retrieve the results to technically work (each passing back a 200), but for the underlying operation to have failed.
+For a Long Running API, it's possible for both the initial request which begins the operation and the request which retrieves the results to technically work (each passing back a 200) but for the underlying operation to have failed.
 Long Running faults MUST roll up as faults into the overall Availability metrics.
 
 ## 6. Client guidance
@@ -315,7 +315,7 @@ Here are some sources for determining what target clients support:
  * [https://stackoverflow.com/a/417184](https://stackoverflow.com/a/417184)
  * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
 
-Also note that some technology stacks have hard and adjustable url limits, so keep this in mind as you design your services.
+Also note that some technology stacks have hard and adjustable URL limits, so keep this in mind as you design your services.
 
 ### 7.3. Canonical identifier
 In addition to friendly URLs, resources that can be moved or be renamed SHOULD expose a URL that contains a unique stable identifier.
@@ -379,7 +379,7 @@ Because PUT is defined as a complete replacement of the content, it is dangerous
 Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties could be inadvertently removed.
 Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
 
-Under UPSERT semantics, a PATCH call to a non-existent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice-versa, the client MAY specify precondition HTTP headers in the request.
+Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice versa, the client MAY specify precondition HTTP headers in the request.
 The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
 
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
@@ -493,7 +493,7 @@ Accept: application/json
 ```
 
 #### 7.10.2. Error condition responses
-For nonsuccess conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services.
+For non-success conditions, developers SHOULD be able to write one piece of code that handles errors consistently across different Microsoft REST API Guidelines services.
 This allows building of simple and reliable infrastructure to handle exceptions as a separate flow from successful responses.
 The following is based on the OData v4 JSON spec.
 However, it is very generic and does not require specific OData constructs.
@@ -550,7 +550,7 @@ Property | Type | Required | Description
 
 Property | Type | Required | Description
 -------- | ---- | -------- | -----------
-`code` | String (enumerated) | ✔ | One of a server-defined set of error codes.
+`code` | String | ✔ | One of a server-defined set of error codes.
 `message` | String | ✔ | A human-readable representation of the error.
 `target` | String |  | The target of the error.
 `details` | Error[] |  | An array of details about specific errors that led to this reported error.
@@ -898,7 +898,7 @@ Example: all products that either have the name 'Milk' or have a price less than
 GET https://api.contoso.com/v1.0/products?$filter=name eq 'Milk' or price lt 2.55
 ```
 
-Example 54: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
+Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```http
 GET https://api.contoso.com/v1.0/products?$filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
@@ -1096,12 +1096,14 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 
 ## 11. JSON standardizations
 ### 11.1. JSON formatting standardization for primitive types
-Primitive values MUST be serialized to JSON following the rules of [RFC4627][rfc-4627].
+Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259].
+
+**Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability and avoid data loss.
 
 ### 11.2. Guidelines for dates and times
 #### 11.2.1. Producing dates
 Services MUST produce dates using the `DateLiteral` format, and SHOULD use the `Iso8601Literal` format unless there are compelling reasons to do otherwise.
-Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED and ECMAScript clients are explicitly unsupported.
+Services that do use the `StructuredDateLiteral` format MUST NOT produce dates using the `T` kind unless BOTH the additional precision is REQUIRED, and ECMAScript clients are explicitly unsupported.
 (Non-Normative statement: When deciding which particular `DateKind` to standardize on, the approximate order of preference is `E, C, U, W, O, X, I, T`.
 This optimizes for ECMAScript, .NET, and C++ programmers, in that order.)
 
@@ -1336,7 +1338,7 @@ Long running operations, sometimes called async operations, tend to mean differe
 This section sets forth guidance around different types of long running operations, and describes the wire protocols and best practices for these types of operations.
 
 1. One or more clients MUST be able to monitor and operate on the same resource at the same time.
-2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long running operation should itself leverage principles of the web. i.e. well defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long running operation
+2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long running operation should itself leverage principles of the web. i.e. well-defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long running operation
 3. Long running operations SHOULD work for clients looking to "Fire and Forget" and for clients looking to actively monitor and act upon results.
 4. Cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a cancelled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
@@ -1350,7 +1352,7 @@ An example may be a machine reboot, where the operation itself completes synchro
 
 This model MAY integrate Push Notifications.
 
-While most operations are likely to be POST semantics, In addition to POST semantics services MAY support PUT semantics via routing to simplify their APIs.
+While most operations are likely to be POST semantics, in addition to POST semantics, services MAY support PUT semantics via routing to simplify their APIs.
 For example, a user that wants to create a database named "db1" could call:
 
 ```http
@@ -1375,7 +1377,7 @@ Services MUST perform as much synchronous validation as practical on stepwise re
 Services MUST prioritize returning errors in a synchronous way, with the goal of having only "Valid" operations processed using the long running operation wire protocol.
 
 For an API that's defined as a Stepwise Long Running Operation the service MUST go through the Stepwise Long Running Operation flow even if the operation can be completed immediately.
-In other words, APIs must adopt and stick with a LRO pattern and not change patterns based on circumstance.
+In other words, APIs must adopt and stick with an LRO pattern and not change patterns based on circumstance.
 
 #### 13.2.1. PUT
 Services MAY enable PUT requests for entity creation.
@@ -1475,7 +1477,7 @@ If supported DELETE operations MUST be idempotent.
 
 > Note: From an API design perspective, cancellation does not explicitly mean rollback.
 On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc.
-Following a cancelled operation It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
+Following a cancelled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
 Services that do not support operation cancellation MUST return a 405 Method Not Allowed in the event of a DELETE.
 
@@ -1486,7 +1488,7 @@ Operations MUST support the following states:
 3. Succeeded. Terminal State.
 4. Failed. Terminal State.
 
-Services MAY add additional states, such as "Cancelled" or "Partially Completed". Services that support cancellation MUST sufficiently describe their cancellation such that the state of the system can be accurately determined and any compensating actions may be run.
+Services MAY add additional states, such as "Cancelled" or "Partially Completed". Services that support cancellation MUST sufficiently describe their cancellation such that the state of the system can be accurately determined, and any compensating actions may be run.
 
 Services that support additional states should consider this list of canonical names and avoid creating new names if possible: Cancelling, Cancelled, Aborting, Aborted, Tombstone, Deleting, Deleted.
 
@@ -1541,7 +1543,7 @@ Services MAY choose to delete tombstones after a service defined period of time.
 #### 13.2.7. The typical flow, polling
 - Client invokes a stepwise operation by invoking an action using POST
 - The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting the number of seconds specified in the Retry-After header.
-- Client polls the location until receiving a 200 OK response from the server.
+- Client polls the location until receiving a 200 response with a terminal operation state.
 
 ##### Example of the typical flow, polling
 Client invokes the restart action:
@@ -1715,11 +1717,11 @@ When a caller has made too many calls
 4. Services MAY return RateLimit headers that document the limit or quota that has been exceeded
 5. Services MAY return RateLimit-Limit: the number of calls the client is allowed to make in a time window
 6. Services MAY return RateLimit-Remaining: the number of calls remaining in the time window
-7. Services MAY return RateLimit-Reset: the number of calls the client is allowed to make in a time window
+7. Services MAY return RateLimit-Reset: the time at which the window resets in UTC epoch seconds
 8. Services MAY return other service specific RateLimit headers as appropriate for more detailed information or specific limits or quotas
 
 #### 14.4.3. Overloaded services
-When a services are generally overloaded and  load shedding
+When services are generally overloaded and  load shedding
 
 1. Services MUST Return a 503 code
 2. Services MUST Return a standard error response (see 7.10.2) describing the specifics so that a programmer can make appropriate changes
@@ -1753,7 +1755,7 @@ RateLimit-Reset: 1538152773
 Callers include all users of the API: tools, portals, other services, not just user clients
 
 1. Callers MUST wait for a minimum of time indicated in a response with a Retry-After before retrying a request.
-2. Callers MAY assume that request is retryable after receiving a response with a Retry-After header without making any changes to the request.
+2. Callers MAY assume that request is retriable after receiving a response with a Retry-After header without making any changes to the request.
 3. Clients SHOULD use shared SDKs and common transient fault libraries to implement the proper behavior
 
 See: https://docs.microsoft.com/en-us/azure/architecture/best-practices/transient-faults
@@ -2199,7 +2201,7 @@ Services SHOULD NOT use the following names:
 - Services MUST name counts of resources with a noun or noun phrase suffixed with 'Count'.
 
 ### 17.9. Common property names
-Where services have a property whose data matches the names below, the service MUST use the name from this table.
+Where services have a property, whose data matches the names below, the service MUST use the name from this table.
 This table will grow as services add terms that will be more commonly used.
 Service owners adding such terms SHOULD propose additions to this document.
 
@@ -2242,7 +2244,7 @@ Service owners adding such terms SHOULD propose additions to this document.
 
 ## 18. Appendix
 ### 18.1. Sequence diagram notes
-All sequence diagrams in this document are generated using the WebSequenceDiagrams.com web site. To generate them, paste the text below into the web tool.
+All sequence diagrams in this document are generated using the [WebSequenceDiagrams.com](https://www.websequencediagrams.com/). To generate them, paste the text below into the web tool.
 
 #### 18.1.1. Push notifications, per user flow
 
