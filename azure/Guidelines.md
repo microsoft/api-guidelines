@@ -2,39 +2,20 @@
 
 ## History
 
-<dl>
-<dd>2020-Mar-31 v3.0</dd>
-<dt>Version 3.0 of the Azure REST API Guidelines was copied from Sharepoint
-into Markdown and uploaded to GitHub as the basis for future improvements.</dt>
-</dl>
+| Date | Version | Notes |
+| 2020-Mar-31 | v3.1 | Merge of Azure guidelines with breaking changes update |
 
 ## Introduction
 
-The Azure REST API guidelines are an extension of the Microsoft-wide [OneAPI guidelines][1] (which historically drew heavily from an earlier version of the Azure REST API guidelines). Readers of this document are assumed to be also reading the [OneAPI guidelines][1] and be familiar with them.  Azure guidance is a superset of OneAPI guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
-
-The OneAPI guidelines are available on Github at [https://github.com/microsoft/api-guidelines][1].
-
-Highlights of the OneAPI guidelines include:
-
-* **REST fundamentals**.  Guidance around REST basics such as HTTP headers, verbs, status codes, and other similar areas.
-* **Versioning**.  The guidance for versioning covers the externally facing mechanics of versioning and compatibility guarantees between versions.  Guidance for when API owners should increment versions is also present.
-* **CORS**.  Guidance around the use of CORS.
-* **Authentication**.  Guidance around the authentication and its use.
-* **Encoding**.  Guidance around the use of JSON encoding and standards.
-* **Error responses**.  A standard format for error responses is closed.
-* **Dates and times**.  Detailed guidance around date and time formats and encoding is provided.
-* **Relationship to OData**.  Guidance around the relationship between OData and REST APIs.
-* **JSON representation**.  JSON is preferred over XML and other formats.
-* **Long running operations**.  The OneAPI guidelines are updated and simplified over the previous Azure guidelines.
-* **Push notifications via Webhooks**.
+The Azure REST API guidelines are an extension of the Microsoft-wide [OneAPI guidelines][1]. Readers of this document are assumed to be also reading the [OneAPI guidelines][1] and be familiar with them.  Azure guidance is a superset of OneAPI guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
 
 #### Asynchronous operations
 
-The OneAPI guidelines for Long Running Operations guidelines are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the board decided to rename the HEADER used in the operation from `Azure-AsyncOperation` to `Operation-Location`. Services can and **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
+The OneAPI guidelines for Long Running Operations guidelines are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
 
 ### Additional guidance for Azure Resource Manager resource providers
 
-Teams building ARM RPs MUST follow the additional guidance in the ARM RPC and related documents. These documents can be found here.
+Teams building ARM Resource Providers (RPs) MUST follow the additional guidance in the ARM RPC and related documents. These documents can be found here.
 
 * [Azure Resource Manager Wiki][2] (Internal only)
 * [Azure Resource Provider Contract][3]
@@ -104,7 +85,7 @@ http(s)://<tenant-id>-<service-defined-root>.<service>.azure.net
 
 ## Versioning
 
-All Azure APIs **MUST** support explicit versioning.  It's critical that clients can count on services to be stable over time, and it's critical that Azure services can add features and make changes.
+All Azure APIs **MUST** use explicit versioning.  It's critical that clients can count on services to be stable over time, and it's critical that Azure services can add features and make changes.
 
 The OneAPI guidelines offer a couple of different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes which options are required of Azure services as well as some guidance about deprecation policy.  There is also a section about additional versioning practices necessary to support Azure Stack and Azure compatibility.
 
@@ -122,7 +103,7 @@ POST http://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 
 A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example).
 
-Even though we recommend clients ignore new fields, there are many libraries and clients that are strict. Therefore, Azure services **MUST** update the version number of their API even when adding optional fields. In fact, servers should be as strict as possible. Ignoring a field can result in the API accepting content that containered a typo or an element at the wrong level of nesting. If this missing field changes the semantics (for example, we have seen cases where security settings were misplaced and ignored, leaving the resources more exposed than intended) this can be a huge and hard to discover error.
+Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Azure services **MUST** update the version number of their API even when adding optional fields. In fact, servers should be as strict as possible. Ignoring a field can result in the API accepting content that containered a typo or an element at the wrong level of nesting. If this missing field changes the semantics (for example, we have seen cases where security settings were misplaced and ignored, leaving the resources more exposed than intended) this can be a huge and hard to discover error.
 
 At a high level, changes to the contract of an API constitute a breaking change. Changes that impact backwards compatibility of an API is also considered a breaking change. Teams MAY define backwards compatibility as their business needs require. For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible. Anything that would violate the Principle of Least Astonishment is considered a breaking change in Azure. Below are some concrete examples of what constitutes a breaking change. In the below breaking change scenarios, the API version must be changed.
 
@@ -132,7 +113,7 @@ If a property called `foo` that was present in v1 of the API needs to be removed
 
 #### New property added to response
 
-If a new property/field is added to the response an API, the GET-PUT pipeline will be broken. Consider the case where from portal a customer updates the value of a new property "A". Another customer does a GET of this resource using the SDK. The SDK will ignore the property since it does not understand it. From the SDK, the customer does a PUT using the model that was returned from the GET. This will overwrite the change made by the first customer from the portal.
+If a new property/field is added to the response of an API, the GET-PUT pipeline will be broken. Consider the case where a customer updates the value of a new property "A" from the Azure portal. Another customer does a GET of this resource using the SDK. The SDK will ignore the property since it does not understand it. From the SDK, the customer does a PUT using the model that was returned from the GET. This will overwrite the change made by the first customer from the portal.
 
 #### New required property added to request
 
@@ -201,11 +182,11 @@ Azure services **SHOULD** support API version discovery.  If they support it:
 
 1. Services **MUST** support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
 2.	Services **MUST** include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Azure versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
-3.	If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it must include those versions (group and major.minor) in the `api-deprecated-versions` header.
-4.	In addition to the functionality described here, services may support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
-5.	Services may allow unauthenticated HTTP `OPTIONS` requests. When doing so authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
-6.	For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends should report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
-7.	If using OData and addressing an expanded resource, the HTTP `OPTIONS` request should return the group versions that are supported across the expanded set.
+3.	If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it **MUST** include those versions (group and major.minor) in the `api-deprecated-versions` header.
+4.	In addition to the functionality described here, services **MAY** support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
+5.	Services **MAY** allow unauthenticated HTTP `OPTIONS` requests. When doing so, authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
+6.	For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
+7.	If using OData and addressing an expanded resource, the HTTP `OPTIONS` request **SHOULD** return the group versions that are supported across the expanded set.
 
 Example request to discover versions (blob storage container list API):
 
@@ -245,7 +226,7 @@ Refer to the Azure deprecation policy for more details.
 
 Pre-release and beta APIs are not covered by the normal API deprecation policy. Each team providing a preview API **SHOULD** communicate to customers what the policy is going to be for support and deprecation, even if that policy is “we may remove this at any time”. The Azure REST API Guidelines cover pre-release API versions. To summarize that section, they should be marked with a version tag like `2013-03-21-Preview`.
 
-Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy and process. ** *Customers have suffered downtime because of deprecation of preview APIs* **. In some cases the code was written by consultants or employees without any awareness on behalf of the customer.
+Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy and process. ** *Customers have suffered downtime because of deprecation of preview APIs* **.
 
 <!-- Links -->
 [1]: https://github.com/microsoft/api-guidelines
