@@ -36,10 +36,8 @@ The OneAPI guidelines for Long Running Operations guidelines are an updated, cla
 
 Teams building ARM RPs MUST follow the additional guidance in the ARM RPC and related documents. These documents can be found here.
 
-<!-- TODO: Find the public documentation here -->
-
-* [Azure Resource Manager Documents][2] (Internal only)
-* [Azure Resource Provider Contract][3] (Internal only)
+* [Azure Resource Manager Wiki][2] (Internal only)
+* [Azure Resource Provider Contract][3]
 
 ARM RPs are a CEC requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
 
@@ -191,8 +189,8 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 [RFC2557]: http://www.ietf.org/rfc/rfc2557.txt
 
 <!-- Azure ARM Links -->
-[2]: http://sharepoint/sites/AzureUX/Sparta/Shared%20Documents/Forms/AllItems.aspx?RootFolder=%2fsites%2fAzureUX%2fSparta%2fShared%20Documents%2fSpecs&FolderCTID=0x012000BE9C61C2BE4C444E8018AB8C82DE4CF9
-[3]: http://sharepoint/sites/AzureUX/Sparta/Shared%20Documents/Specs/Resource%20Provider%20API%20v2.docx?d=wcc855351793a4417a536ab992218ad55
+[2]: https://aka.ms/armwiki
+[3]: https://github.com/Azure/azure-resource-manager-rpc
 
 <!-- Versioning Guidelines -->
 [6]: http://support.microsoft.com/gp/azure-cloud-lifecycle-faq
