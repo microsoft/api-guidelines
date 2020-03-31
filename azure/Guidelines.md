@@ -43,7 +43,7 @@ ARM RPs are a CEC requirement for Azure Services and ARM RP review is another ma
 
 ## Swagger to describe API
 
-All Services **MUST** provide Swagger that describes their service. Swagger is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services. Swagger is a CEC requirement for Azure Services
+All Services **MUST** provide Swagger that describes their service. Swagger is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services. Swagger is a CEC requirement for Azure Services.
 
 ## URL structure
 
@@ -70,7 +70,7 @@ Where:
 
 For Azure PaaS services like SQL Azure, Azure Storage, Caching, etc., the unit of multi-tenancy is the Azure subscription id, which is a GUID. This ensures consistent access using the same URL pattern, and identifier, across all these services.
 
-When services produce URLs in response headers or bodies, they **MUST** use a consistent form – either always a GUID for tenant identifier or always a single verified domain - regardless of the URL used to reach the resource
+When services produce URLs in response headers or bodies, they **MUST** use a consistent form – either always a GUID for tenant identifier or always a single verified domain - regardless of the URL used to reach the resource.
 
 ### Direct endpoint URLs
 
@@ -124,6 +124,69 @@ A breaking change is any change in the API that may cause client or service code
 
 Even though we recommend clients ignore new fields, there are many libraries and clients that are strict. Therefore, Azure services **MUST** update the version number of their API even when adding optional fields. In fact, servers should be as strict as possible. Ignoring a field can result in the API accepting content that containered a typo or an element at the wrong level of nesting. If this missing field changes the semantics (for example, we have seen cases where security settings were misplaced and ignored, leaving the resources more exposed than intended) this can be a huge and hard to discover error.
 
+At a high level, changes to the contract of an API constitute a breaking change. Changes that impact backwards compatibility of an API is also considered a breaking change. Teams MAY define backwards compatibility as their business needs require. For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible. Anything that would violate the Principle of Least Astonishment is considered a breaking change in Azure. Below are some concrete examples of what constitutes a breaking change. In the below breaking change scenarios, the API version must be changed.
+
+#### Existing property is removed
+
+If a property called `foo` that was present in v1 of the API needs to be removed, it must be done in a newer API version.
+
+#### New property added to response
+
+If a new property/field is added to the response an API, the GET-PUT pipeline will be broken. Consider the case where from portal a customer updates the value of a new property "A". Another customer does a GET of this resource using the SDK. The SDK will ignore the property since it does not understand it. From the SDK, the customer does a PUT using the model that was returned from the GET. This will overwrite the change made by the first customer from the portal.
+
+#### New required property added to request
+
+If a new property is made required in the request body, clients will have no way to set this and the request will fail.
+
+#### Property name has changed
+
+Note that this is implied by the requirement that adding/and removing properties are breaking changes, but in some ways worse, since it leads to the possibility of reusing a property name. Even with an API version change, this change is discouraged because it creates documentation and cognitive challenges.
+
+#### Property type has changed
+
+Property `foo was a boolean in v1 but is changed to a string. A client using the existing API version tries to set it as a boolean, but the service will fail since its now expecting a string. So, the API version must be updated.
+
+#### Property default value has changed
+
+If a property is optional and the service provides a default value, changing that default requires an updated API version.
+
+#### Allowed values for an enum have changed
+Enum “foo” had allowed values as “val1” and “val2” in v1 of API. Now, the values accepted by the service are “val1”, “val2” and “val3”.  The client will fail to de-serialize if “val3” comes back in the response.
+
+#### API has been removed or renamed
+
+V1 of API contract supported `PUT /resourceType1/{resourceType1_name}` but the service no longer supports this method. This scenario should follow the proper Azure API deprecation policy and must be done in an updated API version.
+
+#### Behavior of existing API has changed
+
+There is a functional change in what the API was doing. This is a complex issue because it sometimes is not an easy option to maintain the old behavior even on an old API version. It also is very confusing to end users even when version is update and documented. Behavior changes need to be well justified and discussed on a case-by-case basis.
+
+#### Error contracts have changed
+
+#### Property is made required (from optional)
+
+If property “foo” was optional in the request body of v1 and now it is required, this should result in an API version change. If not changed, clients relying on the older API version will fail if this property is not passed.
+
+#### URL format has changed
+
+Resource parameter names change from `/resourceType1/{resourceType1_name}` to `/resourceType1/{resourceType1_id}`. This will impact code generation.
+
+#### Resource naming rules should not change
+
+This could result in failures which would have earlier succeeded. Even if the rules become less strict, clients relying on earlier name constraints to perform local validation will fail.
+
+### Non-Breaking Changes
+
+The following changes are considered backwards compatible and hence non-breaking.
+
+#### Adding new APIs to an existing service
+
+When a new resource types is added, it does not require API version to be updated for existing types.
+
+#### Bug fixes to existing API
+
+Bug fixes to existing API which don’t fall into one of the above categories of breaking changes as described above are fine.
+
 ### Group versioning in Azure and Azure Stack
 
 Azure Stack allows customers and hosters to deploy their own small versions of Azure and upgrade it at a different pace than Azure. In order to make it possible to write an application or SDK that targets both Azure and Azure Stack, additional versioning policy is necessary. Contact the Azure Stack team for further guidance.
@@ -174,7 +237,7 @@ Azure does not have a single SLA for how long we will support all services. Howe
 
 In practice, we have found this is a bare minimum of how long service endpoints must be supported. Services with any significant usage **SHOULD** expect to run until customers are no longer using them, which can be 10 years or more.
 
-Service teams **MUST** contact the Azure API review board before communicating the deprecation externally to customers and partners (which starts the 12 month clock).  
+Service teams **MUST** contact the Azure API review board before communicating the deprecation externally to customers and partners (which starts the 12 month clock).
 
 Refer to the Azure deprecation policy for more details.
 
