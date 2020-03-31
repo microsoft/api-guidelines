@@ -170,7 +170,7 @@ Disabling a runtime REST API that customers are dependent on of course has the p
 
 ### Policy
 
-Azure does not have a single SLA for how long we will support all services. However, we have published expectations such as [here][6].  The most relevant section of the document:
+Azure does not have a single SLA for how long we will support all services. However, we have published expectations such as [the Azure Cloud Lifecycle FAQ][6].  The most relevant section of the document:
 
 > Azure Cloud Services will support no fewer than the latest two SDK versions for deploying new Cloud Services. Microsoft will provide notification 12 months before retiring a SDK in order to smooth the transition to a supported version.
 
