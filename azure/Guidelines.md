@@ -7,15 +7,15 @@
 
 ## Introduction
 
-The Azure REST API guidelines are an extension of the Microsoft-wide [OneAPI guidelines][1]. Readers of this document are assumed to be also reading the [OneAPI guidelines][1] and be familiar with them.  Azure guidance is a superset of OneAPI guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
+The Azure REST API guidelines are an extension of the [Microsoft API guidelines][1]. Readers of this document are assumed to be also reading the [Microsoft API guidelines][1] and be familiar with them.  Azure guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
 
 #### Asynchronous operations
 
-The OneAPI guidelines for Long Running Operations guidelines are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
+The Microsoft API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
 
 ### Additional guidance for Azure Resource Manager resource providers
 
-Teams building ARM Resource Providers (RPs) MUST follow the additional guidance in the ARM RPC and related documents. These documents can be found here.
+Teams building ARM Resource Providers (RPs) MUST follow the additional guidance in the ARM Resource Provider Contract (RPC) and related documents. These documents can be found here.
 
 * [Azure Resource Manager Wiki][2] (Internal only)
 * [Azure Resource Provider Contract][3]
@@ -24,11 +24,11 @@ ARM RPs are a CEC requirement for Azure Services and ARM RP review is another ma
 
 ## Swagger to describe API
 
-All Services **MUST** provide Swagger that describes their service. Swagger is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services. Swagger is a CEC requirement for Azure Services.
+All Services **MUST** provide as [OpenAPI Specification] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
 
 ## URL structure
 
-In addition to the URL structure guidance in the OneAPI guidelines, Azure has specific guidance about service exposure for multi-tenant services
+In addition to the URL structure guidance in the Microsoft API guidelines, Azure has specific guidance about service exposure for multi-tenant services
 
 ### URL structure
 
@@ -87,11 +87,11 @@ http(s)://<tenant-id>-<service-defined-root>.<service>.azure.net
 
 All Azure APIs **MUST** use explicit versioning.  It's critical that clients can count on services to be stable over time, and it's critical that Azure services can add features and make changes.
 
-The OneAPI guidelines offer a couple of different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes which options are required of Azure services as well as some guidance about deprecation policy.  There is also a section about additional versioning practices necessary to support Azure Stack and Azure compatibility.
+The Microsoft API guidelines offer a couple of different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes which options are required of Azure services as well as some guidance about deprecation policy.  There is also a section about additional versioning practices necessary to support Azure Stack and Azure compatibility.
 
 ### Specifying the version in Azure
 
-The OneAPI guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
+The Microsoft API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
 
 ```
 GET http://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
@@ -235,6 +235,9 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 <!-- Azure ARM Links -->
 [2]: https://aka.ms/armwiki
 [3]: https://github.com/Azure/azure-resource-manager-rpc
+
+<!-- Open API Spec -->
+[OpenAPI Specification]: https://github.com/Azure/adx-documentation-pr/wiki/Getting-started-with-OpenAPI-specifications
 
 <!-- Versioning Guidelines -->
 [6]: http://support.microsoft.com/gp/azure-cloud-lifecycle-faq
