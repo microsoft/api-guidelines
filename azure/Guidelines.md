@@ -20,7 +20,7 @@ Teams building ARM Resource Providers (RPs) MUST follow the additional guidance 
 * [Azure Resource Manager Wiki][2] (Internal only)
 * [Azure Resource Provider Contract][3]
 
-ARM RPs are a CEC requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
+ARM RPs are a Common Engineering Criteria (CEC) requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
 
 ## Use OpenAPI Specification to describe API
 
