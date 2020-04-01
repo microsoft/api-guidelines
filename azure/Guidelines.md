@@ -1,17 +1,17 @@
-# Microsoft Azure REST Design Guidelines
+# Microsoft Azure REST API Guidelines
 
 ## History
 
 | Date | Version | Notes |
-| 2020-Mar-31 | v3.1 | Merge of Azure guidelines with breaking changes update |
+| 2020-Mar-31 | v3.1 | 1st public release of the Azure REST API Guidelines|
 
 ## Introduction
 
-The Azure REST API guidelines are an extension of the [Microsoft API guidelines][1]. Readers of this document are assumed to be also reading the [Microsoft API guidelines][1] and be familiar with them.  Azure guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
+The Azure REST API guidelines are an extension of the [Microsoft REST API guidelines][1]. Readers of this document are assumed to be also reading the [Microsoft REST API guidelines][1] and be familiar with them.  Azure guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details.
 
 #### Asynchronous operations
 
-The Microsoft API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
+The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
 
 ### Additional guidance for Azure Resource Manager resource providers
 
@@ -22,20 +22,20 @@ Teams building ARM Resource Providers (RPs) MUST follow the additional guidance 
 
 ARM RPs are a CEC requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
 
-## Swagger to describe API
+## Use OpenAPI Specification to describe API
 
-All Services **MUST** provide as [OpenAPI Specification] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
+All Services **MUST** provide an [OpenAPI Specification] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
 
 ## URL structure
 
-In addition to the URL structure guidance in the Microsoft API guidelines, Azure has specific guidance about service exposure for multi-tenant services
+In addition to the URL structure guidance in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services
 
 ### URL structure
 
 All services **MUST** expose their service to developers via the following URL pattern:
 
 ```
-http(s)://<service>.azure.net/<unit-of-multi-tenancy>/<service-defined-root>
+https://<service>.azure.net/<unit-of-multi-tenancy>/<service-defined-root>
 ```
 
 Where:
@@ -60,7 +60,7 @@ In addition to the required format above, services **MAY** also choose to expose
 The format of the root of the direct endpoint **MUST** be as follows:
 
 ```
-http(s)://<tenant-id>-<service-defined-root>.<service>.azure.net
+https://<tenant-id>-<service-defined-root>.<service>.azure.net
 ```
 
 1. A request is made to the default end point (GET or HEAD).  For example:
@@ -73,30 +73,28 @@ http(s)://<tenant-id>-<service-defined-root>.<service>.azure.net
 
    ```
    200 OK
-   Content-Location: http://contoso-dot-com-account1.blobstore.azure.net/container1/blob2
+   Content-Location: https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2
    ```
 
    Or, with the GUID format:
 
    ```
    200 OK
-   Content-Location: http://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2
+   Content-Location: https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2
    ```
 
 ## Versioning
 
-All Azure APIs **MUST** use explicit versioning.  It's critical that clients can count on services to be stable over time, and it's critical that Azure services can add features and make changes.
-
-The Microsoft API guidelines offer a couple of different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes which options are required of Azure services as well as some guidance about deprecation policy.  There is also a section about additional versioning practices necessary to support Azure Stack and Azure compatibility.
+All Azure APIs **MUST** use explicit versioning. The Microsoft REST API guidelines offer different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes updates those guidelines to ensure consistency between Azure services across Azure Stack, public Azure, and sovereign clouds.
 
 ### Specifying the version in Azure
 
-The Microsoft API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
+The Microsoft REST API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
 
 ```
-GET http://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
-PUT http://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
-POST http://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
+GET https://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
+PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
+POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 ```
 
 ### Breaking changes in Azure
@@ -230,7 +228,7 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 
 <!-- Links -->
 [1]: https://github.com/microsoft/api-guidelines
-[RFC2557]: http://www.ietf.org/rfc/rfc2557.txt
+[RFC2557]: https://www.ietf.org/rfc/rfc2557.txt
 
 <!-- Azure ARM Links -->
 [2]: https://aka.ms/armwiki
@@ -240,4 +238,4 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 [OpenAPI Specification]: https://github.com/Azure/adx-documentation-pr/wiki/Getting-started-with-OpenAPI-specifications
 
 <!-- Versioning Guidelines -->
-[6]: http://support.microsoft.com/gp/azure-cloud-lifecycle-faq
+[6]: https://support.microsoft.com/gp/azure-cloud-lifecycle-faq
