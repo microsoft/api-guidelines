@@ -20,11 +20,11 @@ Teams building ARM Resource Providers (RPs) MUST follow the additional guidance 
 * [Azure Resource Manager Wiki][2] (Internal only)
 * [Azure Resource Provider Contract][3]
 
-ARM RPs are a Common Engineering Criteria (CEC) requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
+ARM RPs are Azure Fundamentals requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
 
 ## Use an OpenAPI definition to describe API
 
-All Services **MUST** provide an [OpenAPI Definition] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
+All Services **MUST** provide an [OpenAPI Definition] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
 
 ## URL structure
 
@@ -35,12 +35,13 @@ In addition to the URL structure guidance in the Microsoft REST API guidelines, 
 All services **MUST** expose their service to developers via the following URL pattern:
 
 ```
-https://<service>.azure.net/<unit-of-multi-tenancy>/<service-defined-root>
+https://<service>.<cloud-instance>/<unit-of-multi-tenancy>/<service-defined-root>
 ```
 
 Where:
 
 * **service** - the name of the service such as "blobstore", "servicebus", "directory", or "management"
+* **cloud-instance** - the DNS domain name at the root of the cloud instance.  For instance, public Azure uses `azure.net`.  Sovereign clouds uses different domains.
 * **service-defined-root** - the root of the service-specific path, such as "blobcontainer", "myqueue", etc.
 * **unit-of-multi-tenancy** - refers to a globally unique moniker that identifies a unique container in the Azure service that has the following properties:
 
@@ -103,7 +104,7 @@ A breaking change is any change in the API that may cause client or service code
 
 Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Azure services **MUST** update the version number of their API even when adding optional fields. In fact, servers should be as strict as possible. Ignoring a field can result in the API accepting content that containered a typo or an element at the wrong level of nesting. If this missing field changes the semantics (for example, we have seen cases where security settings were misplaced and ignored, leaving the resources more exposed than intended) this can be a huge and hard to discover error.
 
-At a high level, changes to the contract of an API constitute a breaking change. Changes that impact backwards compatibility of an API is also considered a breaking change. Teams MAY define backwards compatibility as their business needs require. For example, Azure defines the addition of a new JSON field in a response to be not backwards compatible. Anything that would violate the Principle of Least Astonishment is considered a breaking change in Azure. Below are some concrete examples of what constitutes a breaking change. In the below breaking change scenarios, the API version must be changed.
+At a high level, changes to the contract of an API constitute a breaking change. Changes that impact backwards compatibility of an API is also considered a breaking change. Anything that would violate the Principle of Least Astonishment is considered a breaking change in Azure. Below are some concrete examples of what constitutes a breaking change. In the below breaking change scenarios, the API version must be changed.
 
 #### Existing property is removed
 
@@ -210,9 +211,9 @@ Disabling a runtime REST API that customers are dependent on of course has the p
 
 ### Policy
 
-Azure does not have a single SLA for how long we will support all services. However, we have published expectations such as [the Azure Cloud Lifecycle FAQ][6].  The most relevant section of the document:
+Azure does not have a single SLA for how long we will support all services. However, we have published expectations such as [the Azure Modern Lifecycle Policy][6].  The most relevant section of the document:
 
-> Azure Cloud Services will support no fewer than the latest two SDK versions for deploying new Cloud Services. Microsoft will provide notification 12 months before retiring a SDK in order to smooth the transition to a supported version.
+> For products governed by the Modern Lifecycle Policy, Microsoft will provide a minimum of 12 months' notification prior to ending support if no successor product or service is offered—excluding free services or preview releases.
 
 In practice, we have found this is a bare minimum of how long service endpoints must be supported. Services with any significant usage **SHOULD** expect to run until customers are no longer using them, which can be 10 years or more.
 
@@ -238,4 +239,4 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 [OpenAPI Specification]: https://github.com/Azure/adx-documentation-pr/wiki/Getting-started-with-OpenAPI-specifications
 
 <!-- Versioning Guidelines -->
-[6]: https://support.microsoft.com/gp/azure-cloud-lifecycle-faq
+[6]: https://support.microsoft.com/en-us/help/30881
