@@ -22,9 +22,9 @@ Teams building ARM Resource Providers (RPs) MUST follow the additional guidance 
 
 ARM RPs are a Common Engineering Criteria (CEC) requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
 
-## Use OpenAPI Specification to describe API
+## Use an OpenAPI definition to describe API
 
-All Services **MUST** provide an [OpenAPI Specification] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
+All Services **MUST** provide an [OpenAPI Definition] that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the usability and discoverability of services.
 
 ## URL structure
 
