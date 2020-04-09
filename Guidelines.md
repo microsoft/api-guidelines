@@ -216,12 +216,12 @@ When a service adds a new API, that API SHOULD be consistent with the other APIs
 So if a service was written against version 1.0 of the guidelines, new APIs added incrementally to the service SHOULD also follow version 1.0. The service can then upgrade to align with the latest version of the guidelines at the service's next major release.
 
 ### 4.3. Requirements language
-The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in [RFC 2119][rfc-2119].
 
 ### 4.4. License
 
 This work is licensed under the Creative Commons Attribution 4.0 International License.
-To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+To view a copy of this license, visit https://creativecommons.org/licenses/by/4.0/ or send a letter to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
 
 ## 5. Taxonomy
 As part of onboarding to Microsoft REST API Guidelines, services MUST comply with the taxonomy defined below.
@@ -259,7 +259,7 @@ To ensure the best possible experience for clients talking to a REST service, cl
 
 ### 6.1. Ignore rule
 For loosely coupled clients where the exact shape of the data is not known before the call, if the server returns something the client wasn't expecting, the client MUST safely ignore it.
-  
+
 Some services MAY add fields to responses without changing versions numbers.
 Services that do so MUST make this clear in their documentation and clients MUST ignore unknown fields.
 
@@ -312,9 +312,9 @@ From the RFC:
 Services that can generate URLs longer than 2,083 characters MUST make accommodations for the clients they wish to support.
 Here are some sources for determining what target clients support:
 
- * [http://stackoverflow.com/a/417184](http://stackoverflow.com/a/417184)
+ * [https://stackoverflow.com/a/417184](https://stackoverflow.com/a/417184)
  * [https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/](https://blogs.msdn.microsoft.com/ieinternals/2014/08/13/url-length-limits/)
- 
+
 Also note that some technology stacks have hard and adjustable URL limits, so keep this in mind as you design your services.
 
 ### 7.3. Canonical identifier
@@ -1096,7 +1096,7 @@ If the delta link is no longer valid, the service MUST respond with _410 Gone_. 
 
 ## 11. JSON standardizations
 ### 11.1. JSON formatting standardization for primitive types
-Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259]. 
+Primitive values MUST be serialized to JSON following the rules of [RFC8259][rfc-8259].
 
 **Important note for 64bit integers:** JavaScript will silently truncate integers larger than `Number.MAX_SAFE_INTEGER` (2^53-1) or numbers smaller than `Number.MIN_SAFE_INTEGER` (-2^53+1). If the service is expected to return integer values outside the range of safe values, strongly consider returning the value as a string in order to maximize interoperability and avoid data loss.
 
@@ -1123,7 +1123,7 @@ The Web has coalesced around the [ECMAScript subset of ISO 8601 date formats (IS
 For those cases, this document defines a JSON serialization format that can be used to unambiguously represent dates in different formats.
 Other serialization formats (such as XML) could be derived from this format.
 
-#### 11.3.1. The `DateLiteral` format 
+#### 11.3.1. The `DateLiteral` format
 Dates represented in JSON are serialized using the following grammar.
 Informally, a `DateValue` is either an ISO 8601-formatted string or a JSON object containing two properties named `kind` and `value` that together define a point in time.
 The following is not a context-free grammar; in particular, the interpretation of `DateValue` depends on the value of `DateKind`, but this minimizes the number of productions required to describe the format.
@@ -1134,7 +1134,7 @@ DateLiteral:
   StructuredDateLiteral
 
 Iso8601Literal:
-  A string literal as defined in http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15. Note that the full grammar for ISO 8601 (such as "basic format" without separators) is not supported.
+  A string literal as defined in https://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15. Note that the full grammar for ISO 8601 (such as "basic format" without separators) is not supported.
   All dates default to UTC unless specified otherwise.
 
 StructuredDateLiteral:
@@ -1543,7 +1543,7 @@ Services MAY choose to delete tombstones after a service defined period of time.
 #### 13.2.7. The typical flow, polling
 - Client invokes a stepwise operation by invoking an action using POST
 - The server MUST indicate the request has been started by responding with a 202 Accepted status code. The response SHOULD include the location header containing a URL that the client should poll for the results after waiting the number of seconds specified in the Retry-After header.
-- Client polls the location until receiving a 200 response with a terminal operation state. 
+- Client polls the location until receiving a 200 response with a terminal operation state.
 
 ##### Example of the typical flow, polling
 Client invokes the restart action:
@@ -1674,7 +1674,7 @@ Operations SHOULD transition to "tombstone" for an additional period of time pri
 
 ## 14. Throttling, Quotas, and Limits
 ### 14.1. Principles
-Services should be as responsive as possible, so as not to block callers. 
+Services should be as responsive as possible, so as not to block callers.
 As a rule of thumb any API call that is expected to take longer than 0.5 seconds in the 99th percentile, should consider using the Long-running Operations pattern for those calls.
 Obviously, services cannot guarantee these response times in the face of potentially unlimited load from callers. Services should therefore design and document call request limits for clients, and respond with appropriate, actionable errors and error messages if these limits are exceeded.
 Services should respond quickly with an error when they are generally overloaded, rather than simply respond slowly.
@@ -1696,7 +1696,7 @@ The Retry-After header is the standard way for responding to clients who are bei
 It is also common, but optional, in the case of limits and quotas (but not overall system load) to respond with header describing the limit that was exceeded.
 However, services across Microsoft and the industry use a wide range of different headers for this purpose.
 We recommend using three headers to describe the limit, the number of calls remaining under the limit, and the time when the limit will reset.
-However, other headers may be appropriate for specific types of limits. In all cases these must be documented. 
+However, other headers may be appropriate for specific types of limits. In all cases these must be documented.
 
 ### 14.4. Service Guidance
 Services should choose time windows as appropriate for the SLAs or business objectives.
@@ -1764,7 +1764,7 @@ See: https://docs.microsoft.com/en-us/azure/architecture/best-practices/transien
 Ideally, 429 and 503 returns are so low cost that even clients that retry immediately can be handled.
 In these cases, if possible the service team should make an effort to contact or fix the client.
 If it is a known partner, a bug or incident should be filed.
-In extreme cases it may be necessary to use DoS style protections such as blocking the caller. 
+In extreme cases it may be necessary to use DoS style protections such as blocking the caller.
 
 ## 15. Push notifications via webhooks
 ### 15.1. Scope
@@ -1823,8 +1823,8 @@ For a per-user subscription, app registration is either manual or automated.
 The call flow for a per-user subscription MUST follow the diagram below.
 It shows the end user making use of one of the service's APIs, and again, the same two things MUST be stored:
 
-1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope).   
-2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.  
+1. The service MUST store the end user's act of consent to receiving notifications from this specific application (typically a background usage OAUTH scope).
+2. The subscribing application MUST store the end user's tokens in order to call back for details once notified of changes.
 
 In this case, the subscription is set up programmatically using the end-user's token from the subscribing application.
 The app MUST store the ID of the registered subscription alongside the user tokens.
@@ -2208,13 +2208,13 @@ Service owners adding such terms SHOULD propose additions to this document.
 | |
 |------------- |
  attendees     |
- body          |  
+ body          |
  createdDateTime |
- childCount    |  
- children      |  
- contentUrl    |  
- country       |  
- createdBy     |  
+ childCount    |
+ children      |
+ contentUrl    |
+ country       |
+ createdBy     |
  displayName   |
  errorUrl      |
  eTag          |
@@ -2222,16 +2222,16 @@ Service owners adding such terms SHOULD propose additions to this document.
  expirationDateTime |
  givenName     |
  jobTitle      |
- kind          |  
+ kind          |
  id            |
  lastModifiedDateTime |
  location      |
  memberOf      |
  message       |
- name          |  
+ name          |
  owner         |
- people        |  
- person        |  
+ people        |
+ person        |
  postalCode    |
  photo         |
  preferredLanguage |
@@ -2368,35 +2368,36 @@ note right of App Server: Update status and cache new "since" token
 === End Text ===
 ```
 [fielding]: https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm
-[IANA-headers]: http://www.iana.org/assignments/message-headers/message-headers.xhtml
+[IANA-headers]: https://www.iana.org/assignments/message-headers/message-headers.xhtml
+[rfc-2119]: https://tools.ietf.org/html/rfc2119
 [rfc7231-7-1-1-1]: https://tools.ietf.org/html/rfc7231#section-7.1.1.1
 [rfc-7230-3-1-1]: https://tools.ietf.org/html/rfc7230#section-3.1.1
 [rfc-7231]: https://tools.ietf.org/html/rfc7231
-[rest-in-practice]: http://www.amazon.com/REST-Practice-Hypermedia-Systems-Architecture/dp/0596805829/
-[rest-on-wikipedia]: http://en.wikipedia.org/wiki/Representational_state_transfer
-[rfc-5789]: http://tools.ietf.org/html/rfc5789
-[rfc-5988]: http://tools.ietf.org/html/rfc5988
+[rest-in-practice]: https://www.amazon.com/REST-Practice-Hypermedia-Systems-Architecture/dp/0596805829/
+[rest-on-wikipedia]: https://en.wikipedia.org/wiki/Representational_state_transfer
+[rfc-5789]: https://tools.ietf.org/html/rfc5789
+[rfc-5988]: https://tools.ietf.org/html/rfc5988
 [rfc-3339]: https://tools.ietf.org/html/rfc3339
 [rfc-5322-3-3]: https://tools.ietf.org/html/rfc5322#section-3.3
-[cors-preflight]: http://www.w3.org/TR/cors/#resource-preflight-requests
-[rfc-3864]: http://www.ietf.org/rfc/rfc3864.txt
-[odata-json-annotations]: http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Instance_Annotations
-[cors]: http://www.w3.org/TR/access-control/
-[cors-user-credentials]: http://www.w3.org/TR/access-control/#user-credentials
-[cors-simple-headers]: http://www.w3.org/TR/access-control/#simple-header
+[cors-preflight]: https://www.w3.org/TR/cors/#resource-preflight-requests
+[rfc-3864]: https://tools.ietf.org/html/rfc3864
+[odata-json-annotations]: https://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Instance_Annotations
+[cors]: https://www.w3.org/TR/access-control/
+[cors-user-credentials]: https://www.w3.org/TR/access-control/#user-credentials
+[cors-simple-headers]: https://www.w3.org/TR/access-control/#simple-header
 [rfc-4627]: https://tools.ietf.org/html/rfc4627
-[iso-8601]: http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
+[iso-8601]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.15
 [clr-time]: https://msdn.microsoft.com/en-us/library/System.DateTime(v=vs.110).aspx
-[ecmascript-time]: http://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.1
+[ecmascript-time]: https://www.ecma-international.org/ecma-262/5.1/#sec-15.9.1.1
 [ole-date]: https://docs.microsoft.com/en-us/windows/desktop/api/oleauto/nf-oleauto-varianttimetosystemtime
 [ticks-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
 [unix-time]: https://msdn.microsoft.com/en-us/library/1f4c8f33.aspx
 [windows-time]: https://msdn.microsoft.com/en-us/library/windows/desktop/ms724290(v=vs.85).aspx
-[excel-time]: http://support.microsoft.com/kb/214326?wa=wsignin1.0
-[wikipedia-iso8601-durations]: http://en.wikipedia.org/wiki/ISO_8601#Durations
-[wikipedia-iso8601-intervals]: http://en.wikipedia.org/wiki/ISO_8601#Time_intervals
-[wikipedia-iso8601-repeatingintervals]: http://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals
-[principle-of-least-astonishment]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
-[odata-breaking-changes]: http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209
-[websequencediagram-firehose-subscription-setup]: http://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDogTWFudWFsAIFzEQoKCgCDAgo8LS0-AIIqCiA6IExvZ2luIGludG8Agj8JAII1ECBVWCAKACoKLT4gKwCCWBM6AIQGBU5hbWUgZXRjLgCDFQ4AGxJDb25maXJtAIEBCEFjY2VzcyBUb2tlbgoKAIM3EyAtPiAtAINkCQBnBklEAIEMCwCBVQUAhQIMAIR3CmNvcGllcwArCACCIHAAhHMMAIMKDwCDABg6IHdlYmhvb2sgcgCCeg4AgnUSAIVQDToAhXYHZXIAgwgGAIcTBgBECVVSTCwgU2NvcGUAhzIGSUQKTgCGPQwAhhwNIACDBh4AHhEAgxEPbgCBagwAgxwNAIMaDiAAgx0MbWF5IGNvcHkALREAhVtqAIZHB0F1dGhvcml6AIY7BwCGXQctPiArAIEuDVJlcXVlc3QgYQCFOQZ0byBEQiBwcm90ZWN0ZWQgaW5mb3IAiiQGCgCDBQstPiAtAIctCVJlZGlyZWN0ADYHAGwNIGVuZHBvaW50AIoWBmEADw1yAHYGAIEQDACJVAcASwtlZAAYHgCICAgAMAcAcA4AhGoGAE0FAIEdFmJhY2sgdG8AhF8NaXRoIGNvZGUAghoaaQCBagcAgToHAD0JAII-B3MAPgsAglEHAEsFAIIzDgCBXw0Agn8GdG9rZW5zACcSAI0_BXJpZ2h0IG9mAItpDUNhY2hlIHRoYXQgdGhpcyBVc2VyIElEIHByb3ZpZGVkAINNCwCIZgoAggcJAIN7D3Nwb25zAI0_BwCECgYsIHJlZnJlc2gsIGFuZCBJRACBHAcAgQMPAIYADQCBDAcAgUUGYnkAjFkFIElEAIQkG3R1cm4AhF4MIHRvIGMAjR8FAIwRagCJVw1GbG93AIYqCQCMaQgAgmoKaGFuZ2UAj3YFAIFXBWRhdGEgLSB0eXBpY2FsIHZpYQCQDgVyYWN0aW5nAJAPBgCJQQt2aWEAjnsHCgCPNgogAIhDEACKZw0AkFMFAIkBDwCDDAUAgkYWKwBNCwCHWApjAIEyBQCHRg0AhWUHYWNoAIQeDACEfwVhbmQgInNpbmNlIgCFEQYAkSQOAIR3CgCNfwcAhHQFAIpQEACBUgsAhFAcAII8BWFuZCBuZXcAYRQAhFUTOiBVcGRhdGUgc3RhdHUAgSkGAIFDBQAxEwoKCg&s=mscgen
-[websequencediagram-user-subscription-setup]: http://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDoAgWwRCgphbHQAgyUIAIEHBiByABQMICAAgxsLPC0tPgCDTws6IENvbmZpZ3VyZQogIACDaAsgLT4gKwCCWBMAegZOYW1lIGV0Yy4AhAgFAIMaDQAfEgBdBXJtAIQ_BUFjY2VzcyBUb2tlAIETBgCDOxIgLT4gLQCBFgxBcHAgSUQAhHwIY3JldACBGxAtPgCFFgsgOiBFbWJlZAAkFGVsc2UgTWFudWFsAIIEJACEbQkgOiBMb2dpbiBpbnRvAIUBCQCBKRFVWACGGAUALQoAgh8mAIIZKwCBCAcAgjoNAIIsHACGLwkAgj8IAIESDgCECAYAh1ELAIdFCmNvcGllcwAuCGVuZACEeGoAhWQHQXV0aG9yaXoAhV8HAIV6By0-ICsAg2ANUmVxdWVzdCBhAIRVBnRvIERCIHByb3RlY3RlZCBpbmZvcgCJQQYKAIQaCy0-IC0AhkoJUmVkaXJlY3QANgcAbA0gZW5kcG9pbnQAiTMGYQAPDXIAdgYAgRAMAIhxBwBLC2VkABgeAIRjCAAwB0EAcQxVWAoASQgAgRwWYmFjayB0bwCFdAwAilwFY29kZQCCGRppAIFpBwCBOQcAPQkAgj0HcwA-CwCCUAcASwUAgjIOAIFeDQCCfgZ0b2tlbnMAJxIAjFsFcmlnaHQgb2YAiwUNQ2FjaGUgdGhhdCB0aGlzIFVzZXIgSUQgcHJvdmlkZWQAg0wLAIU6BwCCBAwAg3oPc3BvbnMAjFsHAIQJBiwgcmVmcmVzaCwgYW5kIElEAIEcBwCBAw8AiDENAIEMBwCBRQZieQCLdQUgSUQAhCMbdHVybgCEXQwgdG8gYwCMOwUKCgCLL2oAjXUMAIwTDwCPNQotPisAjhwQOgCORQdlcgCMVwYAg3YIZWJob29rIFVSTCwgU2NvcGUAkAEGSUQAjwoOAI5rDSAAi2UKAINFBQCLYw0AHBEAgzUOOiBuAIE2DABgCACDCB1oZQCBaQ5JRACDYwUAahIAghB4RmxvdwCJMwkAjE0IAIV0CmhhbmdlAJIcBQCEYQVkYXRhIC0gdHlwaWNhbCB2aWEAkjQFcmFjdGluZwCSNQYAjV8LdmlhAJEhBwoAkVwKIACNfhAAhAsNAJJ5BQCCWQ8AhhYFAIVQFisATQsAimEKYwCBMgUAik8NAIhvB2FjaACHKAwAiAkFYW5kICJzaW5jZSIAiBsGAJNKDgCIAQoAhB0cAIFSCwCHWhwAgjwFYW5kIG5ldwBhFACHXxM6IFVwZGF0ZSBzdGF0dQCBKQYAgUMFADETCgoK&s=mscgen
+[excel-time]: https://support.microsoft.com/kb/214326?wa=wsignin1.0
+[wikipedia-iso8601-durations]: https://en.wikipedia.org/wiki/ISO_8601#Durations
+[wikipedia-iso8601-intervals]: https://en.wikipedia.org/wiki/ISO_8601#Time_intervals
+[wikipedia-iso8601-repeatingintervals]: https://en.wikipedia.org/wiki/ISO_8601#Repeating_intervals
+[principle-of-least-astonishment]: https://en.wikipedia.org/wiki/Principle_of_least_astonishment
+[odata-breaking-changes]: https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209
+[websequencediagram-firehose-subscription-setup]: https://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDogTWFudWFsAIFzEQoKCgCDAgo8LS0-AIIqCiA6IExvZ2luIGludG8Agj8JAII1ECBVWCAKACoKLT4gKwCCWBM6AIQGBU5hbWUgZXRjLgCDFQ4AGxJDb25maXJtAIEBCEFjY2VzcyBUb2tlbgoKAIM3EyAtPiAtAINkCQBnBklEAIEMCwCBVQUAhQIMAIR3CmNvcGllcwArCACCIHAAhHMMAIMKDwCDABg6IHdlYmhvb2sgcgCCeg4AgnUSAIVQDToAhXYHZXIAgwgGAIcTBgBECVVSTCwgU2NvcGUAhzIGSUQKTgCGPQwAhhwNIACDBh4AHhEAgxEPbgCBagwAgxwNAIMaDiAAgx0MbWF5IGNvcHkALREAhVtqAIZHB0F1dGhvcml6AIY7BwCGXQctPiArAIEuDVJlcXVlc3QgYQCFOQZ0byBEQiBwcm90ZWN0ZWQgaW5mb3IAiiQGCgCDBQstPiAtAIctCVJlZGlyZWN0ADYHAGwNIGVuZHBvaW50AIoWBmEADw1yAHYGAIEQDACJVAcASwtlZAAYHgCICAgAMAcAcA4AhGoGAE0FAIEdFmJhY2sgdG8AhF8NaXRoIGNvZGUAghoaaQCBagcAgToHAD0JAII-B3MAPgsAglEHAEsFAIIzDgCBXw0Agn8GdG9rZW5zACcSAI0_BXJpZ2h0IG9mAItpDUNhY2hlIHRoYXQgdGhpcyBVc2VyIElEIHByb3ZpZGVkAINNCwCIZgoAggcJAIN7D3Nwb25zAI0_BwCECgYsIHJlZnJlc2gsIGFuZCBJRACBHAcAgQMPAIYADQCBDAcAgUUGYnkAjFkFIElEAIQkG3R1cm4AhF4MIHRvIGMAjR8FAIwRagCJVw1GbG93AIYqCQCMaQgAgmoKaGFuZ2UAj3YFAIFXBWRhdGEgLSB0eXBpY2FsIHZpYQCQDgVyYWN0aW5nAJAPBgCJQQt2aWEAjnsHCgCPNgogAIhDEACKZw0AkFMFAIkBDwCDDAUAgkYWKwBNCwCHWApjAIEyBQCHRg0AhWUHYWNoAIQeDACEfwVhbmQgInNpbmNlIgCFEQYAkSQOAIR3CgCNfwcAhHQFAIpQEACBUgsAhFAcAII8BWFuZCBuZXcAYRQAhFUTOiBVcGRhdGUgc3RhdHUAgSkGAIFDBQAxEwoKCg&s=mscgen
+[websequencediagram-user-subscription-setup]: https://www.websequencediagrams.com/cgi-bin/cdraw?lz=bm90ZSBvdmVyIERldmVsb3BlciwgQXV0b21hdGlvbiwgQXBwIFNlcnZlcjogCiAgICAgQW4AEAUAJwkgbGlrZSBNb3ZpZU1ha2VyACAGV2FudHMgdG8gaW50ZWdyYXRlIHdpdGggcHJpbWFyeSBzZXJ2aWNlADcGRHJvcGJveAplbmQgbm90ZQoAgQwLQiBQb3J0YWwsIERCAIEJBVJlZ2lzdHIAgRkHREIgTm90aWZpYwCBLAVzACEGdXRoACsFUwBgBjogVGhlAF0eAIF_CkNsaWVudAAtBmVuZCB1c2VycycgYnJvd3NlciBvciBpbnN0YWxsZWQgYXBwCgCBIQwAgiQgAIFABQCBIS8AgQoGIDoAgWwRCgphbHQAgyUIAIEHBiByABQMICAAgxsLPC0tPgCDTws6IENvbmZpZ3VyZQogIACDaAsgLT4gKwCCWBMAegZOYW1lIGV0Yy4AhAgFAIMaDQAfEgBdBXJtAIQ_BUFjY2VzcyBUb2tlAIETBgCDOxIgLT4gLQCBFgxBcHAgSUQAhHwIY3JldACBGxAtPgCFFgsgOiBFbWJlZAAkFGVsc2UgTWFudWFsAIIEJACEbQkgOiBMb2dpbiBpbnRvAIUBCQCBKRFVWACGGAUALQoAgh8mAIIZKwCBCAcAgjoNAIIsHACGLwkAgj8IAIESDgCECAYAh1ELAIdFCmNvcGllcwAuCGVuZACEeGoAhWQHQXV0aG9yaXoAhV8HAIV6By0-ICsAg2ANUmVxdWVzdCBhAIRVBnRvIERCIHByb3RlY3RlZCBpbmZvcgCJQQYKAIQaCy0-IC0AhkoJUmVkaXJlY3QANgcAbA0gZW5kcG9pbnQAiTMGYQAPDXIAdgYAgRAMAIhxBwBLC2VkABgeAIRjCAAwB0EAcQxVWAoASQgAgRwWYmFjayB0bwCFdAwAilwFY29kZQCCGRppAIFpBwCBOQcAPQkAgj0HcwA-CwCCUAcASwUAgjIOAIFeDQCCfgZ0b2tlbnMAJxIAjFsFcmlnaHQgb2YAiwUNQ2FjaGUgdGhhdCB0aGlzIFVzZXIgSUQgcHJvdmlkZWQAg0wLAIU6BwCCBAwAg3oPc3BvbnMAjFsHAIQJBiwgcmVmcmVzaCwgYW5kIElEAIEcBwCBAw8AiDENAIEMBwCBRQZieQCLdQUgSUQAhCMbdHVybgCEXQwgdG8gYwCMOwUKCgCLL2oAjXUMAIwTDwCPNQotPisAjhwQOgCORQdlcgCMVwYAg3YIZWJob29rIFVSTCwgU2NvcGUAkAEGSUQAjwoOAI5rDSAAi2UKAINFBQCLYw0AHBEAgzUOOiBuAIE2DABgCACDCB1oZQCBaQ5JRACDYwUAahIAghB4RmxvdwCJMwkAjE0IAIV0CmhhbmdlAJIcBQCEYQVkYXRhIC0gdHlwaWNhbCB2aWEAkjQFcmFjdGluZwCSNQYAjV8LdmlhAJEhBwoAkVwKIACNfhAAhAsNAJJ5BQCCWQ8AhhYFAIVQFisATQsAimEKYwCBMgUAik8NAIhvB2FjaACHKAwAiAkFYW5kICJzaW5jZSIAiBsGAJNKDgCIAQoAhB0cAIFSCwCHWhwAgjwFYW5kIG5ldwBhFACHXxM6IFVwZGF0ZSBzdGF0dQCBKQYAgUMFADETCgoK&s=mscgen
