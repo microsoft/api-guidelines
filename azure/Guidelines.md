@@ -94,74 +94,47 @@ PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
 POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 ```
 
-### Breaking changes in Azure
+### Breaking changes
 
-A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example).
+A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. 
 
-Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Azure services **MUST** update the version number of their API even when adding optional fields. In fact, servers should be as strict as possible. Ignoring a field can result in the API accepting content that containered a typo or an element at the wrong level of nesting. If this missing field changes the semantics (for example, we have seen cases where security settings were misplaced and ignored, leaving the resources more exposed than intended) this can be a huge and hard to discover error.
+Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
 
-At a high level, changes to the contract of an API constitute a breaking change. Changes that impact backwards compatibility of an API is also considered a breaking change. Anything that would violate the Principle of Least Astonishment is considered a breaking change in Azure. Below are some concrete examples of what constitutes a breaking change. In the below breaking change scenarios, the API version must be changed.
+There are three reasons why a service may issue a breaking change:
 
-#### Existing property is removed
+1. To remove a security vulnerability.
+2. To comply with regulatory requirements.
+3. To deprecate a feature of the service.
 
-If a property called `foo` that was present in v1 of the API needs to be removed, it must be done in a newer API version.
+In each case, prior approval of the Azure REST API review board is required.  In the case of deprecation, follow the API deprecation policy (below).  If the service is using SemVer for versioning, breaking changes constitute a major version change.
 
-#### New property added to response
+#### Examples of breaking changes
 
-If a new property/field is added to the response of an API, the GET-PUT pipeline will be broken. Consider the case where a customer updates the value of a new property "A" from the Azure portal. Another customer does a GET of this resource using the SDK. The SDK will ignore the property since it does not understand it. From the SDK, the customer does a PUT using the model that was returned from the GET. This will overwrite the change made by the first customer from the portal.
+At a high level, any change to the contract of an API constitutes a breaking change. The following is a non-exhaustive list of breaking changes:
 
-#### New required property added to request
+* An existing property is removed.
+* A new property is added to an existing response.
+* A new required property is added to an existing request.
+* A property name is changed.
+* A property type is changed.
+* The default value of a property is changed.
+* The allowed values for an enum is changed.
+* An API is removed.
+* An API is removed.
+* The behavior of an existing API is changed.
+* The error contract has changed.
+* A property is made required (from optional)
+* The URL format is changed.
+* Resource naming rules have changed.
 
-If a new property is made required in the request body, clients will have no way to set this and the request will fail.
+#### Examples of non-breaking changes
 
-#### Property name has changed
+Not all changes are breaking.  The following changes are considered backwards compatible and hence non-breaking.
 
-Note that this is implied by the requirement that adding/and removing properties are breaking changes, but in some ways worse, since it leads to the possibility of reusing a property name. Even with an API version change, this change is discouraged because it creates documentation and cognitive challenges.
+* Adding a new API to an existing service.
+* Changing a property from required to optional.
 
-#### Property type has changed
-
-Property `foo was a boolean in v1 but is changed to a string. A client using the existing API version tries to set it as a boolean, but the service will fail since its now expecting a string. So, the API version must be updated.
-
-#### Property default value has changed
-
-If a property is optional and the service provides a default value, changing that default requires an updated API version.
-
-#### Allowed values for an enum have changed
-Enum “foo” had allowed values as “val1” and “val2” in v1 of API. Now, the values accepted by the service are “val1”, “val2” and “val3”.  The client will fail to de-serialize if “val3” comes back in the response.
-
-#### API has been removed or renamed
-
-V1 of API contract supported `PUT /resourceType1/{resourceType1_name}` but the service no longer supports this method. This scenario should follow the proper Azure API deprecation policy and must be done in an updated API version.
-
-#### Behavior of existing API has changed
-
-There is a functional change in what the API was doing. This is a complex issue because it sometimes is not an easy option to maintain the old behavior even on an old API version. It also is very confusing to end users even when version is update and documented. Behavior changes need to be well justified and discussed on a case-by-case basis.
-
-#### Error contracts have changed
-
-#### Property is made required (from optional)
-
-If property “foo” was optional in the request body of v1 and now it is required, this should result in an API version change. If not changed, clients relying on the older API version will fail if this property is not passed.
-
-#### URL format has changed
-
-Resource parameter names change from `/resourceType1/{resourceType1_name}` to `/resourceType1/{resourceType1_id}`. This will impact code generation.
-
-#### Resource naming rules should not change
-
-This could result in failures which would have earlier succeeded. Even if the rules become less strict, clients relying on earlier name constraints to perform local validation will fail.
-
-### Non-Breaking Changes
-
-The following changes are considered backwards compatible and hence non-breaking.
-
-#### Adding new APIs to an existing service
-
-When a new resource types is added, it does not require API version to be updated for existing types.
-
-#### Bug fixes to existing API
-
-Bug fixes to existing API which don’t fall into one of the above categories of breaking changes as described above are fine.
+In these cases, a new version number is still required.  If using SemVer, it is appropriate to use a minor version change.
 
 ### Group versioning in Azure and Azure Stack
 
