@@ -26,11 +26,9 @@ All Services **MUST** provide an [OpenAPI Definition] (with [autorest extensions
 
 In addition to the [URL structure guidance](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#71-url-structure) in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services
 
-### URL structure
-
 All services **MUST** expose their service to developers via the following URL pattern:
 
-```
+```text
 https://<service>.<cloud-instance>/<unit-of-multi-tenancy>/<service-defined-root>
 ```
 
@@ -56,26 +54,26 @@ In addition to the required format above, services **MAY** also choose to expose
 
 The format of the root of the direct endpoint **MUST** be as follows:
 
-```
+```text
 https://<tenant-id>-<service-defined-root>.<service>.azure.net
 ```
 
 1. A request is made to the default end point (GET or HEAD).  For example:
 
-   ```
+   ```text
    GET https://blobstore.azure.net/contoso.com/account1/container1/blob2
    ```
 
 2. That request is returned with the `Content-Location` header set to the direct endpoint.  See [RFC2557]:
 
-   ```
+   ```text
    200 OK
    Content-Location: https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2
    ```
 
    Or, with the GUID format:
 
-   ```
+   ```text
    200 OK
    Content-Location: https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2
    ```
@@ -88,7 +86,7 @@ All Azure APIs **MUST** use explicit versioning. The Microsoft REST API guidelin
 
 The Microsoft REST API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
 
-```
+```text
 GET https://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
 PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
 POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
@@ -96,7 +94,7 @@ POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 
 ### Breaking changes
 
-A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. 
+A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced.
 
 Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
 
@@ -115,11 +113,10 @@ At a high level, any change to the contract of an API constitutes a breaking cha
 * An existing property is removed.
 * A new property is added to an existing response.
 * A new required property is added to an existing request.
-* A property name is changed.
+* A property name is changed (including case changes).
 * A property type is changed.
 * The default value of a property is changed.
 * The allowed values for an enum is changed.
-* An API is removed.
 * An API is removed.
 * The behavior of an existing API is changed.
 * The error contract has changed.
@@ -158,14 +155,14 @@ Azure services **SHOULD** support API version discovery.  If they support it:
 
 Example request to discover versions (blob storage container list API):
 
-```
+```text
 OPTIONS /?comp=list HTTP/1.1
 host: accountname.blob.core.azure.net
 ```
 
 Example response:
 
-```
+```text
 200 OK
 api-supported-versions: 2011-08,2012-02,1.1,2.0
 api-deprecated-versions: 2009-04,1.0
