@@ -92,11 +92,11 @@ PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
 POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 ```
 
-### Breaking changes
-
-A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced.
+### API Changes that require a version change
 
 Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
+
+A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced.
 
 There are three reasons why a service may issue a breaking change:
 
