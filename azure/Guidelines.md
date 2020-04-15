@@ -128,8 +128,9 @@ At a high level, any change to the contract of an API constitutes a breaking cha
 
 Not all changes are breaking.  The following changes are considered backwards compatible and hence non-breaking.
 
-* Adding a new API to an existing service.
-* Changing a property from required to optional.
+* A new API is added.
+* An optional property is added to an existing request.
+* A property is changed from required to optional.
 
 In these cases, a new version number is still required.  If using SemVer, it is appropriate to use a minor version change.
 
