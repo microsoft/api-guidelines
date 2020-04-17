@@ -1700,7 +1700,7 @@ However, other headers may be appropriate for specific types of limits. In all c
 
 ### 14.4. Service Guidance
 Services should choose time windows as appropriate for the SLAs or business objectives.
-In the case of Quotas, the Retry-After time and time window may be very long (hours, days, weeks, even months. Services use 429 to indicate the specific caller has made too many calls, and 503 to indicate that the service is load shedding but that it is not the caller’s responsibility.
+In the case of Quotas, the Retry-After time and time window may be very long (hours, days, weeks, even months). Services use 429 to indicate the specific caller has made too many calls, and 503 to indicate that the service is load shedding but that it is not the caller’s responsibility.
 
 #### 14.4.1. Responsiveness
 1. Services MUST respond quickly in all circumstances, even when under load.
