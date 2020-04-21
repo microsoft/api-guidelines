@@ -94,45 +94,33 @@ POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
 
 ### API Changes that require a version change
 
-Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
+There are three groups of changes that may happen to an API.
 
-A breaking change is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced.
+1. Changes made to an **EXISTING** API version due to security or compliance reasons.  We shall refer to these types of changes as _Compliance changes_.
+2. Changes made to an API that may cause a client making the API call to fail, such as removal of an endpoint or property or changing the format of the body.  We refer to these types of changes as _Breaking changes_.
+3. Additive changes made to an API that do not cause a client making the API call to fail, such as the addition of a new optional property or a new endpoint.  We refer to these types of changes as _Evolutionary changes_.
 
-There are three reasons why a service may issue a breaking change:
+With the exception of _Compliance changes_ (which are extremely rare), Azure services **MUST** update the version number of their API whenever there is a change to the API, no matter how small.  Customers will "lock the API version" so that their code does not fail when the service introduces new features.  They rely on the fact that an API version is a contract with the services that will never change.
 
-1. To remove a security vulnerability.
-2. To comply with regulatory requirements.
-3. To deprecate a feature of the service.
+A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
 
-In each case, prior approval of the Azure REST API review board is required.  In the case of deprecation, follow the API deprecation policy (below).  If the service is using SemVer for versioning, breaking changes constitute a major version change.
+| Property change        | Input        | Output       |
+|========================|==============|==============|
+| Remove a property      | Breaking     | Breaking     |
+| Add optional property  | Evolutionary | Breaking     |
+| Add required property  | Breaking     | Breaking     |
+| Data type change       | Breaking     | Breaking     |
+| Format change          | Breaking     | Breaking     |
+| Integer widens         | Evolutionary | Breaking     |
+| Integer narrows        | Breaking     | Evolutionary |
+| Add new value to enum  | Evolutionary | Breaking     |
+| Remove value from enum | Breaking     | Breaking     |
+| Optional to required   | Breaking     | Breaking     |
+| Required to optional   | Evolutionary | Breaking     |
 
-#### Examples of breaking changes
+Breaking changes require prior approval of the Azure REST API review board. In the case of deprecation, follow the API deprecation policy (below).  If the service is using SemVer for versioning, breaking changes constitute a major version change.
 
-At a high level, any change to the contract of an API constitutes a breaking change. The following is a non-exhaustive list of breaking changes:
-
-* An existing property is removed.
-* A new property is added to an existing response.
-* A new required property is added to an existing request.
-* A property name is changed (including case changes).
-* A property type is changed.
-* The default value of a property is changed.
-* The allowed values for an enum is changed.
-* An API is removed.
-* The behavior of an existing API is changed.
-* The error contract has changed.
-* A property is made required (from optional)
-* The URL format is changed.
-* Resource naming rules have changed.
-
-#### Examples of non-breaking changes
-
-Not all changes are breaking.  The following changes are considered backwards compatible and hence non-breaking.
-
-* A new API is added.
-* An optional property is added to an existing request.
-* A property is changed from required to optional.
-
-In these cases, a new version number is still required.  If using SemVer, it is appropriate to use a minor version change.
+Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
 ### Group versioning in Azure and Azure Stack
 
