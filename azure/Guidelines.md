@@ -122,6 +122,29 @@ Breaking changes require prior approval of the Azure REST API review board. In t
 
 Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
+#### Handling enum additions
+
+While removing a value from an enum is a breaking change, adding an enum can be handled with an _extensible enum_.  An extensible enum is a string value that has been marked with a special marker - setting `modelAsString` to true within an `x-ms-enum` block.  For example:
+
+```json
+"createdByType": {
+   "type": "string",
+   "description": "The type of identity that created the resource.",
+   "enum": [
+      "User",
+      "Application",
+      "ManagedIdentity",
+      "Key"
+   ],
+   "x-ms-enum": {
+      "name": "createdByType",
+      "modelAsString": true
+   }
+}
+```
+
+If you can foresee that an enum will be extended in the future, model the enum as an extensible enum.
+
 ### Group versioning in Azure and Azure Stack
 
 Azure Stack allows customers and hosters to deploy their own small versions of Azure and upgrade it at a different pace than Azure. In order to make it possible to write an application or SDK that targets both Azure and Azure Stack, additional versioning policy is necessary. Contact the Azure Stack team for further guidance.
