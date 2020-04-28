@@ -122,7 +122,30 @@ Breaking changes require prior approval of the Azure REST API review board. In t
 
 Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
-#### Handling enum additions
+#### Why Azure recommends conservative API versioning
+
+Azure history is replete with anecdates that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
+
+Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
+
+**TODO** Include more specific anecdotes on service churn examples.
+
+There are a few mechanisms that can reduce breaking changes and their effects on our customers.
+
+#### Use PATCH instead of PUT
+
+The HTTP PUT verb is an idemopotent apply operation for the API version being used.  The [Microsoft API Guidelines already recommend the use of PATCH](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#742-patch) for updates.
+
+Consider the following sequence:
+
+* User1 creates a resource with version v2, using a new optional parameter.
+* Later, User2 wants to update the resource using unrelated settings.  Using version v1, User2 issues a GET, does the changes, and then issues a PUT to replace the resource definition.
+
+In this case, the optional parameter is lost because of the replace semantics.  The optional parameter only exists on API version v2, and not on version v1.
+
+Service teams SHOULD prefer and recommend PATCH operations for updating resources.
+
+#### Use extensible enums
 
 While removing a value from an enum is a breaking change, adding an enum can be handled with an _extensible enum_.  An extensible enum is a string value that has been marked with a special marker - setting `modelAsString` to true within an `x-ms-enum` block.  For example:
 
