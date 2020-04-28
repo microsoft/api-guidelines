@@ -230,7 +230,7 @@ Refer to the Azure deprecation policy for more details.
 
 Pre-release and beta APIs are not covered by the normal API deprecation policy. Each team providing a preview API **SHOULD** communicate to customers what the policy is going to be for support and deprecation, even if that policy is “we may remove this at any time”. The Azure REST API Guidelines cover pre-release API versions. To summarize that section, they should be marked with a version tag like `2013-03-21-Preview`.
 
-Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy and process. ** *Customers have suffered downtime because of deprecation of preview APIs* **.
+Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy and process. **Customers have suffered downtime because of deprecation of preview APIs**.
 
 <!-- Links -->
 [1]: https://github.com/microsoft/api-guidelines
