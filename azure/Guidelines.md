@@ -82,6 +82,8 @@ https://<tenant-id>-<service-defined-root>.<service>.azure.net
 
 All Azure APIs **MUST** use explicit versioning. The Microsoft REST API guidelines offer different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes updates those guidelines to ensure consistency between Azure services across Azure Stack, public Azure, and sovereign clouds.
 
+Retirement of an API version must follow the standard [_Azure Global Retirements and Breaking Changes_][7] policies in effect.
+
 ### Specifying the version in Azure
 
 The Microsoft REST API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
@@ -118,7 +120,7 @@ A _breaking change_ is any change in the API that may cause client or service co
 | Optional to required   | Breaking     | Breaking     |
 | Required to optional   | Evolutionary | Breaking     |
 
-Breaking changes require prior approval of the Azure REST API review board and approval through the Azure Global Breaking Change Policy. In the case of deprecation, follow the Azure Global Retirement Policy.  If the service is using SemVer for versioning, breaking changes constitute a major version change.
+Breaking changes require prior approval of the Azure REST API review board and approval through the [Azure Global Breaking Change Policy][7]. In the case of deprecation, follow the [Azure Global Retirement Policy][7].  If the service is using SemVer for versioning, breaking changes constitute a major version change.
 
 Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
@@ -227,3 +229,4 @@ Though services may set their own deprecation policy for pre-release APIs, they 
 
 <!-- Versioning Guidelines -->
 [6]: https://support.microsoft.com/en-us/help/30881
+[7]: http://aka.ms/aprwiki
