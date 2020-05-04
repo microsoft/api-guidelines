@@ -105,7 +105,7 @@ With the exception of _Compliance changes_ (which are extremely rare), Azure ser
 A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
 
 | Property change        | Input        | Output       |
-|========================|==============|==============|
+|:-----------------------|:------------:|:------------:|
 | Remove a property      | Breaking     | Breaking     |
 | Add optional property  | Evolutionary | Breaking     |
 | Add required property  | Breaking     | Breaking     |
