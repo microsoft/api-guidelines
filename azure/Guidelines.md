@@ -128,8 +128,6 @@ Azure history is replete with anecdates that directly relate to API versioning. 
 
 Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
 
-**TODO** Include more specific anecdotes on service churn examples.
-
 There are a few mechanisms that can reduce breaking changes and their effects on our customers.
 
 #### Use PATCH instead of PUT
@@ -210,27 +208,11 @@ Clients that use version discovery are expected to cache version information. Si
 
 The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. Services **SHOULD** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. Clients that call these services **SHOULD** look for both HEADERS and prefer the `Operation-Location` version. Both HEADERS **MUST** return the same value.
 
-## API deprecation policy
+#### Retiring pre-release and beta APIs
 
-Disabling a runtime REST API that customers are dependent on of course has the potential of breaking their applications or services, perhaps even mission critical services.  But inevitably our APIs will become obsolete and the cost of supporting them and operating the servers on which they run will require us to deprecate and shut them down. We have a public policy that describes how we will inform customers that deprecation is coming and help them move their applications off these services and on to their replacements.
+Pre-release and beta APIs are not covered by the Azure Global Retirement and Deprecation Policy. Each team providing a preview API **SHOULD** communicate to customers what the policy is going to be for support and deprecation, even if that policy is “we may remove this at any time”. The Azure REST API Guidelines cover pre-release API versions. To summarize that section, they should be marked with a version tag like `2013-03-21-Preview`.
 
-### Policy
-
-Azure does not have a single SLA for how long we will support all services. However, we have published expectations such as [the Azure Modern Lifecycle Policy][6].  The most relevant section of the document:
-
-> For products governed by the Modern Lifecycle Policy, Microsoft will provide a minimum of 12 months' notification prior to ending support if no successor product or service is offered—excluding free services or preview releases.
-
-In practice, we have found this is a bare minimum of how long service endpoints must be supported. Services with any significant usage **SHOULD** expect to run until customers are no longer using them, which can be 10 years or more.
-
-Service teams **MUST** contact the Azure API review board before communicating the deprecation externally to customers and partners (which starts the 12 month clock).
-
-Refer to the Azure deprecation policy for more details.
-
-#### Special case for pre-release and beta APIs
-
-Pre-release and beta APIs are not covered by the normal API deprecation policy. Each team providing a preview API **SHOULD** communicate to customers what the policy is going to be for support and deprecation, even if that policy is “we may remove this at any time”. The Azure REST API Guidelines cover pre-release API versions. To summarize that section, they should be marked with a version tag like `2013-03-21-Preview`.
-
-Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy and process. **Customers have suffered downtime because of deprecation of preview APIs**.
+Though services may set their own deprecation policy for pre-release APIs, they should monitor these endpoints closely and consider following the normal deprecation policy. **Customers have suffered downtime because of deprecation of preview APIs**.
 
 <!-- Links -->
 [1]: https://github.com/microsoft/api-guidelines
