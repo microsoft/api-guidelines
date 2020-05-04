@@ -124,6 +124,18 @@ Breaking changes require prior approval of the Azure REST API review board and a
 
 Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
+#### Changing the API without changing the version
+
+There are a limited set of situations where changing the API is permissable without a version bump:
+
+1. Adding a new (optional) value to an extensible enum.
+2. Adding a new (optional) query parameter to adjust the output (for example, adding filter options to a list operation).
+3. Adding optional computed read-only output values that are generated based on the new (optional) query parameters.
+
+Do not add computed output values if the computed value can be calculated from other information in the payload.  It unnecessarily expands the payload.
+
+In these cases, review by the Azure REST API Review Board is required.  A version bump is advisable, but not required.
+
 #### Why Azure recommends conservative API versioning
 
 Azure history is replete with anecdates that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
