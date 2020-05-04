@@ -118,7 +118,7 @@ A _breaking change_ is any change in the API that may cause client or service co
 | Optional to required   | Breaking     | Breaking     |
 | Required to optional   | Evolutionary | Breaking     |
 
-Breaking changes require prior approval of the Azure REST API review board. In the case of deprecation, follow the API deprecation policy (below).  If the service is using SemVer for versioning, breaking changes constitute a major version change.
+Breaking changes require prior approval of the Azure REST API review board and approval through the Azure Global Breaking Change Policy. In the case of deprecation, follow the Azure Global Retirement Policy.  If the service is using SemVer for versioning, breaking changes constitute a major version change.
 
 Evolutionary changes do not require prior approval (but still need a version bump).  If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
 
