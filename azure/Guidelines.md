@@ -126,15 +126,26 @@ Evolutionary changes do not require prior approval (but still need a version bum
 
 #### Changing the API without changing the version
 
-There are a limited set of situations where changing the API is permissable without a version bump:
+Because the API version represents a contract that a developer can rely on when generating SDKs to communicate with the service, there are a limited set of situations where changing the API is permissable without a version bump.  The only changes universally allowed:
 
 1. Adding a new (optional) value to an extensible enum.
-2. Adding a new (optional) query parameter to adjust the output (for example, adding filter options to a list operation).
-3. Adding optional computed read-only output values that are generated based on the new (optional) query parameters.
+
+An extensible enum is (in essence) a string.  The values of the extensible enum drive intellisense and documentation, but the values are not considered exhaustive.
+
+If a service is **ONLY** available in the Azure public cloud, then an additional situation can be used to add functionality without changing the version:
+
+1. Adding a new (optional) query parameter to adjust the output (for example, adding filter options to a list operation).
+2. Adding optional computed read-only output values that are generated based on the new (optional) query parameters.
+
+For example, let's say an image service wants to add bounding-box information to the output of an operation.  The service can add a new query parameter `includeBoundingBox=true` and then include the bounding box information within the output only when the new query parameter is specified.  A version bump is recommended, but not required.  If not changing the API version, the service **MUST** update all data centers before the new query parameter is advertised to customers.
+
+> **DO NOT** use this mechanism just to get around the version bump.  Adding such query parameters results in sub-optimal API designs and should only be used for exceptional circumstances.
+
+This functionality is only available for single cloud deployments because the API version specifies the contract with the developer.  Consider, for example, if such a functionality was included in Azure public cloud and not a sovereign cloud.  A developer creating an SDK based on this functionality may see the application work in one cloud but fail when targeting the other despite using the same API version in both cases.  For the purposes of this situation, "other clouds" includes Azure Stack and other deployment mechanisms such as containers for on-premise usage.
 
 Do not add computed output values if the computed value can be calculated from other information in the payload.  It unnecessarily expands the payload.
 
-In these cases, review by the Azure REST API Review Board is required.  A version bump is advisable, but not required.
+All situations where the API definition is changed (irrespective of whether a version change happens or not) **MUST** be reviewed by the Azure REST API Review Board before release.  
 
 #### Why Azure recommends conservative API versioning
 
@@ -144,7 +155,7 @@ Even changes that are evolutionary can cause problems.  For instance, let's say 
 
 There are a few mechanisms that can reduce breaking changes and their effects on our customers.
 
-#### Use PATCH instead of PUT
+#### Use PATCH instead of PUT for updates
 
 The HTTP PUT verb is an idemopotent apply operation for the API version being used.  The [Microsoft API Guidelines already recommend the use of PATCH](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#742-patch) for updates.
 
