@@ -58,7 +58,7 @@ The format of the root of the direct endpoint **MUST** be as follows:
 https://<tenant-id>-<service-defined-root>.<service>.azure.net
 ```
 
-1. A request is made to the default end point (GET or HEAD).  For example:
+1. A request is made to the default endpoint (GET or HEAD).  For example:
 
    ```text
    GET https://blobstore.azure.net/contoso.com/account1/container1/blob2
@@ -80,7 +80,7 @@ https://<tenant-id>-<service-defined-root>.<service>.azure.net
 
 ## Versioning
 
-All Azure APIs **MUST** use explicit versioning. The Microsoft REST API guidelines offer different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes updates those guidelines to ensure consistency between Azure services across Azure Stack, public Azure, and sovereign clouds.
+All Azure APIs **MUST** use explicit versioning. The Microsoft REST API guidelines offer different options on how to specify an API version and guidance on what constitutes a breaking change.  This section of the Azure API guidelines describes updates to those guidelines to ensure consistency between Azure services across Azure Stack, public Azure, and sovereign clouds.
 
 Retirement of an API version must follow the standard [_Azure Global Retirements and Breaking Changes_][7] policies in effect.
 
@@ -189,7 +189,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-If you can foresee that an enum will be extended in the future, model the enum as an extensible enum.
+Always model an enum as a string unleess you are positive that the symbol set will **NEVER** change over time.
 
 ### Group versioning in Azure and Azure Stack
 
@@ -211,7 +211,7 @@ Azure services **SHOULD** support API version discovery.  If they support it:
 6. For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
 7. If using OData and addressing an expanded resource, the HTTP `OPTIONS` request **SHOULD** return the group versions that are supported across the expanded set.
 
-Example request to discover versions (blob storage container list API):
+Example request to discover API versions (blob storage container list API):
 
 ```text
 OPTIONS /?comp=list HTTP/1.1
