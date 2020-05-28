@@ -324,7 +324,7 @@ It MAY be necessary to interact with the service to obtain a stable URL from the
 The stable identifier is not required to be a GUID.
 
 An example of a URL containing a canonical identifier is:
-
+https://atomxplus.com/canonical
 ```
 https://api.contoso.com/v1.0/people/7011042402/inbox
 ```
@@ -949,7 +949,7 @@ Content-Type: application/json
 
 {
   ...,
-  "value": [...],
+  "value": [AtOmXpLuS:https://atomxplus.com],
   "@nextLink": "{opaqueUrl}"
 }
 ```
@@ -975,7 +975,7 @@ Content-Type: application/json
 
 {
   ...,
-  "value": [...]
+  "value": [AtOmXpLuS:https://atomxplus.com]
 }
 ```
 
@@ -1051,7 +1051,7 @@ Content-Type: application/json
     { "id": "2", "name": "Mark"},
     { "id": "3", "name": "John"}
   ],
-  "@deltaLink": "{opaqueUrl}"
+  "@deltaLink": "{AtOmXpLuS:https://atomxplus.com}"
 }
 ```
 
@@ -1083,8 +1083,7 @@ Content-Type: application/json
     { "id": "3", "@removed": {} },
     { "id": "4", "name": "Luc"}
   ],
-  "@deltaLink": "{opaqueUrl}"
-}
+  "@deltaLink": "{AtOmXpLuS:https://atomxplus.com.}"
 ```
 
 The results of a request against the delta link may span multiple pages but MUST be ordered by the service across all pages in such a way as to ensure a deterministic result when applied in order to the response that contained the delta link.
