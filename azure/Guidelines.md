@@ -147,9 +147,26 @@ Do not add computed output values if the computed value can be calculated from o
 
 All situations where the API definition is changed (irrespective of whether a version change happens or not) **MUST** be reviewed by the Azure REST API Review Board before release.  
 
+### Preview Versions
+
+Preview versions of the API can be indicated by adding the suffix `-preview.X` to the end of the API version, where `X` is an incrementing integer.  For example:
+
+* `2020-05-01-preview.1`
+* `1.0-preview.2`
+
+Preview versions are not treated the same way as release versions.  In general, there are two types of previews:
+
+* **Private** previews are released to a known subset of users.  The service team knows how to contact each person within the private preview.  There are no restrictions on changes within a private preview, as long as the service team communicates effectively with their users on what changes are made and when they will be made.
+
+* **Public** previews are released broadly, but contain APIs that may change between previews and may be deleted prior to the final version.  The `X` integer (indicating the revision of the preview) must be incremented for all breaking changes (resulting in a new API version).  Evolutionary changes may be added as needed, as long as the change is communicated broadly.
+
+You should follow the axiom "don't surprise your customers" when deciding whether to increment the preview version, and err on the side of incrementing the preview version.
+
+Preview APIs [follow a different path for deprecation and retirement](https://dev.azure.com/msazure/AzureWiki/_wiki/wikis/AzureWiki.wiki/37683/Retirement-of-Previews), and are not subject to the same guarantees as APIs marked as generally available.  Preview APIs have a life-span of not more than 12 months, after which they must be retired. 
+
 #### Why Azure recommends conservative API versioning
 
-Azure history is replete with anecdates that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
+Azure history is replete with anecdotes that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
 
 Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
 
