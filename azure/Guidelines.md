@@ -2,8 +2,10 @@
 
 ## History
 
-| Date | Version | Notes |
-| 2020-Mar-31 | v3.1 | 1st public release of the Azure REST API Guidelines|
+| Date        | Version | Notes                                               |
+| ----------- | ------- | --------------------------------------------------- |
+| 2020-Mar-31 | v3.1    | 1st public release of the Azure REST API Guidelines |
+| 2020-Jul-31 | v3.2    | Added service advice for initial versions           |
 
 ## Introduction
 
@@ -17,6 +19,33 @@ Teams building ARM Resource Providers (RPs) MUST follow the additional guidance 
 * [Azure Resource Provider Contract][3]
 
 ARM RPs are Azure Fundamentals requirement for Azure Services and ARM RP review is another mandatory review. Some of the guidance overlaps with general API review, but passing one review will generally make the other one go very quickly.
+
+### Advice for new services
+
+Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  
+
+* Think about naming from the context of a **developer experience**.  
+  * Start with the "things" your API manipulates, then think about the operations that a developer needs to do to these "things".
+  * Avoid the use of generic names like "Object", "Job", "Task", "Operation" (for example - the list is not exhaustive).
+  * What happens to the names when the focus of the service expands?  It may be worth starting with a less generic name to avoid a breaking change later on.
+* Use previews to get the shape right.  There are different notification, breaking change, and lifetime requirements on preview API versions.
+  * We recommend a minimum of 2 preview versions prior to your first GA release.  
+  * Your API should be in preview for a minimum of 3 months to gain customer insights on usage.
+
+Breaking changes are a source of concern during initial review.  Without a history, the review process attempts to identify patterns that may result in breaking changes later on.  For instance:
+
+* Return collections with server-side paging, even if your resource does not currently need paging.  This avoids a breaking change when your service expands.
+* Use extensible enumerations unless you are completely sure that the enumeration will never expand.  Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
+* Implement [conditional requests](https://tools.ietf.org/html/rfc7232) early.  This allows you to support concurrency, which tends to be a concern later on.
+* If your API specified access conditions to another resource, think about how to represent that model polymorphically.  For example, you may be using a SQL Azure connection now, but extend to Cosmos DB, Azure Data Lake, or Redis Cache later on.  Think about how you can specify that resource in a non-breaking manner.
+* Be concerned about data widths of numeric types.  Wider data types (e.g. 64-bit vs. 32-bit) are more future-proof.
+* Think about how the interface will be represented by an SDK.  For example, JavaScript can only support numbers up to 2<sup>53</sup>, so relying on the full width of a 64-bit number should be avoided.
+* Implement (and encourage) the use of PATCH for resource modifications.  The PATCH operation should be able to modify any mutable property on the resource.
+
+Additionally, for management APIs:
+
+* Follow the advice in the [Azure Resource Manager Wiki][2] (internal only).
+* Use [RPaaS](https://armwiki.azurewebsites.net/rpaas/overview.html) (internal only) to implement the Azure Resource Provider.
 
 ## API definition
 
