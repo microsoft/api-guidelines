@@ -35,6 +35,8 @@ Developing a new service requires the development of at least 1 (management plan
 Breaking changes are a source of concern during initial review.  Without a history, the review process attempts to identify patterns that may result in breaking changes later on.  For instance:
 
 * Return collections with server-side paging, even if your resource does not currently need paging.  This avoids a breaking change when your service expands.
+* Think about how the developer can reason about the collection organization.  Filtering is a common customer request.
+* Prefer allowing the developer to specify the ID of the resource.  A developer will commonly want to download a specific resource by name.
 * Use extensible enumerations unless you are completely sure that the enumeration will never expand.  Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
 * Implement [conditional requests](https://tools.ietf.org/html/rfc7232) early.  This allows you to support concurrency, which tends to be a concern later on.
 * If your API specified access conditions to another resource, think about how to represent that model polymorphically.  For example, you may be using a SQL Azure connection now, but extend to Cosmos DB, Azure Data Lake, or Redis Cache later on.  Think about how you can specify that resource in a non-breaking manner.
