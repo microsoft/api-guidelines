@@ -32,7 +32,7 @@ Developing a new service requires the development of at least 1 (management plan
   * We recommend a minimum of 2 preview versions prior to your first GA release.  
   * Your API should be in preview for a minimum of 3 months to gain customer insights on usage.
 
-Breaking changes are a source of concern during initial review.  Without a history, the review process attempts to identify patterns that may result in breaking changes later on.  For instance:
+Preventing future breaking changes is a source of concern during initial review.  Without a history, the review process attempts to identify patterns that may result in breaking changes later on.  For instance:
 
 * Return collections with server-side paging, even if your resource does not currently need paging.  This avoids a breaking change when your service expands.
 * Think about how the developer can reason about the collection organization.  Filtering is a common customer request.
