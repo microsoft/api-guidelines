@@ -239,7 +239,9 @@ Service teams SHOULD prefer and recommend PATCH operations for updating resource
 
 #### Use extensible enums
 
-While removing a value from an enum is a breaking change, adding an enum can be handled with an _extensible enum_.  An extensible enum is transmitted over the wire as a string, and contractually evolvable over time.  As a developer, you can consider an extensible enum as a string property with some suggested values that are accepted by the service.  The list of values provided within the extensible enum should not be considered exhaustive.  They are there to provide hints for the user. For example, the values are used to assist with tab completion in command line tools.
+An _extensible enum_ is a string with some suggested values. The suggested values are not exhaustive; they are there simply to provide hints for the user. For example, the values are used to assist with tab completion in command line tools. An extensible enum is transmitted over the wire as a string, and therefore contractually evolvable over time. The string is the explicit contract with customers.
+
+The suggested values accepted/rejected by the service are not part of the contract and can change over time **without** requiring a change to the service's API version. So, customer code should expect that passing a suggested value may, in the future, result in an error. Also, a service may, in the future, never return a suggested value. It is strongly recommended that a service only ever add to the set of suggested values and not remove a previously suggested value thereby producing an error that an existing application never received before. However, there are some scenarios where removing a value is not avoidable; this deprecation of a value indicates a breaking change which requires the service team work through the normal Azure breaking change policies and practices.
 
 Within the swagger file, mark an extensible enum by setting `modelAsString` to true within an `x-ms-enum` block.  For example:
 
