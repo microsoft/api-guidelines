@@ -84,6 +84,7 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
         - [9.8.2. Client-driven paging](#982-client-driven-paging)
         - [9.8.3. Additional considerations](#983-additional-considerations)
     - [9.9. Compound collection operations](#99-compound-collection-operations)
+    - [9.10. Empty Results](#910-empty-results)
 - [10. Delta queries](#10-delta-queries)
     - [10.1. Delta links](#101-delta-links)
     - [10.2. Entity representation](#102-entity-representation)
@@ -998,7 +999,16 @@ If a server paginates an embedded collection, it MUST include additional continu
 
 **Recordset count:** Developers who want to know the full number of records across all pages, MAY include the query parameter _$count=true_ to tell the server to include the count of items in the response.
 
-**Empty Results** When a search is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
+### 9.9. Compound collection operations
+Filtering, Sorting and Pagination operations MAY all be performed against a given collection.
+When these operations are performed together, the evaluation order MUST be:
+
+1. **Filtering**. This includes all range expressions performed as an AND operation.
+2. **Sorting**. The potentially filtered list is sorted according to the sort criteria.
+3. **Pagination**. The materialized paginated view is presented over the filtered, sorted list. This applies to both server-driven pagination and client-driven pagination.
+
+### 9.10. Empty Results
+When a search is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
 In this example the filters supplied by the client resulted in a empty result set. 
 The response body is return as normal and the _value_ attribute is set to a empty collection. 
 A client MAY be expecting metadata attributes like _MaxItems_ based on the format of your responses to similar calls which produced results. 
@@ -1017,15 +1027,6 @@ Content-Type: application/json
   "value": []
 }
 ```
-
-
-### 9.9. Compound collection operations
-Filtering, Sorting and Pagination operations MAY all be performed against a given collection.
-When these operations are performed together, the evaluation order MUST be:
-
-1. **Filtering**. This includes all range expressions performed as an AND operation.
-2. **Sorting**. The potentially filtered list is sorted according to the sort criteria.
-3. **Pagination**. The materialized paginated view is presented over the filtered, sorted list. This applies to both server-driven pagination and client-driven pagination.
 
 ## 10. Delta queries
 Services MAY choose to support delta queries.
