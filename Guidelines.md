@@ -998,6 +998,27 @@ If a server paginates an embedded collection, it MUST include additional continu
 
 **Recordset count:** Developers who want to know the full number of records across all pages, MAY include the query parameter _$count=true_ to tell the server to include the count of items in the response.
 
+**Empty Results** When a search is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
+In this example the filters supplied by the client resulted in a empty result set. 
+The response body is return as normal and the _value_ attribute is set to a empty collection. 
+A client MAY be expecting metadata attributes like _MaxItems_ based on the format of your responses to similar calls which produced results. 
+You SHOULD maintain consistency in your API whenever possible. 
+
+```http
+GET https://api.contoso.com/v1.0/products?$filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  ...,
+  "MaxItems": 0,
+  "value": []
+}
+```
+
+
 ### 9.9. Compound collection operations
 Filtering, Sorting and Pagination operations MAY all be performed against a given collection.
 When these operations are performed together, the evaluation order MUST be:
