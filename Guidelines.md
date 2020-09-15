@@ -1008,10 +1008,10 @@ When these operations are performed together, the evaluation order MUST be:
 3. **Pagination**. The materialized paginated view is presented over the filtered, sorted list. This applies to both server-driven pagination and client-driven pagination.
 
 ### 9.10. Empty Results
-When a search is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
+When a filter is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
 In this example the filters supplied by the client resulted in a empty result set. 
-The response body is return as normal and the _value_ attribute is set to a empty collection. 
-A client MAY be expecting metadata attributes like _MaxItems_ based on the format of your responses to similar calls which produced results. 
+The response body is returned as normal and the _value_ attribute is set to a empty collection. 
+A client MAY be expecting metadata attributes like _maxItems_ based on the format of your responses to similar calls which produced results. 
 You SHOULD maintain consistency in your API whenever possible. 
 
 ```http
@@ -1023,7 +1023,7 @@ Content-Type: application/json
 
 {
   ...,
-  "MaxItems": 0,
+  "maxItems": 0,
   "value": []
 }
 ```
