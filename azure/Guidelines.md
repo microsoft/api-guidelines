@@ -135,9 +135,9 @@ Retirement of an API version must follow the standard [_Azure Global Retirements
 The Microsoft REST API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. Azure services **MUST** use the api-version query parameter. For example:
 
 ```text
-GET https://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
-PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
-POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
+GET https://blobstore.azure.net/foo.com/acct1/c1/blob2?api-version=1.0
+PUT https://blobstore.azure.net/foo.com/acct1/c1/b2?api-version=2014-12-07
+POST https://blobstore.azure.net/foo.com/acct1/c1/b2?api-version=2015-12-07
 ```
 
 ### API Changes that require a version change
