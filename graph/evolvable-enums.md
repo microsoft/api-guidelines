@@ -1,7 +1,4 @@
----
-title: Evolvable enums
-owners: sanonsen, mastaffo
----
+﻿[[_TOC_]]
 
 # Adding Members to Enumerations
 
@@ -13,11 +10,11 @@ An evolvable enumeration contains the sentinel member `unknownFutureValue` after
 
 ```xml
 <EnumType Name="weekday">
-  <EnumMember Name="monday"/>
-  <EnumMember Name="tuesday"/>
+  <Member Name="monday"/>
+  <Member Name="tuesday"/>
   ...
-  <EnumMember Name="sunday"/>
-  <EnumMember Name="unknownFutureValue"/>
+  <Member Name="sunday"/>
+  <Member Name="unknownFutureValue"/>
 </EnumType>
 ```
 
@@ -38,12 +35,12 @@ The new enumeration member `newday` is added after `unknownFutureValue`:
 
 ```xml
 <EnumType Name="weekday">
-  <EnumMember Name="monday"/>
-  <EnumMember Name="tuesday"/>
+  <Member Name="monday"/>
+  <Member Name="tuesday"/>
   ...
-  <EnumMember Name="sunday"/>
-  <EnumMember Name="unknownFutureValue"/>
-  <EnumMember Name="newday"/>     <!-- new value -->
+  <Member Name="sunday"/>
+  <Member Name="unknownFutureValue"/>
+  <Member Name="newday"/>     <!-- new value -->
 </EnumType>
 ```
 

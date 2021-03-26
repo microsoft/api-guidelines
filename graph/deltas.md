@@ -1,7 +1,4 @@
----
-title: Adding support for delta queries
-owner: vibiret
----
+﻿[[_TOC_]]
 
 # Adding support for delta queries
 
@@ -10,9 +7,9 @@ Delta query enables application to discover newly created, updated, or deleted e
 ## Why should you add delta query support for your entities?
 
 There are different scenarios where customers are looking at syncing data to a separate system and/or tracking changes in a non-lossy way (making sure they are not missing any changes). These scenarios include compliance solutions, DLP solutions, apps that need to support offline usage and many more.
-Today, if your API surface does not support delta queries, the only avenue for customers to implement such scenarios is by **continuously query your API surface**. This increases the complexity and cost of such solutions for customers or makes implementing certain scenarios impossible at scale. More importantly, it greatly increases COGS for the Microsoft Graph as well as your API.
+Today, if your API surface does not support delta queries, the only avenue for customers to implement such scenarios is to **continuously query your API surface**. This increases the complexity and cost of such solutions for customers or makes implementing certain scenarios impossible at scale. More importantly, it greatly increases COGS for the Microsoft Graph as well as your API.
 
-The Microsoft Identity Platform (AAD) has implemented delta query support for a majority of it's entities and will continue to deliver more delta query support in an effort to provide a better experience for customers but also to **decrease COGS**.
+The Microsoft Identity Platform (AAD) has implemented delta query support for a majority of its entities and will continue to deliver more delta query support in an effort to provide a better experience for customers but also to **decrease COGS**.
 
 ## How to add support for delta queries in your API
 
@@ -28,12 +25,12 @@ Both the API review process and the API schema modification process will require
 There are a few places where the reference of a new delta query support must be inserted.
 
 1. You need to add your resource to the [table of supported resources](https://docs.microsoft.com/en-us/graph/delta-query-overview#supported-resources)
-1. You need to state that your resource supports delta query in the abstract, eg [orgContact](https://docs.microsoft.com/en-us/graph/api/resources/orgcontact?view=graph-rest-1.0). (\*)
-1. You need to add a delta query support page for the resource in the api reference eg [orgContact delta](https://docs.microsoft.com/en-us/graph/api/orgcontact-delta?view=graph-rest-1.0&tabs=http). (\*)
-1. You need to add reference to any page you added in the coresponding Table Of Content.
-1. You need to add an entry for each version/entity that supports Delta queries to the [changelog](https://docs.microsoft.com/en-us/graph/changelog), [guidance](../../document/guidelines/changelog.html)
+1. You need to state that your resource supports delta query in the abstract, e.g. [orgContact](https://docs.microsoft.com/en-us/graph/api/resources/orgcontact?view=graph-rest-1.0). (\*)
+1. You need to add a delta query support page for the resource in the api reference e.g. [orgContact delta](https://docs.microsoft.com/en-us/graph/api/orgcontact-delta?view=graph-rest-1.0&tabs=http). (\*)
+1. You need to add reference to any page you added in the corresponding Table Of Content.
+1. You need to add an entry for each version/entity that supports Delta queries to the [changelog](https://docs.microsoft.com/en-us/graph/changelog), [guidance](../../Document/Guidelines/Changelog)
 
-> \*: These pages are available for beta and v1.0, make sure you update the beta pages during the public preview of change notifications support for your API. Make sure you update v1.0 pages when support ships for general availability. Updates for different versions can be done in different pull request.
+> **Note**: These pages are available for beta and v1.0, make sure you update the beta pages during the public preview of change notifications support for your API. Make sure you update v1.0 pages when support ships for general availability. Updates for different versions can be done in different pull request.
 
 You can see an example of adding delta query support for both v1.0 and beta to the docs [here](https://github.com/microsoftgraph/microsoft-graph-docs/pull/7451).
 
@@ -43,9 +40,9 @@ Should you require assistance with the documentation process, you can contact th
 
 ### Submit your API for review
 
-Now that you have pre-requisite items, you are ready to submit an [API review](../../review/final-prep.html). Describe that you are adding support for delta query (function) for your API.
+Now that you have prerequisite items, you are ready to submit an [API review](../../Review/Create-an-API-proposal). Describe that you are adding support for delta query (function) for your API.
 
-> Note: if you are adding a net new API with Delta query support on day one, you can reuse the existing API onboarding review so long as the delta query support was included in the initial API review
+> **Note**: if you are adding a net new API with Delta query support on day one, you can reuse the existing API onboarding review so long as the delta query support was included in the initial API review
 
 ### Update the schema metadata
 
@@ -76,9 +73,9 @@ In your entity declaration, you need to add an annotation stating that the entit
 </Annotation>
 ```
 
-You can now submit the schema changes following the [guidance](https://msazure.visualstudio.com/One/_wiki/wikis/Microsoft%20Graph%20Partners/55110/Test-Using-VSTS-Repo).
+You can now submit the schema changes following the [guidance](../../../Rollout/Publish-schema/Test-using-VSTS-repo).
 
-> Note: if you want the delta capability to be hidden from publicly available APIs for testing reasons, you can leverage [Privileged identities](https://msazure.visualstudio.com/One/_wiki/wikis/Microsoft%20Graph%20Partners/55117/Privileged-Api) by setting the `ags:IsHidden="true"` attribute on both the annotation and the function.
+> Note: if you want the delta capability to be hidden from publicly available APIs for testing reasons, you can leverage [Privileged identities](../../../Rollout/Publish-schema/Publish-a-test-endpoint/Privileged-API) by setting the `ags:IsHidden="true"` attribute on both the annotation and the function.
 
 ### Provide required information to support
 
@@ -106,16 +103,15 @@ Some of the information that support will require to add it to their internal do
 You need to implement a query response to the `/microsoft.graph.delta` (also aliased `/delta`) requests that the Aggregator Gateway Service (AGS, the service immediately behind graph.microsoft.com) will forward to your workload's API.
 
 > The delta query endpoint should match the following pattern to avoid requiring code changes for request transformation in the AGS: `/{version}/entity/delta`.
-
 > The delta query endpoint should authorize on the same permissions required to enumerate the entity type.
 
 The [OData ASP.NET](https://www.nuget.org/packages/Microsoft.AspNet.WebApi.OData/) and [OData ASP.NET core](https://www.nuget.org/packages/Microsoft.AspNetCore.OData) provide base controllers, serialization wrappers and more that help you generate the delta query response as shown [in the public documentation](https://docs.microsoft.com/en-us/odata/webapi/deltafeed_support).
 
 ### Update routing information
 
-If your delta query implemention does not live on the same service (FQDN) as your entity's API, you need to update the endpoint routing configuration to account for it. For more information, see [Gradual Config Rollout ACIS Operations](https://msazure.visualstudio.com/One/_wiki/wikis/Microsoft%20Graph%20Partners/40069/Gradual-Config-Rollout-ACIS-Operations).
+If your delta query implementation does not live on the same service (FQDN) as your entity's API, you need to update the endpoint routing configuration to account for it. For more information, see [Gradual Configuration Rollout ACIS Operations](../../../Rollout/Publish-config/Gradual-config-rollout-ACIS-operations)/Gradual-config-rollout-ACIS-operations).
 
-You also need to update your workload configuration to indicate your support the delta sync protocol eg:
+You also need to update your workload configuration to indicate your support the delta sync protocol e.g.:
 
 ```xml
 <ServiceProperties>
@@ -143,7 +139,7 @@ When a nextLink is returned, you must not return a deltaLink. The nextLink will 
 1. Know more changes must be enumerated.
 1. Query the next changes.
 
-When querying the the public nextLink, the AGS will decode the nextLink (value of \$skiptoken query parameter) that was provided by the workload and provide the decoded value as a query parameter named `nextLink` to the workload when forwarding the request.
+When querying the public nextLink, the AGS will relay the nextLink (value of \$skiptoken query parameter) that was provided by the workload and provide the value as a query parameter named `nextLink` to the workload when forwarding the request.
 
 When all changes are enumerated, a @odata.deltaLink property should be attached to the response object.
 
@@ -155,41 +151,39 @@ If a response to a delta query request is returning the last change available at
 
 When a deltalink is returned, you must not return a nextLink. It signals to the client that all the current changes have been enumerated and that they should query back, with the deltaLink, at a later time. The deltaLink will be encoded and prefixed by the public Microsoft Graph URL automatically by the AGS before being returned to the client.
 
-When querying the the public deltaLink, the AGS will decode the deltaLink (value of \$deltatoken query parameter) that was provided by the workload and provide the decoded value as a query parameter named `deltaLink` to the workload when forwarding the request.
+When querying the public deltaLink, the AGS will decode the deltaLink (value of \$deltatoken query parameter) that was provided by the workload and provide the decoded value as a query parameter named `deltaLink` to the workload when forwarding the request.
 
 > Delta links and next links should not exceed 10k characters to avoid routing issues at the AGS level.
 
-### Handle filter, top and select query paremeters
+### Handle filter, top and select query parameters
 
-You should consider how these Odata query parameters may or may not be supported for optimizing the response:
+You should consider how these OData query parameters may or may not be supported for optimizing the response:
 
 - **\$select**: you **must** support the select query parameter to client applications to filter which properties they'd like to get in the response.
 - **\$filter**: you may support the filter query parameter to allow client applications to filter which objects they'd like to get from the response.
 - **\$top**: you may support the top query parameter to allow client applications to customize the number of results they'd like to get per page in the response. (see nextLink)
 - **\$expand**: you may support the expand query parameter to allow client applications to get additional linked entities they get in the response.
-- **\$oderby**: you may support the orderby query parameter to allow client applications to customize the order of the results they get in the response.
-- **\$skip**: you should **not** support the skip query parameter as it's behavior might conflict with with nextLink behavior already madated by delta query.
+- **\$orderby**: you may support the orderby query parameter to allow client applications to customize the order of the results they get in the response.
+- **\$skip**: you should **not** support the skip query parameter as it's behavior might conflict with nextLink behavior already mandated by delta query.
 - **\$count**: you may support the count query parameter to allow clients applications to get the count of items in the response along with the results.
 - **\$search**: you may support the search query parameter to allow clients applications to filter which objects they'd like to get from the response.
-- **\$format**: you should **not** support the format query parameter as the AGS is doing some data parsing and replacement before returing the response to clients applications and supports limited formats (JSON).
+- **\$format**: you should **not** support the format query parameter as the AGS is doing some data parsing and replacement before returning the response to clients applications and supports limited formats (JSON).
 
-> If you are building your API using ASP.NET MVC or ASP.NET core MVC you can leverage the OData library to parse and apply oData query paremeters to the delta feed. Make sure you [configure your service pipeline and add the enablequery tag](https://docs.microsoft.com/en-us/odata/webapi/first-odata-api). The library also allows you to [advertise non-support of some query parameters on object properties](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnet.odata.query.nonfilterableattribute?view=odata-aspnetcore-7.0) via attributes.
-
+> If you are building your API using ASP.NET MVC or ASP.NET core MVC you can leverage the OData library to parse and apply oData query parameters to the delta feed. Make sure you [configure your service pipeline and add the enablequery tag](https://docs.microsoft.com/en-us/odata/webapi/first-odata-api). The library also allows you to [advertise non-support of some query parameters on object properties](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnet.odata.query.nonfilterableattribute?view=odata-aspnetcore-7.0) via attributes.
 > If you want more control over OData query options, you can additionally leverage the [ODataQueryOptions object](https://docs.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/supporting-odata-query-options#invoking-query-options-directly).
-
-> Odata query parameters will be added in the encoded delta/skip token provided to the client application so they do not have to add it to each request. They parameters will be decoded and provided to your workload API by the AGS in any subsequent request. Updating the OData query parameters is not supported after an initial delta/skip token has been generated. The parameters stay consistent over time or the client application must restart the synchronization from scratch with the new parameters (querying delta API with no delta/skip token).
+> OData query parameters will be added in the encoded delta/skip token provided to the client application so they do not have to add it to each request. The parameters will be decoded and provided to your workload API by the AGS in any subsequent request. Updating the OData query parameters is not supported after an initial delta/skip token has been generated. The parameters stay consistent over time or the client application must restart the synchronization from scratch with the new parameters (querying delta API with no delta/skip token).
 
 ## How to get help
 
 Should you need any help during your design and implementation, there are a couple of ways you can reach out:
 
 - [Stackoverflow.com](https://stackoverflow.com): for any question that does not contain confidential, internal or customer related information. Example: questions about ASP.NET core MVC, questions about the OData libraries, etc.
-- [Internal Stackoverflow](https://stackoverflow.microsoft.com): for any question that might contain confidential or internal information. Example: how do I configure the routing in AGS to do...
-- [Teams: Microsoft Graph > Delta query](https://teams.microsoft.com/l/channel/19%3a32dabdaf736a4c9482fc3d96967b2ea8%40thread.skype/Delta%2520query?groupId=6d279915-6f5d-452c-895b-7f4f82038843&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47): for any question that contains details really specific to your implementation, escalation of questions left unanswered on one of the stackoverflow platforms, ...
+- [Internal StackOverflow](https://stackoverflow.microsoft.com): for any question that might contain confidential or internal information. Example: how do I configure the routing in AGS to do...
+- [Teams: Microsoft Graph > Delta query](https://teams.microsoft.com/l/channel/19%3a32dabdaf736a4c9482fc3d96967b2ea8%40thread.skype/Delta%2520query?groupId=6d279915-6f5d-452c-895b-7f4f82038843&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47): for any question that contains details really specific to your implementation, escalation of questions left unanswered on one of the StackOverflow platforms, ...
 
 Ask: please refrain from asking questions directly to the engineering team via either emails, Teams chat etc... This does not scale and it doesn't capture the question (and answer) for other people that might have the same question as you. You should always try to ask a question on stack overflow first before reaching out on the Teams channel.
 
 ## End to end testing
 
-You can use canary and ppe for end to end testing of the implementation as outlined in [the following documentation](https://msazure.visualstudio.com/One/_wiki/wikis/Microsoft%20Graph%20Partners/55110/Test-Using-VSTS-Repo).
+You can use Canary and PPE for end to end testing of the implementation as outlined in [the following documentation](../../../Rollout/Publish-schema/Test-using-VSTS-repo)/Rollout/Final-steps/Test-using-VSTS-repo).
 Private previews can be done by creating a _new version_ of Microsoft Graph as outlined in the documentation previously linked.

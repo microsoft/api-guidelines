@@ -1,15 +1,11 @@
----
-title: "Type namespaces"
-owner: sanonsen, mastaffo
----
+﻿[[_TOC_]]
 
 # Type namespaces
 
 Types should be declared in an appropriate namespace. As with traditional compiled libraries, putting types in namespaces creates a better developer experience.
 
-::: warning
-Type namespaces are not 1:1 with URL segmentation. For guidance on URL segmentation, see [[Singletons]].
-:::
+> Warning<br/>
+> Type namespaces are not 1:1 with URL segmentation. For guidance on URL segmentation, see [[Singletons]].
 
 ## Namespace usage
 
@@ -105,8 +101,8 @@ Graph does not enforce namespace ownership. However, namespaces do have key cont
 
 Types must exist within a namespace, and workloads must explicitly state which namespace a type exists in. This does not mean that a workload must have their own namespace. A workload could continue to use their internal namespace or explicitly state that the types are in `microsoft.graph`.
 
-| Namespace | Owner |
-| --------- | ----- |
+| Namespace                   | Owner                                                            |
+| --------------------------- | ---------------------------------------------------------------- |
 | microsoft.graph.callRecords | [IC3 Records Distribution team](mailto:ic3recdist@microsoft.com) |
 
 ## Extensibility and cross-referencing

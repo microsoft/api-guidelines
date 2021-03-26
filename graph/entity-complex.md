@@ -1,4 +1,4 @@
----
+﻿---
 title: Entity Types and Complex Types
 ---
 
@@ -28,7 +28,7 @@ Complex Types are non-scalar properties of entity types that enable scalar prope
 
 - A complex type doesn't have keys and therefore cannot exist independently.
 - Complex type can only exist as properties of entity types or other complex types.
-- It cannot participate in relationships (see navigation properties) directly.
+- As of 9/2020, navigation properties within complex types are supported in Microsoft Graph (with some limitations, such as: cannot be composed with operations, and structural properties cannot be used within `$expand` paths).
 
 ## Comparison
 
@@ -51,7 +51,7 @@ In the example below, we have added an Author as an Entity Type and Address a Co
       </ComplexType>
 ```
 
-You can see that Address type does not have any sort of key property. Complex types cannot be tracked on their own, so as a property in the Author class, it will be **tracked as part of** an author object. The consequence is that its lifecycle is coupled to the enclosing Entity Type: When the author gets deleted, the address gets deleted as well.
+You can see that Address type does not have any sort of key property. Complex types cannot be tracked on their own, so as a property in the Author class, it will be **tracked as part of** an author object. The consequence is that its life cycle is coupled to the enclosing Entity Type: When the author gets deleted, the address gets deleted as well.
 
 ## Summary
 
@@ -59,4 +59,4 @@ In Summary:
 
 - Both Entity Types and Complex types are named types that declare a list of properties for the objects of that type.
 - An Entity Type always has a key declared whereas a Complex type doesn't.
-- Objects of an Entity Type can be directly addressed via an URL but ComplexTypes are always contained in an EntityType object and can only be addressed through a combination of an Entity address and a property name. (see more at [Navigation Properties and Containment](navigation-containment.md))
+- Objects of an Entity Type can be directly addressed via an URL but ComplexTypes are always contained in an EntityType object and can only be addressed through a combination of an Entity address and a property name.

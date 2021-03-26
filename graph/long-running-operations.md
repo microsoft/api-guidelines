@@ -1,7 +1,4 @@
----
-title: Long-running operations
-owner: mastaffo
----
+﻿[[_TOC_]]
 
 # Long-running operations
 
@@ -10,7 +7,7 @@ Long running operations, sometimes called async operations, tend to mean differe
 1. One or more clients MUST be able to monitor and operate on the same resource at the same time.
 2. The state of the system SHOULD be discoverable and testable at all times. Clients SHOULD be able to determine the system state even if the operation tracking resource is no longer active. The act of querying the state of a long running operation should itself leverage principles of the web. i.e. well defined resources with uniform interface semantics. Clients MAY issue a GET on some resource to determine the state of a long running operation
 3. Long running operations SHOULD work for clients looking to "Fire and Forget" and for clients looking to actively monitor and act upon results.
-4. Cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a cancelled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
+4. Cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a canceled operation, It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
 ## Resource based long running operations (RELO)
 
@@ -122,9 +119,8 @@ Services that provide the `/operations` resource MUST provide GET semantics. GET
 | Running Operations     | Operation Creation Time |
 | Completed Operations   | Operation Creation Time |
 
-::: tip
-**Note:** that "Completed Operations" is a goal state (see below), and may actually be any of several different states such as "successful", "cancelled", "failed" and so forth.
-:::
+> TIP<br/>
+> **Note:** that "Completed Operations" is a goal state (see below), and may actually be any of several different states such as "successful", "canceled", "failed" and so forth.
 
 ### Operation resource
 
@@ -134,9 +130,8 @@ An operation is a user addressable resource that tracks a stepwise long running 
 
 Services MAY support operation cancellation by exposing DELETE on the operation. If supported DELETE operations MUST be idempotent.
 
-::: tip
-**Note:** From an API design perspective, cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a cancelled operation It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
-:::
+> TIP<br/>
+> **Note:** From an API design perspective, cancellation does not explicitly mean rollback. On a per-API defined case it may mean rollback, or compensation, or completion, or partial completion, etc. Following a canceled operation It SHOULD NOT be a client's responsibility to return the service to a consistent state which allows continued service.
 
 Services that do not support operation cancellation MUST return a 405 Method Not Allowed in the event of a DELETE.
 
@@ -147,9 +142,9 @@ Operations MUST support the following states:
 3. Succeeded. Terminal State.
 4. Failed. Terminal State.
 
-Services MAY add additional states, such as "Cancelled" or "Partially Completed". Services that support cancellation MUST sufficiently describe their cancellation such that the state of the system can be accurately determined and any compensating actions may be run.
+Services MAY add additional states, such as "Canceled" or "Partially Completed". Services that support cancellation MUST sufficiently describe their cancellation such that the state of the system can be accurately determined and any compensating actions may be run.
 
-Services that support additional states should consider this list of canonical names and avoid creating new names if possible: Cancelling, Cancelled, Aborting, Aborted, Tombstone, Deleting, Deleted.
+Services that support additional states should consider this list of canonical names and avoid creating new names if possible: Canceling, Canceled, Aborting, Aborted, Tombstone, Deleting, Deleted.
 
 An operation MUST contain, and provide in the GET response, the following information:
 
@@ -321,9 +316,8 @@ Location: http://api.contoso.com/v1.0/operations/123
 Retry-After: 60
 ```
 
-::: tip
-**Note:** The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
-:::
+> TIP<br/>
+> **Note:** The use of the HTTP Date is inconsistent with the use of ISO 8601 Date Format used throughout this document, but is explicitly defined by the HTTP standard in [RFC 7231][rfc-7231-7-1-1-1]. Services SHOULD prefer the integer number of seconds (in decimal) format over the HTTP date format.
 
 ## Retention policy for operation results
 

@@ -1,4 +1,4 @@
----
+﻿---
 title: Adding subtypes
 owner: chrispre
 ---
@@ -15,7 +15,7 @@ Table of Contents
 
 This article discusses the consequences of introducing a new sub-type in the Microsoft Graph schema for a type that are used in collections.
 
-A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes (see [modeling variants](modeling-variants.md)). This allows to model collections of objects that have slightly different behavior. The common behavior is represented in the base type and the variations in a subtype, a concept very familiar from OO programming languages. It is straightforward to add a new subtype to the hierarchy with some consequences to the backwards compatibility as shown below.
+A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes (see [modeling variants](Modeling-variants)). This allows to model collections of objects that have slightly different behavior. The common behavior is represented in the base type and the variations in a subtype, a concept very familiar from OO programming languages. It is straightforward to add a new subtype to the hierarchy with some consequences to the backwards compatibility as shown below.
 
 ## Overview
 

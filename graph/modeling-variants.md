@@ -1,4 +1,4 @@
----
+﻿---
 title: Modeling variants
 owner: chrispre
 ---
@@ -13,7 +13,7 @@ Frequently we encounter situations where a certain piece of data in Microsoft Gr
 
 All these variants have different properties representing the information needed in these cases.
 
-OData and Microsoft Graph offer different ways to model the API and these different variants. We'll describe those here, and list the advantages and disadvantages of each modelling technique.
+OData and Microsoft Graph offer different ways to model the API and these different variants. We'll describe those here, and list the advantages and disadvantages of each modeling technique.
 
 In the remainder of the document we are using the term "variant" instead of "kind", "flavor", "type". "type" is defined by OData and we do not want to presume there has to be a type per variant.
 
@@ -48,13 +48,13 @@ The key here is that for each of these values, some properties are meaningful an
 Below are a few pros and cons to decide which pattern to use.
 
 - In **[hierarchy](#type-hierarchy)**, the interdependencies of properties, i.e. which properties are relevant for which variants, is fully captured in metadata and client code can potentially leverage that to construct and/or validate requests.
-- Introducing new cases in **[hierarchy](#type-hierarchy)** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically). But see the note about [changing sematics](#semantics) below.
+- Introducing new cases in **[hierarchy](#type-hierarchy)** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically). But see the note about [changing semantics](#semantics) below.
 - Introducing new cases/variants in **[facets](#facets)** is straightforward. One needs to be careful since it can introduce situations where previously exactly one of the facets was non-null and now all the old ones are null. For example imagine a new facet "shortcut" is added to the example above where everything was one of folder,file,image,photo. Adding the shortcut facet means that there are now object with all of the previous four are null.
   This is not unlike adding new subtypes in the hierarchy pattern or adding a new type value in the flat pattern.
 - **[hierarchy](#type-hierarchy)** and **[facets](#facets)** (to a slightly lesser degree) are well suited for strongly typed client programming languages. Whereas **[flat](#flat)** is more familiar to developers of less strongly typed languages.
 - **[facets](#facets)** has the potential to model what is typically associated with multiple inheritance (but it is not inheritance so please don’t quote me). Just to illustrate the point and constructing a highly hypothetical scenario, in the OneDrive example, having an item be a folder and a photo is easy to represent.
 - **[facets](#facets)** and **[flat](#flat)** lend to syntactically simpler filter query expression. **[hierarchy](#type-hierarchy)** is more explicit but requires the less well known cast segments in the filter query. For example, if one wants to filter on the importance of a mail in a collection of outlookItems, one first needs to "cast" to mailItem to then filter on the importance property: `$filter=microsoft.graph.mailItem/importance eq 'High'`.
-- **[flat](#flat)** might resemble a structure that that developers are familiar with from on-prem products and their API (e.g. recurrence in Microsoft Graph is modeled after Exchange Server's model). Even though the Graph API can and should abstract from the implementation details this can have benefits in documentation and adoption.
+- **[flat](#flat)** might resemble a structure that developers are familiar with from on-prem products and their API (e.g. recurrence in Microsoft Graph is modeled after Exchange Server's model). Even though the Graph API can and should abstract from the implementation details this can have benefits in documentation and adoption.
 - **[hierarchy](#type-hierarchy)** can become hard to maintain if the base type is quite abstract and the hierarchy is relatively wide. Lets assume a situation where collections are modeled using the base type with many sub-types, but the actual elements of the collection are only ever one or two of the sub-types. When a new subtype gets introduced and the collection(s) quickly contain elements of this new sub-type, client code has to react to these changes. It is important to check if this changes the semantics of the property (actual or assumed). See also [changing semantics](#semantics) below.
 - Even though not frequently used in Microsoft Graph, **[hierarchy](#type-hierarchy)** can be refined by annotating the collections with OData `derived type constraints` (see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/master/vocabularies/Org.OData.Validation.V1.md)). This annotation restricts the values to certain sub-trees of an inheritance hierarchy. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return object of a type that is semantically not suitable.
 
