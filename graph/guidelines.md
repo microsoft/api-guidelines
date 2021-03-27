@@ -167,7 +167,7 @@ The following table of contents links back to primary guidelines where there are
 
 #### 9a.1. Noun Resources
 
-While HTTP defines no constraints on how different resources are related together, it does encourage the use of URL path segment hierarchies to convey a relationship.  In addition to the hierarchy of resources, there are also lifetime relationships between resources, the notions of [singletons, entitySets, entities, complex types and navigation properties](entity-complex.md) make it possible to define a set of lifetime relationships between resources.
+While HTTP defines no constraints on how different resources are related together, it does encourage the use of URL path segment hierarchies to convey a relationship.  In addition to the hierarchy of resources, there are also lifetime relationships between resources, the notions of [singletons, entitySets, entities, complex types and navigation properties](entity-complex) make it possible to define a set of lifetime relationships between resources. The notion of [containment](containment) is important in understanding how lifetime relationships are defined.
 
 #### 9a.2. Verb Resources
 
@@ -175,7 +175,7 @@ Noun-based resources are not always the best fit for meeting the requirements of
 
 #### 9a.3. Resource Modeling
 
-There are a number of principles to be aware of when modeling resources for Microsoft Graph.   [modeling variants](modeling-variants)
+There are a number of principles to be aware of when modeling resources for Microsoft Graph. [Modeling variants](modeling-variants) is important when resources have have a subset of common properties and behavior.  
 
 ### 10. Deltas
 
@@ -189,7 +189,8 @@ The ability to track changes (pull) occuring in the data exposed by Microsoft Gr
 
 ### 11.9. Omitting Properties
 
-blah-blah [Omitting properties](ommitting-properties)
+For scenarios where the server contains business logic that determines if a property value should be returned, or not, to the client, a returned representation can be annotated to indicate where properties are [omitted](ommitting-properties).
+
 ### 13. Long running operations
 
 Long running operations are mostly unchanged. The most significant difference is that instead of using `Operation-Location` as the header to point to the Operation, the use of the standard `Location` header is recommended. In hybrid scenarios, a `Content-Location` header can be used to indicate the URL of the created resource and the 202 response can contain a payload. Details of the diffences are described in detail in the [Long Running Operations](long-running-operations) document.
@@ -201,7 +202,7 @@ The ability to get notified (push) when a change occurs in the data exposed by M
 
 ### 17.10. Type Namespaces
 
-blah blah [type namespaces](type-namespaces)
+Microsoft Graph model types can be declared within a [type namespaces](type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.
 
 ### 18.2. Additional resources
 
