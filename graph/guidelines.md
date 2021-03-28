@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The Graph REST API guidelines are an extension of the [Microsoft REST API guidelines][1]. Readers of this document are assumed to be also reading the [Microsoft REST API guidelines][1] and be familiar with them.  Graph guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Graph-specific guidance and additional details.
+The Graph REST API guidelines are an extension of the [Microsoft REST API guidelines](../guidelines). Readers of this document are assumed to be also reading the [Microsoft REST API guidelines](../guidelines) and be familiar with them.  Graph guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Graph-specific guidance and additional details.
 
-The following table of contents links back to primary guidelines where there are no differences in Graph guidelines.  Where differences exist, the section heading is **bold**.
+The following table of contents links back to the primary guidelines where there are no differences in Graph guidelines.  Where differences exist, the section heading is **bold**.
 
 ## 2. Table of contents
 <!-- TOC depthFrom:2 depthTo:4 orderedList:false updateOnSave:false withLinks:true -->
@@ -167,7 +167,7 @@ The following table of contents links back to primary guidelines where there are
 
 #### 9a.1. Noun Resources
 
-While HTTP defines no constraints on how different resources are related together, it does encourage the use of URL path segment hierarchies to convey a relationship.  In addition to the hierarchy of resources, there are also lifetime relationships between resources, the notions of [singletons, entitySets, entities, complex types and navigation properties](entity-complex) make it possible to define a set of lifetime relationships between resources. The notion of [containment](containment) is important in understanding how lifetime relationships are defined.
+While HTTP defines no constraints on how different resources are related together, it does encourage the use of URL path segment hierarchies to convey a relationship.  In addition to the hierarchy of resources, there are also lifetime relationships between resources, the notions of [singletons, entitySets, entities, complex types and navigation properties](entity-complex) make it possible to define a set of lifetime relationships between resources.
 
 #### 9a.2. Verb Resources
 

@@ -1,9 +1,4 @@
-﻿[[_TOC_]]
-
-# RFC: Omitting properties
-
-> Warning<br/>Review period ends 10/10/2018<br/>
-> <https://github.com/Microsoft/graph-onboarding/pull/2>
+﻿# Omitting properties
 
 There are scenarios where the server contains business logic that determines if a property value should be returned, or not, to the client. Even when the client explicitly requests the property, it may be purposefully omitted from the response by the server. This section provides guidance on how the server should explicitly represent omitted properties in the response.
 

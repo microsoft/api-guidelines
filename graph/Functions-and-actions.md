@@ -1,15 +1,12 @@
-﻿[[_TOC_]]
-
-# Functions and Actions
-
-The [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html), beside many other things, provides a way to describe the structure of the requests and responses of an OData service via the [Common Schema Definition Language](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html) (CSDL).
+﻿# Functions and Actions
 
 ## Functions
 
-The standard [defines](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Function) functions as:
+In Graph APIs, functions are defined as:
+
 >service-defined operations that MUST NOT have observable side effects and MUST return a single instance or collection of instances of any type.
 
-Please see the OData standard page to get more details on functions.
+Functions use HTTP GET method.
 
 ### Example
 
@@ -22,10 +19,10 @@ Please see the OData standard page to get more details on functions.
 
 ## Actions
 
-The standard [defines](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Action) actions as:
+Actions are defined as:
 >service-defined operations that MAY have observable side effects and MAY return a single instance or a collection of instances of any type.
 
-Please see the OData standard for more details on actions.
+Actions use HTTP POST method.
 
 ### Example
 
@@ -45,7 +42,7 @@ Bound actions and functions are invoked on resources matching the type of the bi
 
 ## Overloads
 
-Both actions and functions support overloading, meaning a schema may contain multiple actions or functions with the same name. See OData [standard](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_FunctionOverloads) for more information and rules.
+Both actions and functions support overloading, meaning a schema may contain multiple actions or functions with the same name.
 
 ## Parameters
 
@@ -55,7 +52,7 @@ As Graph only supports bound actions and functions, all must have at least one p
 - The parameter name must be unique within the overload.
 - The parameter must specify a type.
 
-The overload rules as per the OData [standard](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_FunctionOverloads) apply when adding parameters to actions and functions.
+Overloaded functions MUST have the same return type, a unique set of parameter names and a unique ordered set of parameter types.
 
 ### Optional Parameters
 

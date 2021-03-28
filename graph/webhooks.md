@@ -1,6 +1,4 @@
-﻿[[_TOC_]]
-
-# Adding support for Change Notifications
+﻿# Adding support for Change Notifications
 
 Microsoft Graph Change Notifications enables application to subscribe to resource changes happening across Microsoft Graph without having to continuously poll the API for changes. Change notifications can be delivered to the subscriber either via webhooks (the subscriber exposes a notification URL) or via Azure Events Hub (first party only at the moment). For an overview of the general concept, please [refer to the public documentation](https://docs.microsoft.com/en-us/graph/webhooks).
 

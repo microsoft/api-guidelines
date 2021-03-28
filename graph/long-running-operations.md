@@ -1,6 +1,4 @@
-﻿[[_TOC_]]
-
-# Long-running operations
+﻿# Long-running operations
 
 Long running operations, sometimes called async operations, tend to mean different things to different people. This section sets forth guidance around different types of long running operations, and describes the wire protocols and best practices for these types of operations.
 

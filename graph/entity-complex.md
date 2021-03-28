@@ -1,23 +1,19 @@
-﻿---
-title: Entity Types and Complex Types
----
+﻿# Entity Types and Complex Types
 
-# Entity Types and Complex Types
+Microsoft Graph uses entities and complex types as way to describe the structure of the requests and responses of an API.
 
-The [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html), beside many other things, provides a way to describe the structure of the requests and responses of an OData service via the [Common Schema Definition Language](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html) (CSDL).
-
-CSDL defines a few ways to define [types](https://en.wikipedia.org/wiki/Data_type) and the most prominent are Entity Types and Complex Types. These two have some similarities and some differences that we are going to explore in this article.
+Entity Types and Complex Types have some similarities and some differences that we are going to explore in this article.
 
 ## Entity Types
 
-Entity Types are that most common way to define the structure of the requests and responses of an OData service. The standard [defines](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_EntityType):
+Entity Types are that most common way to define the structure of the requests and responses of a Graph service.
 
 > Entity Types are nominal structured types with a key that consists of one or more references to structural properties. An entity type is the template for an entity: any uniquely identifiable record such as a customer or order..
 
 There is three things to note in that (arguably terse) definition:
 
 - By "structured" the standard means that an Entity Type is defined by enumerating its (typed) **properties**.
-- "nominal" just refers to the fact that the type **has a name** (a name in the CSDL schema).
+- "nominal" just refers to the fact that the type **has a name**.
 - And the most important piece in the context of this article is that an Entity Type declares a **key property** and the consequence is that objects of this type can be uniquely identified through this key. In Microsoft Graph that key is currently always the property named "id". The standards allows more variation and Microsoft Graph might also relax this constraint in the future.
 
 How they key is used to identify an object is a bit out of the scope of this document. For now it should suffice to say, that it is used as part of the URL to "name" an individual object. For Example in the URL https://localhost/api/authors/50 (or https://localhost/api/authors(50) ), the 50 is the key of an object.
