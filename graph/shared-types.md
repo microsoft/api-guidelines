@@ -1,6 +1,4 @@
-﻿[[_TOC_]]
-
-# Overview
+﻿# Overview
 
 This topic describes three shared types scenarios:
 

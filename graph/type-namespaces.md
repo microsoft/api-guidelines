@@ -1,6 +1,4 @@
-﻿[[_TOC_]]
-
-# Type namespaces
+﻿# Type namespaces
 
 Types should be declared in an appropriate namespace. As with traditional compiled libraries, putting types in namespaces creates a better developer experience.
 
