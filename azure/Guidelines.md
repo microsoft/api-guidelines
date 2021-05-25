@@ -219,6 +219,9 @@ Exactly Once --> Client Retries & Service Idempotency
 
 ### REST
 
+#### Handling unknown properties or parameters
+This should dovetail nicely into the added guidance on how to deal with "readOnly" values that a client may (incorrectly) supply in a request.
+
 
 
 ### JSON
