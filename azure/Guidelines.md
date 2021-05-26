@@ -28,7 +28,7 @@ TODO: Add/expand section on using these guidelines for building general APIs. MS
 
 The Azure REST API guidelines are an extension of the [Microsoft REST API guidelines][1]. Readers of this document are assumed to be also reading the [Microsoft REST API guidelines][1] and be familiar with them. Azure guidance is a superset of the Microsoft API guidelines and services should follow them *except* where this document outlines specific differences or exceptions to those guidelines. This document does contain additional Azure-specific guidance and additional details. While these guidelines represent and codify many years of experience building high performant, scalable cloud services on Azure, they are generally applicable to all APIs. Technology and software is constantly changing and evolving, and as such, this is intended to be a living document. We welcome and encourage new ideas, input and discussion. 
 
-<span style="color:red">TODO: Add sentence on how to contribute, e.g. PRs, GH discussions, etc. </span>
+<span style="color:red; font-size:large">TODO: Add sentence on how to contribute, e.g. PRs, GH discussions, etc. </span>
 
 Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.
 > A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs. Although the best practices and patterns described in this document apply to all REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. 
@@ -86,7 +86,7 @@ It is important to realize that writing an API is, in many cases, the easist par
 > * __SHOULD NOT__ add APIs for speculative features customers might want
 
 ### Reflect key concepts through naming
-<span style="color:red">TODO: Intro sentence for context </span>
+<span style="color:red; font-size:large">TODO: Intro sentence for context </span>
 
 As you identify the tasks and activities that developers will accomplish using your service, it will be important to develop a vocabulary that intuitively reflects your core concepts. 
  * Start with the "things" your API manipulates, then think about the operations that a developer needs to do to these "things".
@@ -94,7 +94,7 @@ As you identify the tasks and activities that developers will accomplish using y
   * Avoid the use of generic names like "Object", "Job", "Task", "Operation" (for example - the list is not exhaustive).
   * What happens to the names when the focus of the service expands?  It may be worth starting with a less generic name to avoid a breaking change later on.
   * 
-<span style="color:red">TODO: Pull in section from Heath's cognitive doc </span>
+<span style="color:red; font-size:large">TODO: Pull in section from Heath's doc </span>
 
 
 ### Start with your API definition
@@ -111,7 +111,7 @@ You don't build a house without a blueprint. Neither should you build your servi
 > * Service teams __SHOULD__ release and evaluate a minimum of 2 preview versions prior to the first GA release.  
 > * Service teams __SHOULD__ create feedback loops that actively solicit feedback from preview customers.
 
-<span style="color:red">TODO: Provide references on how to run an effective preview </span>
+<span style="color:red; font-size:large">TODO: Provide references on how to run an effective preview </span>
 
 ### Avoid surprises
 A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers. 
@@ -132,7 +132,7 @@ As you build out your service and API, there are a number of decisions that can 
 ** Think about how to represent that model polymorphically. For example, you may be using a SQL Azure connection now, but extend to Cosmos DB, Azure Data Lake, or Redis Cache later on. Think about how you can specify that resource in a non-breaking manner.
 * Implement managed identity access controls for accessing the other resource. Do not accept connection strings as a method of specifying access permissions.
 
-<span style="color:red">TODO: I'd like to be much more prescriptive here. </span>
+<span style="color:red; font-size:large">TODO: I'd like to be much more prescriptive here. </span>
 * Be concerned about data widths of numeric types.  Wider data types (e.g. 64-bit vs. 32-bit) are more future-proof.
 * Think about how the interface will be represented by an SDK.  For example, JavaScript can only support numbers up to 2<sup>53</sup>, so relying on the full width of a 64-bit number should be avoided.
 
@@ -226,54 +226,78 @@ https://<tenant-id>-<service-defined-root>.<service>.azure.net
    ```
 
 
-### HTTP Request / Response
-The HTTP Request / Response pattern will dictate much of how your API behaves.    
+### HTTP Request / Response Pattern
+The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern __SHOULD__ be one of the first implementation decisions you will make. For each request / response, the service: 
 
-> * A service __MUST__ validate all inputs.
-> * For create and upsert operations, a service __SHOULD__ return the same object that was sent to the API.
+> * __MUST__ validate all inputs to a request.
+> * __SHOULD__ return the same object that was sent to the API in the response for all create or upsert operations.
  
+Because beacuse information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values. Service provides __MUST__ use the following table when translating strings: 
 
+Data type | Document string must be
+-------- | -------
+Boolean  | true / false 
+Integer  | -253+1 to +253-1 (limit due to IEEE-754 [RFC8259]())https://datatracker.ietf.org/doc/html/rfc8259) 
+Float    | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format) 
+String   | (Un)quoted?, max length, case-sensitive, multiple delimiter 
+UUID     | {}? casing? hyphens? [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
+Date/Time (Header) | [RFC1123](https://datatracker.ietf.org/doc/html/rfc1123)
+Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) 
+Byte array | Base-64 encoded, max length 
 
+<span style="color:red; font-size:large">TODO: Expand the explanation for numbers. </span>
 
+#### Common Request & Response Headers
+The table below lists the request / response headers most used by Azure services Service providers __SHOULD__ properly handle all headers annotated in *italics*. In addition, each request / response header: 
+> * __MUST__ be specificed using kabob-style-text
+> * __MUST__ be all lowercase
+> * __SHOULD NOT__ use "x-" prefix, unless already existing in production
 
-##### Common Request & Response Headers
 
 Header Key |	Applies to |	Example 
 ------------ | ------------- | -------------
-authorization	 | Request |	Bearer eyJ0...Xd6j (Support Azure Active Directory) 
-x-ms-useragent  |  Request | (see Telemetry)
-traceparent | Request | (see Distributed Tracing)
-tracecontext | Request | (see Distributed Tracing)
+*authorization*	 | Request |	Bearer eyJ0...Xd6j (Support Azure Active Directory) 
+*x-ms-useragent*  |  Request | [see Telemetry](http://TODO:link-goes-here)
+traceparent | Request | [see Distributed Tracing]](http://TODO:link-goes-here)
+tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)
 accept | Request | application/json
 if-match | Request | "67ab43" or * (no quotes) (see Conditional Access)
-if-none-match | Request | "67ab43" or * (no quotes) (see Conditional Access)
+if-none-match | Request | "67ab43" or * (no quotes) [see Conditional Access](http://TODO:link-goes-here)
+If-Modified-Since | | Request | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
+If-Unmodified-Since | Request | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
 date [RFC1123] | Both | Sun, 06 Nov 1994 08:49:37 GMT 
-content-type | Both | application/merge-patch+json
-content-length | Both | 1024
-x-ms-request-id | Response | (see Customer Support)
-etag | Response | "67ab43" (see Conditional Access)
-retry-after | Response | 180 (see Throttling Client Requests)
-x-ms-error-code | Response | (see Processing a REST Request)
+*content-type* | Both | application/merge-patch+json
+*content-length* | Both | 1024
+*x-ms-request-id* | Response | [see Customer Support](http://TODO:link-goes-here)
+etag | Response | "67ab43" [see Conditional Access](http://TODO:link-goes-here)
+retry-after | Response | 180 [see Throttling Client Requests]
+*x-ms-error-code* | Response | [see Processing a REST Request](http://TODO:link-goes-here)
+Last-Modified | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
 
 
+<span style="color:red; font-size:large">TODO: Fix the links. </span>
 
 
-#### Idempotency
+#### HTTP methods & idempotency
+[Idempotentency](https://www.lexico.com/en/definition/idempotent), or the ability for the state of resource to remain unchanged when the same operation is applied, is a fundamental property of resilient cloud services. Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences. (See our guiding principle of "No surprises".) 
 
- **Building a cloud service**
-Customers can create fault-tolerant apps by supporting retries/idempotency
-Remaining fault-tolerant in the face of failures
-Network requests fail for many reasons
-Unhandled exception, hardware failure, scale-down, code upgrade, orchestrator VM balancing, timeout, server throttling, network outage
-Bottom line: a client may not get a service's response
-Client code must retry to compensate for these failures. So, services must implement operations idempotently
 
-Exactly Once --> Client Retries & Service Idempotency
+Method | Description | Response Status Code 
+----|----|----
+GET | Read the resource | 200-OK 
+DELETE | Remove the resource | 204-No Content; avoid 404-Not Found 
+PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
+PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
 
-> The problem with POST
+> * Service providers __MUST__ implement all operations idempotently. 
+> * Service providers __SHOULD__ avoid using POST unless it can be implemented idempotently. 
 
 #### Additional References
 * [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
+* [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
+* [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
+
+
 
 ### REST
 
@@ -306,8 +330,16 @@ This should dovetail nicely into the added guidance on how to deal with "readOnl
 * Getting data into your service
 * Working with blobs
 
+### Optimistic concurrency
+
 
 ## Final Thoughts / Summary
 * Careful consideration up front
 * Long term decisions that are often codified in SDKs, CODE, etc.
 * Reach out and engage the stewardship team!
+
+
+## API Guidelines Quick Reference Sheet
+<span style="color:red; font-size:large">TODO: Should we create a quick reference sheet??</span>
+Add the Must / Must NOT w/links
+See if we can generate this
