@@ -1,7 +1,7 @@
 
 
 > ### Background
-> This document is a work in progress and is intended to become an updated version of the Azure REST API guidelines. It is based on the best practices for building REST APIs, the existing Azure API Guidelines, and feedback from the API Stewardship Board. Your thoughts, comments, pull requests, and all other forms of feedback are welcomed and encouraged. If you have any questions, please reach out to @Mark Weitzel. 
+> This document is a work in progress and is intended to become an updated version of the Azure REST API guidelines. It is based on the best practices for building REST APIs, the existing Microsoft and Azure API Guidelines, and feedback from the API Stewardship Board. Your thoughts, comments, issues, pull requests, and all other forms of feedback are welcomed and encouraged. You can also reach out to Mark Weitzel as well. 
 > 
 > Thanks!
 
