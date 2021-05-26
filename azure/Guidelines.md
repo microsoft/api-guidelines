@@ -142,44 +142,99 @@ Innovation and design improvements to a service and its API are often the result
 > Service teams __MUST__ follow the breaking change guidelines specified in this document. *[LINK TO SECTION]*
 
 
-
-## Building Blocks: HTTP, REST, & JSON
-Purpose: Understand the building blocks. 
-Communicate the core concepts. 
-The more common patterns that APIs use are all built using these. 
-
-
-
-
-
 There are additional considerations for management APIs. Microsoft teams building this aspect of the service should refer to the following resources for supplemental guidelines:
 * [Azure Resource Manager Wiki][2] (Microsoft only).
 * Use [RPaaS](https://armwiki.azurewebsites.net/rpaas/overview.html) (Microsoft only) to implement the Azure Resource Provider.
 
+
+## Building Blocks: HTTP, REST, & JSON
+The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet, namely HTTP, REST, and JSON. This section will provide you with a general understanding of how these technologies should be applied when creating your service. 
+
 ### HTTP
+Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231), as closely possible when presenting their API. This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
+* Uniform Resource Locators (URLs)
+* HTTP Methods 
+* Headers
+* Bodies
 
-#### Request / Response
+#### URLs 
+A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. Becuase these will be used so heavily by developers, careful consideration should be taken when devising your structure. For these reasons, service providers __SHOULD__ keep URLs readable and if possible, avoid UUIDs & %-encoding (ex: Cádiz)
 
-REQUEST
-``` 
-POST /items?color=orange HTTP/1.1
-host: www.contoso.com:443
-accept: application/json
-content-type: application/json 
-{ "someValue": true} 
+In addition to the [URL structure guidance](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#71-url-structure) in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services. Specifically: 
+
+All services **MUST** expose their service to developers via the following URL pattern:
+
+```text
+https://<service>.<cloud-instance>/<unit-of-multi-tenancy>/<service-defined-root>
 ```
 
-RESPONSE
-```
-HTTP/1.1 200 OK
-etag: "511GaciaHb28"
-content-length: 23
-content-type: application/json
-{"someValue": true}
+Where:
+
+* **service** - the name of the service such as "blobstore", "servicebus", "directory", or "management"
+* **cloud-instance** - the DNS domain name at the root of the cloud instance.  For instance, public Azure uses `azure.net`.  Sovereign clouds uses different domains.
+* **service-defined-root** - the root of the service-specific path, such as "blobcontainer", "myqueue", etc.
+* **unit-of-multi-tenancy** - refers to a globally unique moniker that identifies a unique container in the Azure service that has the following properties:
+
+  * This container is the boundary of isolation between different tenants of the service.
+  * Quotas as set and enforced at the level of this container - but there will be different limits for different operations; and operations will be service specific.
+  * Resources in the service are attached to this container and are tied to this container in terms of lifecycle. For example someone signs up, they get this container. If they unsubscribe (or don’t pay their bills) then cleanup of this container occurs and the resources associated with this container are cleaned up. Cleanup follows a state machine – the container and the resources attached to it are deactivated first (and can be easily restored if required), and if no response for some period then deleted.
+  * It is the container for billing – which means the owner of this container sees one bill for the resource usage of all azure services under this container’s identifier.
+
+For Azure PaaS services like SQL Azure, Azure Storage, Caching, etc., the unit of multi-tenancy is the Azure subscription id, which is a GUID. This ensures consistent access using the same URL pattern, and identifier, across all these services.
+
+##### Additional URL considerations
+When services produce URLs in response headers or bodies, they **MUST** use a consistent form – either always a GUID for tenant identifier or always a single verified domain - regardless of the URL used to reach the resource.
+
+It is common that resources will differ by case. In addition, case may also affect computed values. Therefore, a service URL must be case-sensitive (except for scheme/host). If case doesn't match what you expect, the request __MUST__ fail with the appropriate HTTP return code. Further, when you are returning information in a Response, services __MUST__ maintain and respect proper case values. 
+
+Logging of URLs is another common practice. We want to take every precaution to prevent the leakage of Personal Identifying Information (PII). Azure services __MUST NOT__ include Personal Identifying Information (PII) in the URL.
+
+The Max length=2083 characters __MUST__ be observed. If a URL excedes this length, the service __MUST__ return a ```414-URI Too Long```
+
+Legal characters for a URL ar: 0-9  A-Z  a-z  -  .  _  ~  /  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =
+Services __SHOULD__ reserve the following characters for use exclusive use: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
+
+
+### Direct endpoint URLs
+
+In addition to the required format above, services **MAY** also choose to expose direct endpoint for performance or routing reasons.  The direct endpoint should be discoverable by clients, to ensure that developers are presented with a consistent pattern for accessing Azure services.
+
+The format of the root of the direct endpoint **MUST** be as follows:
+
+```text
+https://<tenant-id>-<service-defined-root>.<service>.azure.net
 ```
 
-> A service __MUST__ validate all inputs
-> A service __MUST NOT__ include PII in the URL
+1. A request is made to the default endpoint (GET or HEAD).  For example:
+
+   ```text
+   GET https://blobstore.azure.net/contoso.com/account1/container1/blob2
+   ```
+
+2. That request is returned with the `Content-Location` header set to the direct endpoint.  See [RFC2557]:
+
+   ```text
+   200 OK
+   Content-Location: https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2
+   ```
+
+   Or, with the GUID format:
+
+   ```text
+   200 OK
+   Content-Location: https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2
+   ```
+
+
+### HTTP Request / Response
+The HTTP Request / Response pattern will dictate much of how your API behaves.    
+
+> * A service __MUST__ validate all inputs.
+> * For create and upsert operations, a service __SHOULD__ return the same object that was sent to the API.
+ 
+
+
+
 
 ##### Common Request & Response Headers
 
@@ -201,7 +256,7 @@ retry-after | Response | 180 (see Throttling Client Requests)
 x-ms-error-code | Response | (see Processing a REST Request)
 
 
-#### URLs 
+
 
 #### Idempotency
 
@@ -217,7 +272,13 @@ Exactly Once --> Client Retries & Service Idempotency
 
 > The problem with POST
 
+#### Additional References
+* [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
+
 ### REST
+
+
+
 
 #### Handling unknown properties or parameters
 This should dovetail nicely into the added guidance on how to deal with "readOnly" values that a client may (incorrectly) supply in a request.
