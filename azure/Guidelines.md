@@ -357,6 +357,11 @@ PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 
 #### Handling Errors
 
+:white_check_mark: **DO** deturn x-ms-error-code header with string
+
+:white_check_mark: **DO** ensure your service returns the error response body
+
+
 ### JSON
 
 ## Common API Patterns
