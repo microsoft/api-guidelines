@@ -369,10 +369,50 @@ PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 
 
 ### JSON
+Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
+* **Boolean:**	true/false
+* **Number:**	signed floating point (IEEE-754 binary64; int range: -253+1 to +253-1)
+* **String:**	used for everything else
+
+:white_check_mark: **DO** use integers within the acceptable range of JSON number.
+
+#### String contracts
+When using strings, you must establish, and adhere to, a well defined contract for the format. For example, you should be cognizant of attributes like maximum length, legal characters, case-sensitivity, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
+
+:white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable." 
+:white_check_mark: **DO** use [RFC3339] for date/time. 
+:white_check_mark: **DO** use [RFC4122] for UUIDs.
+
+##### Composite types
+JSON also supports composing strings into higher order constructs, for example: 
+* **Object**:	{ "name" : value, … }
+* **Array**:	[ value, … ] 
+
+
+:warning: **YOU SHOULD NOT** use JSON Arrays, e.g. [ value, … ]. Arrays are very difficult and inefficient to work with, especially with updates when using ```JSON Merge Patch```, as the entire array needs to be read prior to any operation being applied to it. 
+
+:ballot_box_with_check: **YOU SHOULD** use Maps instead of Arrays. 
+
+
+#### Enums & SDKs (Client libraries)
+
+
+
+
+
+:white_check_mark: **DO** 
+:no_entry: **DO NOT** 
+:ballot_box_with_check: **YOU SHOULD**
+:warning: **YOU SHOULD NOT** 
+:heavy_check_mark: **YOU MAY** 
+
+
 
 ## Common API Patterns
 
 ### Performing an Action
+
+### Conditional Access
 
 ### Collections
 
