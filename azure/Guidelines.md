@@ -396,16 +396,40 @@ JSON also supports composing strings into higher order constructs, for example:
 
 #### Enums & SDKs (Client libraries)
 
+It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI specification as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation. However, your services will have client libraries in many different programming languages. And because enumerations are handled differently depending on the language, this can lead to significant interoperability issues. 
 
+To address these issues, Microsoft's tooling uses the concept of an "extensible enum," which effectively treats all enumerations as strings. In addition, "extensible enums" indicate to client libraries that the list of values is only a *partial* list. This enables the set of values to grow over time while ensuring stability in client libraries. 
 
+:white_check_mark: **DO** use "extensible enums" 
 
+:ballot_box_with_check: **YOU SHOULD** be prepared to handle new values in your client
 
-:white_check_mark: **DO** 
-:no_entry: **DO NOT** 
-:ballot_box_with_check: **YOU SHOULD**
-:warning: **YOU SHOULD NOT** 
-:heavy_check_mark: **YOU MAY** 
+:no_entry: **DO NOT** send "enum integers" over the wire.
 
+:no_entry: **DO NOT** remove items from your enumerated list. This will likely result in a breaking change to client libraries.
+
+#### Discriminate polymorphic types 
+While polymorphism is a powerful concept in programming languages, returing "polymorphic JSON" as part of an API introduces significant complexity for implementors of client libraries and developers, especially as new versions of your service are introduced. For example, consider a service where V1 introduces two shapes, Retangles and Circles. They could be represented in JSON as follows:
+
+**Rectangle**
+```json
+{"kind": "rectangle", 
+"x": 100, "y": 50, "width": 10, "length": 24, "fillColor": "Red", "lineColor": "White", 
+"subscription": {"expiration": "2024"    "kind": "free"}}
+```
+
+**Circle**
+ ```json
+ {"kind": "circle",
+"x": 100, "y": 50, "radius": 10, "fillColor": "Green", "lineColor": "Black", 
+"subscription": { "expiration": "2024", "kind": "paid", "invoice": "123456"}}``
+```
+
+The first issue is that developers writing code against this JSON string contract will have a very difficult time, especially in typed languages. It will be impossible to determine what the actual type is during development, minimizing the effectiveness of tooling. At runtime, developers will have to parse the JSON, interpret the "kind" value, and *then* cast to the proper sub-class.  
+
+Overall, this is a very brittle design that leads to a poor developer experience, especially over time. Consider the scenario when a new shape is introduced in V2 of the API. Existing client libraries that work with V1 will have no concept of this new shape and, when receiving an unknown shape, fail. 
+
+:warning: **YOU SHOULD NOT** use polymorphic types. Instead, return discriminate types. 
 
 
 ## Common API Patterns
