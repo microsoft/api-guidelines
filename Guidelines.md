@@ -171,17 +171,16 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
 Developers access most Microsoft Cloud Platform resources via HTTP interfaces.
 Although each service typically provides language-specific frameworks to wrap their APIs, all of their operations eventually boil down to HTTP requests.
 Microsoft must support a wide range of clients and services and cannot rely on rich frameworks being available for every development environment.
-Thus, a goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
+A goal of these guidelines is to ensure Microsoft REST APIs can be easily and consistently consumed by any client with basic HTTP support.
 
 To provide the smoothest possible experience for developers, it's important to have these APIs follow consistent design guidelines, thus making using them easy and intuitive.
 This document establishes the guidelines to be followed by Microsoft REST API developers for developing such APIs consistently.
+Consistency allows teams to leverage common code, patterns, documentation and design decisions.
 
-The benefits of consistency accrue in aggregate as well; consistency allows teams to leverage common code, patterns, documentation and design decisions.
-
-These guidelines aim to achieve the following:
-- Define consistent practices and patterns for all API endpoints across Microsoft.
-- Adhere as closely as possible to accepted REST/HTTP best practices in the industry at-large. [\*]
-- Make accessing Microsoft Services via REST interfaces easy for all application developers.
+These guidelines cover the following:
+- Consistent practices and patterns for all API endpoints across Microsoft.
+- Accepted REST/HTTP best practices in the industry at-large. [\*]
+- Make accessing Microsoft Services via REST interfaces easier for all application developers.
 - Allow service developers to leverage the prior work of other services to implement, test and document REST endpoints defined consistently.
 - Allow for partners (e.g., non-Microsoft entities) to use these guidelines for their own REST endpoint design.
 
