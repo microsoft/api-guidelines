@@ -111,8 +111,8 @@ A major inhibitor to adoption and usage is when an API behaves in an unexpected 
 :ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands.
 
 
-### Design for Resiliancy 
-As you build out your service and API, there are a number of decisions that can be made up front that add resiliency. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
+### Design for Change Resiliancy 
+As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
 
 :ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change. 
 
