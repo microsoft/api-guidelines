@@ -55,7 +55,9 @@ This document provides Microsoft teams building Azure services with a set of gui
 Service teams should engage the API Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.   
 
 Our goal is to create a developer friendly API where:
+
 :white_check_mark: **DO** ensure that customer workloads never break
+
 :white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK w/out requiring code changes 
 
 > Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.
@@ -130,6 +132,8 @@ Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ie
 * Bodies
 
 #### URLs 
+<span style="color:red; font-size:large">TODO: Update this section </span>
+
 A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. Because these will be used so heavily by developers, careful consideration should be taken when devising your structure.
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable and if possible, avoid UUIDs & %-encoding (ex: Cádiz)
@@ -207,9 +211,11 @@ https://<tenant-id>-<service-defined-root>.<service>.azure.net
 The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make. For each request / response, the service: 
 
 :white_check_mark: **DO** validate all inputs to a request.
+
 :white_check_mark: **DO** return the same object that was sent to the API in the response for all create or upsert operations.
  
 Because beacuse information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
+
 :white_check_mark: **DO** use the following table when translating strings: 
 
 Data type | Document string must be
@@ -228,13 +234,13 @@ Byte array | Base-64 encoded, max length
 #### Common Request & Response Headers
 The table below lists the request / response headers most used by Azure services Service providers.
 
-:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header: 
+:white_check_mark: **DO** specify headers using kabob-style-text.
 
-:white_check_mark: **DO** specify headers using kabob-style-text
+:white_check_mark: **DO**  use all lowercase for headers.
 
-:white_check_mark: **DO**  use all lowercase for headers
+:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header. 
 
-:no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production
+:no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production.
 
 Header Key |	Applies to |	Example 
 ------------ | ------------- | -------------
@@ -265,6 +271,8 @@ Implementing services in an idempotent manner, with an "exactly once" semantic, 
 
 :white_check_mark: **DO** implement all operations idempotently, ideally from the outset.
 
+:warning: **YOU SHOULD NOT** using the POST method unless you can guarantee it can be implemented idempotently. 
+
 :white_check_mark: **DO** adhere to the return codes in the following table when implementing your API:
 
 Method | Description | Response Status Code 
@@ -274,7 +282,7 @@ DELETE | Remove the resource | 204-No Content; avoid 404-Not Found
 PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
 PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
  
-:warning: **YOU SHOULD NOT** using the POST method unless you can guarantee it can be implemented idempotently. 
+
 
 #### Additional References
 * [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
@@ -312,29 +320,27 @@ Field Mutability | Service Request's behavior for this bield
 **Read** |Service fails request (or accept if they match what's in the resource);returns these fields in a response
 
 #### General guidelines
-The following are general guidelines when using REST.
+The following are general guidelines when using REST:
 
-:white_check_mark: **DO** use GET with JSON in response body
+:white_check_mark: **DO** use GET with JSON in response body.
 
-:white_check_mark: **DO** create and update resource using PATCH [RFC5789] with JSON Merge Patch request body
+:white_check_mark: **DO** create and update resource using PATCH [RFC5789] with JSON Merge Patch request body.
 
 :white_check_mark: **DO** use PUT with JSON for wholesale create/update update operations. Take special care to hand versioning issues properly.
 
-:white_check_mark: **DO** use DELETE when removing resources
-* NOTE: Ids are "Customer Content" & Azure allows their use
+:white_check_mark: **DO** use DELETE when removing resources. NOTE: Ids are "Customer Content" & Azure allows their use.
 
-:white_check_mark: **DO** make the payloads for PUT, PATCH, GET the same
+:white_check_mark: **DO** make the payloads for PUT, PATCH, GET the same.
 
-:white_check_mark: **DO** make fields simple
+:white_check_mark: **DO** make fields simple.
 
-:white_check_mark: **DO** preserve string casing/array order
+:white_check_mark: **DO** preserve string casing/array order.
 
-:no_entry: **DO NOT** let an operation succeeed if unknown fields or bad values are passed
+:no_entry: **DO NOT** let an operation succeeed if unknown fields or bad values are passed.
 
-:no_entry: **DO NOT** return secret fields via GET
-* Ex: do not return adminPassword in JSON. 
+:no_entry: **DO NOT** return secret fields via GET. For exampple, do not return adminPassword in JSON. 
   
-:heavy_check_mark: **YOU MAY**  return secret fields via POST **if absolutely necessary** 
+:heavy_check_mark: **YOU MAY**  return secret fields via POST **if absolutely necessary**. 
 
 
 #### Process a PATCH/PUT request
