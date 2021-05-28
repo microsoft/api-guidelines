@@ -32,19 +32,19 @@ The Guiding Principles section presents the high level concerns that affect all 
 These guidelines are organized in three primary sections; Advice for new services, Building Blocks, and Common API patterns. Each section builds upon the other. For example, when updating resource collections, you should make sure to understand the difference in the HTTP verbs PUT and PATCH, as their behavior is quite different and directly affects how you expose the capability of your service.  
 
 #### Prescriptive Guidance  
-This document will be as prescritive as possible. Specific guideance is labelled and color-coded to show the relative importance.  In order from highest importance to lowest importance:
+This document will be as prescriptive as possible. Specific guidance is labelled and color-coded to show the relative importance.  In order from highest importance to lowest importance:
 
-__MUST__ adopt this guideline or follow this pattern.
+:white_check_mark: **DO** adopt this guideline or follow this pattern. If you feel you need an exception, engage with the Architecture Board prior to implementation.
 
-__MUST NOT__ adopt this guideline or follow this pattern.
+:no_entry: **DO NOT** follow this pattern. If you feel you need an exception, engage with the Architecture Board prior to implementation.
 
-__SHOULD__ strongly consider this guideline.
+:ballot_box_with_check: **YOU SHOULD** strongly consider this guideline. If not following this advice, you MUST disclose the variance during the Architecture Board design review.
 
-__SHOULD NOT__ strongly consider this guideline.
+:warning: **YOU SHOULD NOT** strongly consider avoiding the described pattern. If not following this advice, you MUST disclose the variance during the Architecture Board design review.
 
-__MAY__ consider this guideline if appropriate to your situation.
+:heavy_check_mark: **YOU MAY** consider this guideline if appropriate to your situation. No notification to the architecture board is required.
 
- If you feel you need an exception, or need clarity based on your situation, please engage with the [API Stewardship Board] prior to release of your API.
+*If you feel you need an exception, or need clarity based on your situation, please engage with the [API Stewardship Board] prior to release of your API.*
 
 
 ## Advice for new services 
@@ -55,8 +55,8 @@ This document provides Microsoft teams building Azure services with a set of gui
 Service teams should engage the API Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.   
 
 Our goal is to create a developer friendly API where:
-* customer workloads __MUST__ never break
-* customers __MUST__ be able to adopt a new version of service or SDK w/out requiring code changes 
+:white_check_mark: **DO** ensure that customer workloads never break
+:white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK w/out requiring code changes 
 
 > Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.
 > A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs. Although the best practices and patterns described in this document apply to all REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. 
@@ -79,7 +79,7 @@ It is important to realize that writing an API is, in many cases, the easist par
 
 :white_check_mark: **DO** provide example code that demonstrates their "Hero Scenarios."
 
-:x: **DO NOT** add APIs for speculative features customers might want 
+:no_entry: **DO NOT** add APIs for speculative features customers might want 
 
 ### Start with your API definition
 Understanding how your service will be used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It should be reflect the naming decisions and make it easy for developers to implement your hero scenarios.  
@@ -87,7 +87,7 @@ Understanding how your service will be used and defining its model and interacti
 
 :ballot_box_with_check: **YOU SHOULD** describe their services using ADL *[LINK TO ADL HERE]*. 
 
-:ballot_box_with_check: ** YOU SHOULD** use ADL to generate the required OpenAPI Definition. 
+:ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI Definition. 
 
 ### Use previews to iterate 
  Before releasing your API, plan to invest significant design effort, get customer feedback, & iterate through multiple previews. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service. 
@@ -132,11 +132,11 @@ Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ie
 #### URLs 
 A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. Because these will be used so heavily by developers, careful consideration should be taken when devising your structure.
 
-Service providers __SHOULD__ keep URLs readable and if possible, avoid UUIDs & %-encoding (ex: Cádiz)
+:ballot_box_with_check: **YOU SHOULD** keep URLs readable and if possible, avoid UUIDs & %-encoding (ex: Cádiz)
 
 In addition to the [URL structure guidance](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#71-url-structure) in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services. Specifically: 
 
-All services **MUST** expose their service to developers via the following URL pattern:
+:white_check_mark: **DO** expose their service to developers via the following URL pattern:
 
 ```text
 https://<service>.<cloud-instance>/<unit-of-multi-tenancy>/<service-defined-root>
@@ -169,7 +169,7 @@ The Max length=2083 characters __MUST__ be observed. If a URL excedes this lengt
 
 Legal characters for a URL ar: 0-9  A-Z  a-z  -  .  _  ~  /  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =
 
-Services __SHOULD__ reserve the following characters for use exclusive use: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
+:ballot_box_with_check: **YOU SHOULD** reserve the following characters for use exclusive use: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
 
 
 ### Direct endpoint URLs
@@ -204,12 +204,13 @@ https://<tenant-id>-<service-defined-root>.<service>.azure.net
 
 
 ### HTTP Request / Response Pattern
-The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern __SHOULD__ be one of the first implementation decisions you will make. For each request / response, the service: 
+The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make. For each request / response, the service: 
 
-> * __MUST__ validate all inputs to a request.
-> * __SHOULD__ return the same object that was sent to the API in the response for all create or upsert operations.
+:white_check_mark: **DO** validate all inputs to a request.
+:white_check_mark: **DO** return the same object that was sent to the API in the response for all create or upsert operations.
  
-Because beacuse information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values. Service provides __MUST__ use the following table when translating strings: 
+Because beacuse information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
+:white_check_mark: **DO** use the following table when translating strings: 
 
 Data type | Document string must be
 -------- | -------
@@ -225,11 +226,15 @@ Byte array | Base-64 encoded, max length
 <span style="color:red; font-size:large">TODO: Expand the explanation for numbers. </span>
 
 #### Common Request & Response Headers
-The table below lists the request / response headers most used by Azure services Service providers __SHOULD__ properly handle all headers annotated in *italics*. In addition, each request / response header: 
-> * __MUST__ be specificed using kabob-style-text
-> * __MUST__ be all lowercase
-> * __SHOULD NOT__ use "x-" prefix, unless already existing in production
+The table below lists the request / response headers most used by Azure services Service providers.
 
+:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header: 
+
+:white_check_mark: **DO** specify headers using kabob-style-text
+
+:white_check_mark: **DO**  use all lowercase for headers
+
+:no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production
 
 Header Key |	Applies to |	Example 
 ------------ | ------------- | -------------
@@ -256,8 +261,11 @@ Last-Modified | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:li
 
 
 #### HTTP methods & idempotency
-Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences. Service providers __MUST__ implement all operations idempotently and __MUST__ adhere to the return codes in the following table:
+Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences. 
 
+:white_check_mark: **DO** implement all operations idempotently, ideally from the outset.
+
+:white_check_mark: **DO** adhere to the return codes in the following table when implementing your API:
 
 Method | Description | Response Status Code 
 ----|----|----
@@ -266,7 +274,7 @@ DELETE | Remove the resource | 204-No Content; avoid 404-Not Found
 PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
 PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
  
-> * Service providers __SHOULD__ avoid using POST unless it can be implemented idempotently. 
+:warning: **YOU SHOULD NOT** using the POST method unless you can guarantee it can be implemented idempotently. 
 
 #### Additional References
 * [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
@@ -276,27 +284,78 @@ PUT | Create/Replace the *whole* resource | 200-OK, 201-Created
 
 
 ### REST
+REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment,reduced latency via caching, and security. When applying REST to your API, you will define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's URLs determine the hierarchical path developers use to retrieve and update the state of your resource. Note, it's important to model resource state, not to behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service. 
+<span style="color:red; font-size:large">TODO: Add link to behavior section </span>
+
+When designing your service, it is important to optimize for the developer using your API.
+
+:white_check_mark: **DO** focus heavily on great & consistent naming
+
+:white_check_mark: **DO** ensure your resource paths make sense
+
+:white_check_mark: **DO** simplify call with few required query parameters & JSON fields
+
+:white_check_mark: **DO** establish clear contracts for string values
+
+:white_check_mark: **DO** use proper response codes/payloads so customer can self-fix
+
+
+#### JSON resource schema & field mutability
+For a given URL path, the JSON schema (data type) should be the same for PATCH, PUT, GET, DELETE, and GETting collection items. This allows one SDK type for input/output operations and enables the response to be passed back in request. While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries. 
+
+:white_check_mark: **DO** create a model of your data types. For each field, apply one of the following rules:
+
+Field Mutability | Service Request's behavior for this bield
+----| ----
+**Create** | Service honors field only when creating a resource Minimize create-only fields so customers don't have to delete & re-create the resource
+**Update** | Service honors field when creating or updating a resource
+**Read** |Service fails request (or accept if they match what's in the resource);returns these fields in a response
+
+#### General guidelines
+The following are general guidelines when using REST.
+
+:white_check_mark: **DO** use GET with JSON in response body
+
+:white_check_mark: **DO** create and update resource using PATCH [RFC5789] with JSON Merge Patch request body
+
+:white_check_mark: **DO** use PUT with JSON for wholesale create/update update operations. Take special care to hand versioning issues properly.
+
+:white_check_mark: **DO** use DELETE when removing resources
+* NOTE: Ids are "Customer Content" & Azure allows their use
+
+:white_check_mark: **DO** make the payloads for PUT, PATCH, GET the same
+
+:white_check_mark: **DO** make fields simple
+
+:white_check_mark: **DO** preserve string casing/array order
+
+:no_entry: **DO NOT** let an operation succeeed if unknown fields or bad values are passed
+
+:no_entry: **DO NOT** return secret fields via GET
+* Ex: do not return adminPassword in JSON. 
+  
+:heavy_check_mark: **YOU MAY**  return secret fields via POST **if absolutely necessary** 
+
 
 #### Process a PATCH/PUT request
+PATCH/PUT requests accept a subset of fields. Because of this, they require additional guidelines handling requests and responses. In general, you want to avoid creating partial resources as a result of create operations.
 
-If...| | Response Code
+:white_check_mark: **DO** adhere to the return codes in the following table when implementing your API. These tests be processed in this oder:
+
+When using this method |if this condition happens | use this response code
 ----|----|----
-PATCH PUT | Any JSON field name/value not known/valid | 422-Unprocessable Entity
-PATCH PUT | Any Read field passed (client can't set Read fields) | 422-Unprocessable Entity 
-| **Resource does not exist** |
-PATCH PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity 
-PATCH PUT | Create resource using Create/Update fields |201-Created 
-| **Resource already exists** |
+PATCH/PUT | Any JSON field name/value not known/valid | 422-Unprocessable Entity
+PATCH/PUT | Any Read field passed (client can't set Read fields) | 422-Unprocessable Entity 
+| **IF the resource does not exist** | 
+PATCH/PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity 
+PATCH/PUT | Create resource using Create/Update fields |201-Created 
+| **If the resource already exists** |
 PATCH | Any Create field doesn't match current value (allows retries) |409-Conflict 
 PATCH | Update resource using Update fields | 200-OK 
 PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity 
 PUT | Overwrite resource entirely using Create/Update fields | 200-OK 
 
-
-#### Handling unknown properties or parameters
-This should dovetail nicely into the added guidance on how to deal with "readOnly" values that a client may (incorrectly) supply in a request.
-
-
+#### Handling Errors
 
 ### JSON
 
@@ -328,7 +387,3 @@ This should dovetail nicely into the added guidance on how to deal with "readOnl
 * Reach out and engage the stewardship team!
 
 
-## API Guidelines Quick Reference Sheet
-<span style="color:red; font-size:large">TODO: Should we create a quick reference sheet??</span>
-Add the Must / Must NOT w/links
-See if we can generate this
