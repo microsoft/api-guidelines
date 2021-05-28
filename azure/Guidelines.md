@@ -87,7 +87,7 @@ It is important to realize that writing an API is, in many cases, the easist par
 Understanding how your service will be used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It should be reflect the naming decisions and make it easy for developers to implement your hero scenarios.  
 :white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
 
-:ballot_box_with_check: **YOU SHOULD** describe their servicesgi using ADL *[LINK TO ADL HERE]*. 
+:ballot_box_with_check: **YOU SHOULD** describe their services using ADL *[LINK TO ADL HERE]*. 
 
 :ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI Definition. 
 
