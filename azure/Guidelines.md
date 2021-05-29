@@ -30,13 +30,13 @@ This document offers prescriptive guidance labeled as follows:
 
 :white_check_mark: **DO** adopt this guideline or follow this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board[TODO: mail link? - not for public people] <b>prior</b> to implementation.
 
-:no_entry: **DO NOT** follow this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
-
 :ballot_box_with_check: **YOU SHOULD** strongly consider this guideline. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
+
+:heavy_check_mark: **YOU MAY** consider this guideline if appropriate to your situation. No notification to the Azure HTTP/REST Stewardship Board is required.
 
 :warning: **YOU SHOULD NOT** strongly consider avoiding the described pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
 
-:heavy_check_mark: **YOU MAY** consider this guideline if appropriate to your situation. No notification to the Azure HTTP/REST Stewardship Board is required.
+:no_entry: **DO NOT** follow this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
 
 *If you feel you need an exception, or need clarity based on your situation, please contact the Azure HTTP/REST Stewardship Board <b>prior</b> to release of your API.*
 
