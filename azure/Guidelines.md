@@ -121,11 +121,7 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 :ballot_box_with_check: **YOU SHOULD** adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231)
 
 ## URLs 
-<span style="color:red; font-size:large">TODO: Update this section </span>
-
 A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critically important as it describes the service's cognitive model:
-
-<span style="color:red; font-size:large">TODO: Show URL example </span>
 
 :white_check_mark: **DO** use the following URL pattern:
 
@@ -153,7 +149,12 @@ Where:
 
 * **resource-id**: id or name of resource within the resource-collection; these names are frequently provided by clients
 
- :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz)
+A well formed Azure service URL would look similar to the following:
+
+<span style="color:red; font-size:large">TODO: Show URL example </span>
+
+
+:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz)
 
 :white_check_mark: **DO** use case-insensitive comparison for a URL's scheme (http or https) and host.
 
@@ -161,7 +162,7 @@ Where:
 
 :ballot_box_with_check: **YOU SHOULD** use case-sensitive comparison for <resource-id> 
 
-**YOU MAY** use case-insensitive comparison for a <resrouce-id> that is a GUID value
+:heavy_check_mark: **YOU MAY** use case-insensitive comparison for a <resrouce-id> that is a GUID value
 
 ---
 A direct endpoint URL <b>may also</b> be used for performance/routing:
@@ -184,7 +185,7 @@ A direct endpoint URL <b>may also</b> be used for performance/routing:
 
 :ballot_box_with_check: **YOU SHOULD** try to limit your URL's characters to ```0-9  A-Z  a-z  -  .  _  ~```
 
-**YOU MAY** use these other characters but they will likely require %-encoding: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
+:heavy_check_mark: **YOU MAY** use these other characters but they will likely require %-encoding: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
 
 ### HTTP Methods & Idempotency
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, <b>all</b> service operations (including POST) <b>must</b> be idempotent.
