@@ -43,24 +43,24 @@ This document offers prescriptive guidance labeled as follows:
 ## Advice for New Services 
 Great APIs make your service usable to customers. They are intuitive, naturally reflecting and communicating the underlying model and its behavior. They lend themselves easily to client library implementations in multiple programming languages. And they don't "get in the way" of the developer, by remaining stable and predictable, especially over time.
 
-This document provides Microsoft teams building Azure services with a set of guidelines that will help service teams build great APIs. The guidelines can be applied to create an API that is approachable, sustainable, and consistent across the Azure platform. We do this by applying a common set of patterns and web standards to the design and development of the API. For developers, a well defined and constructed API enables them to build fault tolerant applications that are easy to maintain, support, and grow. For Azure service teams, the API is often the source of code generation, and enabling a broad audience of developers across multiple languages. 
+This document provides Microsoft teams building Azure services with a set of guidelines that will help service teams build great APIs. The guidelines can be applied to create an API that is approachable, sustainable, and consistent across the Azure platform. We do this by applying a common set of patterns and web standards to the design and development of the API. For developers, a well defined and constructed API enables them to build fault tolerant applications that are easy to maintain, support, and grow. For Azure service teams, the API is often the source of code generation, and enabling a broad audience of developers across multiple languages.
 
-Service teams should engage the API Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.   
+Azure Service teams should engage the API Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.
 
-Our goal is to create a developer friendly API where:
+Your goal is to create a developer friendly API where:
 
 :white_check_mark: **DO** ensure that customer workloads never break
 
 :white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK w/out requiring code changes 
 
+## Azure Management Plane vs Data Plane
 > Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.
-
-> A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs. Although the best practices and patterns described in this document apply to all REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. 
+> A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs. Although the best practices and patterns described in this document apply to all REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on the conventions of the Azure ARM.
 
 ### Start with developer experience
-A great API starts with a well thought out and designed service. It is extremely difficult, if not impossible, to create an elegant API that will work well on top of a service that is poorly designed. For example, if during a user study during a preview, you discover that customers are struggling to use your API, e.g. they don't understand the abstraction layer, take the time to fix your service. This will benefit the developer and your team. For this reason, it's important that you put yourself in the developer's shoes and think deeply about how they will be using your API and your service. 
+A great API starts with a well thought out and designed service. It is extremely difficult to create an elegant API that will work well on top of a service that is poorly designed. It is important that your development team builds some client code using the API. Hold reviews and share what is learend with your team.  Engage with your customers during a preview release.  If during a preview you discover that customers are struggling to use your API, e.g. they don't understand the abstraction layer, take the time to fix your service abstractions. This will benefit the developer and your team. Put yourself in the developer's shoes and think deeply about how they will be using your API and your service.
 
-Think about the code that a customer will write both before and after the REST API call.
+Think about the code that a customer will write both before and after the REST API call.  What data structures will they need to assemble?  What is the most likely next call?
 
 :white_check_mark: **DO** provide examples in multiple languages
 
@@ -78,31 +78,30 @@ It is important to realize that writing an API is, in many cases, the easist par
 
 ### Start with your API definition
 Understanding how your service will be used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It should be reflect the naming decisions and make it easy for developers to implement your hero scenarios.  
-:white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) that describes their service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
+:white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) that describes the service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
 
-:ballot_box_with_check: **YOU SHOULD** describe their services using ADL *[LINK TO ADL HERE]*. 
+:ballot_box_with_check: **YOU SHOULD** describe their services using ADL *[LINK TO ADL HERE]*.
 
-:ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI Definition. 
+:ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI Definition.
 
 ### Use previews to iterate 
- Before releasing your API, plan to invest significant design effort, get customer feedback, & iterate through multiple previews. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service. 
+ Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
-:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.  
+:ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API. :ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.  
 :ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples. 
 :ballot_box_with_check: **YOU SHOULD**  consider doing a *code with* exercise in which you actively develop with the customer, observing and learning from their API usage.
-:ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board. 
+:ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
 ### Avoid surprises
-A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers. 
+A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers.
 
 :ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint __SHOULD__ work with a single type to avoid problems during SDK creation.
 
-:ballot_box_with_check: **YOU SHOULD** make Collections easy to work with. Collections are a common source of review comments. It is important to handle them in a consistent manner within your service. 
+:ballot_box_with_check: **YOU SHOULD** make [Collections](#Collections) easy to work with. Collections are a common source of review comments. It is important to handle them in a consistent manner within your service.
 
 :ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so.  If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
 
 :ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands.
-
 
 ### Design for Change Resiliancy 
 As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
@@ -115,15 +114,26 @@ As you build out your service and API, there are a number of decisions that can 
 :ballot_box_with_check: **YOU SHOULD** use wider data types (e.g. 64-bit vs. 32-bit) as they are more future-proof. For example, JavaScript can only support numbers up to 2<sup>53</sup>, so relying on the full width of a 64-bit number should be avoided.
 
 ## Building Blocks: HTTP, REST, & JSON
-The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet, namely HTTP, REST, and JSON. This section provides you with a general understanding of how to apply these technologies when design a service's API. 
+The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet, namely HTTP, REST, and JSON. This section will provide you with a general understanding of how these technologies should be applied when creating your service.
 
 ### HTTP
-:ballot_box_with_check: **YOU SHOULD** adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231)
+Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231), as closely possible when presenting their API. This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
+* [Uniform Resource Locators (URLs)](URLS)
+* HTTP Methods
+* Headers
+* Bodies
+
+#### URLs 
+<span style="color:red; font-size:large">TODO: Update this section </span>
+
+A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. These are so central to the developer experience that careful consideration should be given when devising your URL structure.
 
 ## URLs 
 A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critically important as it describes the service's cognitive model:
 
-:white_check_mark: **DO** use the following URL pattern:
+In addition to the [URL structure guidance](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#71-url-structure) in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services. Specifically:
+
+:white_check_mark: **DO** expose their service to developers via the following URL pattern:
 
 ```text
 https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resource-id>/
@@ -145,9 +155,9 @@ Where:
 
 * **service-root**: service-specific path (ex: blobcontainer, myqueue)
 
-* **resrouce-collection**: holds items; use plural/lowercase noun; these names are almost always defined by the service; avoid >2 collections (TODO: Fix this last part - separate guideline bullet?)
+A service URL must be case-sensitive (except for scheme/host). If case doesn't match what you expect, the request __MUST__ fail with the appropriate HTTP return code.
 
-* **resource-id**: id or name of resource within the resource-collection; these names are frequently provided by clients
+When returning information in a Response, services __MUST__ maintain and respect proper case values.
 
 A well formed Azure service URL would look similar to the following:
 
@@ -156,9 +166,7 @@ A well formed Azure service URL would look similar to the following:
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz)
 
-:white_check_mark: **DO** use case-insensitive comparison for a URL's scheme (http or https) and host.
-
-:white_check_mark: **DO** use case-sensitive comparison for <service>, <cloud>, <tenant>, <service-root>, and <resource-collection>.
+### Direct endpoint URLs
 
 :ballot_box_with_check: **YOU SHOULD** use case-sensitive comparison for <resource-id> 
 
@@ -179,9 +187,8 @@ A direct endpoint URL <b>may also</b> be used for performance/routing:
 
 :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
-:no_entry: **DO NOT** include Personal Identifying Information (PII) in the URL.
-
-:no_entry: **DO NOT** accept URLs with a length greater than 2083 characters; return ```414-URI Too Long```
+### HTTP Request / Response Pattern
+The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make. For each request / response, the service: 
 
 :ballot_box_with_check: **YOU SHOULD** try to limit your URL's characters to ```0-9  A-Z  a-z  -  .  _  ~```
 
@@ -214,9 +221,9 @@ PUT | Create/Replace the *whole* resource | 200-OK, 201-Created
 ### HTTP Query Parameters and Header Values
 The table below lists the headers most used by Azure services:
 
-Header Key |	Applies to |	Example 
+Header Key | Applies to | Example
 ------------ | ------------- | -------------
-*authorization*	 | Request |	Bearer eyJ0...Xd6j (Support Azure Active Directory) 
+*authorization* | Request | Bearer eyJ0...Xd6j (Support Azure Active Directory) 
 *x-ms-useragent*  |  Request | [see Telemetry](http://TODO:link-goes-here)
 traceparent | Request | [see Distributed Tracing]](http://TODO:link-goes-here)
 tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)
@@ -240,14 +247,23 @@ Last-Modified | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:li
 
 :white_check_mark: **DO** compare request header values using case-sensitivity. Some exceptions exist: user-agent?, accept?, content-type?, RFC1123 dates, guids?.
 
+#### HTTP Methods & Idempotency
+Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 :ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header. 
 
 :no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production.
 
+:warning: **YOU SHOULD NOT** using the POST method unless you can guarantee it can be implemented idempotently.
 :white_check_mark: **DO** validate all query parameter and request header values. TODO: What to return on failure
 
 :white_check_mark: **DO** return the state of the resource after a PUT, PATCH, or GET operation with a ```200-OK``` or ```201-Created```.
 
+Method | Description | Response Status Code
+----|----|----
+GET | Read the resource | 200-OK
+DELETE | Remove the resource | 204-No Content; avoid 404-Not Found
+PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
+PUT | Create/Replace the *whole* resource | 200-OK, 201-Created
 :white_check_mark: **DO** return a ```204-No Content``` without a resource for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
  
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
@@ -274,14 +290,13 @@ Byte array | Base-64 encoded, max length
 * [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
 * [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
-### REST (REpresentational State Transfer)
-REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment,reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's URLs determine the hierarchical path developers use to create, update & retrieve the state of a resource. Note: it's important to model resource state, not behavior. There are patterns, later in these guidelines, that describe how to invoke an action on a resource. 
-
+### REST
+REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you will define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to retrieve and update the state of your resource. Note, it's important to model resource state, not to behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service.
 <span style="color:red; font-size:large">TODO: Add link to behavior section </span>
 
 When designing your service, it is important to optimize for the developer using your API.
 
-:white_check_mark: **DO** focus heavily on great & consistent naming
+:white_check_mark: **DO** focus heavily on clear & consistent naming
 
 :white_check_mark: **DO** ensure your resource paths make sense
 
@@ -292,6 +307,7 @@ When designing your service, it is important to optimize for the developer using
 :white_check_mark: **DO** use proper response codes/payloads so customer can self-fix
 
 #### JSON Resource Schema & Field Mutability
+For a given URL path, the JSON schema (data type) should be the same for PATCH, PUT, GET, DELETE, and GETting collection items. This allows one SDK type for input/output operations and enables the response to be passed back in request. While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. <!--Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries.-->
 :white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH request/response, GET response, and POST response. This allows one SDK type for input/output operations and enables the response to be passed back in request.
 
 ---
@@ -304,26 +320,25 @@ For PATCH, the their must be a similar JSON schema with no required fields nulla
 ---
 
 ---
-This i also not really a rest thing; more of a service implementation thing
+This is also not really a rest thing; more of a service implementation thing
 While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. REMOVE?: Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries. 
 
 :white_check_mark: **DO** create a model of your data types. For each field, apply one of the following rules:
 
-Field Mutability | Service Request's behavior for this bield
+Field Mutability | Service Request's behavior for this field
 ----| ----
 **Create** | Service honors field only when creating a resource. Minimize create-only fields so customers don't have to delete & re-create the resource.
 **Update** | Service honors field when creating or updating a resource
 **Read**   | Service fails request (or accept if they match what's in the resource);returns these fields in a response
 
-TODO: Fit 'required' into this story (Jeff)
 ---
 
 #### General guidelines
 The following are general guidelines when using REST:
 
-:white_check_mark: **DO** use GET with JSON in response body.
+:white_check_mark: **DO** serve GET for resource retrieval and send JSON in the response body.
 
-:white_check_mark: **DO** create and update resource using PATCH [RFC5789] with JSON Merge Patch [RFC7396](https://datatracker.ietf.org/doc/html/rfc7396) request body. TODO: The response should be the JSON schema WITH required fields (not the same schema as passed in)
+:white_check_mark: **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
 
 :white_check_mark: **DO** use PUT with JSON for wholesale create/update operations.
 > NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent tof DELETE followed by PUT).
@@ -357,15 +372,15 @@ PATCH/PUT requests accept a subset of fields. Because of this, they require addi
 When using this method |if this condition happens | use this response code
 ----|----|----
 PATCH/PUT | Any JSON field name/value not known/valid | 422-Unprocessable Entity
-PATCH/PUT | Any Read field passed (client can't set Read fields) | 422-Unprocessable Entity 
+PATCH/PUT | Any Read field passed (client can't set Read fields) | 422-Unprocessable Entity
 | **IF the resource does not exist** | 
-PATCH/PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity 
-PATCH/PUT | Create resource using Create/Update fields |201-Created 
+PATCH/PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity
+PATCH/PUT | Create resource using Create/Update fields |201-Created
 | **If the resource already exists** |
-PATCH | Any Create field doesn't match current value (allows retries) |409-Conflict 
+PATCH | Any Create field doesn't match current value (allows retries) |409-Conflict
 PATCH | Update resource using Update fields | 200-OK 
-PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity 
-PUT | Overwrite resource entirely using Create/Update fields | 200-OK 
+PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity
+PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 
 #### Handling Errors
 
@@ -376,34 +391,34 @@ PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 ### JSON
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
 * **Boolean:**	true/false
-* **Number:**	signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
-* **String:**	used for everything else
+* **Number:** signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
+* **String:** used for everything else
 
 :white_check_mark: **DO** use integers within the acceptable range of JSON number.
 
-#### String contracts
+#### String Contracts
 When using strings, you must establish, and adhere to, a well defined contract for the format. For example, you should be cognizant of attributes like maximum length, legal characters, case-sensitivity, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
 
 :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable." 
-:white_check_mark: **DO** use [RFC3339] for date/time. 
+:white_check_mark: **DO** use [RFC3339] for date/time.
 :white_check_mark: **DO** use [RFC4122] for UUIDs.
 
 ##### Composite types
-JSON also supports composing strings into higher order constructs, for example: 
+JSON also supports composing strings into higher order constructs, for example:
 * **Object**:	{ "name" : value, … }
-* **Array**:	[ value, … ] 
+* **Array**:	[ value, … ]
 
-:warning: **YOU SHOULD NOT** use JSON Arrays, e.g. [ value, … ]. Arrays are very difficult and inefficient to work with, especially with updates when using ```JSON Merge Patch```, as the entire array needs to be read prior to any operation being applied to it. 
+:warning: **YOU SHOULD NOT** use JSON Arrays, e.g. [ value, … ]. Arrays are very difficult and inefficient to work with, especially with updates when using ```JSON Merge Patch```, as the entire array needs to be read prior to any operation being applied to it.
 
-:ballot_box_with_check: **YOU SHOULD** use maps instead of arrays. 
+:ballot_box_with_check: **YOU SHOULD** use maps instead of arrays.
 
 #### Enums & SDKs (Client libraries)
 
-It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI specification as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation. However, your services will have client libraries in many different programming languages. And because enumerations are handled differently depending on the language, this can lead to significant interoperability issues. 
+It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI specification as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation. However, your services will have client libraries in many different programming languages. And because enumerations are handled differently depending on the language, this can lead to significant interoperability issues.
 
-To address these issues, Microsoft's tooling uses the concept of an "extensible enum," which effectively treats all enumerations as strings. In addition, "extensible enums" indicate to client libraries that the list of values is only a *partial* list. This enables the set of values to grow over time while ensuring stability in client libraries. 
+To address these issues, Microsoft's tooling uses the concept of an "extensible enum," which effectively treats all enumerations as strings. In addition, "extensible enums" indicate to client libraries that the list of values is only a *partial* list. This enables the set of values to grow over time while ensuring stability in client libraries.
 
-:white_check_mark: **DO** use "extensible enums" 
+:white_check_mark: **DO** use "extensible enums"
 
 :ballot_box_with_check: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
 
@@ -430,10 +445,9 @@ While polymorphism is a powerful concept in programming languages, returing "pol
 
 The first issue is that developers writing code against this JSON string contract will have a very difficult time, especially in typed languages. It will be impossible to determine what the actual type is during development, minimizing the effectiveness of tooling. At runtime, developers will have to parse the JSON, interpret the "kind" value, and *then* cast to the proper sub-class.  
 
-Overall, this is a very brittle design that leads to a poor developer experience, especially over time. Consider the scenario when a new shape is introduced in V2 of the API. Existing client libraries that work with V1 will have no concept of this new shape and, when receiving an unknown shape, fail. 
+Overall, this is a very brittle design that leads to a poor developer experience, especially over time. Consider the scenario when a new shape is introduced in V2 of the API. Existing client libraries that work with V1 will have no concept of this new shape and, when receiving an unknown shape, fail.
 
 :warning: **YOU SHOULD NOT** use polymorphic types. Instead, return discriminate types. 
-
 
 ## Common API Patterns
 
@@ -680,7 +694,6 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 * Working with blobs
 
 ### Optimistic concurrency
-
 
 ## Final Thoughts / Summary
 * Careful consideration up front
