@@ -6,6 +6,7 @@
 | ----------- | ------- | --------------------------------------------------- |
 | 2020-Mar-31 | v3.1    | 1st public release of the Azure REST API Guidelines |
 | 2020-Jul-31 | v3.2    | Added service advice for initial versions           |
+| 2020-Aug-11 | v3.3    | Clarified advice around extensible enums            |
 
 ## Introduction
 
@@ -152,19 +153,23 @@ With the exception of _Compliance changes_ (which are extremely rare), Azure ser
 
 A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
 
-| Property change        | Input        | Output       |
-|:-----------------------|:------------:|:------------:|
-| Remove a property      | Breaking     | Breaking     |
-| Add optional property  | Evolutionary | Breaking     |
-| Add required property  | Breaking     | Breaking     |
-| Data type change       | Breaking     | Breaking     |
-| Format change          | Breaking     | Breaking     |
-| Integer widens         | Evolutionary | Breaking     |
-| Integer narrows        | Breaking     | Evolutionary |
-| Add new value to enum  | Evolutionary | Breaking     |
-| Remove value from enum | Breaking     | Breaking     |
-| Optional to required   | Breaking     | Breaking     |
-| Required to optional   | Evolutionary | Breaking     |
+| Property change                   | Input          | Output         |
+|:----------------------------------|:--------------:|:--------------:|
+| Remove a property                 | Breaking       | Breaking       |
+| Add optional property             | Evolutionary   | Breaking       |
+| Add required property             | Breaking       | Breaking       |
+| Data type change                  | Breaking       | Breaking       |
+| Format change                     | Breaking       | Breaking       |
+| Integer widens                    | Evolutionary   | Breaking       |
+| Integer narrows                   | Breaking       | Evolutionary   |
+| Add new value to enum             | Evolutionary   | Breaking       |
+| Add new value to extensible enum  | Evolutionary\* | Evolutionary\* |
+| Remove value from enum            | Breaking       | Breaking       |
+| Remove value from extensible enum | Breaking       | Evolutionary\* |
+| Optional to required              | Breaking       | Breaking       |
+| Required to optional              | Evolutionary   | Breaking       |
+
+Changes marked with a \* are allowed without a version bump.
 
 Breaking changes require prior approval of the Azure REST API review board and approval through the [Azure Global Breaking Change Policy][7]. In the case of deprecation, follow the [Azure Global Retirement Policy][7].  If the service is using SemVer for versioning, breaking changes constitute a major version change.
 
@@ -175,6 +180,7 @@ Evolutionary changes do not require prior approval (but still need a version bum
 Because the API version represents a contract that a developer can rely on when generating SDKs to communicate with the service, there are a limited set of situations where changing the API is permissable without a version bump.  The only changes universally allowed:
 
 1. Adding a new (optional) value to an extensible enum.
+2. Removing a value from an extensible enum in an output model.
 
 An extensible enum is (in essence) a string.  The values of the extensible enum drive intellisense and documentation, but the values are not considered exhaustive.
 
@@ -233,7 +239,11 @@ Service teams SHOULD prefer and recommend PATCH operations for updating resource
 
 #### Use extensible enums
 
-While removing a value from an enum is a breaking change, adding an enum can be handled with an _extensible enum_.  An extensible enum is a string value that has been marked with a special marker - setting `modelAsString` to true within an `x-ms-enum` block.  For example:
+An _extensible enum_ is a string with some suggested values. The suggested values are not exhaustive; they are there simply to provide hints for the user. For example, the values are used to assist with tab completion in command line tools. An extensible enum is transmitted over the wire as a string, and therefore contractually evolvable over time. The string is the explicit contract with customers.
+
+The suggested values accepted/rejected by the service are not part of the contract and can change over time **without** requiring a change to the service's API version. So, customer code should expect that passing a suggested value may, in the future, result in an error. Also, a service may, in the future, never return a suggested value. It is strongly recommended that a service only ever add to the set of suggested values and not remove a previously suggested value thereby producing an error that an existing application never received before. However, there are some scenarios where removing a value is not avoidable; this deprecation of a value indicates a breaking change which requires the service team work through the normal Azure breaking change policies and practices.
+
+Within the swagger file, mark an extensible enum by setting `modelAsString` to true within an `x-ms-enum` block.  For example:
 
 ```json
 "createdByType": {
