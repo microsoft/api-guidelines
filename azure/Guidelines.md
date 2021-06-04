@@ -453,10 +453,7 @@ Overall, this is a very brittle design that leads to a poor developer experience
 
 ### Performing an Action
 
-### Conditional Access
-
 ### Collections
-
 
 ### API Versioning
 
@@ -671,7 +668,7 @@ Pre-release and beta APIs are not covered by the Azure Global Retirement and Dep
 [7]: http://aka.ms/aprwiki
 
 
-### Long Running Operations
+### Long Running Operations & Jobs
 
 The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. 
 
@@ -685,15 +682,25 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 
 
 ### Distributed Tracing & Service Telemetry
+* Distributed Tracing  
+* Service Telemetry 
+* How to collect client side telemetry 
 
-### Jobs
-* e.g. cascading delete
 
 ### Bring your own storage
 * Getting data into your service
 * Working with blobs
 
 ### Optimistic concurrency
+* Conditional Access 
+* Optimistic Concurrency 
+* Etags 
+
+
+### Getting data into your service 
+* Bring your own storage 
+* Working with blobs 
+
 
 ## Final Thoughts / Summary
 * Careful consideration up front
