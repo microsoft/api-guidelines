@@ -131,16 +131,12 @@ A Uniform Resource Locator (URL) is how developers will access the resources of 
 ## URLs 
 A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critical as it describes the service's cognitive model.
 
-In addition to the [URL structure guidance](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#71-url-structure) in the Microsoft REST API guidelines, Azure has specific guidance about service exposure for multi-tenant services.
-
 :white_check_mark: **DO** expose their service to developers via the following URL pattern:
-
 ```text
 https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resource-id>/
 ```
 
 Where:
-
 * **service**: name of the service (ex: blobstore, servicebus, directory, or management)
 * **cloud**: cloud domain name (see Azure CLI's "az cloud list")
    | Cloud         | Domain            |
@@ -154,16 +150,14 @@ Where:
 
 * **service-root**: service-specific path (ex: blobcontainer, myqueue)
 
-A service URL must be case-sensitive (except for scheme/host). If case doesn't match what you expect, the request __MUST__ fail with the appropriate HTTP return code.
+:white_check_mark: **DO** treat URLs as case-sensitive (except for scheme/host). If case doesn't match what you expect, the request __MUST__ fail with the appropriate HTTP return code.
+> Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a GUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
-When returning information in a Response, services __MUST__ maintain and respect proper case values.
+:white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a response JSON body
 
-A well formed Azure service URL would look similar to the following:
+:white_check_mark: **DO** return '414-URI Too Long' if a URL exceeds 2083 characters
 
-<span style="color:red; font-size:large">TODO: Show URL example </span>
-
-
-:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz)
+:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
 ### Direct endpoint URLs
 
@@ -185,6 +179,11 @@ A direct endpoint URL <b>may also</b> be used for performance/routing:
 :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a GUID for <tenant> or always a single verified domain.
 
 :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
+
+:heavy_check_mark: **YOU MAY** use URLs as values
+```
+https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
+```
 
 ### HTTP Request / Response Pattern
 The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make. For each request / response, the service: 
@@ -452,133 +451,41 @@ Overall, this is a very brittle design that leads to a poor developer experience
 
 ### Performing an Action
 
-### Conditional Access
-
 ### Collections
-
 
 ### API Versioning
 
-Versioning is a powerful technique that helps you provide consistent and stable APIs to developers that use your service. The Microsoft REST API guidelines offer different options on how to specify an API version and guidance on what constitutes a breaking change. However, this section refines that guidance in order to drive greater consistency across the Azure services and stack, as well as the developer tooling, and client libraries. 
+Azure services need to change over time. However, when changing a service, there are 2 requirements:
+ 1. Already-running customer workloads must never break due to a service change
+ 2. Customers can adopt a new service version without requiring any code changes
+   - Of course, the customer must modify code to leverage any new service features
 
-:white_check_mark: **DO** use explicit versioning for your service API.
+:ballot_box_with_check: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** follow the standard [_Azure Global Retirements and Breaking Changes_][7] when retiring your API.
-
-#### Specifying the version in Azure
-The Microsoft REST API guidelines give two options for how services and clients communicate the version: a url segment and a query parameter. For consistency across the Azure portfolio, you must specify the version using a query parameter.
-
-Examples: 
+:white_check_mark: **DO** use an 'api-version' query parameter with a date
 ```text
-GET https://blobstore.azure.com/foo.com/acct1/c1/blob2?api-version=1.0
-PUT https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2014-12-07
-POST https://blobstore.azure.com/foo.com/acct1/c1/b2?api-version=2015-12-07
+PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
 
-#### API Changes that require a version change
+:white_check_mark: **DO** use a later date for each new version
 
-There are three groups of changes that may happen to an API.
+:white_check_mark: **DO** suffix the date with '-preview' for a preview API
+```text
+PUT https://service.azure.com/users/Jeff?api-version=2021-06-04-preview
+```
+> The only difference between a private and public preview is whether you publicly document the API; there is no impact to the 'api-version' value
 
-1. Changes made to an **EXISTING** API version due to security or compliance reasons.  We shall refer to these types of changes as _Compliance changes_.
-2. Changes made to an API that may cause a client making the API call to fail, such as removal of an endpoint or property or changing the format of the body.  We refer to these types of changes as _Breaking changes_.
-3. Additive changes made to an API that do not cause a client making the API call to fail, such as the addition of a new optional property or a new endpoint.  We refer to these types of changes as _Evolutionary changes_.
+:no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
 
-With the exception of _Compliance changes_ (which are extremely rare), Azure services must update the version number of their API whenever there is a change to the API, _no matter how small_.  Customers will "lock the API version" so that their code does not fail when the service introduces new features and will rely on the fact that your API version is a contract with the services that will never change.
+:white_check_mark: **DO** use a later date for each new preview version
+> When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
 
-A _breaking change_ is any change in the API that may cause client or service code making the API call to fail. Obvious examples of such a change are the removal of an endpoint, adding or removing a required field or changing the format of the body (from XML to JSON for example). Even though we recommend clients ignore new fields, there are many libraries and clients that fail when new fields are introduced. Removing an endpoint from an API is always a _breaking change_.  Adding a new endpoint is always an _evolutionary change_.  Changes to properties may be _evolutionary_ or _breaking_ depending on the type of change and whether the change is to an input parameter or output parameter:
+:white_check_mark: **DO** use a later date for successive preview versions. 
 
-| Property change        | Input        | Output       |
-|:-----------------------|:------------:|:------------:|
-| Remove a property      | Breaking     | Breaking     |
-| Add optional property  | Evolutionary | Breaking     |
-| Add required property  | Breaking     | Breaking     |
-| Data type change       | Breaking     | Breaking     |
-| Format change          | Breaking     | Breaking     |
-| Integer widens         | Evolutionary | Breaking     |
-| Integer narrows        | Breaking     | Evolutionary |
-| Add new value to enum  | Evolutionary | Breaking     |
-| Remove value from enum | Breaking     | Breaking     |
-| Optional to required   | Breaking     | Breaking     |
-| Required to optional   | Evolutionary | Breaking     |
+:no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 
-
-:ballot_box_with_check: **YOU SHOULD** use a date oriented semantic as the version numbering scheme of your API, e.g. `2021-05-01-preview.1`.
-
-:white_check_mark: **DO** increment the version of your API for _Compliance changes_.
-
-:white_check_mark: **DO** review any breaking changes with the Azure REST API stewardship board prior to seecing approval through the [Azure Global Breaking Change Policy][7]. 
-
-:white_check_mark: **DO** follow the [Azure Global Retirement Policy][7] for any deprecated APIs.  
-
-:white_check_mark: **DO** increment the major version (if using SemVer) for any breaking changes.
-
-:white_check_mark: **DO** increment the version bump for _evolutionary changes. If the service is using SemVer for versioning, evolutionary changes constitute a minor version change.
-
-:ballot_box_with_check: **YOU SHOULD** review any _evolutionary change_ with the Azure API stewardship board.
-
-
-#### Changing the API without changing the version
-
-Because the API version represents a contract that a developer can rely on when generating SDKs to communicate with the service, there are a limited set of situations where changing the API is permissable without a version bump.  The only changes universally allowed:
-
-1. Adding a new (optional) value to an extensible enum.
-
-An extensible enum is (in essence) a string.  The values of the extensible enum drive intellisense and documentation, but the values are not considered exhaustive.
-
-If a service is **ONLY** available in the Azure public cloud, then an additional situation can be used to add functionality without changing the version:
-
-1. Adding a new (optional) query parameter to adjust the output (for example, adding filter options to a list operation).
-2. Adding optional computed read-only output values that are generated based on the new (optional) query parameters.
-
-For example, let's say an image service wants to add bounding-box information to the output of an operation.  The service can add a new query parameter `includeBoundingBox=true` and then include the bounding box information within the output only when the new query parameter is specified.  A version bump is recommended, but not required.  
-
-If not changing the API version, the service **MUST** update all data centers before the new query parameter is advertised to customers.
-
-:no_entry: **DO NOT** use this mechanism to get around the version bump.  Adding such query parameters results in sub-optimal API designs and should only be used for exceptional circumstances.
-
-This functionality is only available for single cloud deployments because the API version specifies the contract with the developer. Consider, for example, if such a functionality was included in Azure public cloud and not a sovereign cloud. A developer creating an SDK based on this functionality may see the application work in one cloud but fail when targeting the other despite using the same API version in both cases.  For the purposes of this situation, "other clouds" includes Azure Stack and other deployment mechanisms such as containers for on-premise usage.
-
-
-All situations where the API definition is changed (irrespective of whether a version change happens or not)
- **MUST** be reviewed by the Azure REST API Review Board before release.  
-
-#### Preview Versions
-
-Preview versions of the API can be indicated by adding the suffix `-preview.X` to the end of the API version, where `X` is an incrementing integer.  For example:
-
-* `2021-05-01-preview.1`
-* `1.0-preview.2`
-
-Preview versions are not treated the same way as release versions.  In general, there are two types of previews:
-
-* **Private** previews are released to a known subset of users.  The service team knows how to contact each person within the private preview.  There are no restrictions on changes within a private preview, as long as the service team communicates effectively with their users on what changes are made and when they will be made.
-
-* **Public** previews are released broadly, but contain APIs that may change between previews and may be deleted prior to the final version.  The `X` integer (indicating the revision of the preview) must be incremented for all breaking changes (resulting in a new API version).  Evolutionary changes may be added as needed, as long as the change is communicated broadly.
-
-You should follow the axiom "don't surprise your customers" when deciding whether to increment the preview version, and err on the side of incrementing the preview version.
-
-Preview APIs [follow a different path for deprecation and retirement](https://dev.azure.com/msazure/AzureWiki/_wiki/wikis/AzureWiki.wiki/37683/Retirement-of-Previews), and are not subject to the same guarantees as APIs marked as generally available.  Preview APIs have a life-span of not more than 12 months, after which they must be retired. 
-
-#### Why Azure recommends conservative API versioning
-
-Azure history is replete with anecdotes that directly relate to API versioning.  For instance, Cognitive Services unintentionally broke customers by making changes to the API structure without a version bump with updates that they did not think would be breaking changes.  These changes led customers to question the stability and maturity of the product and increased the churn rate for the services.
-
-Even changes that are evolutionary can cause problems.  For instance, let's say that a service adds a new feature via a new endpoint in the API.  The SDK gets updates to support this new API, but the service does not bump the version number.  Since the roll out of the new feature is not atomic, there is a period of time (potentially months long) where the feature is available in some regions but not others.  A customer has the potential for attempting to use the feature in two different regions and having it work in one region but not the other, despite the two regions supporting the same version number.  This is only made worse when we consider Azure Stack, which can be upwards of a year behind the public cloud offerings.
-
-There are a few mechanisms that can reduce breaking changes and their effects on our customers.
-
-#### Use PATCH instead of PUT for updates
-
-The HTTP PUT verb is an idemopotent apply operation for the API version being used.  The [Microsoft API Guidelines already recommend the use of PATCH](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#742-patch) for updates.
-
-Consider the following sequence:
-
-* User1 creates a resource with version v2, using a new optional parameter.
-* Later, User2 wants to update the resource using unrelated settings.  Using version v1, User2 issues a GET, does the changes, and then issues a PUT to replace the resource definition.
-
-In this case, the optional parameter is lost because of the replace semantics.  The optional parameter only exists on API version v2, and not on version v1.
-
-Service teams SHOULD prefer and recommend PATCH operations for updating resources.
+:no_entry: **DO NOT** introduce any breaking changes into service. 
+>   NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. If a new service version must break customers (due to security/compliance/etc.), contact the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) <i>as soon as possible</i>.
 
 #### Use extensible enums
 
@@ -601,11 +508,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-Always model an enum as a string unleess you are positive that the symbol set will **NEVER** change over time.
-
-#### Group versioning in Azure and Azure Stack
-
-Azure Stack allows customers and hosters to deploy their own small versions of Azure and upgrade it at a different pace than Azure. In order to make it possible to write an application or SDK that targets both Azure and Azure Stack, additional versioning policy is necessary. Contact the Azure Stack team for further guidance.
+Always model an enum as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version discovery
 
@@ -616,14 +519,19 @@ API version discovery is needed when either a given hosted service may expose a 
 :white_check_mark: **DO**  support API version discovery, including 
 
 1. Support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
+
 2. Include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Azure versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
+
 3. If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it must include those versions (group and major.minor) in the `api-deprecated-versions` header.
+
 4. For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
 
 :ballot_box_with_check: **YOU SHOULD** support the following for version discovery:
 
 1. In addition to the functionality described here, services should support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
+
 2. Services should allow unauthenticated HTTP `OPTIONS` requests. When doing so, authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
+
 3. If using OData and addressing an expanded resource, the HTTP `OPTIONS` request should return the group versions that are supported across the expanded set.
 
 Example request to discover API versions (blob storage container list API):
@@ -644,14 +552,6 @@ Content-Length: 0
 
 Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators. In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
 
-#### Retiring pre-release and beta APIs
-
-Pre-release and beta APIs are not covered by the Azure Global Retirement and Deprecation Policy. Each team providing a preview API should communicate to customers what the policy is going to be for support and deprecation, even if that policy is “we may remove this at any time”. The Azure REST API Guidelines cover pre-release API versions. To summarize that section, they should be marked with a version tag like `2013-03-21-Preview`. Despite their unstable nature and the fact they are not officially supported, **customers have suffered downtime when we have deprecated preview APIs**. 
-
-:ballot_box_with_check: **YOU SHOULD** should monitor preview endpoints closely.
-
-:ballot_box_with_check: **YOU SHOULD** consider following the normal deprecation policy. 
-
 ##### Additional References
 
 <!-- Links -->
@@ -670,7 +570,7 @@ Pre-release and beta APIs are not covered by the Azure Global Retirement and Dep
 [7]: http://aka.ms/aprwiki
 
 
-### Long Running Operations
+### Long Running Operations & Jobs
 
 The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. 
 
@@ -684,15 +584,25 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 
 
 ### Distributed Tracing & Service Telemetry
+* Distributed Tracing  
+* Service Telemetry 
+* How to collect client side telemetry 
 
-### Jobs
-* e.g. cascading delete
 
 ### Bring your own storage
 * Getting data into your service
 * Working with blobs
 
 ### Optimistic concurrency
+* Conditional Access 
+* Optimistic Concurrency 
+* Etags 
+
+
+### Getting data into your service 
+* Bring your own storage 
+* Working with blobs 
+
 
 ## Final Thoughts / Summary
 * Careful consideration up front
