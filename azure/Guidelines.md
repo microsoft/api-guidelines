@@ -68,7 +68,7 @@ Think about the code that a customer will write both before and after the REST A
 
 
 ### Focus on hero scenarios
-It is important to realize that writing an API is, in many cases, the easist part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documenation, and creation of client libraries and examples.Focusing on hero scenarios reduces development, support, and maintenace costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A tell tale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another. Service teams:    
+It is important to realize that writing an API is, in many cases, the easist part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documentation, and creation of client libraries and examples.Focusing on hero scenarios reduces development, support, and maintenace costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A tell tale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another. Service teams:    
 
 :white_check_mark: **DO** define "hero scenarios" first, then the operations required, & then design the API
 
@@ -77,8 +77,8 @@ It is important to realize that writing an API is, in many cases, the easist par
 :no_entry: **DO NOT** add APIs for speculative features customers might want 
 
 ### Start with your API definition
-Understanding how your service will be used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It should be reflect the naming decisions and make it easy for developers to implement your hero scenarios.  
-:white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) that describes the service. The OpenAPI Specification is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
+Understanding how your service will be used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It should reflect the naming decisions and make it easy for developers to implement your hero scenarios.  
+:white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) that describes the service. The OpenAPI Definition is a key element of the Azure SDK plan and essential to improving the documentation, usability and discoverability of services.
 
 :ballot_box_with_check: **YOU SHOULD** describe their services using ADL *[LINK TO ADL HERE]*.
 
@@ -87,7 +87,8 @@ Understanding how your service will be used and defining its model and interacti
 ### Use previews to iterate 
  Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
-:ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API. :ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.  
+:ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
+:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.  
 :ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples. 
 :ballot_box_with_check: **YOU SHOULD**  consider doing a *code with* exercise in which you actively develop with the customer, observing and learning from their API usage.
 :ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
@@ -239,19 +240,20 @@ retry-after | Response | 180 [see Throttling Client Requests]
 *x-ms-error-code* | Response | [see Processing a REST Request](http://TODO:link-goes-here)
 Last-Modified | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
 
-:white_check_mark: **DO** specify headers using kabob-casing.
+:white_check_mark: **DO** specify headers using kebab-casing.
 
 :white_check_mark: **DO** compare request header names using case-insensitivity
 
 :white_check_mark: **DO** compare request header values using case-sensitivity. Some exceptions exist: user-agent?, accept?, content-type?, RFC1123 dates, guids?.
 
-#### HTTP Methods & Idempotency
-Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
-:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header. 
+:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header.
 
 :no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production.
 
-:warning: **YOU SHOULD NOT** using the POST method unless you can guarantee it can be implemented idempotently.
+#### HTTP Methods & Idempotency
+Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
+
+:warning: **YOU SHOULD NOT** use the POST method unless you can guarantee it can be implemented idempotently.
 :white_check_mark: **DO** validate all query parameter and request header values. TODO: What to return on failure
 
 :white_check_mark: **DO** return the state of the resource after a PUT, PATCH, or GET operation with a ```200-OK``` or ```201-Created```.
@@ -289,7 +291,7 @@ Byte array | Base-64 encoded, max length
 * [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
 ### REST
-REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you will define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to retrieve and update the state of your resource. Note, it's important to model resource state, not to behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service.
+REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you will define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to retrieve and update the state of your resource. Note, it's important to model resource state, not behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service.
 <span style="color:red; font-size:large">TODO: Add link to behavior section </span>
 
 When designing your service, it is important to optimize for the developer using your API.
@@ -314,7 +316,7 @@ TODO: Some fields may be marked as required indicating that their value must alw
 
 
 > NOTE: A service is <b>not allowed</b> to introduce new required fields or remove any required fields in newer versions of the service.
-For PATCH, the their must be a similar JSON schema with no required fields nullable.
+For PATCH, there must be a similar JSON schema with no required fields nullable.
 ---
 
 ---
@@ -339,7 +341,7 @@ The following are general guidelines when using REST:
 :white_check_mark: **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
 
 :white_check_mark: **DO** use PUT with JSON for wholesale create/update operations.
-> NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent tof DELETE followed by PUT).
+> NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).
 
 :white_check_mark: **DO** use DELETE to remove a resource.
 
@@ -351,9 +353,9 @@ TODO: If we keep this NOTE, then it is about IDs, not about DELETE: NOTE: Ids ar
 
 :white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions but avoid if at all possible.
 
-:no_entry: **DO** fail an operation with ```400-Bad Request``` if the request JSON body is improperly-formed JSON.
+:white_check_mark: **DO** fail an operation with ```400-Bad Request``` if the request JSON body is improperly-formed JSON.
 
-:no_entry: **DO** fail an operation with ```412-Unprocessable Entity``` if any JSON field name or value is not fully understood by the specific version of the service.
+:white_check_mark: **DO** fail an operation with ```412-Unprocessable Entity``` if any JSON field name or value is not fully understood by the specific version of the service.
 
 :no_entry: **DO NOT** return secret fields via GET. For example, do not return adminPassword in JSON.
 
@@ -466,14 +468,6 @@ Azure services need to change over time. However, when changing a service, there
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
-
-:white_check_mark: **DO** use a later date for each new version
-
-:white_check_mark: **DO** suffix the date with '-preview' for a preview API
-```text
-PUT https://service.azure.com/users/Jeff?api-version=2021-06-04-preview
-```
-> The only difference between a private and public preview is whether you publicly document the API; there is no impact to the 'api-version' value
 
 :no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
 
