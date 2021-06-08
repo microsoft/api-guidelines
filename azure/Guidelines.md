@@ -129,7 +129,7 @@ Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ie
 A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. These are so central to the developer experience that careful consideration should be given when devising your URL structure.
 
 ## URLs 
-A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critically important as it describes the service's cognitive model:
+A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critical as it describes the service's cognitive model.
 
 :white_check_mark: **DO** expose their service to developers via the following URL pattern:
 ```text
@@ -139,7 +139,6 @@ https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resourc
 Where:
 * **service**: name of the service (ex: blobstore, servicebus, directory, or management)
 * **cloud**: cloud domain name (see Azure CLI's "az cloud list")
-
    | Cloud         | Domain            |
    | ------------- | -----             |
    | Public        | azure.net         |
