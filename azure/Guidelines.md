@@ -307,18 +307,12 @@ When designing your service, it is important to optimize for the developer using
 
 #### JSON Resource Schema & Field Mutability
 For a given URL path, the JSON schema (data type) should be the same for PATCH, PUT, GET, DELETE, and GETting collection items. This allows one SDK type for input/output operations and enables the response to be passed back in request. While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. <!--Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries.-->
+
 :white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH request/response, GET response, and POST response. This allows one SDK type for input/output operations and enables the response to be passed back in request.
-
----
-<span style="color:red;">Jeff: What to say about required fields - it not really a REST thing 
-TODO: Some fields may be marked as required indicating that their value must alway be sent <b>and</b> is always returned. </span>
-
 
 > NOTE: A service is <b>not allowed</b> to introduce new required fields or remove any required fields in newer versions of the service.
 For PATCH, there must be a similar JSON schema with no required fields nullable.
----
 
----
 This is also not really a rest thing; more of a service implementation thing
 While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. REMOVE?: Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries. 
 
@@ -382,10 +376,38 @@ PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity
 PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 
 #### Handling Errors
+When your service encounters an error, you will not be able to return the payload that was sent as part of the operation. Because you cannot put a resource in the response, you will instead use a specific header, ```x-ms-error-code``` along with a string code. In addition, the message body will have the descriptive text of the error. This error message should give enough information to the customer so they can self-diagnose the problem. It is preferrable to include additional information as part the 'inner-error'. Informative error codes and messages increase the ability for customers to be successful and lowers the overall support costs for your service. The code value that is passed in the header is also repeated as the ```code``` value in the inner-error. It is possible that clients can recover from errors gracefully at runtime. Often, the mechanism employed will be to inspect the header value and implement appropriate coping logic. Because of this, the error code, is considered part of your API contract. Example:
 
-:white_check_mark: **DO** return x-ms-error-code header with string
+**HEADER**
 
-:white_check_mark: **DO** ensure your service returns the error response body (TODO: show it here)
+```x-ms-error-code``` : ```InvalidPasswordFormat```
+
+**RESPONSE BODY**
+```json
+{
+  "error": {
+    "code": "InvalidPasswordFormat",
+    "message": "Human-readable description",
+    "target": "target of error",
+    "innererror": {
+      "code": "PasswordTooShort",
+      "minLength": 6,
+    }
+  }
+} 
+```
+
+:white_check_mark: **DO** Return x-ms-error-code header with string
+
+:white_check_mark: **DO** return an ```error``` as part of the response body. The 1st ```code``` must match the ```x-ms-error-code```.
+
+:white_check_mark: **DO** document runtime errors that are recoverable. 
+
+:no_entry: **DO NOT** change the value of ```code``` between versions--it is part of your API contract and is considered a breaking change. 
+
+:heavy_check_mark: **YOU MAY** change the values of all other fields.
+
+
 
 ### JSON
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
@@ -582,8 +604,6 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version. 
 
 
-
-
 ### Distributed Tracing & Service Telemetry
 * Distributed Tracing  
 * Service Telemetry 
@@ -591,18 +611,111 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 
 
 ### Bring your own storage
-* Getting data into your service
-* Working with blobs
+When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc. While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions. 
 
-### Optimistic concurrency
-* Conditional Access 
-* Optimistic Concurrency 
-* Etags 
+:white_check_mark: **DO** use Azure Bring Your Own Storage. 
+:no_entry: **DO NOT** require a fresh container per operation (there's a limit of 50K so that approach doesn't scale to tons of usage) - :white_check_mark: **DO** use a blob prefix instead
+#### Authentication
+How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach. It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources. 
+
+:white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions 
+
+:white_check_mark: **DO** Ensure that RBAC roles MUST are backward compatible, and specifically, you cannot take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.  
+
+##### Handlilng 'downstream' errors
+It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream erorr code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon. 
+
+:white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body. 
+
+<span style="color:red;"> TODO: There are some security considerations here, e.g. returning the endpoint/url with a status code that exists/doesn't exist. )</span>
+
+#### Working with files
+Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
+
+##### Single file access
+Desiging an API for accessing a single file, depending on your scenario, is relatively straight forward.
+
+:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SaS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SaS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.   
+
+:ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.  
+
+:ballot_box_with_check: **YOU SHOULD** support managed identity using Azure Storage by default (if using Azure services). 
+
+###### File versioning
+Depending on your requirements, there are scenarios where users of your service will require a specific version of a file. For example, you may need to keep track of configuration changes over time to be able to rollback to a previous state. In these scenarios, you will need to provide a mechanism for accessing a specific version.
+
+:white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file. 
 
 
-### Getting data into your service 
-* Bring your own storage 
-* Working with blobs 
+
+<span style="color:red; font-size:large">TODO: collection of files</span>
+<br/>
+<span style="color:red; font-size:large">Azure storage vs. something else</span>
+
+
+
+
+### Conditional Requests
+
+Avoid pessimistic strategies, e.g. last writer wins
+-	Prefer optimistic concurrency control.  Last writer wins may be sufficient.  It’s very expensive to build and scale pessimistic concurrency control (locks, leases, etc.)
+
+
+SHOULD: Conditional read (cache validation)
+-	Conditional GETs improves performance by allowing cache validation
+
+
+Conditionaly updates (You SHOULD use optimistic concurrency)
+-	Conditional PUT/POST/DELETE/PATCH allow optimistic concurrency
+This is a strong recommendation. 
+Services SHOULD force conditional updates by providing a 428 return value
+(Review w/team)
+
+#### Optimistic concurrency
+SHOULD Always return an ETag with any operation returning the resource or part of a resource (this includes getting, updating that returns a resource, listing that returns partial resources, etc.) or any update of the resource (whether the resource is returned or not). 
+Always return an etag.
+If you return an etag, you must always accept an etag on all other operations. 
+
+
+#### Computing ETags
+Strategy of how you compute the etag depends on the semantic of the etag. 
+Resources that are inherently versioned, should have the version. Otherwise hash.
+
+
+etag - hash of the value
+SHOULD optionally use a hash of the resource, but you must hash the entire resource and this can be expensive to compute.  Especially for for listing operations.  Apache uses file system info like file size + last write to generate the ETag.  This can work  in some cases, but make sure it's not dependent on anything specific to the server sending the response
+
+Versioning semantic. 
+MAY Best option is to add a timestamp and version identifier in your resource schema.
+Timestamp shouldn't be returned with more than subsecond precision if you'll also be using the Last-Modified HTTP response header (or sub-millisecond otherwise per our general guidance).SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
+
+
+MAY consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes.  You can also use weak etags if it's expensive to compute an ETag (i.e., weak etag is size in bytes which might not be super accurate compared to an MD5 hash of a sizeable resource).
+If you choose to use a Weak ETag, then...
+(add text from mike)
+(Review w/team, e.g. when to use in Azure)
+
+#### Multiple conditions: If-Match && If-Unmodified-Since && (If-None-Match || If-Modified-Since)
+o	If you have multiple conditions fail, return the most severe status code
+see https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations for examples
+
+You MAY support preflight requests...
+Preflight requests?  Often supported for CORS but could be used for any potentially expensive request.  Consider "EXPECT: 100-continue" for other requests that will return 100 Continue if the conditions are satisfactory or 417 Expectation Failed otherwise. Useful for conditionaly requests with large payloads. You should return the same error code that the service should use. 
+SHOULD provide documentation on what preflight checks will be validated.
+
+AWS uses this for S3 API
+
+
+-	Status codes
+o	GET: if the comparison fails, return 304 Not Modified (consider also returning Expires/Cache-Control/Age headers for caching scenarios)
+o	PUT/POST/DELETE: if the comparison fails, return 412 Precondition Not Met
+o	Consider forcing conditional headers on resource mutation, then use 428 Precondition Required if they're not present.
+
+-	If-Match header - should support multiple values that are Or-ed together per HTTP/1.1.
+
+
+
+
 
 
 ## Final Thoughts / Summary
