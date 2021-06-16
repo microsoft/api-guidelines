@@ -42,7 +42,7 @@ SDKs need to provide support for dictionary types so SDK consummers get a deligh
 
 - Dictionaries support OData annotations (values prefixed with **@OData**), such annotations should not be inserted directly in the dictionary but rather in the additional properties manager.
 - Dictionary types can inherit another dictionary type, this inheritance must be respected.
-- Dictionary values can be of union types, if the target langauge doesn't support union types, a wrapper type should be generated as backward compatible solution with properties for each type of the union.
+- Dictionary values can be of union types, if the target language doesn't support union types, a wrapper type should be generated as backward compatible solution with properties for each type of the union.
 
 ### Dotnet
 

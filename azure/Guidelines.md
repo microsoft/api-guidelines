@@ -172,7 +172,7 @@ Evolutionary changes do not require prior approval (but still need a version bum
 
 #### Changing the API without changing the version
 
-Because the API version represents a contract that a developer can rely on when generating SDKs to communicate with the service, there are a limited set of situations where changing the API is permissable without a version bump.  The only changes universally allowed:
+Because the API version represents a contract that a developer can rely on when generating SDKs to communicate with the service, there are a limited set of situations where changing the API is permissible without a version bump.  The only changes universally allowed:
 
 1. Adding a new (optional) value to an extensible enum.
 

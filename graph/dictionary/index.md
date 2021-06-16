@@ -22,7 +22,7 @@ Before using a dictionary type in your API definition make sure your scenario fi
 
 ## JSON payload example
 
-The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been ommitted for brievety.
+The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been omitted for brievety.
 
 ```json
 {
@@ -48,7 +48,7 @@ In this set of examples we're modeling a **roles** property of dictionary type o
 GET https://graph.microsoft.com/v1.0/users/10/roles/author
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -62,7 +62,7 @@ Reponse:
 GET https://graph.microsoft.com/v1.0/users/10/roles
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -84,7 +84,7 @@ Reponse:
 GET https://graph.microsoft.com/v1.0/users/10
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -134,7 +134,7 @@ PATCH https://graph.microsoft.com/v1.0/users/10/roles
 ```
 
 > Note: setting one of the keys to **null** deletes it from the dictionary.
-> Note: the domain values for the existing author and maintainer entries will get udpated.
+> Note: the domain values for the existing author and maintainer entries will get updated.
 > Note: the reviewer entry will be inserted in the dictionary.
 
 ### Updating an entry in the dictionary
