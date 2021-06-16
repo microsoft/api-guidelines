@@ -26,7 +26,7 @@ Developing a new service requires the development of at least 1 (management plan
 
 > A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs.
 
-* Think about naming from the context of a **developer experience**.  
+* Think about naming from the context of a **developer experience**.
   * Start with the "things" your API manipulates, then think about the operations that a developer needs to do to these "things".
   * Keep the verbs present-tense.  Avoid the use of past or future tense in most cases.
   * Avoid the use of generic names like "Object", "Job", "Task", "Operation" (for example - the list is not exhaustive).
@@ -34,7 +34,7 @@ Developing a new service requires the development of at least 1 (management plan
 * Think about the code that a customer will write both before and after the REST API call.  How will a developer use this API in the canonical use case?
   * Consider multiple languages, and include at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#).
 * Use previews to get the shape right.  There are different notification, breaking change, and lifetime requirements on preview API versions.
-  * We recommend a minimum of 2 preview versions prior to your first GA release.  However, there is no hard rule for previews.  
+  * We recommend a minimum of 2 preview versions prior to your first GA release.  However, there is no hard rule for previews.
   * You should gather feedback from your customers and iterate until the API is useful.  Actively solicit feedback from your preview customers.
 
 Preventing future breaking changes is a source of concern during initial review.  Without a history, the review process attempts to identify patterns that may result in breaking changes later on.  For instance, think about the following:
@@ -54,7 +54,7 @@ Preventing future breaking changes is a source of concern during initial review.
   * Implement managed identity access controls for accessing the other resource.  Do not accept connection strings as a method of specifying access permissions.
 * Be concerned about data widths of numeric types.  Wider data types (e.g. 64-bit vs. 32-bit) are more future-proof.
 * Think about how the interface will be represented by an SDK.  For example, JavaScript can only support numbers up to 2<sup>53</sup>, so relying on the full width of a 64-bit number should be avoided.
-* Implement (and encourage) the use of PATCH for resource modifications.  
+* Implement (and encourage) the use of PATCH for resource modifications.
   * The PATCH operation should be able to modify any mutable property on the resource.
   * Prefer JSON merge-patch ([RFC 7396](https://tools.ietf.org/html/rfc7396)) over JSON patch ([RFC 6902](https://tools.ietf.org/html/rfc6902)) as the accepted data format for PATCH operations.
 * Get a security review of your API.  You should be especially concerned with PII leakage, GDPR compliance and any other compliance regulations appropriate to your situation.
@@ -191,7 +191,7 @@ This functionality is only available for single cloud deployments because the AP
 
 Do not add computed output values if the computed value can be calculated from other information in the payload.  It unnecessarily expands the payload.
 
-All situations where the API definition is changed (irrespective of whether a version change happens or not) **MUST** be reviewed by the Azure REST API Review Board before release.  
+All situations where the API definition is changed (irrespective of whether a version change happens or not) **MUST** be reviewed by the Azure REST API Review Board before release.
 
 ### Preview Versions
 
@@ -208,7 +208,7 @@ Preview versions are not treated the same way as release versions.  In general, 
 
 You should follow the axiom "don't surprise your customers" when deciding whether to increment the preview version, and err on the side of incrementing the preview version.
 
-Preview APIs [follow a different path for deprecation and retirement](https://dev.azure.com/msazure/AzureWiki/_wiki/wikis/AzureWiki.wiki/37683/Retirement-of-Previews), and are not subject to the same guarantees as APIs marked as generally available.  Preview APIs have a life-span of not more than 12 months, after which they must be retired. 
+Preview APIs [follow a different path for deprecation and retirement](https://dev.azure.com/msazure/AzureWiki/_wiki/wikis/AzureWiki.wiki/37683/Retirement-of-Previews), and are not subject to the same guarantees as APIs marked as generally available.  Preview APIs have a life-span of not more than 12 months, after which they must be retired.
 
 #### Why Azure recommends conservative API versioning
 
@@ -220,7 +220,7 @@ There are a few mechanisms that can reduce breaking changes and their effects on
 
 #### Use PATCH instead of PUT for updates
 
-The HTTP PUT verb is an idemopotent apply operation for the API version being used.  The [Microsoft API Guidelines already recommend the use of PATCH](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#742-patch) for updates.
+The HTTP PUT verb is an idempotent apply operation for the API version being used.  The [Microsoft API Guidelines already recommend the use of PATCH](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#742-patch) for updates.
 
 Consider the following sequence:
 
@@ -252,7 +252,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-Always model an enum as a string unleess you are positive that the symbol set will **NEVER** change over time.
+Always model an enum as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 ### Group versioning in Azure and Azure Stack
 

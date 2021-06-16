@@ -22,7 +22,7 @@ Before using a dictionary type in your API definition make sure your scenario fi
 
 ## JSON payload example
 
-The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been omitted for brievety.
+The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been omitted for brevity.
 
 ```json
 {
@@ -172,7 +172,7 @@ The following example defines a complex type **roleSettings** as well as a dicti
     </Collection>
   </Annotation>
   <Annotation Term="SupportedHttpMethod">
-    <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary atomtically -->
+    <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary automatically -->
       <String>GET</String>
       <String>PATCH</String>
       <String>DELETE</String>
