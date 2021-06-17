@@ -224,7 +224,7 @@ Header Key | Applies to | Example
 *authorization* | Request | Bearer eyJ0...Xd6j (Support Azure Active Directory) 
 *x-ms-useragent*  |  Request | [see Telemetry](http://TODO:link-goes-here)
 traceparent | Request | [see Distributed Tracing]](http://TODO:link-goes-here)
-tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)
+tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)++
 accept | Request | application/json
 if-match | Request | "67ab43" or * (no quotes) (see Conditional Access)
 if-none-match | Request | "67ab43" or * (no quotes) [see Conditional Access](http://TODO:link-goes-here)
@@ -237,7 +237,7 @@ date [RFC1123](https://datatracker.ietf.org/doc/html/rfc1123) | Both | Sun, 06 N
 etag | Response | "67ab43" [see Conditional Access](http://TODO:link-goes-here)
 retry-after | Response | 180 [see Throttling Client Requests]
 *x-ms-error-code* | Response | [see Processing a REST Request](http://TODO:link-goes-here)
-Last-Modified | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
+*Last-Modified* | Response | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
 
 :white_check_mark: **DO** specify headers using kebab-casing.
 
@@ -614,7 +614,8 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc. While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions. 
 
 :white_check_mark: **DO** use Azure Bring Your Own Storage. 
-:no_entry: **DO NOT** require a fresh container per operation (there's a limit of 50K so that approach doesn't scale to tons of usage) - :white_check_mark: **DO** use a blob prefix instead
+:no_entry: **DO NOT** require a fresh container per operation 
+:white_check_mark: **DO** use a blob prefix instead
 #### Authentication
 How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach. It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources. 
 
@@ -627,7 +628,7 @@ It is not uncommon to rely on other services, e.g. storage, when implementing yo
 
 :white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body. 
 
-<span style="color:red;"> TODO: There are some security considerations here, e.g. returning the endpoint/url with a status code that exists/doesn't exist. )</span>
+<span style="color:red;"> TODO: There are some security considerations here, e.g. returning the endpoint/url with a status code that exists/doesn't exist. Johan )</span>
 
 #### Working with files
 Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
@@ -635,7 +636,7 @@ Generally speaking, there are two patterns that you will encounter when working 
 ##### Single file access
 Desiging an API for accessing a single file, depending on your scenario, is relatively straight forward.
 
-:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SaS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SaS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.   
+:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.   
 
 :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.  
 
@@ -645,15 +646,43 @@ Desiging an API for accessing a single file, depending on your scenario, is rela
 Depending on your requirements, there are scenarios where users of your service will require a specific version of a file. For example, you may need to keep track of configuration changes over time to be able to rollback to a previous state. In these scenarios, you will need to provide a mechanism for accessing a specific version.
 
 :white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file. 
+##### File collections
+When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and it's contents, in a consistent manner. Because there is no industry standard for working with with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes. 
 
+:white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well. 
 
+:white_check_mark: **DO** When using managed identity, ensure the customer has given the proper permissions to access the file container to the service. 
 
-<span style="color:red; font-size:large">TODO: collection of files</span>
-<br/>
-<span style="color:red; font-size:large">Azure storage vs. something else</span>
+A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process, e.g. "input" and a location(s) to place the any files that result from processing, e.g. "output." (Note: the terms "input" and "output" are just examples and terms more relevant to the service domain are more appropriate.)
 
+For example, in a request payload may look similar to the following:
 
+```json
+{ 
+"input":{ 
+    "location": "https://mycompany.blob.core.windows.net/documents/english/?<sas token>", 
+    "delimiter":"/" 
+    }, 
+"output":{ 
+    "location": "https://mycompany.blob.core.windows.net/documents/spanglish/?<sas token>", 
+    "delimiter":"/" 
+    } 
+} 
+```
+Note: How the service gets the request body is outside the purview of these guidelines.  
 
+Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. However, for each of the "input" sections the following apply:
+
+:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter."
+
+:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```listing``` and ```read``` permissions. 
+
+For each of the "output" sections the following apply:
+
+:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```write``` permissions 
+
+ 
+<span style="color:red;"> TODO: Add the proper links for 'additional references' )</span>
 
 ### Conditional Requests
 
