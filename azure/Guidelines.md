@@ -477,6 +477,210 @@ Overall, this is a very brittle design that leads to a poor developer experience
 
 ### Collections
 
+The standard REST pattern for accessing a collection of resources is with a _GET_ method on the collection URL.
+This operation is commonly called the "list operation" for the resource, since the primary content of the response
+is an array (list) of the resource type.  Query parameters on the list operation may be provided to control
+which resources are returned and in what order.
+
+Resource collections can often be arbitrarily large, increasing lookup time as well as the size of the responses being sent over the wire. Therefore, it is important that list operations implement pagination.
+
+:white_check_mark: **DO** provide a list operation for each resource type.
+
+:white_check_mark: **DO** structure the response to a list operation as an object with a top-level array property to contain the collection of resources.
+
+:ballot_box_with_check: **YOU SHOULD** use _value_ as the name of the top-level array property -- there are some allowable exceptions to this guidance.
+
+:white_check_mark: **DO** implement pagination of list operation responses unless there is no possibility of a collection exceeding a size appropriate for a single response.
+In particular, include a top-level property in the response named _nextLink_ that contains an opaque URL to return the next page of results when there are additional items in the collection.
+
+:no_entry: **DO NOT** include a _nextLink_ property in the response if there are no additional items in the collection.
+
+:white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this.
+
+Clients MUST be resilient to collection data being either paged or nonpaged for any given request.
+
+Example:
+```json
+{
+  "value":[
+    { "id": "Item 1","price": 99.95,"sizes": null},
+    { … },
+    { … },
+    { "id": "Item 99","price": 59.99,"sizes": null}
+  ],
+  "nextLink": "{opaqueUrl}"
+}
+```
+
+#### Query options
+
+A number of query parameters that may be supported on a list operation to control which resources are returned and in what order. A summary of these query parameters is shown in the following table, with more detail given below.  All these query parameters are optional.
+
+| Parameter name | type | description |
+| -------------- | ---- | ----------- |
+| _filter_       | string | an expression on the resource type that selects the resources to be returned |
+| _orderby_      | array of string | a list of expressions that specify the order of the returned resources |
+| _skip_         | integer | an offset into the collection of the first resource to be returned |
+| _maxpagesize_  | integer | the maximum number of resources to include in a single response |
+
+:white_check_mark: **DO** treat these query parameter names as case-sensitve.
+
+:no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
+
+:no_entry: **DO NOT** define a _top_ query parameter to limit the number of results returned.  Use the _maxpagesize_ parameter for this purpose.
+
+:white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
+
+:white_check_mark: **DO** apply _select_ or _expand_ options after applying all the query options in the table above.
+
+#### filter
+
+:heavy_check_mark: **YOU MAY** support filtering of the results of a list operation with the _filter_ query parameter.
+
+The value of the _filter_ option is a Boolean expression which is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.
+
+:white_check_mark: **DO** omit all resources from the collection for which the _filter_ expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+
+Example: return all Products whose Price is less than $10.00
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=price lt 10.00
+```
+
+##### filter operators
+
+:ballot_box_with_check: **YOU SHOULD** support the following minimal set of operators in _filter_ expressions.
+
+Operator             | Description           | Example
+-------------------- | --------------------- | -----------------------------------------------------
+Comparison Operators |                       |
+eq                   | Equal                 | city eq 'Redmond'
+ne                   | Not equal             | city ne 'London'
+gt                   | Greater than          | price gt 20
+ge                   | Greater than or equal | price ge 10
+lt                   | Less than             | price lt 20
+le                   | Less than or equal    | price le 100
+Logical Operators    |                       |
+and                  | Logical and           | price le 200 and price gt 3.5
+or                   | Logical or            | price le 3.5 or price gt 200
+not                  | Logical negation      | not price le 3.5
+Grouping Operators   |                       |
+( )                  | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
+
+:white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
+
+:white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence:
+
+| Group           | Operator | Description           |
+|:----------------|:---------|:----------------------|
+| Grouping        | ( )      | Precedence grouping   |
+| Unary           | not      | Logical Negation      |
+| Relational      | gt       | Greater Than          |
+|                 | ge       | Greater than or Equal |
+|                 | lt       | Less Than             |
+|                 | le       | Less than or Equal    |
+| Equality        | eq       | Equal                 |
+|                 | ne       | Not Equal             |
+| Conditional AND | and      | Logical And           |
+| Conditional OR  | or       | Logical Or            |
+
+##### Operator examples
+The following examples illustrate the use and semantics of each of the logical operators.
+
+Example: all products with a name equal to 'Milk'
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk'
+```
+
+Example: all products with a name not equal to 'Milk'
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=name ne 'Milk'
+```
+
+Example: all products with the name 'Milk' that also have a price less than 2.55:
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk' and price lt 2.55
+```
+
+Example: all products that either have the name 'Milk' or have a price less than 2.55:
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk' or price lt 2.55
+```
+
+Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
+
+```http
+GET https://api.contoso.com/v1.0/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+```
+
+#### orderby
+
+:heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the _orderby_ query parameter.
+
+The value of the _orderby_ parameter is a comma-separated list of expressions used to sort the items.
+A special case of such an expression is a property path terminating on a primitive property.
+
+Each expression in the _orderby_ parameter value may include the suffix "asc" for ascending or "desc" for descending, separated from the expression by one or more spaces.
+
+:white_check_mark: **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
+
+:white_check_mark: **DO** sort NULL values as "less than" non-NULL values.
+
+:white_check_mark: **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
+
+:white_check_mark: **DO** use the inherent sort order for the type of the property. For example, date-time values should be sorted chronologically and not alphabetically.
+
+:white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if the client requests sorting by a property that is not supported by the operation.
+
+For example, to return all people sorted by name in ascending order:
+
+```http
+GET https://api.contoso.com/v1.0/people?$orderBy=name
+```
+
+
+For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
+
+```http
+GET https://api.contoso.com/v1.0/people?$orderBy=name desc,hireDate
+```
+
+Sorting MUST compose with filtering such that:
+
+```http
+GET https://api.contoso.com/v1.0/people?filter=name eq 'david'&orderby=hireDate
+```
+
+will return all people whose name is David sorted in ascending order by hireDate.
+
+##### Considerations for sorting with pagination
+
+:white_check_mark: **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
+
+##### skip
+
+:heavy_check_mark: **YOU MAY** allow clients to pass the _skip_ query parameter to specify an offset into collection of the first resource to be returned.
+
+:white_check_mark: **DO** define the _skip_ parameter as an integer with a default and minimum value of 0.
+
+##### maxpagesize
+
+:ballot_box_with_check: **YOU SHOULD** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in the response.
+
+:white_check_mark: **DO** define the _maxpagesize_ parameter as an optional integer with a default value appropriate for the collection.
+
+:white_check_mark: **DO** make clear in documentation of the _maxpagesize_ parameter that the operation may choose to return fewer resources than the value specified in a single response.
+
+:white_check_mark: **DO** apply any _skip_ value specified by the client before applying the _maxpagesize_ to the collection.
+
+> MDK: Make sure that the guidance below is captured elsewhere then remove from here.
+> Note: If the server can't honor _skip_ or _maxpagesize_ (e.g. a negative value is specified), the server MUST return an error to the client informing about it instead of just ignoring the query options.
+> This will avoid the risk of the client making assumptions about the data returned.
+
 ### API Versioning
 
 Azure services need to change over time. However, when changing a service, there are 2 requirements:
