@@ -713,8 +713,10 @@ Timestamp shouldn't be returned with more than subsecond precision if you'll als
 
 
 MAY consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes.  You can also use weak etags if it's expensive to compute an ETag (i.e., weak etag is size in bytes which might not be super accurate compared to an MD5 hash of a sizeable resource).
+
 If you choose to use a Weak ETag, then...
 (add text from mike)
+
 (Review w/team, e.g. when to use in Azure)
 
 #### Multiple conditions: If-Match && If-Unmodified-Since && (If-None-Match || If-Modified-Since)
@@ -725,19 +727,13 @@ You MAY support preflight requests...
 Preflight requests?  Often supported for CORS but could be used for any potentially expensive request.  Consider "EXPECT: 100-continue" for other requests that will return 100 Continue if the conditions are satisfactory or 417 Expectation Failed otherwise. Useful for conditionaly requests with large payloads. You should return the same error code that the service should use. 
 SHOULD provide documentation on what preflight checks will be validated.
 
-AWS uses this for S3 API
-
 
 -	Status codes
-o	GET: if the comparison fails, return 304 Not Modified (consider also returning Expires/Cache-Control/Age headers for caching scenarios)
-o	PUT/POST/DELETE: if the comparison fails, return 412 Precondition Not Met
-o	Consider forcing conditional headers on resource mutation, then use 428 Precondition Required if they're not present.
+* GET: if the comparison fails, return 304 Not Modified (consider also returning Expires/Cache-Control/Age headers for caching scenarios)
+* PUT/POST/DELETE: if the comparison fails, return 412 Precondition Not Met
+* Consider forcing conditional headers on resource mutation, then use 428 Precondition Required if they're not present.
 
 -	If-Match header - should support multiple values that are Or-ed together per HTTP/1.1.
-
-
-
-
 
 
 ## Final Thoughts / Summary
