@@ -485,18 +485,19 @@ Resource collections can often be arbitrarily large, increasing lookup time as w
 
 :white_check_mark: **DO** provide a list operation for each resource type.
 
-:white_check_mark: **DO** structure the response to a list operation as an object with a top-level array property to contain the collection of resources.
+:white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field to contain the collection of resources.
 
-:ballot_box_with_check: **YOU SHOULD** use _value_ as the name of the top-level array property -- there are some allowable exceptions to this guidance.
+:ballot_box_with_check: **YOU SHOULD** at a minimum include the id field in each resource.  Also include the _ETag_ if supported for this resource type.
+
+:ballot_box_with_check: **YOU SHOULD** use _value_ as the name of the top-level array field -- there are some allowable exceptions to this guidance.
 
 :white_check_mark: **DO** implement pagination of list operation responses unless there is no possibility of a collection exceeding a size appropriate for a single response.
-In particular, include a top-level property in the response named _nextLink_ that contains an opaque URL to return the next page of results when there are additional items in the collection.
+In particular, include a top-level field in the response named _nextLink_ that contains an opaque absolute URL to return the next page of results when there are additional items in the collection.
 
-:no_entry: **DO NOT** include a _nextLink_ property in the response if there are no additional items in the collection.
+:no_entry: **DO NOT** include a _nextLink_ field in the response if there are no additional items in the collection.
+<!-- In other words, don't include `"nextLink": null` in the response to indicate the final page. I've seen it! -->
 
 :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this.
-
-Clients MUST be resilient to collection data being either paged or nonpaged for any given request.
 
 Example:
 ```json
@@ -520,13 +521,12 @@ A number of query parameters that may be supported on a list operation to contro
 | _filter_       | string | an expression on the resource type that selects the resources to be returned |
 | _orderby_      | array of string | a list of expressions that specify the order of the returned resources |
 | _skip_         | integer | an offset into the collection of the first resource to be returned |
+| _top_          | integer | the maximum number of resources to return from the collection |
 | _maxpagesize_  | integer | the maximum number of resources to include in a single response |
 
 :white_check_mark: **DO** treat these query parameter names as case-sensitve.
 
 :no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
-
-:no_entry: **DO NOT** define a _top_ query parameter to limit the number of results returned.  Use the _maxpagesize_ parameter for this purpose.
 
 :white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
 
@@ -536,14 +536,14 @@ A number of query parameters that may be supported on a list operation to contro
 
 :heavy_check_mark: **YOU MAY** support filtering of the results of a list operation with the _filter_ query parameter.
 
-The value of the _filter_ option is a Boolean expression which is evaluated for each resource in the collection, and only items where the expression evaluates to true are included in the response.
+The value of the _filter_ option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
 :white_check_mark: **DO** omit all resources from the collection for which the _filter_ expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=price lt 10.00
+GET https://api.contoso.com/products?filter=price lt 10.00
 ```
 
 ##### filter operators
@@ -589,31 +589,31 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk'
+GET https://api.contoso.com/products?filter=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=name ne 'Milk'
+GET https://api.contoso.com/products?filter=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/v1.0/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
@@ -631,27 +631,27 @@ Each expression in the _orderby_ parameter value may include the suffix "asc" fo
 
 :white_check_mark: **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
 
-:white_check_mark: **DO** use the inherent sort order for the type of the property. For example, date-time values should be sorted chronologically and not alphabetically.
+:white_check_mark: **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
 
-:white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if the client requests sorting by a property that is not supported by the operation.
+:white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
 
 ```http
-GET https://api.contoso.com/v1.0/people?$orderBy=name
+GET https://api.contoso.com/people?$orderBy=name
 ```
 
 
 For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
 
 ```http
-GET https://api.contoso.com/v1.0/people?$orderBy=name desc,hireDate
+GET https://api.contoso.com/people?$orderBy=name desc,hireDate
 ```
 
 Sorting MUST compose with filtering such that:
 
 ```http
-GET https://api.contoso.com/v1.0/people?filter=name eq 'david'&orderby=hireDate
+GET https://api.contoso.com/people?filter=name eq 'david'&orderby=hireDate
 ```
 
 will return all people whose name is David sorted in ascending order by hireDate.
@@ -666,15 +666,27 @@ will return all people whose name is David sorted in ascending order by hireDate
 
 :white_check_mark: **DO** define the _skip_ parameter as an integer with a default and minimum value of 0.
 
+##### top
+
+:heavy_check_mark: **YOU MAY** allow clients to pass the _top_ query parameter to specify the maximum number of resources to return from the collection.
+
+:white_check_mark: **DO** define the _top_ parameter as an integer with a minimum value of 1.
+
+:white_check_mark: **DO** return all resources of the collection, starting from _skip_ if specified, possibly paginated by server-driven pagination, if _top_ is not specified.
+
+:white_check_mark: **DO** return the _top_ resources, accumulated over all server-driven paging, if the collection contains at least _top_ number of resources. Returning fewer than _top_ resources can be interpreted by the client to mean that there are no more resources in the collection.
+
 ##### maxpagesize
 
-:ballot_box_with_check: **YOU SHOULD** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in the response.
+:heavy_check_mark: **YOU MAY** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in a single response.
 
 :white_check_mark: **DO** define the _maxpagesize_ parameter as an optional integer with a default value appropriate for the collection.
 
 :white_check_mark: **DO** make clear in documentation of the _maxpagesize_ parameter that the operation may choose to return fewer resources than the value specified in a single response.
 
 :white_check_mark: **DO** apply any _skip_ value specified by the client before applying the _maxpagesize_ to the collection.
+
+:no_entry: **DO NOT** support both _top_ and _maxpagesize_ unless server-side paging provides stronger consistency guarantees and these are described in the documentation.
 
 > MDK: Make sure that the guidance below is captured elsewhere then remove from here.
 > Note: If the server can't honor _skip_ or _maxpagesize_ (e.g. a negative value is specified), the server MUST return an error to the client informing about it instead of just ignoring the query options.
