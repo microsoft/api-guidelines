@@ -932,7 +932,7 @@ These guidelines describe the ..., and the common patterns that teams encounter 
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. 
 ### Typical review session   
 When engaging with the API REST Stewardship board, your working sessions will generally focus on three areas:
-* Correctness - Is 
+* Correctness - Your service should leverage the proper HTTP verbs, return codes, and respect the core constructs of a REST API, e.g. idempotency, that are standard throughout the industry. 
 * Consistency - Your services should look and behave as though they are natural part of the Azure platform.
 * Well formed - Do your services adhere to REST and Azure standards, e.g. proper return codes, use of headers. 
 * Sustainable - Your APIs will grow and change over time and leveraging the common patterns described in this document will help you mimize your tech debt and move fast with confidence. 
