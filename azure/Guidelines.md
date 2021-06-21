@@ -960,17 +960,17 @@ SHOULD provide documentation on what preflight checks will be validated.
 
 
 ### Distributed Tracing & Telemetry
-Azure Core guidelines specify that you support telemetry data through both the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
-When a client library is created, code to handle telemetry and distributed tracing information will be automatically added. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
+Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
+Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
 
-:white_check_mark: **DO** follow the Azure Core guidelines for supporting telemetry headers and Open Telemetry.
+:white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
 
 #### Additional References
-* [Azure Core Guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
-* [Azure User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
-* [Azure Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
+* [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
+* [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
+* [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
 * [Open Telemetry](https://opentelemetry.io/)
 
 
