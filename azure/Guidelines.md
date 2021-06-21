@@ -926,36 +926,15 @@ An ```ETag``` should also be used to reflect the create, update, and delete poli
 
 :white_check_mark: **DO** adhere to the following table for guidance:
 
-| Operation   | Header        | Value | etag check | Return code | Response       |
-|:------------|:--------------|:------|:-----------|:------------|----------------|
-| PATCH / PUT | if-none-match | *     | check for *any* version of the resource ('*' is a wildcard used to match anything), if none are found, create the resource. | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
-| PATCH / PUT | if-none-match | *     | check for *any* version of the resource, if one is found, fail the operation |  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| PATCH / PUT | if-match | value of etag     | value of if-match equals the latest etag value on the server, confirming that the version of the resource is the most current | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
-| PATCH / PUT | if-match | value of etag     | value of if-match header DOES NOT equal the latest etag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| DELETE      | if-none-match | value of etag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
-| DELETE      | if-none-match | value of etag     | value matches the latest value on the server | 200 OK or </br> 204 No Content | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
-in over time.
-#### Computing ETags
-The strategy that you use to compute the ```ETag``` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the ```ETag```. Another common strategy for determining the value of an ```ETag``` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism. 
+## Final thoughts
+These guidelines describe the ..., and the common patterns that teams encounter when building an Azure service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success. 
 
-:heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
+The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. 
+### Typical review session   
+When engaging with the API REST Stewardship board, your working sessions will generally focus on three areas:
+* Correctness - Is 
+* Consistency - Your services should look and behave as though they are natural part of the Azure platform.
+* Well formed - Do your services adhere to REST and Azure standards, e.g. proper return codes, use of headers. 
+* Sustainable - Your APIs will grow and change over time and leveraging the common patterns described in this document will help you mimize your tech debt and move fast with confidence. 
 
-:ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
-
-:heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
-### Distributed Tracing & Telemetry
-Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
-Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
-
-:white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
-
-:no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
-#### Additional References
-* [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
-* [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
-* [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
-* [Open Telemetry](https://opentelemetry.io/)
-## Final Thoughts / Summary
-* Careful consideration up front
-* Long term decisions that are often codified in SDKs, CODE, etc.
-* Reach out and engage the stewardship team!
+It was once said that "all roads lead to Rome." For cloud services, the equivalent might be that "all 'roads' start with your API." That could not be more true than at Microsoft, where client libraries, documentation, and many other artifacts all originate from the fundamental way you choose to expose your service. With careful consideration at the outset of your service, the architectural stewardship of the API boar, and the thoughtful application of these guidelines, you will be able to produce a consistent, well formed API that will delight our customers.
