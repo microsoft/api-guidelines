@@ -740,7 +740,7 @@ SHOULD provide documentation on what preflight checks will be validated.
 Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
 
-:white_check_mark: **DO** follow the Azure Core guidelines for supporting telemetry headers and Open Telemetry.
+:white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
 
