@@ -745,7 +745,7 @@ Client libraries are required to send telemetry and distributed tracing informat
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
 
 #### Additional References
-* [Azure Core Guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
+* [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
 * [Azure User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 * [Azure Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
 * [Open Telemetry](https://opentelemetry.io/)
