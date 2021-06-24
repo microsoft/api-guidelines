@@ -304,7 +304,7 @@ A service **SHOULD** support repeatable requests as defined in [OASIS Repeatable
 
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
 - A service advertises support for repeatability requests by adding the `Repeatbility-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
-- When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
+- When supported, all endpoints co-located behind a DNS name **MUST** support the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
 
 ## Retiring pre-release and beta APIs
 
