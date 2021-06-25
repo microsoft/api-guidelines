@@ -53,7 +53,7 @@ Your goal is to create a developer friendly API where:
 
 :white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK w/out requiring code changes 
 
-## Azure Management Plane vs Data Plane
+### Azure Management Plane vs Data Plane
 > Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.
 > A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used by subscription administrators.  A **data plane** API is used by developers to implement applications.  Rarely, a subset of operations may be useful to both administrators and users, in which case it should appear in both APIs. Although the best practices and patterns described in this document apply to all REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on the conventions of the Azure ARM.
 
@@ -88,9 +88,13 @@ Understanding how your service will be used and defining its model and interacti
  Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
 :ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
-:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.  
-:ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples. 
+
+:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.
+
+:ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
+
 :ballot_box_with_check: **YOU SHOULD**  consider doing a *code with* exercise in which you actively develop with the customer, observing and learning from their API usage.
+
 :ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
 ### Avoid surprises
@@ -107,12 +111,11 @@ A major inhibitor to adoption and usage is when an API behaves in an unexpected 
 ### Design for Change Resiliancy 
 As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
 
-
 :ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change. 
 
 :ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
-:ballot_box_with_check: **YOU SHOULD** use wider data types (e.g. 64-bit vs. 32-bit) as they are more future-proof. For example, JavaScript can only support numbers up to 2<sup>53</sup>, so relying on the full width of a 64-bit number should be avoided.
+:ballot_box_with_check: **YOU SHOULD** use wider data types (e.g. 64-bit vs. 32-bit) as they are more future-proof. For example, JavaScript can only support integers up to 2<sup>53</sup>, so relying on the full width of a 64-bit integer should be avoided.
 
 ## Building Blocks: HTTP, REST, & JSON
 The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet, namely HTTP, REST, and JSON. This section will provide you with a general understanding of how these technologies should be applied when creating your service.
@@ -124,13 +127,9 @@ Azure services will adhere to the HTTP specification, [RFC7231](https://tools.ie
 * Headers
 * Bodies
 
-#### URLs 
-<span style="color:red; font-size:large">TODO: Update this section </span>
+### URLs
 
 A Uniform Resource Locator (URL) is how developers will access the resources of your service. Ultimately, URLs will be how developers begin to form a cognitive model of your service. These are so central to the developer experience that careful consideration should be given when devising your URL structure.
-
-## URLs 
-A Uniform Resource Locator (URL) is how developers access your service's resources. The structure of the URL is critical as it describes the service's cognitive model.
 
 :white_check_mark: **DO** expose their service to developers via the following URL pattern:
 ```text
@@ -151,8 +150,22 @@ Where:
 
 * **service-root**: service-specific path (ex: blobcontainer, myqueue)
 
+* **resource-collection**: the name of the collection, unabbreviated, pluralized
+
+* **resource-id**: the value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+
 :white_check_mark: **DO** treat URLs as case-sensitive (except for scheme/host). If case doesn't match what you expect, the request __MUST__ fail with the appropriate HTTP return code.
 > Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a GUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
+
+:white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
+
+:ballot_box_with_check: **YOU SHOULD** limit your URL's characters to `0-9  A-Z  a-z  -  .  _  ~`
+
+:heavy_check_mark: **YOU MAY** use these other characters in the URL but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
+
+:ballot_box_with_check: **YOU SHOULD** use case-sensitive comparison for **resource_id**
+
+:heavy_check_mark: **YOU MAY** use case-insensitive comparison for a **resrouce-id** that is a GUID value
 
 :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a response JSON body
 
@@ -160,26 +173,19 @@ Where:
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
-### Direct endpoint URLs
+#### Direct endpoint URLs
 
-:ballot_box_with_check: **YOU SHOULD** use case-sensitive comparison for <resource-id> 
+:heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
+```text
+https://<tenant>-<service-root>.<service>.<cloud>/...
+```
 
-:heavy_check_mark: **YOU MAY** use case-insensitive comparison for a <resrouce-id> that is a GUID value
-
----
-A direct endpoint URL <b>may also</b> be used for performance/routing:
-
-    https://<tenant>-<service-root>.<service>.<cloud>/...
-
-    Examples: 
-    - Request URL: https://blobstore.azure.net/contoso.com/account1/container1/blob2
-    - Response ```content-location``` [RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4): https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2
-    - GUID format: https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2
----
+Examples:
+  - Request URL: `https://blobstore.azure.net/contoso.com/account1/container1/blob2`
+  - Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
+  - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
 :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a GUID for <tenant> or always a single verified domain.
-
-:white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
 :heavy_check_mark: **YOU MAY** use URLs as values
 ```
@@ -187,16 +193,14 @@ https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
 ### HTTP Request / Response Pattern
-The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make. For each request / response, the service: 
+The HTTP Request / Response pattern will dictate much of how your API behaves, for example; POST methods must be idempotent, GET methods may be cached, the If-Modified and etag headers determine your optimistic concurrency strategy. The URL of a service, along with its request / response, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you will make.
 
-:ballot_box_with_check: **YOU SHOULD** try to limit your URL's characters to ```0-9  A-Z  a-z  -  .  _  ~```
-
-:heavy_check_mark: **YOU MAY** use these other characters but they will likely require %-encoding: ```/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =```
-
-### HTTP Methods & Idempotency
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, <b>all</b> service operations (including POST) <b>must</b> be idempotent.
+Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 
 ---
+> Idempotent = Retrying a request has the same intended effect, even if the original request succeeded, though the response might differ
+
 > Exactly Once Behavior = Client Retries & Service Idempotency
 ---
 
@@ -208,22 +212,49 @@ Cloud applications embrace failure. Therefore, to enable customers to write faul
 
 Method | Description | Response Status Code 
 ----|----|----
+GET | Read (i.e. list) a resource collection | 200-OK
 GET | Read the resource | 200-OK 
 DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found 
 PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
 PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
  
+:white_check_mark: **DO** return the state of the resource after a PUT, PATCH, or GET operation with a ```200-OK``` or ```201-Created```.
+
+:white_check_mark: **DO** return a ```204-No Content``` without a resource for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
+
 **YOU MAY** support caching and optimistic concurrency by returning resources with an etag response header and by supporting the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers.
 
 ### HTTP Query Parameters and Header Values
+
+:white_check_mark: **DO** validate all query parameter and request header values and return an error response if any value fails validation.
+
+Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
+
+:white_check_mark: **DO** use the following table when translating strings:
+
+Data type | Document that string must be
+-------- | -------
+Boolean  | true / false (all lowercase)
+Integer  | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON limits on integers [RFC8259](https://datatracker.ietf.org/doc/html/rfc8259))
+Float    | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
+String   | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
+UUID     | {}? casing? hyphens? [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
+Date/Time (Header) | [RFC1123](https://datatracker.ietf.org/doc/html/rfc1123)
+Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
+Byte array | Base-64 encoded, max length
+
+<span style="color:red; font-size:large">TODO: Expand the explanation for numbers. </span>
+
+<span style="color:red; font-size:large">TODO: Fix the links. </span>
+
 The table below lists the headers most used by Azure services:
 
 Header Key | Applies to | Example
 ------------ | ------------- | -------------
 *authorization* | Request | Bearer eyJ0...Xd6j (Support Azure Active Directory) 
 *x-ms-useragent*  |  Request | [see Telemetry](http://TODO:link-goes-here)
-traceparent | Request | [see Distributed Tracing]](http://TODO:link-goes-here)
-tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)++
+traceparent | Request | [see Distributed Tracing](http://TODO:link-goes-here)
+tracecontext | Request | [see Distributed Tracing](http://TODO:link-goes-here)
 accept | Request | application/json
 if-match | Request | "67ab43" or * (no quotes) (see Conditional Access)
 if-none-match | Request | "67ab43" or * (no quotes) [see Conditional Access](http://TODO:link-goes-here)
@@ -244,44 +275,11 @@ retry-after | Response | 180 [see Throttling Client Requests]
 
 :white_check_mark: **DO** compare request header values using case-sensitivity. Some exceptions exist: user-agent?, accept?, content-type?, RFC1123 dates, guids?.
 
-:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*. In addition, each request / response header.
+:ballot_box_with_check: **YOU SHOULD** properly handle all headers annotated in *italics*.
 
-:no_entry: **DO NOT** use "x-" prefix for headers, unless the header already exists in production.
+:no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated.
 
-#### HTTP Methods & Idempotency
-Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
-
-:warning: **YOU SHOULD NOT** use the POST method unless you can guarantee it can be implemented idempotently.
-:white_check_mark: **DO** validate all query parameter and request header values. TODO: What to return on failure
-
-:white_check_mark: **DO** return the state of the resource after a PUT, PATCH, or GET operation with a ```200-OK``` or ```201-Created```.
-
-Method | Description | Response Status Code
-----|----|----
-GET | Read the resource | 200-OK
-DELETE | Remove the resource | 204-No Content; avoid 404-Not Found
-PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
-PUT | Create/Replace the *whole* resource | 200-OK, 201-Created
-:white_check_mark: **DO** return a ```204-No Content``` without a resource for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
- 
-Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
-
-:white_check_mark: **DO** use the following table when translating strings: 
-
-Data type | Document that string must be
--------- | -------
-Boolean  | true / false (all lowercase)
-Integer  | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (limit due to IEEE-754 [RFC8259](https://datatracker.ietf.org/doc/html/rfc8259))
-Float    | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format) 
-String   | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter 
-UUID     | {}? casing? hyphens? [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
-Date/Time (Header) | [RFC1123](https://datatracker.ietf.org/doc/html/rfc1123)
-Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) 
-Byte array | Base-64 encoded, max length 
-
-<span style="color:red; font-size:large">TODO: Expand the explanation for numbers. </span>
-
-<span style="color:red; font-size:large">TODO: Fix the links. </span>
+:no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
 #### Additional References
 * [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
@@ -298,19 +296,18 @@ When designing your service, it is important to optimize for the developer using
 
 :white_check_mark: **DO** ensure your resource paths make sense
 
-:white_check_mark: **DO** simplify call with few required query parameters & JSON fields
+:white_check_mark: **DO** simplify operations with few required query parameters & JSON fields
 
 :white_check_mark: **DO** establish clear contracts for string values
 
 :white_check_mark: **DO** use proper response codes/payloads so customer can self-fix
 
 #### JSON Resource Schema & Field Mutability
-For a given URL path, the JSON schema (data type) should be the same for PATCH, PUT, GET, DELETE, and GETting collection items. This allows one SDK type for input/output operations and enables the response to be passed back in request. While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. <!--Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries.-->
 
-:white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH request/response, GET response, and POST response. This allows one SDK type for input/output operations and enables the response to be passed back in request.
+:white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH response, GET response, and POST response on a given URL path. The PATCH request schema should contain all the same fields with no required fields.
+This allows one SDK type for input/output operations and enables the response to be passed back in request.
 
 > NOTE: A service is <b>not allowed</b> to introduce new required fields or remove any required fields in newer versions of the service.
-For PATCH, there must be a similar JSON schema with no required fields nullable.
 
 This is also not really a rest thing; more of a service implementation thing
 While not explicitly defined in JSON, each field in your JSON schema should have an associated mutability rule. REMOVE?: Tools like ADL do allow annotation of mutability, enabling more sophisticated code generation of client libraries. 
@@ -336,8 +333,6 @@ The following are general guidelines when using REST:
 > NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).
 
 :white_check_mark: **DO** use DELETE to remove a resource.
-
-TODO: If we keep this NOTE, then it is about IDs, not about DELETE: NOTE: Ids are "Customer Content" & Azure allows their use.
 
 :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 
@@ -375,7 +370,7 @@ PUT | Any mandatory Create/Update field missing | 422-Unprocessable Entity
 PUT | Overwrite resource entirely using Create/Update fields | 200-OK
 
 #### Handling Errors
-When your service encounters an error, you will not be able to return the payload that was sent as part of the operation. Because you cannot put a resource in the response, you will instead use a specific header, ```x-ms-error-code``` along with a string code. In addition, the message body will have the descriptive text of the error. This error message should give enough information to the customer so they can self-diagnose the problem. It is preferrable to include additional information as part the 'inner-error'. Informative error codes and messages increase the ability for customers to be successful and lowers the overall support costs for your service. The code value that is passed in the header is also repeated as the ```code``` value in the inner-error. It is possible that clients can recover from errors gracefully at runtime. Often, the mechanism employed will be to inspect the header value and implement appropriate coping logic. Because of this, the error code, is considered part of your API contract. Example:
+When your service encounters an error, you will not be able to return the payload that was sent as part of the operation. Because you cannot put a resource in the response, you will instead use a specific header, ```x-ms-error-code``` along with a string code. In addition, the message body will have the descriptive text of the error. This error message should give enough information to the customer so they can self-diagnose the problem. It is preferrable to include additional information as part the 'inner-error'. Informative error codes and messages increase the ability for customers to be successful and lowers the overall support costs for your service. The code value that is passed in the header is also repeated as the ```code``` value in the error. It is possible that clients can recover from errors gracefully at runtime. Often, the mechanism employed will be to inspect the header value and implement appropriate coping logic. Because of this, the error code, is considered part of your API contract. Example:
 
 **HEADER**
 
@@ -398,7 +393,7 @@ When your service encounters an error, you will not be able to return the payloa
 
 :white_check_mark: **DO** Return x-ms-error-code header with string
 
-:white_check_mark: **DO** return an ```error``` as part of the response body. The 1st ```code``` must match the ```x-ms-error-code```.
+:white_check_mark: **DO** return an ```error``` as part of the response body. The `code` field of the `error` object must match the ```x-ms-error-code```.
 
 :white_check_mark: **DO** document runtime errors that are recoverable. 
 
@@ -420,7 +415,9 @@ Services, and the clients that access them, may be written in multiple languages
 When using strings, you must establish, and adhere to, a well defined contract for the format. For example, you should be cognizant of attributes like maximum length, legal characters, case-sensitivity, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
 
 :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable." 
+
 :white_check_mark: **DO** use [RFC3339] for date/time.
+
 :white_check_mark: **DO** use [RFC4122] for UUIDs.
 
 ##### Composite types
@@ -430,13 +427,14 @@ JSON also supports composing strings into higher order constructs, for example:
 
 :warning: **YOU SHOULD NOT** use JSON Arrays, e.g. [ value, … ]. Arrays are very difficult and inefficient to work with, especially with updates when using ```JSON Merge Patch```, as the entire array needs to be read prior to any operation being applied to it.
 
-:ballot_box_with_check: **YOU SHOULD** use maps instead of arrays.
+:ballot_box_with_check: **YOU SHOULD** use JSON objects instead of arrays.
 
 #### Enums & SDKs (Client libraries)
 
-It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI specification as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation. However, your services will have client libraries in many different programming languages. And because enumerations are handled differently depending on the language, this can lead to significant interoperability issues.
+It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI definition as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation.
 
-To address these issues, Microsoft's tooling uses the concept of an "extensible enum," which effectively treats all enumerations as strings. In addition, "extensible enums" indicate to client libraries that the list of values is only a *partial* list. This enables the set of values to grow over time while ensuring stability in client libraries.
+However, it is not uncommon for the set of values to grow over the life of a service. For this reason, Microsoft's tooling uses the concept of an "extensible enum," which indicates that the set of values should be treats as only a *partial* list.
+This indicates to client libraries that values of the enumeration field should be effectively treated as strings. This enables the set of values to grow over time while ensuring stability in client libraries.
 
 :white_check_mark: **DO** use "extensible enums"
 
@@ -446,8 +444,8 @@ To address these issues, Microsoft's tooling uses the concept of an "extensible 
 
 :no_entry: **DO NOT** remove values from your enumeration list. This will likely result in a breaking change to client libraries & customers.
 
-#### Discriminate polymorphic types 
-While polymorphism is a powerful concept in programming languages, returing "polymorphic JSON" as part of an API introduces significant complexity for implementors of client libraries and developers, especially as new versions of your service are introduced. For example, consider a service where V1 introduces two shapes, Retangles and Circles. They could be represented in JSON as follows:
+#### Polymorphic types
+While polymorphism is a powerful concept in programming languages, returing "polymorphic JSON" as part of an API introduces significant complexity for developers of client libraries and applications, especially as new versions of your service are introduced. For example, consider a service where V1 introduces two shapes, Retangles and Circles. They could be represented in JSON as follows:
 
 **Rectangle**
 ```json
@@ -463,11 +461,11 @@ While polymorphism is a powerful concept in programming languages, returing "pol
 "subscription": { "expiration": "2024", "kind": "paid", "invoice": "123456"}}``
 ```
 
-The first issue is that developers writing code against this JSON string contract will have a very difficult time, especially in typed languages. It will be impossible to determine what the actual type is during development, minimizing the effectiveness of tooling. At runtime, developers will have to parse the JSON, interpret the "kind" value, and *then* cast to the proper sub-class.  
+The first issue is that developers writing code against this JSON contract will have a very difficult time, especially in typed languages. It will be impossible to determine what the actual type is during development, minimizing the effectiveness of tooling. At runtime, developers will have to parse the JSON, interpret the "kind" value, and *then* cast to the proper sub-class.
 
 Overall, this is a very brittle design that leads to a poor developer experience, especially over time. Consider the scenario when a new shape is introduced in V2 of the API. Existing client libraries that work with V1 will have no concept of this new shape and, when receiving an unknown shape, fail.
 
-:warning: **YOU SHOULD NOT** use polymorphic types. Instead, return discriminate types. 
+:warning: **YOU SHOULD NOT** use polymorphic types. Instead, return concrete types.
 
 ## Common API Patterns
 
@@ -717,7 +715,7 @@ Azure services need to change over time. However, when changing a service, there
 
 :ballot_box_with_check: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an 'api-version' query parameter with a date
+:white_check_mark: **DO** use an 'api-version' query parameter with a date value
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
@@ -736,7 +734,7 @@ PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 
 #### Use extensible enums
 
-While removing a value from an enum is a breaking change, adding an enum can be handled with an _extensible enum_.  An extensible enum is a string value that has been marked with a special marker - setting `modelAsString` to true within an `x-ms-enum` block.  For example:
+While removing a value from an enum is a breaking change, adding value to an enum can be handled with an _extensible enum_.  An extensible enum is a string value that has been marked with a special marker - setting `modelAsString` to true within an `x-ms-enum` block.  For example:
 
 ```json
 "createdByType": {
@@ -832,14 +830,17 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc. While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions. 
 
 :white_check_mark: **DO** use Azure Bring Your Own Storage. 
+
 :no_entry: **DO NOT** require a fresh container per operation 
+
 :white_check_mark: **DO** use a blob prefix instead
+
 #### Authentication
 How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach. It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources. 
 
-:white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions 
+:white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
 
-:white_check_mark: **DO** Ensure that RBAC roles MUST are backward compatible, and specifically, you cannot take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.  
+:white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
 
 ##### Handlilng 'downstream' errors
 It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream erorr code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon. 
@@ -865,7 +866,7 @@ Depending on your requirements, there are scenarios where users of your service 
 
 :white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file. 
 ##### File collections
-When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and it's contents, in a consistent manner. Because there is no industry standard for working with with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes. 
+When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
 
 :white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well. 
 
