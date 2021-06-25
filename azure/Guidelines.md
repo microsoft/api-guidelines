@@ -472,6 +472,23 @@ Overall, this is a very brittle design that leads to a poor developer experience
 ## Common API Patterns
 
 ### Performing an Action
+The REST specificaiton is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services have the requirement to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message. To perform an action on a resource, we introduce the concept of a "controller resource," or simply "controller."
+> A controller resource models a procedural concept. Controller resources are like executable functions, with parameters and return values; inputs and outputs.[REST API Tutorial](https://restfulapi.net/resource-naming/) 
+
+One reason for using controllers is API consistency. The URL to the controller will include the resource upon which the operation will take place. Typically, the URL pattern for actions should be constructed as follows: First, specify the service and the resource collection. Next, identify the exact resource to operate on using the resource's id. Finally, use the "/:<controler>" pattern to indicate the action on the resource. Query parameters are used to send any parameters to the action. Consider the example of a service that sends a text message. The action URl would look similar to the following: 
+> **URL Pattern** 
+>
+> ```https://<servicename>/<collection>/<resourceId>/:<controller>?<input parameters>```
+> 
+> **SMS Example**
+>
+> ```https://myTextingService/users/12345/:send-sms?Text="Hello"```
+
+While this is a generally recognized pattern in the industry, these Azure API guidelines add further precision to how this pattern should be modeled. 
+
+:white_check_mark: **DO** use a POST operation for any action on a resource. Further, this operation **MUST** be idempotent. 
+
+:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
 
 ### Collections
 
