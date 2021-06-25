@@ -470,6 +470,23 @@ Overall, this is a very brittle design that leads to a poor developer experience
 ## Common API Patterns
 
 ### Performing an Action
+The REST specificaiton is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services have the requirement to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message. To perform an action on a resource, we introduce the concept of a "controller resource," or simply "controller."
+> A controller resource models a procedural concept. Controller resources are like executable functions, with parameters and return values; inputs and outputs.[REST API Tutorial](https://restfulapi.net/resource-naming/) 
+
+One reason for using controllers is API consistency. The URL to the controller will include the resource upon which the operation will take place. Typically, the URL pattern for actions should be constructed as follows: First, specify the service and the resource collection. Next, identify the exact resource to operate on using the resource's id. Finally, use the "/:<controler>" pattern to indicate the action on the resource. Query parameters are used to send any parameters to the action. Consider the example of a service that sends a text message. The action URl would look similar to the following: 
+> **URL Pattern** 
+>
+> ```https://<servicename>/<collection>/<resourceId>/:<controller>?<input parameters>```
+> 
+> **SMS Example**
+>
+> ```https://myTextingService/users/12345/:send-sms?Text="Hello"```
+
+While this is a generally recognized pattern in the industry, these Azure API guidelines add further precision to how this pattern should be modeled. 
+
+:white_check_mark: **DO** use a POST operation for any action on a resource. Further, this operation **MUST** be idempotent. 
+
+:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
 
 ### Collections
 
@@ -736,7 +753,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-Always model an enum as a string unless you are positive that the symbol set will **NEVER** change over time.
+:ballot_box_with_check: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version discovery
 
@@ -887,63 +904,54 @@ For each of the "output" sections the following apply:
 <span style="color:red;"> TODO: Add the proper links for 'additional references' )</span>
 
 ### Conditional Requests
+When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction. Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an ```ETag``` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with. An ```ETag``` is always set by the service and will enable you to *conditionally* control how your service responds to requests, enabling you to provide predictable updates and more efficient access.  
 
-Avoid pessimistic strategies, e.g. last writer wins
--	Prefer optimistic concurrency control.  Last writer wins may be sufficient.  It’s very expensive to build and scale pessimistic concurrency control (locks, leases, etc.)
+:ballot_box_with_check: **YOU SHOULD** return an ```ETag``` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not). 
 
+:ballot_box_with_check: **YOU SHOULD** use ```etags``` consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
 
-SHOULD: Conditional read (cache validation)
--	Conditional GETs improves performance by allowing cache validation
+> You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232). 
+#### Cache control
+One of the more common uses for ```ETag``` headers is cache control, also referred to a "conditional GET." This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency). That is, using the value of the ```ETag``` , the server can determine if the resource has changed. If there are no changes, then there is no need to return the resource, as the client already has the most recent version. 
 
+Implementing this strategy is relatively straightforward. First, you will return an ```ETag``` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your ```ETag```. In these scenarios, when a request is made by the client an ```ETag``` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The ```ETag``` value can then be sent in subsequent requests as part of the ```if-none-match``` header. This tells the service to compare the ```ETag``` that came in with the request, with the latest value that it has calcuted. If the two values are the same, then it is not necesary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated ```ETag``` value in the header. 
+ 
+:ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
 
-Conditionaly updates (You SHOULD use optimistic concurrency)
--	Conditional PUT/POST/DELETE/PATCH allow optimistic concurrency
-This is a strong recommendation. 
-Services SHOULD force conditional updates by providing a 428 return value
-(Review w/team)
+:white_check_mark: **DO** adhere to the following table for guidance:
+
+| GET Request | Return code | Response                                    |
+|:------------|:------------|:--------------------------------------------|
+| etag value = if-none-match value   | 304 Not Modified | no additional information   |
+| etag value != if-none-match value  | 200 OK           | Response body include the serialized value of the resource (typically JSON)    |
+
+> For more control over caching, please refer to the ```cache-control``` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
 
 #### Optimistic concurrency
-SHOULD Always return an ETag with any operation returning the resource or part of a resource (this includes getting, updating that returns a resource, listing that returns partial resources, etc.) or any update of the resource (whether the resource is returned or not). 
-Always return an etag.
-If you return an etag, you must always accept an etag on all other operations. 
+An ```ETag``` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls. Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of ```ETags``` and the HTTP. 
 
 
+:warning: **YOU SHOULD NOT**  implement pessimistic update strategies, e.g. last writer wins.
+
+:white_check_mark: **DO** adhere to the following table for guidance:
+
+| Operation   | Header        | Value | etag check | Return code | Response       |
+|:------------|:--------------|:------|:-----------|:------------|----------------|
+| PATCH / PUT | if-none-match | *     | check for *any* version of the resource ('*' is a wildcard used to match anything), if none are found, create the resource. | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
+| PATCH / PUT | if-none-match | *     | check for *any* version of the resource, if one is found, fail the operation |  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
+| PATCH / PUT | if-match | value of etag     | value of if-match equals the latest etag value on the server, confirming that the version of the resource is the most current | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
+| PATCH / PUT | if-match | value of etag     | value of if-match header DOES NOT equal the latest etag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
+| DELETE      | if-none-match | value of etag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
+| DELETE      | if-none-match | value of etag     | value matches the latest value on the server | 200 OK or </br> 204 No Content | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
+in over time.
 #### Computing ETags
-Strategy of how you compute the etag depends on the semantic of the etag. 
-Resources that are inherently versioned, should have the version. Otherwise hash.
+The strategy that you use to compute the ```ETag``` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the ```ETag```. Another common strategy for determining the value of an ```ETag``` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism. 
 
+:heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
 
-etag - hash of the value
-SHOULD optionally use a hash of the resource, but you must hash the entire resource and this can be expensive to compute.  Especially for for listing operations.  Apache uses file system info like file size + last write to generate the ETag.  This can work  in some cases, but make sure it's not dependent on anything specific to the server sending the response
+:ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
 
-Versioning semantic. 
-MAY Best option is to add a timestamp and version identifier in your resource schema.
-Timestamp shouldn't be returned with more than subsecond precision if you'll also be using the Last-Modified HTTP response header (or sub-millisecond otherwise per our general guidance).SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
-
-
-MAY consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes.  You can also use weak etags if it's expensive to compute an ETag (i.e., weak etag is size in bytes which might not be super accurate compared to an MD5 hash of a sizeable resource).
-
-If you choose to use a Weak ETag, then...
-(add text from mike)
-
-(Review w/team, e.g. when to use in Azure)
-
-#### Multiple conditions: If-Match && If-Unmodified-Since && (If-None-Match || If-Modified-Since)
-o	If you have multiple conditions fail, return the most severe status code
-see https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations for examples
-
-You MAY support preflight requests...
-Preflight requests?  Often supported for CORS but could be used for any potentially expensive request.  Consider "EXPECT: 100-continue" for other requests that will return 100 Continue if the conditions are satisfactory or 417 Expectation Failed otherwise. Useful for conditionaly requests with large payloads. You should return the same error code that the service should use. 
-SHOULD provide documentation on what preflight checks will be validated.
-
-
--	Status codes
-* GET: if the comparison fails, return 304 Not Modified (consider also returning Expires/Cache-Control/Age headers for caching scenarios)
-* PUT/POST/DELETE: if the comparison fails, return 412 Precondition Not Met
-* Consider forcing conditional headers on resource mutation, then use 428 Precondition Required if they're not present.
-
--	If-Match header - should support multiple values that are Or-ed together per HTTP/1.1.
-
+:heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
@@ -952,15 +960,25 @@ Client libraries are required to send telemetry and distributed tracing informat
 :white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
-
 #### Additional References
 * [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
 * [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 * [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
 * [Open Telemetry](https://opentelemetry.io/)
-
-
 ## Final Thoughts / Summary
 * Careful consideration up front
 * Long term decisions that are often codified in SDKs, CODE, etc.
 * Reach out and engage the stewardship team!
+=======
+## Final thoughts
+These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success. 
+
+The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. 
+### Typical review session   
+When engaging with the API REST Stewardship board, your working sessions will generally focus on three areas:
+* Correctness - Your service should leverage the proper HTTP verbs, return codes, and respect the core constructs of a REST API, e.g. idempotency, that are standard throughout the industry. 
+* Consistency - Your services should look and behave as though they are natural part of the Azure platform.
+* Well formed - Do your services adhere to REST and Azure standards, e.g. proper return codes, use of headers. 
+* Sustainable - Your APIs will grow and change over time and leveraging the common patterns described in this document will help you minimize your tech debt and move fast with confidence. 
+
+It was once said that "all roads lead to Rome." For cloud services, the equivalent might be that "all 'roads' start with your API." That could not be more true than at Microsoft, where client libraries, documentation, and many other artifacts all originate from the fundamental way you choose to expose your service. With careful consideration at the outset of your development effort, the architectural stewardship of the API board, and the thoughtful application of these guidelines, you will be able to produce a consistent, well formed API that will delight our customers.
