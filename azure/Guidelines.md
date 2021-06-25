@@ -213,8 +213,6 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
 PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
  
-<span style="color:red; font-size:large">TODO: To get a collection's resources (GET; see the collection section)</span>
-
 **YOU MAY** support caching and optimistic concurrency by returning resources with an etag response header and by supporting the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers.
 
 ### HTTP Query Parameters and Header Values
@@ -474,6 +472,23 @@ Overall, this is a very brittle design that leads to a poor developer experience
 ## Common API Patterns
 
 ### Performing an Action
+The REST specificaiton is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services have the requirement to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message. To perform an action on a resource, we introduce the concept of a "controller resource," or simply "controller."
+> A controller resource models a procedural concept. Controller resources are like executable functions, with parameters and return values; inputs and outputs.[REST API Tutorial](https://restfulapi.net/resource-naming/) 
+
+One reason for using controllers is API consistency. The URL to the controller will include the resource upon which the operation will take place. Typically, the URL pattern for actions should be constructed as follows: First, specify the service and the resource collection. Next, identify the exact resource to operate on using the resource's id. Finally, use the "/:<controler>" pattern to indicate the action on the resource. Query parameters are used to send any parameters to the action. Consider the example of a service that sends a text message. The action URl would look similar to the following: 
+> **URL Pattern** 
+>
+> ```https://<servicename>/<collection>/<resourceId>/:<controller>?<input parameters>```
+> 
+> **SMS Example**
+>
+> ```https://myTextingService/users/12345/:send-sms?Text="Hello"```
+
+While this is a generally recognized pattern in the industry, these Azure API guidelines add further precision to how this pattern should be modeled. 
+
+:white_check_mark: **DO** use a POST operation for any action on a resource. Further, this operation **MUST** be idempotent. 
+
+:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
 
 ### Collections
 
@@ -740,7 +755,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-Always model an enum as a string unless you are positive that the symbol set will **NEVER** change over time.
+:ballot_box_with_check: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version discovery
 
@@ -811,12 +826,6 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 :white_check_mark: **DO** return the same value for **both** headers.
 
 :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version. 
-
-
-### Distributed Tracing & Service Telemetry
-* Distributed Tracing  
-* Service Telemetry 
-* How to collect client side telemetry 
 
 
 ### Bring your own storage
@@ -942,6 +951,7 @@ The strategy that you use to compute the ```ETag``` depends on its semantic. For
 :ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
 
 :heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
+
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
@@ -958,3 +968,16 @@ Client libraries are required to send telemetry and distributed tracing informat
 * Careful consideration up front
 * Long term decisions that are often codified in SDKs, CODE, etc.
 * Reach out and engage the stewardship team!
+=======
+## Final thoughts
+These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success. 
+
+The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. 
+### Typical review session   
+When engaging with the API REST Stewardship board, your working sessions will generally focus on three areas:
+* Correctness - Your service should leverage the proper HTTP verbs, return codes, and respect the core constructs of a REST API, e.g. idempotency, that are standard throughout the industry. 
+* Consistency - Your services should look and behave as though they are natural part of the Azure platform.
+* Well formed - Do your services adhere to REST and Azure standards, e.g. proper return codes, use of headers. 
+* Sustainable - Your APIs will grow and change over time and leveraging the common patterns described in this document will help you minimize your tech debt and move fast with confidence. 
+
+It was once said that "all roads lead to Rome." For cloud services, the equivalent might be that "all 'roads' start with your API." That could not be more true than at Microsoft, where client libraries, documentation, and many other artifacts all originate from the fundamental way you choose to expose your service. With careful consideration at the outset of your development effort, the architectural stewardship of the API board, and the thoughtful application of these guidelines, you will be able to produce a consistent, well formed API that will delight our customers.
