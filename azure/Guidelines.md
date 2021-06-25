@@ -213,8 +213,6 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 PATCH | Create/Modify the resource with JSON Merge Patch | 200-OK, 201-Created
 PUT | Create/Replace the *whole* resource | 200-OK, 201-Created 
  
-<span style="color:red; font-size:large">TODO: To get a collection's resources (GET; see the collection section)</span>
-
 **YOU MAY** support caching and optimistic concurrency by returning resources with an etag response header and by supporting the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers.
 
 ### HTTP Query Parameters and Header Values
@@ -740,7 +738,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-Always model an enum as a string unless you are positive that the symbol set will **NEVER** change over time.
+:ballot_box_with_check: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version discovery
 
@@ -811,12 +809,6 @@ The Microsoft REST API guidelines for Long Running Operations are an updated, cl
 :white_check_mark: **DO** return the same value for **both** headers.
 
 :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version. 
-
-
-### Distributed Tracing & Service Telemetry
-* Distributed Tracing  
-* Service Telemetry 
-* How to collect client side telemetry 
 
 
 ### Bring your own storage
