@@ -537,7 +537,7 @@ While removing a value from an enum is a breaking change, adding an enum can be 
 }
 ```
 
-:ballot_box_with_check: **DO** slways model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
+:ballot_box_with_check: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version discovery
 
