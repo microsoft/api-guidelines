@@ -92,12 +92,6 @@ Understanding how your service is used and defining its model and interaction pa
 
 :white_check_mark: **DO** provide an [OpenAPI Definition][OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
 
-<!-- MDK: I think we want to hold off on mentioning ADL until it is public.
-:ballot_box_with_check: **YOU SHOULD** describe the service using ADL *[LINK TO ADL HERE]*.
-
-:ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI definition.
--->
-
 ### Use Previews to Iterate 
  Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
