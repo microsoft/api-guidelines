@@ -90,11 +90,13 @@ Focusing on hero scenarios reduces development, support, and maintenance costs; 
 ### Start with your API Definition
 Understanding how your service is used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It reflects the abstractions & naming decisions and makes it easy for developers to implement the hero scenarios.  
 
-:white_check_mark: **DO** provide an [OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
+:white_check_mark: **DO** provide an [OpenAPI Definition][OpenAPI Definition] (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
 
+<!-- MDK: I think we want to hold off on mentioning ADL until it is public.
 :ballot_box_with_check: **YOU SHOULD** describe the service using ADL *[LINK TO ADL HERE]*.
 
 :ballot_box_with_check: **YOU SHOULD** use ADL to generate the required OpenAPI definition.
+-->
 
 ### Use Previews to Iterate 
  Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
@@ -185,7 +187,7 @@ Examples:
   - Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
   - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
-:white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for <tenant> or always a single verified domain.
+:white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
 :heavy_check_mark: **YOU MAY** use URLs as values
 ```
@@ -205,7 +207,7 @@ Cloud applications embrace failure. Therefore, to enable customers to write faul
 
 :ballot_box_with_check: **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
 
-:heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (TODO: See link)
+:heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#Repeatability-of-requests)).
 
 :white_check_mark: **DO** adhere to the return codes in the following table when the method is successful:
 
@@ -229,7 +231,7 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
-:white_check_mark: **DO** validate all query parameter and request header values and return an error response if any value fails validation. 
+:white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
 
 :white_check_mark: **DO** use the following table when translating strings:
 
@@ -246,29 +248,27 @@ Byte array | Base-64 encoded, max length
 
 <span style="color:red; font-size:large">TODO: Expand the explanation for numbers. </span>
 
-<span style="color:red; font-size:large">TODO: Fix the links. </span>
-
 The table below lists the headers most used by Azure services:
 
 Header Key          | Applies to | Example
 ------------------- | ---------- | -------------
 *authorization*     | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory) 
-*x&#x2011;ms&#x2011;useragent*    | Request    | [see Telemetry](http://TODO:link-goes-here)
-traceparent         | Request    | [see Distributed Tracing](http://TODO:link-goes-here)
-tracecontext        | Request    | [see Distributed Tracing](http://TODO:link-goes-here)
+*x-ms-useragent*    | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
+traceparent         | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
+tracecontext        | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
 accept              | Request    | application/json
-if-match            | Request    | "67ab43" or * (no quotes) (see Conditional Access)
-if-none-match       | Request    | "67ab43" or * (no quotes) [see Conditional Access](http://TODO:link-goes-here)
-If-Modified-Since   | Request    | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1) [see Optimistic Concurrency](http://TODO:link-goes-here)
-If&#x2011;Unmodified&#x2011;Since | Request    | (RFC1123) [see Optimistic Concurrency](http://TODO:link-goes-here)
-date [RFC1123](https://datatracker.ietf.org/doc/html/rfc1123) | Both | Sun, 06 Nov 1994 08:49:37 GMT 
+if-match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+if-none-match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+If-Modified-Since   | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
+If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
+date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
 *content-type*      | Both       | application/merge-patch+json
 *content-length*    | Both       | 1024
 *x-ms-request-id*   | Response   | [see Customer Support](http://TODO:link-goes-here)
-etag                | Response   | "67ab43" [see Conditional Access](http://TODO:link-goes-here)
-last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1) 
-*x-ms-error-code*   | Response   | [see Processing a REST Request](http://TODO:link-goes-here)
-retry-after         | Response   | 180 [see Throttling Client Requests]
+etag                | Response   | "67ab43" see [Conditional Requests](#Conditional-Requests)
+last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
+*x-ms-error-code*   | Response   | see [Handling Errors](#Handling-Errors)
+retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in *italics*
 
@@ -277,6 +277,8 @@ retry-after         | Response   | 180 [see Throttling Client Requests]
 :white_check_mark: **DO** compare request header names using case-insensitivity
 
 :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
+
+:white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT"
 
 :no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
 
@@ -331,7 +333,7 @@ Field Mutability | Service Request's behavior for this field
 
 :white_check_mark: **DO** use DELETE to remove a resource.
 
-:white_check_mark: **DO** fail an operation with ```400-Bad Request``` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response (TODO: link) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+:white_check_mark: **DO** fail an operation with ```400-Bad Request``` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
 
 :no_entry: **DO NOT** return secret fields via GET. For example, do not return ```administratorPassword``` in JSON. 
 
@@ -537,8 +539,8 @@ _orderby_      | string&nbsp;array | a list of expressions that specify the orde
 _skip_         | integer           | an offset into the collection of the first resource to be returned
 _top_          | integer           | the maximum number of resources to return from the collection
 _maxpagesize_  | integer           | the maximum number of resources to include in a single response
-_select_       | string&nbsp;array | TODO
-_expand_       | string&nbsp;array | TODO
+_select_       | string&nbsp;array | a list of field names to be returned for each resource
+_expand_       | string&nbsp;array | a list of the related resources to be included in line with each resource
 
 :white_check_mark: **DO** return an error if the client specifies any parameter not supported by the service.
 
@@ -786,23 +788,18 @@ Content-Length: 0
 
 Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators. In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
 
-##### Additional References
+### Repeatability of requests
 
-<!-- Links -->
-[1]: https://github.com/microsoft/api-guidelines
-[RFC2557]: https://www.ietf.org/rfc/rfc2557.txt
+The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
 
-<!-- Azure ARM Links -->
-[2]: https://aka.ms/armwiki
-[3]: https://github.com/Azure/azure-resource-manager-rpc
+A service **SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
+
+- The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
+- A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
+- When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
 
 <!-- Open API Spec -->
-[OpenAPI Specification]: https://github.com/Azure/adx-documentation-pr/wiki/Getting-started-with-OpenAPI-specifications
-
-<!-- Versioning Guidelines -->
-[6]: https://support.microsoft.com/en-us/help/30881
-[7]: http://aka.ms/aprwiki
-
+[OpenAPI Specification]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md
 
 ### Long Running Operations & Jobs
 
@@ -832,7 +829,7 @@ How you secure and protect the data and files that your service uses will not on
 :white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
 
 ##### Handling 'downstream' errors
-It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream erorr code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon. 
+It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
 
 :white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body. 
 
@@ -899,7 +896,8 @@ When designing an API, you will almost certainly have to manage how your resourc
 
 :ballot_box_with_check: **YOU SHOULD** use ```etags``` consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
 
-> You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232). 
+You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232).
+
 #### Cache Control
 One of the more common uses for ```ETag``` headers is cache control, also referred to a "conditional GET." This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency). That is, using the value of the ```ETag``` , the server can determine if the resource has changed. If there are no changes, then there is no need to return the resource, as the client already has the most recent version. 
 
@@ -914,10 +912,10 @@ Implementing this strategy is relatively straightforward. First, you will return
 | etag value = if-none-match value   | 304 Not Modified | no additional information   |
 | etag value != if-none-match value  | 200 OK           | Response body include the serialized value of the resource (typically JSON)    |
 
-> For more control over caching, please refer to the ```cache-control``` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
+For more control over caching, please refer to the ```cache-control``` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
 
 #### Optimistic Concurrency
-An ```ETag``` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls. Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of ```ETags``` and the HTTP. 
+An ```ETag``` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls. Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of ```ETags``` and the [HTTP Request / Response Pattern](#http-request--response-pattern). 
 
 :warning: **YOU SHOULD NOT**  implement pessimistic update strategies, e.g. last writer wins.
 
@@ -931,7 +929,7 @@ An ```ETag``` should also be used to reflect the create, update, and delete poli
 | PATCH / PUT | if-match | value of etag     | value of if-match header DOES NOT equal the latest etag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
 | DELETE      | if-none-match | value of etag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
 | DELETE      | if-none-match | value of etag     | value matches the latest value on the server | 200 OK or </br> 204 No Content | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.  |
-in over time.
+
 #### Computing ETags
 The strategy that you use to compute the ```ETag``` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the ```ETag```. Another common strategy for determining the value of an ```ETag``` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism. 
 
@@ -953,11 +951,7 @@ Client libraries are required to send telemetry and distributed tracing informat
 * [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 * [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy) 
 * [Open Telemetry](https://opentelemetry.io/)
-## Final Thoughts / Summary
-* Careful consideration up front
-* Long term decisions that are often codified in SDKs, CODE, etc.
-* Reach out and engage the stewardship team!
-=======
+
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success. 
 
