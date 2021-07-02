@@ -222,7 +222,7 @@ Field Mutability | Service Request's behavior for this field
 **Update** | Service honors field when creating or updating a resource
 **Read**   | Service returns this field in a response. If the client passed a read-only field, the service __must__ fail the request unless the passed-in value matches the resource's current value
 
-In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically __not__ become a nullable filed in a SDK's data structure. THis allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
+In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically __not__ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
 > :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 > 
