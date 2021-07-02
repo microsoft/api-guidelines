@@ -627,7 +627,7 @@ Azure services need to change over time. However, when changing a service, there
 >
 > :no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 > 
-> :no_entry: **DO NOT** introduce any breaking changes into service. 
+> :no_entry: **DO NOT** introduce any breaking changes into the service. 
 *NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. If a new service version must break customers (due to security/compliance/etc.), contact the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) as soon as possible.*
 
 #### Use Extensible Enums
