@@ -25,7 +25,7 @@ Technology and software is constantly changing and evolving, and as such, this i
 ### Prescriptive Guidance  
 This document offers prescriptive guidance labeled as follows:
 
-> :white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board[TODO: mail link? - not for public people] <b>prior</b> to implementation.
+> :white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
  
 > :ballot_box_with_check: **YOU SHOULD** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
  
