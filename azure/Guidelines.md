@@ -1,4 +1,11 @@
-# Microsoft Azure HTTP/REST API Guidelines
+# Microsoft Azure REST API Guidelines
+## History
+
+| Date        | Version | Notes                                               |
+| ----------- | ------- | --------------------------------------------------- |
+| 2021-Jul-02 | vNext-RC1 | Updated Azure REST Guidelines.                    |
+| 2020-Jul-31 | v3.2    | Added service advice for initial versions           |
+| 2020-Mar-31 | v3.1    | 1st public release of the Azure REST API Guidelines |
 
 ## Introduction
 
