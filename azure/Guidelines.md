@@ -495,7 +495,7 @@ not                      | Logical negation      | not price le 3.5
 __Grouping Operators__   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-> :white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
+> :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
 > 
 > :white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
