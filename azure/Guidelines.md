@@ -82,7 +82,7 @@ Where:
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
-> :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a response JSON body
+> :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
 
 #### Direct Endpoint URLs
 
