@@ -138,7 +138,7 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
-> :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+> :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
 > 
 > :white_check_mark: **DO** use the following table when translating strings:
 
