@@ -25,7 +25,7 @@ Technology and software is constantly changing and evolving, and as such, this i
 ### Prescriptive Guidance  
 This document offers prescriptive guidance labeled as follows:
 
-> :white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board[TODO: mail link? - not for public people] <b>prior</b> to implementation.
+> :white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
  
 > :ballot_box_with_check: **YOU SHOULD** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
  
@@ -68,7 +68,7 @@ Where:
 
 > :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 > 
-> :white_check_mark: **DO** return '414-URI Too Long' if a URL exceeds 2083 characters
+> :white_check_mark: **DO** return ```414-URI Too Long``` if a URL exceeds 2083 characters
 >
 > :white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with the appropriate HTTP return code.
 
@@ -82,7 +82,7 @@ Where:
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
-> :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a response JSON body
+> :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
 
 #### Direct Endpoint URLs
 
@@ -138,7 +138,7 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
-> :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+> :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
 > 
 > :white_check_mark: **DO** use the following table when translating strings:
 
@@ -222,7 +222,7 @@ Field Mutability | Service Request's behavior for this field
 **Update** | Service honors field when creating or updating a resource
 **Read**   | Service returns this field in a response. If the client passed a read-only field, the service __must__ fail the request unless the passed-in value matches the resource's current value
 
-In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically __not__ become a nullable filed in a SDK's data structure. THis allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
+In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically __not__ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
 > :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 > 
@@ -332,7 +332,7 @@ It is common for strings to have an explicit set of values. These are often refl
 However, it is not uncommon for the set of values to grow over the life of a service. For this reason, Microsoft's tooling uses the concept of an "extensible enum," which indicates that the set of values should be treated as only a *partial* list.
 This indicates to client libraries and customers that values of the enumeration field should be effectively treated as strings and that undocumented value may returned in the future. This enables the set of values to grow over time while ensuring stability in client libraries and customer code.
 
-> :white_check_mark: **DO** use "extensible enums"
+> :ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
 > 
 > :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
  
@@ -495,7 +495,7 @@ not                      | Logical negation      | not price le 3.5
 __Grouping Operators__   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-> :white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
+> :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
 > 
 > :white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
@@ -627,7 +627,7 @@ Azure services need to change over time. However, when changing a service, there
 >
 > :no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 > 
-> :no_entry: **DO NOT** introduce any breaking changes into service. 
+> :no_entry: **DO NOT** introduce any breaking changes into the service. 
 *NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. If a new service version must break customers (due to security/compliance/etc.), contact the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) as soon as possible.*
 
 #### Use Extensible Enums
@@ -651,7 +651,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-> :white_check_mark: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
+> :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version Discovery
 
