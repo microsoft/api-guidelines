@@ -103,9 +103,9 @@ Cloud applications embrace failure. Therefore, to enable customers to write faul
 
 #### Exactly Once Behavior = Client Retries & Service Idempotency
 > :white_check_mark: **DO** ensure that __all__ HTTP methods are idempotent.
-> 
+ 
 > :ballot_box_with_check: **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
-> 
+ 
 > :heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#Repeatability-of-requests)).
 
 ##### HTTP Return Codes
@@ -178,7 +178,7 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 > :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
 > 
 > :white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT"
-> 
+
 > :no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
 > 
 > :no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
@@ -419,7 +419,6 @@ The REST specification is used to model the state of a resource, and is primaril
  }
 ```
 
-
 > :white_check_mark: **DO** include the id field and etag field (if supported) for each item as this allows the customer to modify the item in a future operation.
 > 
 > :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
@@ -429,13 +428,14 @@ The REST specification is used to model the state of a resource, and is primaril
 > :ballot_box_with_check: **YOU SHOULD** use ```value``` as the name of the top-level array field unless a more appropriate name is available.
 
 > :no_entry: **DO NOT** return the ```nextLink``` field at all when returning the last page of the collection. 
-
+>
 > :no_entry: **DO NOT** ever return a ```nextLink``` field with a value of null.
 
 #### Query options
 > :heavy_check_mark: **YOU MAY** support the following query parameters allowing customers to control the list operation:
+
 Parameter&nbsp;name | Type | Description
--------------- | ---- | -----------
+------------------- | ---- | -----------
 _filter_       | string            | an expression on the resource type that selects the resources to be returned
 _orderby_      | string&nbsp;array | a list of expressions that specify the order of the returned resources
 _skip_         | integer           | an offset into the collection of the first resource to be returned
@@ -471,6 +471,7 @@ GET https://api.contoso.com/products?filter=price lt 10.00
 ##### filter operators
 
 > :heavy_check_mark: **YOU MAY** support the following operators in _filter_ expressions:
+
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
 __Comparison Operators__ |                       |
@@ -606,13 +607,11 @@ Azure services need to change over time. However, when changing a service, there
  1. Already-running customer workloads must never break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
 
-> :ballot_box_with_check: **DO** review any API changes with the Azure API Stewardship Board
+> :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 > 
 > :white_check_mark: **DO** use an 'api-version' query parameter with a date value
-```text
-PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
-```
-
+> ```text PUT https://service.azure.com/users/Jeff?api-version=2021-06-04```
+>
 > :white_check_mark: **DO** use a later date for each new preview version
 > When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
 > :white_check_mark: **DO** use a later date for successive preview versions. 
