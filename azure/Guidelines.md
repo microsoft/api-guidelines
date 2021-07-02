@@ -68,7 +68,7 @@ Where:
 
 > :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 > 
-> :white_check_mark: **DO** return '414-URI Too Long' if a URL exceeds 2083 characters
+> :white_check_mark: **DO** return ```414-URI Too Long``` if a URL exceeds 2083 characters
 >
 > :white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with the appropriate HTTP return code.
 
