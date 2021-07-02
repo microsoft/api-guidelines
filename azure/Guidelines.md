@@ -651,7 +651,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-> :white_check_mark: **DO** model an ```enum``` as a string unless you are positive that the symbol set will **NEVER** change over time.
+> :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
 #### Version Discovery
 
