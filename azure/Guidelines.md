@@ -332,7 +332,7 @@ It is common for strings to have an explicit set of values. These are often refl
 However, it is not uncommon for the set of values to grow over the life of a service. For this reason, Microsoft's tooling uses the concept of an "extensible enum," which indicates that the set of values should be treated as only a *partial* list.
 This indicates to client libraries and customers that values of the enumeration field should be effectively treated as strings and that undocumented value may returned in the future. This enables the set of values to grow over time while ensuring stability in client libraries and customer code.
 
-> :white_check_mark: **DO** use "extensible enums"
+> :ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
 > 
 > :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
  
