@@ -150,7 +150,7 @@ Float     | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_f
 String    | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
 UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
 Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
-Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
+Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
 
 
@@ -430,7 +430,7 @@ The REST specification is used to model the state of a resource, and is primaril
 > 
 > :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 >
-> :white_check_mark: **DO** return a ```nextLink``` field with a URL that the client can GET in order to retrieve the next page of the collection.
+> :white_check_mark: **DO** return a ```nextLink``` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
 
 > :ballot_box_with_check: **YOU SHOULD** use ```value``` as the name of the top-level array field unless a more appropriate name is available.
 
@@ -567,12 +567,12 @@ Each expression in the _orderby_ parameter value may include the suffix "asc" fo
 
 For example, to return all people sorted by name in ascending order:
 ```http
-GET https://api.contoso.com/people?$orderBy=name
+GET https://api.contoso.com/people?orderBy=name
 ```
 
 For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
 ```http
-GET https://api.contoso.com/people?$orderBy=name desc,hireDate
+GET https://api.contoso.com/people?orderBy=name desc,hireDate
 ```
 
 Sorting MUST compose with filtering such that:
@@ -621,6 +621,7 @@ Azure services need to change over time. However, when changing a service, there
 >
 > :white_check_mark: **DO** use a later date for each new preview version
 > When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
+
 > :white_check_mark: **DO** use a later date for successive preview versions. 
 
 > :no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
@@ -757,7 +758,7 @@ Depending on your requirements, there are scenarios where users of your service 
 
 > :white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file. 
 ##### File Collections
-When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
+When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
 
 > :white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well. 
 > 
