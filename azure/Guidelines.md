@@ -116,7 +116,7 @@ Cloud applications embrace failure. Therefore, to enable customers to write faul
 > :heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#Repeatability-of-requests)).
 
 ##### HTTP Return Codes
-> :white_check_mark: **DO** adhere to the return codes in the following table when the method is successful:
+> :white_check_mark: **DO** adhere to the return codes in the following table when the method completes synchronously and is successful:
 
 Method | Description | Response Status Code 
 -------|-------------|---------------------
@@ -126,7 +126,9 @@ POST   | Create new resource (ID set by service) | 201-Created with URL of creat
 GET    | Read (i.e. list) a resource collection | 200-OK
 GET    | Read the resource | 200-OK 
 DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found 
- 
+
+> :white_check_mark: **DO** return status code ```202-Accepted``` and follow the guidance in [Long Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously
+
 > :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 > 
 > :white_check_mark: **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a ```200-OK``` or ```201-Created```.
@@ -152,6 +154,7 @@ UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensit
 Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
 Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
+Array      | One of a) a comma-separated list of values (preferred), or b) separate ```name=value``` parameter instances for each value of the array
 
 
 The table below lists the headers most used by Azure services:
