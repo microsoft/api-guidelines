@@ -74,10 +74,9 @@ Where:
 
 > :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 > 
-> :ballot_box_with_check: **YOU SHOULD** limit your URL's characters to `0-9  A-Z  a-z  -  .  _  ~`
+> :ballot_box_with_check: **YOU SHOULD** limit your URL's characters to `0-9  A-Z  a-z  -  .  _  ~ :`
 
 > :heavy_check_mark: **YOU MAY** use these other characters in the URL but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
-
 
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
@@ -199,7 +198,7 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 * [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
 ### REpresentational State Transfer (REST)
-REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service.
+REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service. See [this article in the Azure Architecture Center](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design) for a more detailed discussion of REST API design patterns.
 
 When designing your service, it is important to optimize for the developer using your API.
 
@@ -249,7 +248,7 @@ In addition to the above, a field may be "required" or "optional". A required fi
 >  
 > :no_entry: **DO NOT** add fields to the JSON if the value is easily computable from other fields to avoid bloating the body.
 
-##### Create / Update / Replease Processing Rules
+##### Create / Update / Replace Processing Rules
  
 > :white_check_mark: **DO** follow the processing below to create/update/replace a resource:
 
@@ -383,7 +382,7 @@ Below is an example of JSON for a Rectangle and Circle:
    }
 }
 ```
-Both Rectangle and Circle has common fields: ```kind```, ```fillColor```, ```lineColor```, and ```subscription```. A Rectangle also has ```x```, ```y```, ```width```, and ```length``` while a Circle has ```x```, ```y```, and ```radius```. The ```subscription``` is a nested polymorphic type. A ```free``` subscription has no additional fields and a ```paid``` subscription has ```expiration``` and ```invoice``` fields.
+Both Rectangle and Circle have common fields: ```kind```, ```fillColor```, ```lineColor```, and ```subscription```. A Rectangle also has ```x```, ```y```, ```width```, and ```length``` while a Circle has ```x```, ```y```, and ```radius```. The ```subscription``` is a nested polymorphic type. A ```free``` subscription has no additional fields and a ```paid``` subscription has ```expiration``` and ```invoice``` fields.
 
 ## Common API Patterns
 
@@ -566,7 +565,7 @@ Each expression in the _orderby_ parameter value may include the suffix "asc" fo
 > 
 > :white_check_mark: **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
 > 
-> :white_check_mark: **DO** respond with an error message as defined in the [Unsupported Requests](??) section if the client requests sorting by a field that is not supported by the operation.
+> :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#Handling-errors) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
 ```http
@@ -626,6 +625,8 @@ Azure services need to change over time. However, when changing a service, there
 > When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
 
 > :white_check_mark: **DO** use a later date for successive preview versions. 
+
+> :no_entry: **DO NOT** include a version number segment in any operation path.
 
 > :no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
 >
