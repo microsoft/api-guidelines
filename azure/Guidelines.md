@@ -322,11 +322,9 @@ Services, and the clients that access them, may be written in multiple languages
 
 > :heavy_check_mark: **YOU MAY** use JSON objects to group sub-fields together.
 > 
-> :heavy_check_mark: **YOU MAY** use JSON arrays if maintaining an order of values is required.
+> :heavy_check_mark: **YOU MAY** use JSON arrays if maintaining an order of values is required. Avoid arrays in other situations since arrays can be difficult and inefficient to work with, especially with ```JSON Merge Patch``` where the entire array needs to be read prior to any operation being applied to it.
 
 > :ballot_box_with_check: **YOU SHOULD** use JSON objects instead of arrays whenever possible.
-
-> :warning: **YOU SHOULD NOT** use JSON Arrays, e.g. [ value, … ]. Arrays are very difficult and inefficient to work with, especially with ```JSON Merge Patch```, as the entire array needs to be read prior to any operation being applied to it.
 
 #### Enums & SDKs (Client libraries)
 It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI definition as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation.

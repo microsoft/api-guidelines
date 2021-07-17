@@ -29,6 +29,10 @@ It is extremely difficult to create an elegant API that works well on top of a p
 
 The whole purpose of a preview to address feedback by improving abstractions, naming, relationships, API operations, and so on. It is OK to make breaking changes during a preview to improve the experience now so that it is sustainable long term.
 
+The API should be designed so that developers can use their language of choice to access the service.
+
+> :no_entry: **DO** restrict integer values to the range of +/- 2<sup>53</sup>, since JavaScript native types cannot represent integers outside this range.
+
 ### Focus on Hero Scenarios
 It is important to realize that writing an API is, in many cases, the easiest part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documentation, client libraries, examples, blog posts, videos, and supporting customers in perpetuity. In fact, implementing an API is of miniscule cost compared to all the other downstream activities. 
 
@@ -81,8 +85,6 @@ As you build out your service and API, there are a number of decisions that can 
 > :ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change. 
 >
 > :ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
->
-> :ballot_box_with_check: **YOU SHOULD** use wider data types (e.g. 64-bit vs. 32-bit) as they are more future-proof. For example, JavaScript can only support integers up to 2<sup>53</sup>, so relying on the full width of a 64-bit integer should be avoided.
 
 ## Getting Help: The Azure REST API Stewardship Board
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design.
