@@ -70,7 +70,7 @@ Where:
 > 
 > :white_check_mark: **DO** return ```414-URI Too Long``` if a URL exceeds 2083 characters
 >
-> :white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with the appropriate HTTP return code.
+> :white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with a ```404-Not found``` HTTP return code.
 
 > :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 > 
@@ -335,9 +335,7 @@ This indicates to client libraries and customers that values of the enumeration 
 > :ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
 > 
 > :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
- 
-> :no_entry: **DO NOT** send "enum integers" over the wire.
-> 
+
 > :no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
 
 #### Polymorphic types
