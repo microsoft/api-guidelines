@@ -3,10 +3,12 @@ Great APIs make your service usable to customers. They are intuitive, naturally 
 
 This document provides Microsoft teams building Azure services with a set of guidelines that  help service teams build great APIs. The guidelines create APIs that are approachable, sustainable, and consistent across the Azure platform. We do this by applying a common set of patterns and web standards to the design and development of the API. For developers, a well defined and constructed API enables them to build fault-tolerant applications that are easy to maintain, support, and grow. For Azure service teams, the API is often the source of code generation enabling a broad audience of developers across multiple languages.
 
-Azure Service teams should engage the  Azure HTTP/REST Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.
+Azure Service teams should engage the Azure HTTP/REST Stewardship Board early in the development lifecycle for guidance, discussion, and review of their API. In addition, it is good practice to perform a security review, especially if you are concerned about PII leakage, compliance with GDPR, or any other considerations relative to your situation.
 
-Your goal is to create a developer friendly API where:
+It is critically important to design your service to avoid disrupting users as the API evolves:
 
+> :white_check_mark: **DO** implement API versioning starting with the very first release of the service.
+>
 > :white_check_mark: **DO** ensure that customer workloads never break
 > 
 > :white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library <b>without requiring code changes</b> 
@@ -29,10 +31,6 @@ It is extremely difficult to create an elegant API that works well on top of a p
 
 The whole purpose of a preview to address feedback by improving abstractions, naming, relationships, API operations, and so on. It is OK to make breaking changes during a preview to improve the experience now so that it is sustainable long term.
 
-The API should be designed so that developers can use their language of choice to access the service.
-
-> :no_entry: **DO** restrict integer values to the range of +/- 2<sup>53</sup>, since JavaScript native types cannot represent integers outside this range.
-
 ### Focus on Hero Scenarios
 It is important to realize that writing an API is, in many cases, the easiest part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documentation, client libraries, examples, blog posts, videos, and supporting customers in perpetuity. In fact, implementing an API is of miniscule cost compared to all the other downstream activities. 
 
@@ -43,17 +41,17 @@ Focusing on hero scenarios reduces development, support, and maintenance costs; 
 > :white_check_mark: **DO** define "hero scenarios" first including abstractions, naming, relationships, and then define the API describing the operations required
 > 
 > :white_check_mark: **DO** provide example code demonstrating the "Hero Scenarios"
-> 
-> :no_entry: **DO NOT** proactively add APIs for speculative features customers might want 
 
 > :white_check_mark: **DO** consider how your abstractions will be represented in different high-level languages.
 
 > :white_check_mark: **DO** develop code examples in at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#) to illustrate your abstractions and high-level language representations.
 
+> :no_entry: **DO NOT** proactively add APIs for speculative features customers might want 
+
 ### Start with your API Definition
 Understanding how your service is used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It reflects the abstractions & naming decisions and makes it easy for developers to implement the hero scenarios.  
 
-> :white_check_mark: **DO** provide an [OpenAPI Definition](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
+> :white_check_mark: **DO** create an [OpenAPI Definition](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
 
 ### Use Previews to Iterate 
  Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
@@ -71,13 +69,19 @@ Understanding how your service is used and defining its model and interaction pa
 ### Avoid Surprises
 A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers.
 
+One common area of friction for developers is _polymorphism_ -- where a value may have any of several types or structures.
+Polymorphism can be beneficial in certain cases, e.g. as a way to express inheritance, but also creates friction
+because it requires the value to be introspected before being processed and cannot be represented in a natural/useful way in many type-safe languages.
+
 > :ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint __SHOULD__ work with a single type to avoid problems during SDK creation.
 >
-> :ballot_box_with_check: **YOU SHOULD** make [Collections](./Guidelines.md#collections) easy to work with. Collections are a common source of review comments. It is important to handle them in a consistent manner within your service.
+> :ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so. If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
 >
-> :ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so.  If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
->
-> :ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands.
+Collections are another common area of friction for developers. It is important to define collections in a consistent manner within your service and across services of the platform.  In particular, features such as pagination, filtering, and sorting, when supported, should follow common API patterns. See [Collections](./Guidelines.md#collections) for specific guidance.
+
+An important consideration when defining a new service is support for pagination.
+
+> :ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands. See [Collections](./Guidelines.md#collections) for specific guidance.
 
 ### Design for Change Resiliency 
 As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
