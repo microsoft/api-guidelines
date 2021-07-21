@@ -21,8 +21,9 @@ A **management plane** API is implemented through the Azure Resource Manager (AR
 ### Start with the Developer Experience
 A great API starts with a well thought out and designed service. Your service should define simple/understandable abstractions with each given a clear name that you use consistently throughout your API and documentation. There must also be an unambiguous relationship between these abstractions.
 
-Follow these suggestions to create clear names for your abstractions:
+Follow these practices to create clear names for your abstractions:
 - Don't invent fancy terms or use fancy words. Try explaining the abstraction to someone that is not a domain expert and then name the abstraction using similar verbage.
+- Don't include "throwaway" words in names, like "response", "object", "payload", etc.
 - Avoid generic names. Names should be specific to the abstraction and highlight how it is different from other abstractions in your service or related services.
 - Pick one word/term out of a set of synonyms and stick to it.
 
