@@ -133,6 +133,8 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 > :white_check_mark: **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a ```200-OK``` or ```201-Created```.
 > 
 > :white_check_mark: **DO** return a ```204-No Content``` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
+>
+> :white_check_mark: **DO** return a ```404-Not Found``` when the user does not have access to the resource. Returning a ```404-Not Found``` vs. a ```403-Forbidden``` prevents a malicious request from learning anything about resources based on error codes.
 > 
 > :white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the etag and last-modified response headers
 
