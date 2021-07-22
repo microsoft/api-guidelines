@@ -565,12 +565,12 @@ Each expression in the _orderby_ parameter value may include the suffix "asc" fo
 
 For example, to return all people sorted by name in ascending order:
 ```http
-GET https://api.contoso.com/people?orderBy=name
+GET https://api.contoso.com/people?orderby=name
 ```
 
 For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
 ```http
-GET https://api.contoso.com/people?orderBy=name desc,hireDate
+GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
 Sorting MUST compose with filtering such that:
