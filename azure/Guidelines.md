@@ -60,7 +60,7 @@ Where:
  | Field | Description
  | - | - |
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
- | cloud | Cloud domain name (see Azure CLI's "az cloud list")<p><table><tr><td><b>Cloud</td><td><b>Domain</td></tr><tr><td>Public</td><td>azure.net</td></tr><tr><td>US Government</td><td>usgovcloudapi.net</td></tr><tr><td>China</td><td>chinacloudapi.cn</td></tr><tr><td>German</td><td>cloudapi.de</td></tr></table>
+ | cloud | Cloud domain name (see Azure CLI's "az cloud list")<p><table><tr><td><b>Cloud</td><td><b>Domain</td></tr><tr><td>Public</td><td>azure.net</td></tr></table>
  | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containees (ex: subscription UUID)
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
@@ -611,8 +611,10 @@ If supporting _maxpagesize_
 ### API Versioning
 
 Azure services need to change over time. However, when changing a service, there are 2 requirements:
- 1. Already-running customer workloads must never break due to a service change
+ 1. Already-running customer workloads must not break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
+
+*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
 > :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 > 
@@ -624,14 +626,13 @@ Azure services need to change over time. However, when changing a service, there
 
 > :white_check_mark: **DO** use a later date for successive preview versions. 
 
+> :no_entry: **DO NOT** introduce any breaking changes into the service.
+
 > :no_entry: **DO NOT** include a version number segment in any operation path.
 
 > :no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
 >
 > :no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
-> 
-> :no_entry: **DO NOT** introduce any breaking changes into the service. 
-*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. If a new service version must break customers (due to security/compliance/etc.), contact the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) as soon as possible.*
 
 #### Use Extensible Enums
 
