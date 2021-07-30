@@ -134,8 +134,8 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 > 
 > :white_check_mark: **DO** return a ```204-No Content``` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
 >
-> :white_check_mark: **DO** return a ```404-Not Found``` when the user does not have access to the resource. Returning a ```404-Not Found``` vs. a ```403-Forbidden``` prevents a malicious request from learning anything about resources based on error codes.
-> 
+> :white_check_mark: **DO** return a ```403-Forbidden``` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be ```404-Not Found```. [Rationale: a ```403-Forbidden``` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
+
 > :white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the etag and last-modified response headers
 
 ### HTTP Query Parameters and Header Values
@@ -385,20 +385,28 @@ Both Rectangle and Circle have common fields: ```kind```, ```fillColor```, ```li
 ## Common API Patterns
 
 ### Performing an Action
-The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.
+The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.  It is also sometimes useful to perform an action on a collection.
 
 > :white_check_mark: **DO** pattern your URL like this to perform an action on a resource
-**URL Pattern** 
- ```https://.../<resource-collection>/<resource-id>/:<action>?<input parameters>```
+**URL Pattern**
+```https://.../<resource-collection>/<resource-id>:<action>?<input parameters>```
 
-**SMS Example**
-
- ```https://.../users/Bob/:send-sms?Text="Hello"```
+**Example**
+```https://.../users/Bob:send-sms?text="Hello"```
 
 **Equivalent to (in C#)**
 ```users["Bob"].SendSms("Hello")```
 
-> :white_check_mark: **DO** use a POST operation for any action on a resource. 
+> :white_check_mark: **DO** pattern your URL like this to perform an action on a collection
+**URL Pattern**
+```https://.../<resource-collection>:<action>?<input parameters>```
+
+**Example**
+```https://.../users:grant?access=read```
+
+Note: To avoid potential collision of actions and resource ids, you should disallow the use of the ":" character in resource ids.
+
+> :white_check_mark: **DO** use a POST operation for any action on a resource or collection.
 >
 > :white_check_mark: **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
 
