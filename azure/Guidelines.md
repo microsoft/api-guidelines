@@ -74,9 +74,9 @@ Where:
 
 > :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 > 
-> :ballot_box_with_check: **YOU SHOULD** limit your URL's characters to `0-9  A-Z  a-z  -  .  _  ~ :`
+> :ballot_box_with_check: **YOU SHOULD** limit your URL's path characters to `0-9  A-Z  a-z  -  .  _  ~ :`
 
-> :heavy_check_mark: **YOU MAY** use these other characters in the URL but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
+> :heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
 
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
