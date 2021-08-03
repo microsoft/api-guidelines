@@ -25,16 +25,16 @@ Technology and software is constantly changing and evolving, and as such, this i
 ### Prescriptive Guidance  
 This document offers prescriptive guidance labeled as follows:
 
-> :white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
- 
-> :ballot_box_with_check: **YOU SHOULD** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
- 
-> :heavy_check_mark: **YOU MAY** consider this pattern if appropriate to your situation. No notification to the Azure HTTP/REST Stewardship Board is required.
- 
-> :warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
- 
-> :no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
- 
+:white_check_mark: **DO** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
+
+:ballot_box_with_check: **YOU SHOULD** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
+
+:heavy_check_mark: **YOU MAY** consider this pattern if appropriate to your situation. No notification to the Azure HTTP/REST Stewardship Board is required.
+
+:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Azure HTTP/REST Stewardship Board review.
+
+:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Azure HTTP/REST Stewardship Board <b>prior</b> to implementation.
+
 *If you feel you need an exception, or need clarity based on your situation, please contact the Azure HTTP/REST Stewardship Board <b>prior</b> to release of your API.*
 
 ## Building Blocks: HTTP, REST, & JSON
@@ -51,7 +51,7 @@ Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ie
 
 A Uniform Resource Locator (URL) is how developers access the resources of your service. Ultimately, URLs are how developers form a cognitive model of your service's resources.
 
-> :white_check_mark: **DO** use this URL pattern:
+:white_check_mark: **DO** use this URL pattern:
 ```text
 https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resource-id>/
 ```
@@ -66,26 +66,26 @@ Where:
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
  | resource&#x2011;id | Value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
 
-> :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
-> 
-> :white_check_mark: **DO** return ```414-URI Too Long``` if a URL exceeds 2083 characters
->
-> :white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with a ```404-Not found``` HTTP return code.
+:white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
-> :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
-> 
-> :ballot_box_with_check: **YOU SHOULD** limit your URL's path characters to `0-9  A-Z  a-z  -  .  _  ~ :`
+:white_check_mark: **DO** return ```414-URI Too Long``` if a URL exceeds 2083 characters
 
-> :heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
+:white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request __MUST__ fail with a ```404-Not found``` HTTP return code.
+
+:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
+
+:ballot_box_with_check: **YOU SHOULD** limit your URL's path characters to `0-9  A-Z  a-z  -  .  _  ~ :`
+
+:heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
 
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
-> :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
+:white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
 
 #### Direct Endpoint URLs
 
-> :heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
+:heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
 ```text
 https://<tenant>-<service-root>.<service>.<cloud>/...
 ```
@@ -95,9 +95,9 @@ Examples:
   - Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
   - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
-> :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
+:white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
-> :heavy_check_mark: **YOU MAY** use URLs as values
+:heavy_check_mark: **YOU MAY** use URLs as values
 ```
 https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
@@ -108,14 +108,16 @@ The HTTP Request / Response pattern dictates how your API behaves. For example: 
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, <b>all</b> service operations (including POST) <b>must</b> be idempotent. Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 
 #### Exactly Once Behavior = Client Retries & Service Idempotency
-> :white_check_mark: **DO** ensure that __all__ HTTP methods are idempotent.
- 
-> :ballot_box_with_check: **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
- 
-> :heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#Repeatability-of-requests)).
+
+:white_check_mark: **DO** ensure that __all__ HTTP methods are idempotent.
+
+:ballot_box_with_check: **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
+
+:heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response __must__ return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#Repeatability-of-requests)).
 
 ##### HTTP Return Codes
-> :white_check_mark: **DO** adhere to the return codes in the following table when the method completes synchronously and is successful:
+
+:white_check_mark: **DO** adhere to the return codes in the following table when the method completes synchronously and is successful:
 
 Method | Description | Response Status Code 
 -------|-------------|---------------------
@@ -126,24 +128,24 @@ GET    | Read (i.e. list) a resource collection | 200-OK
 GET    | Read the resource | 200-OK 
 DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found 
 
-> :white_check_mark: **DO** return status code ```202-Accepted``` and follow the guidance in [Long Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously
+:white_check_mark: **DO** return status code ```202-Accepted``` and follow the guidance in [Long Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously
 
-> :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
-> 
-> :white_check_mark: **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a ```200-OK``` or ```201-Created```.
-> 
-> :white_check_mark: **DO** return a ```204-No Content``` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
->
-> :white_check_mark: **DO** return a ```403-Forbidden``` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be ```404-Not Found```. [Rationale: a ```403-Forbidden``` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
+:white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 
-> :white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the etag and last-modified response headers
+:white_check_mark: **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a ```200-OK``` or ```201-Created```.
+
+:white_check_mark: **DO** return a ```204-No Content``` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return ```404-Not Found```)
+
+:white_check_mark: **DO** return a ```403-Forbidden``` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be ```404-Not Found```. [Rationale: a ```403-Forbidden``` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
+
+:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the etag and last-modified response headers
 
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
-> :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
-> 
-> :white_check_mark: **DO** use the following table when translating strings:
+:white_check_mark: **DO** validate all query parameter and request header values and fail the operation with ```400-Bad Request``` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
+
+:white_check_mark: **DO** use the following table when translating strings:
 
 Data type | Document that string must be
 --------- | -------
@@ -180,19 +182,19 @@ last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 *x-ms-error-code*   | Response   | see [Handling Errors](#Handling-Errors)
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
-> :white_check_mark: **DO** support all headers shown in *italics*
-> 
-> :white_check_mark: **DO** specify headers using kebab-casing
-> 
-> :white_check_mark: **DO** compare request header names using case-insensitivity
-> 
-> :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
-> 
-> :white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT"
+:white_check_mark: **DO** support all headers shown in *italics*
 
-> :no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
-> 
-> :no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
+:white_check_mark: **DO** specify headers using kebab-casing
+
+:white_check_mark: **DO** compare request header names using case-insensitivity
+
+:white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
+
+:white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT"
+
+:no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
+
+:no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
 #### Additional References
 * [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
@@ -204,21 +206,21 @@ REST is an architectural style with broad reach that emphasizes scalability, gen
 
 When designing your service, it is important to optimize for the developer using your API.
 
-> :white_check_mark: **DO** focus heavily on clear & consistent naming
-> 
-> :white_check_mark: **DO** ensure your resource paths make sense
-> 
-> :white_check_mark: **DO** simplify operations with few required query parameters & JSON fields
-> 
-> :white_check_mark: **DO** establish clear contracts for string values
-> 
-> :white_check_mark: **DO** use proper response codes/bodies so customer can diagnose their own problems and fix them without contacting Azure support or the service team
+:white_check_mark: **DO** focus heavily on clear & consistent naming
+
+:white_check_mark: **DO** ensure your resource paths make sense
+
+:white_check_mark: **DO** simplify operations with few required query parameters & JSON fields
+
+:white_check_mark: **DO** establish clear contracts for string values
+
+:white_check_mark: **DO** use proper response codes/bodies so customer can diagnose their own problems and fix them without contacting Azure support or the service team
 
 #### JSON Resource Schema & Field Mutability
 
-> :white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH response, GET response, and POST request/response on a given URL path. The PATCH request schema should contain all the same fields with no required fields. This allows one SDK type for input/output operations and enables the response to be passed back in a request.
-> 
-> :white_check_mark: **DO** think about your resource's fields and how they are used:
+:white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH response, GET response, and POST request/response on a given URL path. The PATCH request schema should contain all the same fields with no required fields. This allows one SDK type for input/output operations and enables the response to be passed back in a request.
+
+:white_check_mark: **DO** think about your resource's fields and how they are used:
 
 Field Mutability | Service Request's behavior for this field
 -----------------| -----------------------------------------
@@ -228,31 +230,31 @@ Field Mutability | Service Request's behavior for this field
 
 In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically __not__ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
-> :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
-> 
-> :white_check_mark: **DO** treat JSON field names with case-sensitivity.
-> 
-> :white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions but avoid if at all possible.
-> 
-> :white_check_mark: **DO** use GET for resource retrieval and return JSON in the response body
-> 
-> :white_check_mark: **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
-> 
-> :white_check_mark: **DO** use PUT with JSON for wholesale create/update operations. *NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).*
-> 
-> :white_check_mark: **DO** use DELETE to remove a resource.
-> 
-> :white_check_mark: **DO** fail an operation with ```400-Bad Request``` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+:white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 
-> :heavy_check_mark: **YOU MAY** return secret fields via POST **if absolutely necessary**. 
- 
-> :no_entry: **DO NOT** return secret fields via GET. For example, do not return ```administratorPassword``` in JSON. 
->  
-> :no_entry: **DO NOT** add fields to the JSON if the value is easily computable from other fields to avoid bloating the body.
+:white_check_mark: **DO** treat JSON field names with case-sensitivity.
+
+:white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions but avoid if at all possible.
+
+:white_check_mark: **DO** use GET for resource retrieval and return JSON in the response body
+
+:white_check_mark: **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
+
+:white_check_mark: **DO** use PUT with JSON for wholesale create/update operations. *NOTE: If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).*
+
+:white_check_mark: **DO** use DELETE to remove a resource.
+
+:white_check_mark: **DO** fail an operation with ```400-Bad Request``` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response as described in [Handling errors](#Handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+
+:heavy_check_mark: **YOU MAY** return secret fields via POST **if absolutely necessary**.
+
+:no_entry: **DO NOT** return secret fields via GET. For example, do not return ```administratorPassword``` in JSON.
+
+:no_entry: **DO NOT** add fields to the JSON if the value is easily computable from other fields to avoid bloating the body.
 
 ##### Create / Update / Replace Processing Rules
- 
-> :white_check_mark: **DO** follow the processing below to create/update/replace a resource:
+
+:white_check_mark: **DO** follow the processing below to create/update/replace a resource:
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
@@ -272,16 +274,17 @@ There are 2 kinds of errors:
  - An error where you expect customer code to gracefully recover at runtime
  - An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
 
-> :white_check_mark: **DO** return error an ```x-ms-error-code``` response header with a string value indicating what went wrong.
-> *NOTE: String values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
-> 
-> :white_check_mark: **DO** carefully craft ```x-ms-error-code``` string values for errors that are recoverable at runtime.
-> 
-> :white_check_mark: **DO** ensure that the top-level ```code``` field's value is identical to the ```x-ms-error-code``` header's value (see example body below).
-> 
-> :white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
-> 
-> :white_check_mark: **DO** provide a response body as follows (example):
+:white_check_mark: **DO** return error an ```x-ms-error-code``` response header with a string value indicating what went wrong.
+
+*NOTE: Error code values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
+
+:white_check_mark: **DO** carefully craft ```x-ms-error-code``` string values for errors that are recoverable at runtime.
+
+:white_check_mark: **DO** ensure that the top-level ```code``` field's value is identical to the ```x-ms-error-code``` header's value (see example body below).
+
+:white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
+
+:white_check_mark: **DO** provide a response body as follows (example):
 ```json
 {
   "error": {
@@ -296,9 +299,9 @@ There are 2 kinds of errors:
 } 
 ```
 
-> :heavy_check_mark: **YOU MAY** group common customer code errors into a few ```x-ms-error-code``` string values.
->
-> :heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are __not__ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
+:heavy_check_mark: **YOU MAY** group common customer code errors into a few ```x-ms-error-code``` string values.
+
+:heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are __not__ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
 
 
 ### JSON
@@ -310,23 +313,23 @@ Services, and the clients that access them, may be written in multiple languages
  Number  | Signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
  String  | Used for everything else
 
-> :white_check_mark: **DO** use integers within the acceptable range of JSON number.
-> 
-> :white_check_mark: **DO** establish a well-defined contract for the format of strings. For example, determine maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
-> 
-> :white_check_mark: **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC3339 for date/time.
-> 
-> :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
-> 
-> :white_check_mark: **DO** use [RFC3339] for date/time.
-> 
-> :white_check_mark: **DO** use [RFC4122] for UUIDs.
+:white_check_mark: **DO** use integers within the acceptable range of JSON number.
 
-> :heavy_check_mark: **YOU MAY** use JSON objects to group sub-fields together.
-> 
-> :heavy_check_mark: **YOU MAY** use JSON arrays if maintaining an order of values is required. Avoid arrays in other situations since arrays can be difficult and inefficient to work with, especially with ```JSON Merge Patch``` where the entire array needs to be read prior to any operation being applied to it.
+:white_check_mark: **DO** establish a well-defined contract for the format of strings. For example, determine maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
 
-> :ballot_box_with_check: **YOU SHOULD** use JSON objects instead of arrays whenever possible.
+:white_check_mark: **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC3339 for date/time.
+
+:white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
+
+:white_check_mark: **DO** use [RFC3339] for date/time.
+
+:white_check_mark: **DO** use [RFC4122] for UUIDs.
+
+:heavy_check_mark: **YOU MAY** use JSON objects to group sub-fields together.
+
+:heavy_check_mark: **YOU MAY** use JSON arrays if maintaining an order of values is required. Avoid arrays in other situations since arrays can be difficult and inefficient to work with, especially with ```JSON Merge Patch``` where the entire array needs to be read prior to any operation being applied to it.
+
+:ballot_box_with_check: **YOU SHOULD** use JSON objects instead of arrays whenever possible.
 
 #### Enums & SDKs (Client libraries)
 It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI definition as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation.
@@ -334,18 +337,18 @@ It is common for strings to have an explicit set of values. These are often refl
 However, it is not uncommon for the set of values to grow over the life of a service. For this reason, Microsoft's tooling uses the concept of an "extensible enum," which indicates that the set of values should be treated as only a *partial* list.
 This indicates to client libraries and customers that values of the enumeration field should be effectively treated as strings and that undocumented value may returned in the future. This enables the set of values to grow over time while ensuring stability in client libraries and customer code.
 
-> :ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
-> 
-> :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
+:ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
 
-> :no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
+:white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
+
+:no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
 
 #### Polymorphic types
-> :warning: **YOU SHOULD NOT** use polymorphic JSON types because they greatly complicate the customer code due to runtime dynamic casts and the introduction of new types in the future. 
+:warning: **YOU SHOULD NOT** use polymorphic JSON types because they greatly complicate the customer code due to runtime dynamic casts and the introduction of new types in the future.
 
 If you can't avoid them, then follow the guideline below.
 
-> :white_check_mark: **DO** define a ```kind``` field indicating the kind of the resource and include any kind-specific fields in the body. 
+:white_check_mark: **DO** define a ```kind``` field indicating the kind of the resource and include any kind-specific fields in the body.
 
 Below is an example of JSON for a Rectangle and Circle:
 **Rectangle**
@@ -387,7 +390,7 @@ Both Rectangle and Circle have common fields: ```kind```, ```fillColor```, ```li
 ### Performing an Action
 The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.  It is also sometimes useful to perform an action on a collection.
 
-> :white_check_mark: **DO** pattern your URL like this to perform an action on a resource
+:white_check_mark: **DO** pattern your URL like this to perform an action on a resource
 **URL Pattern**
 ```https://.../<resource-collection>/<resource-id>:<action>?<input parameters>```
 
@@ -397,7 +400,7 @@ The REST specification is used to model the state of a resource, and is primaril
 **Equivalent to (in C#)**
 ```users["Bob"].SendSms("Hello")```
 
-> :white_check_mark: **DO** pattern your URL like this to perform an action on a collection
+:white_check_mark: **DO** pattern your URL like this to perform an action on a collection
 **URL Pattern**
 ```https://.../<resource-collection>:<action>?<input parameters>```
 
@@ -406,20 +409,20 @@ The REST specification is used to model the state of a resource, and is primaril
 
 Note: To avoid potential collision of actions and resource ids, you should disallow the use of the ":" character in resource ids.
 
-> :white_check_mark: **DO** use a POST operation for any action on a resource or collection.
->
-> :white_check_mark: **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
+:white_check_mark: **DO** use a POST operation for any action on a resource or collection.
 
-> :ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
+:white_check_mark: **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
+
+:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
 
 
 ### Collections
-> :white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
+:white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
 
-> :ballot_box_with_check: **YOU SHOULD** support paging today if there is ever a chance in the future that the number of items can grow to be very large. 
+:ballot_box_with_check: **YOU SHOULD** support paging today if there is ever a chance in the future that the number of items can grow to be very large.
 > NOTE: It is a breaking change to add paging in the future
 
-> :heavy_check_mark: **YOU MAY** expose an operation that lists your resources by supporting a GET method with a URL to a resource-collection (as opposed to a resource-id).
+:heavy_check_mark: **YOU MAY** expose an operation that lists your resources by supporting a GET method with a URL to a resource-collection (as opposed to a resource-id).
 
 **Example Response Body** 
 ```
@@ -434,20 +437,20 @@ Note: To avoid potential collision of actions and resource ids, you should disal
  }
 ```
 
-> :white_check_mark: **DO** include the id field and etag field (if supported) for each item as this allows the customer to modify the item in a future operation.
-> 
-> :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
->
-> :white_check_mark: **DO** return a ```nextLink``` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
+:white_check_mark: **DO** include the id field and etag field (if supported) for each item as this allows the customer to modify the item in a future operation.
 
-> :ballot_box_with_check: **YOU SHOULD** use ```value``` as the name of the top-level array field unless a more appropriate name is available.
+:white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
-> :no_entry: **DO NOT** return the ```nextLink``` field at all when returning the last page of the collection. 
->
-> :no_entry: **DO NOT** ever return a ```nextLink``` field with a value of null.
+:white_check_mark: **DO** return a ```nextLink``` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
+
+:ballot_box_with_check: **YOU SHOULD** use ```value``` as the name of the top-level array field unless a more appropriate name is available.
+
+:no_entry: **DO NOT** return the ```nextLink``` field at all when returning the last page of the collection.
+
+:no_entry: **DO NOT** ever return a ```nextLink``` field with a value of null.
 
 #### Query options
-> :heavy_check_mark: **YOU MAY** support the following query parameters allowing customers to control the list operation:
+:heavy_check_mark: **YOU MAY** support the following query parameters allowing customers to control the list operation:
 
 Parameter&nbsp;name | Type | Description
 ------------------- | ---- | -----------
@@ -459,23 +462,23 @@ _maxpagesize_  | integer           | the maximum number of resources to include 
 _select_       | string&nbsp;array | a list of field names to be returned for each resource
 _expand_       | string&nbsp;array | a list of the related resources to be included in line with each resource
 
-> :white_check_mark: **DO** return an error if the client specifies any parameter not supported by the service.
-> 
-> :white_check_mark: **DO** treat these query parameter names as case-sensitive.
->
-> :white_check_mark: **DO** apply _select_ or _expand_ options after applying all the query options in the table above.
->
-> :white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
+:white_check_mark: **DO** return an error if the client specifies any parameter not supported by the service.
 
-> :no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
+:white_check_mark: **DO** treat these query parameter names as case-sensitive.
+
+:white_check_mark: **DO** apply _select_ or _expand_ options after applying all the query options in the table above.
+
+:white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
+
+:no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
 #### filter
 
-> :heavy_check_mark: **YOU MAY** support filtering of the results of a list operation with the _filter_ query parameter.
+:heavy_check_mark: **YOU MAY** support filtering of the results of a list operation with the _filter_ query parameter.
 
 The value of the _filter_ option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-> :white_check_mark: **DO** omit all resources from the collection for which the _filter_ expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+:white_check_mark: **DO** omit all resources from the collection for which the _filter_ expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
@@ -485,7 +488,7 @@ GET https://api.contoso.com/products?filter=price lt 10.00
 
 ##### filter operators
 
-> :heavy_check_mark: **YOU MAY** support the following operators in _filter_ expressions:
+:heavy_check_mark: **YOU MAY** support the following operators in _filter_ expressions:
 
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
@@ -503,9 +506,9 @@ not                      | Logical negation      | not price le 3.5
 __Grouping Operators__   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-> :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
-> 
-> :white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
+
+:white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -555,7 +558,7 @@ GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') a
 
 #### orderby
 
-> :heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the _orderby_ query parameter.
+:heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the _orderby_ query parameter.
 *NOTE: It is unusual for a service to support __orderby__ because it is very expensive to implement as it requires sorting the entire large collection before being able to return any results.*
 
 The value of the _orderby_ parameter is a comma-separated list of expressions used to sort the items.
@@ -563,15 +566,15 @@ A special case of such an expression is a property path terminating on a primiti
 
 Each expression in the _orderby_ parameter value may include the suffix "asc" for ascending or "desc" for descending, separated from the expression by one or more spaces.
 
-> :white_check_mark: **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
-> 
-> :white_check_mark: **DO** sort NULL values as "less than" non-NULL values.
-> 
-> :white_check_mark: **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
-> 
-> :white_check_mark: **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
-> 
-> :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#Handling-errors) section if the client requests sorting by a field that is not supported by the operation.
+:white_check_mark: **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
+
+:white_check_mark: **DO** sort NULL values as "less than" non-NULL values.
+
+:white_check_mark: **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
+
+:white_check_mark: **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
+
+:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#Handling-errors) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
 ```http
@@ -591,30 +594,30 @@ will return all people whose name is David sorted in ascending order by hireDate
 
 ##### Considerations for sorting with pagination
 
-> :white_check_mark: **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
+:white_check_mark: **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
 
 ##### skip
-> :white_check_mark: **DO** define the _skip_ parameter as an integer with a default and minimum value of 0.
+:white_check_mark: **DO** define the _skip_ parameter as an integer with a default and minimum value of 0.
 
-> :heavy_check_mark: **YOU MAY** allow clients to pass the _skip_ query parameter to specify an offset into collection of the first resource to be returned.
+:heavy_check_mark: **YOU MAY** allow clients to pass the _skip_ query parameter to specify an offset into collection of the first resource to be returned.
 ##### top
 
-> :heavy_check_mark: **YOU MAY** allow clients to pass the _top_ query parameter to specify the maximum number of resources to return from the collection.
+:heavy_check_mark: **YOU MAY** allow clients to pass the _top_ query parameter to specify the maximum number of resources to return from the collection.
 
 If supporting _top_:
-> :white_check_mark: **DO** define the _top_ parameter as an integer with a minimum value of 1. If not specified, __top__ has a default value of infinity.
-> 
-> :white_check_mark: **DO** return the collection's _top_ number of resources (if available), starting from _skip_.
+:white_check_mark: **DO** define the _top_ parameter as an integer with a minimum value of 1. If not specified, __top__ has a default value of infinity.
+
+:white_check_mark: **DO** return the collection's _top_ number of resources (if available), starting from _skip_.
 
 ##### maxpagesize
 
-> :heavy_check_mark: **YOU MAY** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in a single page response.
+:heavy_check_mark: **YOU MAY** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in a single page response.
 
 If supporting _maxpagesize_
 
-> :white_check_mark: **DO** define the _maxpagesize_ parameter as an optional integer with a default value appropriate for the collection.
-> 
-> :white_check_mark: **DO** make clear in documentation of the _maxpagesize_ parameter that the operation may choose to return fewer resources than the value specified.
+:white_check_mark: **DO** define the _maxpagesize_ parameter as an optional integer with a default value appropriate for the collection.
+
+:white_check_mark: **DO** make clear in documentation of the _maxpagesize_ parameter that the operation may choose to return fewer resources than the value specified.
 
 ### API Versioning
 
@@ -624,23 +627,23 @@ Azure services need to change over time. However, when changing a service, there
 
 *NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
-> :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
-> 
-> :white_check_mark: **DO** use an 'api-version' query parameter with a date value
+:white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
+
+:white_check_mark: **DO** use an 'api-version' query parameter with a date value
 > ```text PUT https://service.azure.com/users/Jeff?api-version=2021-06-04```
->
-> :white_check_mark: **DO** use a later date for each new preview version
+
+:white_check_mark: **DO** use a later date for each new preview version
 > When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
 
-> :white_check_mark: **DO** use a later date for successive preview versions. 
+:white_check_mark: **DO** use a later date for successive preview versions.
 
-> :no_entry: **DO NOT** introduce any breaking changes into the service.
+:no_entry: **DO NOT** introduce any breaking changes into the service.
 
-> :no_entry: **DO NOT** include a version number segment in any operation path.
+:no_entry: **DO NOT** include a version number segment in any operation path.
 
-> :no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
->
-> :no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
+:no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API <b>must be</b> a date later than 2021-06-04
+
+:no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 
 #### Use Extensible Enums
 
@@ -671,7 +674,7 @@ Simpler clients may be hardcoded to a single version of a service. Since Azure s
 
 API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises). In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
 
-> :white_check_mark: **DO**  support API version discovery, including 
+:white_check_mark: **DO**  support API version discovery, including
 
 1. Support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
 
@@ -681,7 +684,7 @@ API version discovery is needed when either a given hosted service may expose a 
 
 4. For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
 
-> :ballot_box_with_check: **YOU SHOULD** support the following for version discovery:
+:ballot_box_with_check: **YOU SHOULD** support the following for version discovery:
 
 1. In addition to the functionality described here, services should support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
 
@@ -711,7 +714,7 @@ Clients that use version discovery are expected to cache version information. Si
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
 
-> :ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
+:ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
 
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
 - A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
@@ -724,33 +727,33 @@ The ability to retry failed requests for which a client never received a respons
 
 The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`. 
 
-> :white_check_mark: **DO** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate. 
-> 
-> :white_check_mark: **DO** return the same value for **both** headers.
-> 
-> :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version. 
+:white_check_mark: **DO** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate.
+
+:white_check_mark: **DO** return the same value for **both** headers.
+
+:white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version.
 
 
 ### Bring your own Storage
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc. While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions. 
 
-> :white_check_mark: **DO** use Azure Bring Your Own Storage. 
->
-> :white_check_mark: **DO** use a blob prefix
+:white_check_mark: **DO** use Azure Bring Your Own Storage.
 
-> :no_entry: **DO NOT** require a fresh container per operation 
+:white_check_mark: **DO** use a blob prefix
+
+:no_entry: **DO NOT** require a fresh container per operation
 
 #### Authentication
 How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach. It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources. 
 
-> :white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
-> 
-> :white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
+:white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
+
+:white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
 
 ##### Handling 'downstream' errors
 It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
 
-> :white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body. 
+:white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body.
 
 #### Working with files
 Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
@@ -758,22 +761,22 @@ Generally speaking, there are two patterns that you will encounter when working 
 ##### Single file access
 Desiging an API for accessing a single file, depending on your scenario, is relatively straight forward.
 
-> :heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.   
+:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
 
-> :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.  
-> 
-> :ballot_box_with_check: **YOU SHOULD** support managed identity using Azure Storage by default (if using Azure services). 
+:ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
+
+:ballot_box_with_check: **YOU SHOULD** support managed identity using Azure Storage by default (if using Azure services).
 
 ###### File Versioning
 Depending on your requirements, there are scenarios where users of your service will require a specific version of a file. For example, you may need to keep track of configuration changes over time to be able to rollback to a previous state. In these scenarios, you will need to provide a mechanism for accessing a specific version.
 
-> :white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file. 
+:white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file.
 ##### File Collections
 When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
 
-> :white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well. 
-> 
-> :white_check_mark: **DO** When using managed identity, ensure the customer has given the proper permissions to access the file container to the service. 
+:white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well.
+
+:white_check_mark: **DO** When using managed identity, ensure the customer has given the proper permissions to access the file container to the service.
 
 A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process, e.g. "input" and a location(s) to place the any files that result from processing, e.g. "output." (Note: the terms "input" and "output" are just examples and terms more relevant to the service domain are more appropriate.)
 
@@ -795,19 +798,20 @@ Note: How the service gets the request body is outside the purview of these guid
 
 Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. However, for each of the "input" sections the following apply:
 
-> :white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter."
-> 
-> :white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```listing``` and ```read``` permissions. 
+:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter."
+
+:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```listing``` and ```read``` permissions.
 
 For each of the "output" sections the following apply:
 
-> :white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```write``` permissions 
+:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of ```write``` permissions
+
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction. Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an ```ETag``` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with. An ```ETag``` is always set by the service and will enable you to *conditionally* control how your service responds to requests, enabling you to provide predictable updates and more efficient access.  
 
-> :ballot_box_with_check: **YOU SHOULD** return an ```ETag``` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not). 
-> 
-> :ballot_box_with_check: **YOU SHOULD** use ```etags``` consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
+:ballot_box_with_check: **YOU SHOULD** return an ```ETag``` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
+
+:ballot_box_with_check: **YOU SHOULD** use ```etags``` consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
 
 You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232).
 
@@ -816,10 +820,10 @@ One of the more common uses for ```ETag``` headers is cache control, also referr
 
 Implementing this strategy is relatively straightforward. First, you will return an ```ETag``` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your ```ETag```. In these scenarios, when a request is made by the client an ```ETag``` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The ```ETag``` value can then be sent in subsequent requests as part of the ```if-none-match``` header. This tells the service to compare the ```ETag``` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated ```ETag``` value in the header. 
  
-> :ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
+:ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
 
 When supporting conditional read strategies:
-> :white_check_mark: **DO** adhere to the following table for guidance:
+:white_check_mark: **DO** adhere to the following table for guidance:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
@@ -831,10 +835,10 @@ For more control over caching, please refer to the ```cache-control``` [HTTP hea
 #### Optimistic Concurrency
 An ```ETag``` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls. Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of ```ETags``` and the [HTTP Request / Response Pattern](#http-request--response-pattern). 
 
-> :warning: **YOU SHOULD NOT**  implement pessimistic update strategies, e.g. last writer wins.
+:warning: **YOU SHOULD NOT**  implement pessimistic update strategies, e.g. last writer wins.
 
 When supporting optimistic concurrency:
-> :white_check_mark: **DO** adhere to the following table for guidance:
+:white_check_mark: **DO** adhere to the following table for guidance:
 
 | Operation   | Header        | Value | etag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
@@ -848,19 +852,19 @@ When supporting optimistic concurrency:
 #### Computing ETags
 The strategy that you use to compute the ```ETag``` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the ```ETag```. Another common strategy for determining the value of an ```ETag``` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism. 
 
-> :ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
+:ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
 
-> :heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
->
-> :heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
+:heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
+
+:heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the ```User-Agent``` header, ```X-MS-UserAgent``` header, and Open Telemetry. 
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
 
-> :white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
+:white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
-> :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers. 
+:no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
 #### Additional References
 * [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
 * [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
