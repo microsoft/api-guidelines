@@ -70,18 +70,19 @@ Where:
 
 :white_check_mark: **DO** return `414-URI Too Long` if a URL exceeds 2083 characters
 
-:white_check_mark: **DO** treat URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request **MUST** fail with a `404-Not found` HTTP return code.
-
-:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
-
-:ballot_box_with_check: **YOU SHOULD** limit your URL's path characters to `0-9  A-Z  a-z  -  .  _  ~ :`
-
-:heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
-
+:white_check_mark: **DO** treat service-defined URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request **MUST** fail with a `404-Not found` HTTP return code.
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
 :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
+
+:ballot_box_with_check: **YOU SHOULD** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
+
+:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in path parameters to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
+
+:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
+
+:heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
 
 #### Direct Endpoint URLs
 
@@ -231,6 +232,8 @@ Field Mutability | Service Request's behavior for this field
 In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically _not_ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
 :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
+
+:white_check_mark: **DO** use camel case for all JSON field names.
 
 :white_check_mark: **DO** treat JSON field names with case-sensitivity.
 
@@ -737,7 +740,10 @@ The ability to retry failed requests for which a client never received a respons
 
 ### Long Running Operations & Jobs
 
-The Microsoft REST API guidelines for Long Running Operations are an updated, clarified and simplified version of the Asynchronous Operations guidelines from the 2.1 version of the Azure API guidelines. Unfortunately, to generalize to the whole of Microsoft and not just Azure, the HEADER used in the operation was renamed from `Azure-AsyncOperation` to `Operation-Location`.
+Azure generally follows the [Microsoft REST API guidelines for Long running operations](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).  Follow the Microsoft guidelines with the modifications / extensions given here when designing / implementing long running operations.
+
+Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the operation URL,
+while the Microsoft guidelines use the name "Operation-Location".
 
 :white_check_mark: **DO** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate.
 
