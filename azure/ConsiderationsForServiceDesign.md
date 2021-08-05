@@ -1,5 +1,5 @@
 ## Considerations for Service Design
-Great APIs make your service usable to customers. They are intuitive, naturally reflecting and communicating the underlying model and its behavior. They lend themselves easily to client library implementations in multiple programming languages. And they don't "get in the way" of the developer, by remaining stable and predictable, <i>especially over time</i>.
+Great APIs make your service usable to customers. They are intuitive, naturally reflecting and communicating the underlying model and its behavior. They lend themselves easily to client library implementations in multiple programming languages. And they don't "get in the way" of the developer, by remaining stable and predictable, _especially over time_.
 
 This document provides Microsoft teams building Azure services with a set of guidelines that  help service teams build great APIs. The guidelines create APIs that are approachable, sustainable, and consistent across the Azure platform. We do this by applying a common set of patterns and web standards to the design and development of the API. For developers, a well defined and constructed API enables them to build fault-tolerant applications that are easy to maintain, support, and grow. For Azure service teams, the API is often the source of code generation enabling a broad audience of developers across multiple languages.
 
@@ -11,7 +11,7 @@ It is critically important to design your service to avoid disrupting users as t
 
 :white_check_mark: **DO** ensure that customer workloads never break
 
-:white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library <b>without requiring code changes</b>
+:white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
 
 ### Azure Management Plane vs Data Plane
 *Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.*
@@ -42,7 +42,7 @@ The whole purpose of a preview to address feedback by improving abstractions, na
 ### Focus on Hero Scenarios
 It is important to realize that writing an API is, in many cases, the easiest part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documentation, client libraries, examples, blog posts, videos, and supporting customers in perpetuity. In fact, implementing an API is of miniscule cost compared to all the other downstream activities.
 
-*For this reason, it is <b>much better</b> to ship with fewer features and only add new features over time as required by customers.*
+*For this reason, it is **much better** to ship with fewer features and only add new features over time as required by customers.*
 
 Focusing on hero scenarios reduces development, support, and maintenance costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A telltale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another.
 
