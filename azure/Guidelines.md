@@ -103,7 +103,7 @@ https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
 ### HTTP Request / Response Pattern
-The HTTP Request / Response pattern dictates how your API behaves. For example: POST methods that create resources must be idempotent, GET method results may be cached, the If-Modified and etag headers offer optimistic concurrency. The URL of a service, along with its request/response bodies, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you make.
+The HTTP Request / Response pattern dictates how your API behaves. For example: POST methods that create resources must be idempotent, GET method results may be cached, the If-Modified and ETag headers offer optimistic concurrency. The URL of a service, along with its request/response bodies, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you make.
 
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, <b>all</b> service operations (including POST) <b>must</b> be idempotent. Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 
@@ -138,7 +138,7 @@ DELETE | Remove the resource | 204-No Content\; avoid 404-Not Found
 
 :white_check_mark: **DO** return a ```403-Forbidden``` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be ```404-Not Found```. [Rationale: a ```403-Forbidden``` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
 
-:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the etag and last-modified response headers
+:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
@@ -177,7 +177,7 @@ date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, 
 *content-type*      | Both       | application/merge-patch+json
 *content-length*    | Both       | 1024
 *x-ms-request-id*   | Response   | [see Customer Support](http://TODO:link-goes-here)
-etag                | Response   | "67ab43" see [Conditional Requests](#Conditional-Requests)
+ETag                | Response   | "67ab43" see [Conditional Requests](#Conditional-Requests)
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 *x-ms-error-code*   | Response   | see [Handling Errors](#Handling-Errors)
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
@@ -437,7 +437,7 @@ Note: To avoid potential collision of actions and resource ids, you should disal
  }
 ```
 
-:white_check_mark: **DO** include the id field and etag field (if supported) for each item as this allows the customer to modify the item in a future operation.
+:white_check_mark: **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation.
 
 :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
@@ -522,6 +522,8 @@ __Grouping Operators__   |                       |
 |                 | ne       | Not Equal             |
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
+
+> :heavy_check_mark: **YOU MAY** support orderby and filter functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -809,9 +811,9 @@ For each of the "output" sections the following apply:
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction. Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an ```ETag``` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with. An ```ETag``` is always set by the service and will enable you to *conditionally* control how your service responds to requests, enabling you to provide predictable updates and more efficient access.  
 
-:ballot_box_with_check: **YOU SHOULD** return an ```ETag``` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
+:ballot_box_with_check: **YOU SHOULD** return an ```ETag``` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not). 
 
-:ballot_box_with_check: **YOU SHOULD** use ```etags``` consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
+:ballot_box_with_check: **YOU SHOULD** use ```ETag```s consistently across your API, i.e. if you use an ```ETag```, accept it on all other operations.
 
 You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232).
 
@@ -827,8 +829,8 @@ When supporting conditional read strategies:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
-| etag value = if-none-match value   | 304 Not Modified | no additional information   |
-| etag value != if-none-match value  | 200 OK           | Response body include the serialized value of the resource (typically JSON)    |
+| ETag value = if-none-match value   | 304 Not Modified | no additional information   |
+| ETag value != if-none-match value  | 200 OK           | Response body include the serialized value of the resource (typically JSON)    |
 
 For more control over caching, please refer to the ```cache-control``` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
 
@@ -840,14 +842,14 @@ An ```ETag``` should also be used to reflect the create, update, and delete poli
 When supporting optimistic concurrency:
 :white_check_mark: **DO** adhere to the following table for guidance:
 
-| Operation   | Header        | Value | etag check | Return code | Response       |
+| Operation   | Header        | Value | ETag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
 | PATCH / PUT | if-none-match | *     | check for *any* version of the resource ('*' is a wildcard used to match anything), if none are found, create the resource. | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
 | PATCH / PUT | if-none-match | *     | check for *any* version of the resource, if one is found, fail the operation |  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| PATCH / PUT | if-match | value of etag     | value of if-match equals the latest etag value on the server, confirming that the version of the resource is the most current | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
-| PATCH / PUT | if-match | value of etag     | value of if-match header DOES NOT equal the latest etag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| DELETE      | if-none-match | value of etag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD be empty.|
-| DELETE      | if-none-match | value of etag     | value matches the latest value on the server | 204 No Content | Response body SHOULD be empty.  |
+| PATCH / PUT | if-match | value of ETag     | value of if-match equals the latest ETag value on the server, confirming that the version of the resource is the most current | 200 OK or </br> 201 Created </br> | Response header MUST include the new ```ETag``` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
+| PATCH / PUT | if-match | value of ETag     | value of if-match header DOES NOT equal the latest ETag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
+| DELETE      | if-none-match | value of ETag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD be empty.|
+| DELETE      | if-none-match | value of ETag     | value matches the latest value on the server | 204 No Content | Response body SHOULD be empty.  |
 
 #### Computing ETags
 The strategy that you use to compute the ```ETag``` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the ```ETag```. Another common strategy for determining the value of an ```ETag``` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism. 
