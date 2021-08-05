@@ -462,41 +462,41 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 Parameter&nbsp;name | Type | Description
 ------------------- | ---- | -----------
-_filter_       | string            | an expression on the resource type that selects the resources to be returned
-_orderby_      | string&nbsp;array | a list of expressions that specify the order of the returned resources
-_skip_         | integer           | an offset into the collection of the first resource to be returned
-_top_          | integer           | the maximum number of resources to return from the collection
-_maxpagesize_  | integer           | the maximum number of resources to include in a single response
-_select_       | string&nbsp;array | a list of field names to be returned for each resource
-_expand_       | string&nbsp;array | a list of the related resources to be included in line with each resource
+`filter`       | string            | an expression on the resource type that selects the resources to be returned
+`orderby`      | string&nbsp;array | a list of expressions that specify the order of the returned resources
+`skip`         | integer           | an offset into the collection of the first resource to be returned
+`top`          | integer           | the maximum number of resources to return from the collection
+`maxpagesize`  | integer           | the maximum number of resources to include in a single response
+`select`       | string&nbsp;array | a list of field names to be returned for each resource
+`expand`       | string&nbsp;array | a list of the related resources to be included in line with each resource
 
 :white_check_mark: **DO** return an error if the client specifies any parameter not supported by the service.
 
 :white_check_mark: **DO** treat these query parameter names as case-sensitive.
 
-:white_check_mark: **DO** apply _select_ or _expand_ options after applying all the query options in the table above.
+:white_check_mark: **DO** apply `select` or `expand` options after applying all the query options in the table above.
 
 :white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
 
 :no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
-#### filter
+#### `filter`
 
-:heavy_check_mark: **YOU MAY** support filtering of the results of a list operation with the _filter_ query parameter.
+:heavy_check_mark: **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
 
-The value of the _filter_ option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
+The value of the `filter` option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-:white_check_mark: **DO** omit all resources from the collection for which the _filter_ expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+:white_check_mark: **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
 ```http
-GET https://api.contoso.com/products?filter=price lt 10.00
+GET https://api.contoso.com/products?`filter`=price lt 10.00
 ```
 
-##### filter operators
+##### `filter` operators
 
-:heavy_check_mark: **YOU MAY** support the following operators in _filter_ expressions:
+:heavy_check_mark: **YOU MAY** support the following operators in `filter` expressions:
 
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
@@ -514,9 +514,9 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a _filter_ expression that is not supported by the operation.
+:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
 
-:white_check_mark: **DO** use the following operator precedence for supported operators when evaluating _filter_ expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+:white_check_mark: **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -531,7 +531,7 @@ not                      | Logical negation      | not price le 3.5
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
 
-> :heavy_check_mark: **YOU MAY** support orderby and filter functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
+> :heavy_check_mark: **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -539,42 +539,42 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```http
-GET https://api.contoso.com/products?filter=name eq 'Milk'
+GET https://api.contoso.com/products?`filter`=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```http
-GET https://api.contoso.com/products?filter=name ne 'Milk'
+GET https://api.contoso.com/products?`filter`=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```http
-GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
 
-:heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the _orderby_ query parameter.
-*NOTE: It is unusual for a service to support _orderby_ because it is very expensive to implement as it requires sorting the entire large collection before being able to return any results.*
+:heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the `orderby` query parameter.
+*NOTE: It is unusual for a service to support `orderby` because it is very expensive to implement as it requires sorting the entire large collection before being able to return any results.*
 
-The value of the _orderby_ parameter is a comma-separated list of expressions used to sort the items.
+The value of the `orderby` parameter is a comma-separated list of expressions used to sort the items.
 A special case of such an expression is a property path terminating on a primitive property.
 
-Each expression in the _orderby_ parameter value may include the suffix "asc" for ascending or "desc" for descending, separated from the expression by one or more spaces.
+Each expression in the `orderby` parameter value may include the suffix "asc" for ascending or "desc" for descending, separated from the expression by one or more spaces.
 
 :white_check_mark: **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
 
@@ -596,38 +596,36 @@ For example, to return all people sorted by name in descending order and a secon
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
-Sorting MUST compose with filtering such that:
+Sorting MUST compose with `filter`ing such that:
 ```http
-GET https://api.contoso.com/people?filter=name eq 'david'&orderby=hireDate
+GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
 
 ##### Considerations for sorting with pagination
 
-:white_check_mark: **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
+:white_check_mark: **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
 
 ##### skip
-:white_check_mark: **DO** define the _skip_ parameter as an integer with a default and minimum value of 0.
+:white_check_mark: **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
 
-:heavy_check_mark: **YOU MAY** allow clients to pass the _skip_ query parameter to specify an offset into collection of the first resource to be returned.
+:heavy_check_mark: **YOU MAY** allow clients to pass the `skip` query parameter to specify an offset into collection of the first resource to be returned.
 ##### top
 
-:heavy_check_mark: **YOU MAY** allow clients to pass the _top_ query parameter to specify the maximum number of resources to return from the collection.
+:heavy_check_mark: **YOU MAY** allow clients to pass the `top` query parameter to specify the maximum number of resources to return from the collection.
 
-If supporting _top_:
-:white_check_mark: **DO** define the _top_ parameter as an integer with a minimum value of 1. If not specified, _top_ has a default value of infinity.
+If supporting `top`:
+:white_check_mark: **DO** define the `top` parameter as an integer with a minimum value of 1. If not specified, `top` has a default value of infinity.
 
-:white_check_mark: **DO** return the collection's _top_ number of resources (if available), starting from _skip_.
+:white_check_mark: **DO** return the collection's `top` number of resources (if available), starting from `skip`.
 
 ##### maxpagesize
 
-:heavy_check_mark: **YOU MAY** allow clients to pass the _maxpagesize_ query parameter to specify the maximum number of resources to include in a single page response.
+:heavy_check_mark: **YOU MAY** allow clients to pass the `maxpagesize` query parameter to specify the maximum number of resources to include in a single page response.
 
-If supporting _maxpagesize_
+:white_check_mark: **DO** define the `maxpagesize` parameter as an optional integer with a default value appropriate for the collection.
 
-:white_check_mark: **DO** define the _maxpagesize_ parameter as an optional integer with a default value appropriate for the collection.
-
-:white_check_mark: **DO** make clear in documentation of the _maxpagesize_ parameter that the operation may choose to return fewer resources than the value specified.
+:white_check_mark: **DO** make clear in documentation of the `maxpagesize` parameter that the operation may choose to return fewer resources than the value specified.
 
 ### API Versioning
 
