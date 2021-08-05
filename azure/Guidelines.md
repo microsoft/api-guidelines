@@ -138,7 +138,7 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
 :white_check_mark: **DO** return a `403-Forbidden` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be `404-Not Found`. [Rationale: a `403-Forbidden` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
 
-:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the if-match, if-none-match, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
+:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 ### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
@@ -165,21 +165,21 @@ The table below lists the headers most used by Azure services:
 Header Key          | Applies to | Example
 ------------------- | ---------- | -------------
 _authorization_     | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory)
-_x-ms-useragent_    | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
-traceparent         | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
-tracecontext        | Request    | see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry)
+_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
+traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
+tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
 accept              | Request    | application/json
-if-match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
-if-none-match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+If-Match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+If-None-Match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
 If-Modified-Since   | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
 If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
 date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
 _content-type_      | Both       | application/merge-patch+json
 _content-length_    | Both       | 1024
 _x-ms-request-id_   | Response   | [see Customer Support](http://TODO:link-goes-here)
-ETag                | Response   | "67ab43" see [Conditional Requests](#Conditional-Requests)
+ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
-_x-ms-error-code_   | Response   | see [Handling Errors](#Handling-Errors)
+_x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in _italics_
@@ -258,16 +258,16 @@ In addition to the above, a field may be "required" or "optional". A required fi
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
-PATCH/PUT | Any JSON field name/value not known/valid | 400-Bad Request
-PATCH/PUT | Any Read field passed (client can't set Read fields) | 400-Bad Request
+PATCH/PUT | Any JSON field name/value not known/valid | `400-Bad Request`
+PATCH/PUT | Any Read field passed (client can't set Read fields) | `400-Bad Request`
 | **If&nbsp;the&nbsp;resource&nbsp;does&nbsp;not&nbsp;exist** |
-PATCH/PUT | Any mandatory Create/Update field missing | 400-Bad Request
-PATCH/PUT | Create resource using Create/Update fields | 201-Created
+PATCH/PUT | Any mandatory Create/Update field missing | `400-Bad Request`
+PATCH/PUT | Create resource using Create/Update fields | `201-Created`
 | **If&nbsp;the&nbsp;resource&nbsp;already&nbsp;exists** |
-PATCH | Any Create field doesn't match current value (allows retries) | 409-Conflict
-PATCH | Update resource using Update fields | 200-OK
-PUT | Any mandatory Create/Update field missing | 400-Bad Request
-PUT | Overwrite resource entirely using Create/Update fields | 200-OK
+PATCH | Any Create field doesn't match current value (allows retries) | `409-Conflict`
+PATCH | Update resource using Update fields | `200-OK`
+PUT | Any mandatory Create/Update field missing | `400-Bad Request`
+PUT | Overwrite resource entirely using Create/Update fields | `200-OK`
 
 #### Handling Errors
 There are 2 kinds of errors:
@@ -321,9 +321,9 @@ Services, and the clients that access them, may be written in multiple languages
 
 :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
 
-:white_check_mark: **DO** use [RFC3339] for date/time.
+:white_check_mark: **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
 
-:white_check_mark: **DO** use [RFC4122] for UUIDs.
+:white_check_mark: **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
 
 :heavy_check_mark: **YOU MAY** use JSON objects to group sub-fields together.
 
@@ -637,7 +637,7 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an 'api-version' query parameter with a date value
+:white_check_mark: **DO** use an `api-version` query parameter with a date value
 
 ```http
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
@@ -653,7 +653,7 @@ When releasing a new preview, the service team may completely retire any previou
 
 :no_entry: **DO NOT** include a version number segment in any operation path.
 
-:no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview 'api-version' is '2021-06-04-preview', the GA version of the API **must be** a date later than 2021-06-04
+:no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview `api-version` is '2021-06-04-preview', the GA version of the API **must be** a date later than 2021-06-04
 
 :no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 
@@ -830,7 +830,7 @@ You can learn more about conditional requests by reading [RFC7232](https://datat
 #### Cache Control
 One of the more common uses for `ETag` headers is cache control, also referred to a "conditional GET." This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency). That is, using the value of the `ETag` , the server can determine if the resource has changed. If there are no changes, then there is no need to return the resource, as the client already has the most recent version.
 
-Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your `ETag`. In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `if-none-match` header. This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
+Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your `ETag`. In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header. This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
 
 :ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
 
@@ -839,8 +839,8 @@ When supporting conditional read strategies:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
-| ETag value = if-none-match value   | 304 Not Modified | no additional information   |
-| ETag value != if-none-match value  | 200 OK           | Response body include the serialized value of the resource (typically JSON)    |
+| ETag value = `If-None-Match` value   | `304-Not Modified` | no additional information   |
+| ETag value != `If-None-Match` value  | `200-OK`           | Response body include the serialized value of the resource (typically JSON)    |
 
 For more control over caching, please refer to the `cache-control` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
 
@@ -854,12 +854,12 @@ When supporting optimistic concurrency:
 
 | Operation   | Header        | Value | ETag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
-| PATCH / PUT | if-none-match | *     | check for _any_ version of the resource ('*' is a wildcard used to match anything), if none are found, create the resource. | 200 OK or </br> 201 Created </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
-| PATCH / PUT | if-none-match | *     | check for _any_ version of the resource, if one is found, fail the operation |  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| PATCH / PUT | if-match | value of ETag     | value of if-match equals the latest ETag value on the server, confirming that the version of the resource is the most current | 200 OK or </br> 201 Created </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
-| PATCH / PUT | if-match | value of ETag     | value of if-match header DOES NOT equal the latest ETag value on the server, indicating a change has ocurred since after the client fetched the resource|  412 Precondition Failed | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| DELETE      | if-none-match | value of ETag     | value does NOT match the latest value on the server | 412 Preconditioned Failed | Response body SHOULD be empty.|
-| DELETE      | if-none-match | value of ETag     | value matches the latest value on the server | 204 No Content | Response body SHOULD be empty.  |
+| PATCH / PUT | `If-None-Match` | *     | check for _any_ version of the resource ('*' is a wildcard used to match anything), if none are found, create the resource. | `200-OK` or </br> `201-Created` </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
+| PATCH / PUT | `If-None-Match` | *     | check for _any_ version of the resource, if one is found, fail the operation |  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
+| PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` equals the latest ETag value on the server, confirming that the version of the resource is the most current | `200-OK` or </br> `201-Created` </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
+| PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` header DOES NOT equal the latest ETag value on the server, indicating a change has ocurred since after the client fetched the resource|  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
+| DELETE      | `If-None-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
+| DELETE      | `If-None-Match` | value of ETag     | value matches the latest value on the server | `204-No Content` | Response body SHOULD be empty.  |
 
 #### Computing ETags
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
