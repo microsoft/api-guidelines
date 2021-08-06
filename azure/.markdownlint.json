@@ -1,0 +1,16 @@
+{
+  "default": true,
+  "MD012": {
+    "maximum": 2
+  },
+  "MD013": {
+    "line_length": 500
+  },
+  "MD022": false,
+  "MD031": false,
+  "MD032": false,
+  "MD033": {
+    "allowed_elements": [ "sup" ]
+  },
+  "MD036": false
+}
