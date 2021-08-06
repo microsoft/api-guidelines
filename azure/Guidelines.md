@@ -1,11 +1,11 @@
 # Microsoft Azure REST API Guidelines
 ## History
 
-| Date        | Version | Notes                                               |
-| ----------- | ------- | --------------------------------------------------- |
-| 2021-Jul-02 | vNext-RC1 | Updated Azure REST Guidelines.                    |
-| 2020-Jul-31 | v3.2    | Added service advice for initial versions           |
-| 2020-Mar-31 | v3.1    | 1st public release of the Azure REST API Guidelines |
+| Date        | Notes                                                          |
+| ----------- | -------------------------------------------------------------- |
+| 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
+| 2020-Jul-31 | Added service advice for initial versions                      |
+| 2020-Mar-31 | 1st public release of the Azure REST API Guidelines            |
 
 ## Introduction
 
@@ -19,6 +19,8 @@ These guidelines offer prescriptive guidance that Azure service teams MUST follo
   2. Customers can adopt a version without requiring code changes
 
 Technology and software is constantly changing and evolving, and as such, this is intended to be a living document. [Open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest a change or propose a new idea.
+
+See the [Considerations for Service Design](./ConsiderationsForServiceDesign.md) for an introduction to the topic of API design for Azure services.
 
 *NOTE: For an existing GA'd service, don't change/break its existing API; instead, leverage these concepts for future APIs while prioritizing consistency within your existing service.*
 

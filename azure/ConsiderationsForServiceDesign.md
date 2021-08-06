@@ -1,4 +1,11 @@
 ## Considerations for Service Design
+### History
+
+| Date        | Notes                                                          |
+| ----------- | -------------------------------------------------------------- |
+| 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
+
+### Introduction
 
 Great APIs make your service usable to customers. They are intuitive, naturally reflecting and communicating the underlying model and its behavior. They lend themselves easily to client library implementations in multiple programming languages. And they don't "get in the way" of the developer, by remaining stable and predictable, _especially over time_.
 
