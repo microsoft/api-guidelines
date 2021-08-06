@@ -42,10 +42,10 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
-* [Uniform Resource Locators (URLs)](URLS)
-* HTTP Methods
-* Request & Response Headers
-* Bodies
+- [Uniform Resource Locators (URLs)](URLS)
+- HTTP Methods
+- Request & Response Headers
+- Bodies
 
 ### Uniform Resource Locators (URLs)
 
@@ -92,14 +92,14 @@ https://<tenant>-<service-root>.<service>.<cloud>/...
 ```
 
 Examples:
-  - Request URL: `https://blobstore.azure.net/contoso.com/account1/container1/blob2`
-  - Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
-  - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
+- Request URL: `https://blobstore.azure.net/contoso.com/account1/container1/blob2`
+- Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
+- GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
 :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
 :heavy_check_mark: **YOU MAY** use URLs as values
-```
+```http
 https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
@@ -198,12 +198,14 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 :no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
 #### Additional References
-* [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
-* [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
-* [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
+- [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
+- [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
+- [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
 ### REpresentational State Transfer (REST)
-REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items. These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior. There are patterns, later in these guidelines, that describe how to invoke behavior on your service. See [this article in the Azure Architecture Center](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design) for a more detailed discussion of REST API design patterns.
+REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items.
+These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
+There are patterns, later in these guidelines, that describe how to invoke behavior on your service. See [this article in the Azure Architecture Center](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design) for a more detailed discussion of REST API design patterns.
 
 When designing your service, it is important to optimize for the developer using your API.
 
@@ -229,7 +231,8 @@ Field Mutability | Service Request's behavior for this field
 **Update** | Service honors field when creating or updating a resource
 **Read**   | Service returns this field in a response. If the client passed a read-only field, the service **MUST** fail the request unless the passed-in value matches the resource's current value
 
-In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically _not_ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check. Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
+In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically _not_ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check.
+Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
 :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 
@@ -274,8 +277,8 @@ PUT | Overwrite resource entirely using Create/Update fields | `200-OK`
 
 #### Handling Errors
 There are 2 kinds of errors:
- - An error where you expect customer code to gracefully recover at runtime
- - An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
+- An error where you expect customer code to gracefully recover at runtime
+- An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
 
 :white_check_mark: **DO** return error an `x-ms-error-code` response header with a string value indicating what went wrong.
 
@@ -438,7 +441,7 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 :heavy_check_mark: **YOU MAY** expose an operation that lists your resources by supporting a GET method with a URL to a resource-collection (as opposed to a resource-id).
 
 **Example Response Body**
-```
+```json
 {
     "value": [
        { "id": "Item 01", "etag": "0xabc", "price": 99.95, "sizes": null },
@@ -689,7 +692,8 @@ While removing a value from an enum is a breaking change, adding value to an enu
 
 Simpler clients may be hardcoded to a single version of a service. Since Azure services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
 
-API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises). In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
+API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises).
+In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
 
 :white_check_mark: **DO**  support API version discovery, including
 
@@ -725,7 +729,8 @@ api-deprecated-versions: 2009-04,1.0
 Content-Length: 0
 ```
 
-Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators. In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
+Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators.
+In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
 
 ### Repeatability of requests
 
@@ -753,9 +758,9 @@ while the Microsoft guidelines use the name "Operation-Location".
 
 :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version.
 
-
 ### Bring your own Storage
-When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc. While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions.
+When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
+While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions.
 
 :white_check_mark: **DO** use Azure Bring Your Own Storage.
 
@@ -764,7 +769,8 @@ When implementing your service, it is very common to store and retrieve data and
 :no_entry: **DO NOT** require a fresh container per operation
 
 #### Authentication
-How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach. It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources.
+How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach.
+It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources.
 
 :white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
 
@@ -827,7 +833,9 @@ For each of the "output" sections the following apply:
 :white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of `write` permissions
 
 ### Conditional Requests
-When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction. Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an `ETag` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with. An `ETag` is always set by the service and will enable you to _conditionally_ control how your service responds to requests, enabling you to provide predictable updates and more efficient access.
+When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
+Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an `ETag` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with.
+An `ETag` is always set by the service and will enable you to _conditionally_ control how your service responds to requests, enabling you to provide predictable updates and more efficient access.
 
 :ballot_box_with_check: **YOU SHOULD** return an `ETag` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
 
@@ -838,7 +846,9 @@ You can learn more about conditional requests by reading [RFC7232](https://datat
 #### Cache Control
 One of the more common uses for `ETag` headers is cache control, also referred to a "conditional GET." This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency). That is, using the value of the `ETag` , the server can determine if the resource has changed. If there are no changes, then there is no need to return the resource, as the client already has the most recent version.
 
-Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your `ETag`. In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header. This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
+Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-ETags) section provides guidance on how to properly calculate the value of your `ETag`.
+In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header.
+This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
 
 :ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
 
@@ -853,7 +863,8 @@ When supporting conditional read strategies:
 For more control over caching, please refer to the `cache-control` [HTTP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control).
 
 #### Optimistic Concurrency
-An `ETag` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls. Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of `ETags` and the [HTTP Request / Response Pattern](#http-request--response-pattern).
+An `ETag` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls.
+Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of `ETags` and the [HTTP Request / Response Pattern](#http-request--response-pattern).
 
 :warning: **YOU SHOULD NOT**  implement pessimistic update strategies, e.g. last writer wins.
 
@@ -886,12 +897,14 @@ Client libraries are required to send telemetry and distributed tracing informat
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
 #### Additional References
-* [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
-* [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
-* [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy)
-* [Open Telemetry](https://opentelemetry.io/)
+- [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
+- [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
+- [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy)
+- [Open Telemetry](https://opentelemetry.io/)
 
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
 
-The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](.\ConsiderationsForServiceDesign.md).
+The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers.
+Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process.
+These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](.\ConsiderationsForServiceDesign.md).
