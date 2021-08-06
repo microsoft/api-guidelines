@@ -424,6 +424,8 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 :white_check_mark: **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
 
+:white_check_mark: **DO** return a `200-OK` when the action completes synchronously and successfully.
+
 :ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
 
 
