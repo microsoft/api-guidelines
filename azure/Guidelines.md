@@ -76,9 +76,9 @@ Some customer-provided path segment values may be compared case-insensitivity if
 
 :white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
 
-:ballot_box_with_check: **YOU SHOULD** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
+:white_check_mark: **DO** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
 
-:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in path parameters to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
+:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segements (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
@@ -240,7 +240,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 :white_check_mark: **DO** treat JSON field names with case-sensitivity.
 
-:white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions but avoid if at all possible.
+:white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions (e.g. GUIDs) but avoid if at all possible.
 
 :white_check_mark: **DO** use GET for resource retrieval and return JSON in the response body
 
