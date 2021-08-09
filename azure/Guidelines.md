@@ -761,7 +761,7 @@ while the Microsoft guidelines use the name "Operation-Location".
 :white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version.
 
 ### Bring your own Storage (BYOS)
-Many services need to store and retrieve data files. For this scenario, teh service should not implement its own 
+Many services need to store and retrieve data files. For this scenario, the service should not implement its own 
 storage mechanism and should instead leverage the existing Azure Storage service. When doing this, the customer 
 "owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already with the Azure Storage service. 
 
