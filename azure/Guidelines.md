@@ -127,6 +127,7 @@ Method | Description | Response Status Code
 PATCH  | Create/Modify the resource with JSON Merge Patch | `200-OK`, `201-Created`
 PUT    | Create/Replace the _whole_ resource | `200-OK`, `201-Created`
 POST   | Create new resource (ID set by service) | `201-Created` with URL of created resource
+POST   | Action | `200-OK`, `204-No Content`
 GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
@@ -297,13 +298,13 @@ There are 2 kinds of errors:
 **ErrorResponse** : Object
 
 Property | Type | Required | Description
--------- | ---- | -------- | -----------
+-------- | ---- | :------: | -----------
 `error` | ErrorDetail | ✔ | The error object.
 
 **ErrorDetail** : Object
 
 Property | Type | Required | Description
--------- | ---- | -------- | -----------
+-------- | ---- | :------: | -----------
 `code` | String | ✔ | One of a server-defined set of error codes.
 `message` | String | ✔ | A human-readable representation of the error.
 `target` | String |  | The target of the error.
@@ -313,7 +314,7 @@ Property | Type | Required | Description
 **InnerError** : Object
 
 Property | Type | Required | Description
--------- | ---- | -------- | -----------
+-------- | ---- | :------: | -----------
 `code` | String |  | A more specific error code than was provided by the containing error.
 `innererror` | InnerError |  | An object containing more specific information than the current object about the error.
 
