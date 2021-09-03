@@ -127,7 +127,7 @@ Method | Description | Response Status Code
 PATCH  | Create/Modify the resource with JSON Merge Patch | `200-OK`, `201-Created`
 PUT    | Create/Replace the _whole_ resource | `200-OK`, `201-Created`
 POST   | Create new resource (ID set by service) | `201-Created` with URL of created resource
-POST   | Action | `200-OK`, `204-No Content`
+POST   | Action | `200-OK`, `204-No Content` (only when nothing returned in response body)
 GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
