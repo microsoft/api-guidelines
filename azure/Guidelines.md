@@ -238,7 +238,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 
-:white_check_mark: **DO** use camel case for all JSON field names.
+:white_check_mark: **DO** use camel case for all JSON field names. Do not upper-case acronyms; use camel case.
 
 :white_check_mark: **DO** treat JSON field names with case-sensitivity.
 
@@ -282,17 +282,42 @@ There are 2 kinds of errors:
 - An error where you expect customer code to gracefully recover at runtime
 - An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
 
-:white_check_mark: **DO** return error an `x-ms-error-code` response header with a string value indicating what went wrong.
+:white_check_mark: **DO** return an `x-ms-error-code` response header with a string error code indicating what went wrong.
 
 *NOTE: Error code values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
 :white_check_mark: **DO** carefully craft `x-ms-error-code` string values for errors that are recoverable at runtime.
 
-:white_check_mark: **DO** ensure that the top-level `code` field's value is identical to the `x-ms-error-code` header's value (see example body below).
+:white_check_mark: **DO** ensure that the top-level `code` field's value is identical to the `x-ms-error-code` header's value.
 
 :white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
 
-:white_check_mark: **DO** provide a response body as follows (example):
+:white_check_mark: **DO** provide a response body with the following structure:
+
+**ErrorResponse** : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`error` | ErrorDetail | ✔ | The error object.
+
+**ErrorDetail** : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`code` | String | ✔ | One of a server-defined set of error codes.
+`message` | String | ✔ | A human-readable representation of the error.
+`target` | String |  | The target of the error.
+`details` | ErrorDetail[] |  | An array of details about specific errors that led to this reported error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+
+**InnerError** : Object
+
+Property | Type | Required | Description
+-------- | ---- | -------- | -----------
+`code` | String |  | A more specific error code than was provided by the containing error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+
+Example:
 ```json
 {
   "error": {
