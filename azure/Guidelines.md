@@ -3,6 +3,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
 | 2020-Jul-31 | Added service advice for initial versions                      |
 | 2020-Mar-31 | 1st public release of the Azure REST API Guidelines            |
@@ -132,7 +133,7 @@ GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
-:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously
+:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, PATCH, POST, or DELETE method completes asynchronously.
 
 :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 
@@ -773,18 +774,75 @@ The ability to retry failed requests for which a client never received a respons
 <!-- Open API Spec -->
 [OpenAPI Specification]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md
 
-### Long Running Operations & Jobs
+### Long-Running Operations & Jobs
 
-Azure generally follows the [Microsoft REST API guidelines for Long running operations](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).  Follow the Microsoft guidelines with the modifications / extensions given here when designing / implementing long running operations.
+When the processing for an operation may take a significant amount of time to complete, it should be
+implemented as a _long-running operation (LRO)_. This allows clients to continue running while the
+operation is being processed. The client obtains the outcome of the operation at some later time
+through another API call.
+See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
+Considerations for Service Design for an introduction to the design of long running operations.
 
-Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the operation URL,
-while the Microsoft guidelines use the name "Operation-Location".
+:white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
 
-:white_check_mark: **DO** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate.
+In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
+it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
+
+There are two basic patterns that can be used for long-running operations:
+1. Resource-based long-running operations (RELO)
+2. Long-running operations with status monitor
+
+:white_check_mark: **DO** use the RELO pattern when the operation is on a resource that contains a "status" property that can be used to obtain the outcome of the operation.
+
+:ballot_box_with_check: **YOU SHOULD** only use the status monitor LRO pattern when the RELO pattern is not applicable.
+
+#### Resource-based long-running operations
+
+Some common situations where the RELO pattern should be used:
+1. A "create" operation (PUT, PATCH, or POST) for a resource where the basic structure of the resource is created immediately and includes a status field that indicates when the create has completed, e.g. "provisioning" -> "active".
+2. An action operation for a resource where both the initiation of the action and the completion of the action cause a change to the "status" property of the resource.
+
+:white_check_mark: **DO** return a `200-OK` response, `201-Created` for create operations, from the request that initiates the operation.  The response body should contain a representation of the resource that clearly indicates that the operation has been accepted or started.
+
+:white_check_mark: **DO** support a get method on the resource that returns a representation of the resource including the status field that indicates when the operation has completed.
+
+:white_check_mark: **DO** define the "status" field of the resource as an enum with all the values it may contain including the "terminal" values "Succeeded", "Failed", and "Canceled".
+
+:ballot_box_with_check: **YOU SHOULD** use the name `status` for the "status" field of the resource.
+
+#### Long-running operations with status monitor
+
+In a long-running operation with status monitor, the client makes a request to initiate the operation processing and receives a URL in the response where it can obtain the operation results. The [HTTP specification](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) calls the target of this URL a "status monitor".
+
+:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO with status monitor if the processing of the operation was successfully initiated.
+
+:white_check_mark: **DO** perform as much validation of the initial request as practical and return an error response immediately when appropriate (without starting the operation).
+
+:white_check_mark: **DO** return the status monitor URL in the `Operation-Location` response header.
+
+:white_check_mark: **DO** support the `get` method on the status monitor endpoint that returns a `200-OK` response with a response body that contains the completion status of the operation with sufficient information to diagnose any potential failures.
+
+:white_check_mark: **DO** include a field in the status monitor resource named `status` indicating the operation's status. This field should be a string with well-defined values. Indicate the terminal state using "Succeeded", "Failed", or "Canceled".
+
+:white_check_mark: **DO** include a field in the status monitor named `error` to contain error information -- minimally `code` and `message` fields -- when an operation fails.
+
+:white_check_mark: **DO** retain the status monitor resource for some documented period of time (at least 24 hours) after the operation completes.
+
+:white_check_mark: **DO** include a `Retry-After` header in the response to the initiating request and requests to the operation-location URL. The value of this header should be an integer number of seconds to wait before making the next request to the operation-location URL.
+
+:heavy_check_mark: **YOU MAY** support a `get` method on the status monitor collection URL that returns a list of status monitors for all recently initiated operations.
+
+:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of a status-monitor LRO -- return `202-Accepted` and a status monitor URL even if processing was completed before the initiating request returns.
+
+:no_entry: **DO NOT** return any data in the response body of a `202-Accepted` response.
+
+Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the status monitor URL.
+
+:white_check_mark: **DO** return **both** `Azure-AsyncOperation` and `Operation-Location` headers if your service previously returned `Azure-AsyncOperation`, even though they are redundant, so that existing clients will continue to operate.
 
 :white_check_mark: **DO** return the same value for **both** headers.
 
-:white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version.
+:white_check_mark: **DO** look for **both** headers in client code, preferring the `Operation-Location` header.
 
 ### Bring your own Storage
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
