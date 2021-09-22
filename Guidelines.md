@@ -503,16 +503,16 @@ APIs SHOULD use this format even if they are not using other OData constructs.
 The error response MUST be a single JSON object.
 This object MUST have a name/value pair named "error." The value MUST be a JSON object.
 
-This object MUST contain name/value pairs with the names "code" and "message," and it MAY contain name/value pairs with the names "target," "details" and "innererror."
+This object MUST contain name/value pairs with the names "code" and "message," and it MAY contain name/value pairs with the names "target," "details" and "innerError."
 
 The value for the "code" name/value pair is a language-independent string.
 Its value is a service-defined error code that SHOULD be human-readable.
 This code serves as a more specific indicator of the error than the HTTP error code specified in the response.
 Services SHOULD have a relatively small number (about 20) of possible values for "code," and all clients MUST be capable of handling all of them.
 Most services will require a much larger number of more specific error codes, which are not interesting to all clients.
-These error codes SHOULD be exposed in the "innererror" name/value pair as described below.
+These error codes SHOULD be exposed in the "innerError" name/value pair as described below.
 Introducing a new value for "code" that is visible to existing clients is a breaking change and requires a version increase.
-Services can avoid breaking changes by adding new error codes to "innererror" instead.
+Services can avoid breaking changes by adding new error codes to "innerError" instead.
 
 The value for the "message" name/value pair MUST be a human-readable representation of the error.
 It is intended as an aid to developers and is not suitable for exposure to end users.
@@ -525,13 +525,13 @@ The value for the "details" name/value pair MUST be an array of JSON objects tha
 The objects in the "details" array usually represent distinct, related errors that occurred during the request.
 See example below.
 
-The value for the "innererror" name/value pair MUST be an object.
+The value for the "innerError" name/value pair MUST be an object.
 The contents of this object are service-defined.
-Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innererror." Each nested "innererror" object represents a higher level of detail than its parent.
-When evaluating errors, clients MUST traverse through all of the nested "innererrors" and choose the deepest one that they understand.
+Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innerError." Each nested "innerError" object represents a higher level of detail than its parent.
+When evaluating errors, clients MUST traverse through all of the nested "innerErrors" and choose the deepest one that they understand.
 This scheme allows services to introduce new error codes anywhere in the hierarchy without breaking backwards compatibility, so long as old error codes still appear.
 The service MAY return different levels of depth and detail to different callers.
-For example, in development environments, the deepest "innererror" MAY contain internal information that can help debug the service.
+For example, in development environments, the deepest "innerError" MAY contain internal information that can help debug the service.
 To guard against potential security concerns around information disclosure, services SHOULD take care not to expose too much detail unintentionally.
 Error objects MAY also include custom server-defined name/value pairs that MAY be specific to the code.
 Error types with custom server-defined properties SHOULD be declared in the service's metadata document.
@@ -555,18 +555,18 @@ Property | Type | Required | Description
 `message` | String | ✔ | A human-readable representation of the error.
 `target` | String |  | The target of the error.
 `details` | Error[] |  | An array of details about specific errors that led to this reported error.
-`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+`innerError` | InnerError |  | An object containing more specific information than the current object about the error.
 
 ##### InnerError : Object
 
 Property | Type | Required | Description
 -------- | ---- | -------- | -----------
 `code` | String |  | A more specific error code than was provided by the containing error.
-`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+`innerError` | InnerError |  | An object containing more specific information than the current object about the error.
 
 ##### Examples
 
-Example of "innererror":
+Example of "innerError":
 
 ```json
 {
@@ -574,15 +574,15 @@ Example of "innererror":
     "code": "BadArgument",
     "message": "Previous passwords may not be reused",
     "target": "password",
-    "innererror": {
+    "innerError": {
       "code": "PasswordError",
-      "innererror": {
+      "innerError": {
         "code": "PasswordDoesNotMeetPolicy",
         "minLength": "6",
         "maxLength": "64",
         "characterTypes": ["lowerCase","upperCase","number","symbol"],
         "minDistinctCharacterTypes": "2",
-        "innererror": {
+        "innerError": {
           "code": "PasswordReuseNotAllowed"
         }
       }
@@ -591,7 +591,7 @@ Example of "innererror":
 }
 ```
 
-In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innererror."
+In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innerError."
 The "PasswordReuseNotAllowed" code may have been added by the service at a later date, having previously only returned "PasswordDoesNotMeetPolicy."
 Existing clients do not break when the new error code is added, but new clients MAY take advantage of it.
 The "PasswordDoesNotMeetPolicy" error also includes additional name/value pairs that allow the client to determine the server's configuration, validate the user's input programmatically, or present the server's constraints to the user within the client's own localized messaging.
