@@ -769,7 +769,7 @@ While Azure Managed Storage may be easier to get started with, as your service e
 
 :white_check_mark: **DO** use the Bring Your Own Storage pattern
 
-:white_check_mark: **DO** use a blob prefix for logical folders
+:white_check_mark: **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
 
 :no_entry: **DO NOT** require a fresh container per operation
 
