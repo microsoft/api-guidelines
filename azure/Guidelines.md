@@ -802,6 +802,7 @@ For example, a service's request body to configure BYOS may look like this:
   "input":{
     "location": "https://mycompany.blob.core.windows.net/documents/english/?<sas token>",
     "delimiter": "/",
+    "extensions" : [ ".bmp", ".jpg", ".tif", ".png" ],
     "lastModified": "Wed, 21 Oct 2015 07:28:00 GMT"
   },
   "output":{
