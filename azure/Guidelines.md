@@ -763,7 +763,7 @@ while the Microsoft guidelines use the name "Operation-Location".
 ### Bring your own Storage (BYOS)
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own 
 storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer 
-"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already with the Azure Storage service. 
+"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service. 
 
 While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
 
