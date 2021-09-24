@@ -789,7 +789,9 @@ While Azure Managed Storage may be easier to get started with, as your service e
 
 :heavy_check_mark: **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use. When reading a file, your service passes this timestamp to Azure Storage using the [if-unmodified-since](https://datatracker.ietf.org/doc/html/rfc7232#section-3.4) request header. If the Storage operation fails with 412, the Storage object was modified and your service operation should return an appropriate 4xx status code and return the Storage error in your operation's 'inner-error' (see guideline above).
 
-:white_check_mark: **DO** allow the customer to specify a URL path to a logical directory (via prefix and delimiter) if your service requires access to multiple files (within this directory). For more information, see [List Blobs API](https://docs.microsoft.com/en-us/rest/api/storageservices/list-blobs)
+:white_check_mark: **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/en-us/rest/api/storageservices/list-blobs)
+
+:heavy_check_mark: **YOU MAY** offer an ```extensions``` field representing an array of strings indicating file extensions of desired blobs within the logical folder. 
 
 A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process ("input") and a location(s) to place any files that result from processing ("output"). Note: the terms "input" and "output" are just examples; use terms more appropriate to your service's domain.
 
