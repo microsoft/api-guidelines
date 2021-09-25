@@ -783,7 +783,9 @@ While Azure Managed Storage may be easier to get started with, as your service e
 
 :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
 
-:white_check_mark: **DO** return an HTTP status code representing the result of your service operation's behavior. If the operation uses Storage internally, this an implementation detail from the client's perspective of the operation but may happen due to a missing Storage object or insufficient permissions. If the internal Storage operation fails, include the Storage error information in the 'inner-error' section of your operation's response body to help the client know that they may have configured their Storage improperly. 
+:white_check_mark: **DO** return an HTTP status code representing the result of your service operation's behavior. 
+
+:white_check_mark: **DO** include the Storage error information in the 'inner-error' section of an error response if the error was the result of an internal Storage operation failure. This helps the client determine the underlying cause of the error, e.g.: a missing storage object or insufficient permissions. 
 
 :white_check_mark: **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
 
