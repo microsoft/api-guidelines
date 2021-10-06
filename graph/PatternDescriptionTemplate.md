@@ -23,8 +23,8 @@ Problem:
 Solution
 --------
 
-*Describe how to implement the solution to solve the problem*
-
+*Describe how to implement the solution to solve the problem.*
+*Describe related patterns.*
 * *
 
 Issues and Considerations
