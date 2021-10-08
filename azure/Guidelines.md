@@ -427,7 +427,7 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 ### Performing an Action
 The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.  It is also sometimes useful to perform an action on a collection.
 
-:white_check_mark: **DO** pattern your URL like this to perform an action on a resource
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a resource
 **URL Pattern**
 ```http
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
@@ -441,7 +441,7 @@ https://.../users/Bob:send-sms?text="Hello"
 **Equivalent to (in C#)**
 ```users["Bob"].SendSms("Hello")```
 
-:white_check_mark: **DO** pattern your URL like this to perform an action on a collection
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a collection
 **URL Pattern**
 ```http
 https://.../<resource-collection>:<action>?<input parameters>
