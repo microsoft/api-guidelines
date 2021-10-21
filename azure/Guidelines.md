@@ -995,4 +995,4 @@ These guidelines describe the upfront design considerations, technology building
 
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers.
 Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process.
-These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](.\ConsiderationsForServiceDesign.md).
+These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](./ConsiderationsForServiceDesign.md).
