@@ -142,4 +142,15 @@ for each variant:
 
 }
 ```
- 
+### Prescriptive Guidance
+This document offers prescriptive guidance labeled as follows:
+
+:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+
+:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
+
+:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
+
+:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
+
+:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation. 
