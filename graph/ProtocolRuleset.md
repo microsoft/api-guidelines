@@ -7,7 +7,7 @@ API owners that have onboarded to Microsoft Graph:
 
 and are looking to do one or more of the following:
 
-- [ ] Understand the requirements of Microsoft Graph APIs
+- [x] Understand the requirements of Microsoft Graph APIs
 - [ ] Address issues raised by the schema validation CI pipeline
 - [ ] Fix existing issues because grace period is expiring
 
