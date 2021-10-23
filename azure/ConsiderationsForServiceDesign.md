@@ -127,7 +127,7 @@ It is good practice to define the path for action operations that is easily dist
 1) constrain user-specified resource ids to allow only certain characters, such as alphanumeric and '-' or '_', and
 2) use a special character not in the set of valid characters for resource names to distinguish the "action" in the path.
 
-In Azure we recommend using ':' as the character to distinguish action paths. E.g.
+In Azure we recommend distinguishing action operations by appending a ':' followed by an action verb to the final path segment.  E.g.
 ```http
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 ```
