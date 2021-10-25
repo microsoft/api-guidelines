@@ -203,7 +203,7 @@ Note: RFC 1123 defines the date format as a modification of the date format in [
 
 :no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
-#### Additional References
+**Additional References**
 - [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
 - [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
 - [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
@@ -425,9 +425,9 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 ## Common API Patterns
 
 ### Performing an Action
-The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.  It is also sometimes useful to perform an action on a collection.
+The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image or rebooting a VM.  It is also sometimes useful to perform an action on a collection.
 
-:white_check_mark: **DO** pattern your URL like this to perform an action on a resource
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a resource
 **URL Pattern**
 ```http
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
@@ -435,13 +435,10 @@ https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 
 **Example**
 ```http
-https://.../users/Bob:send-sms?text="Hello"
+https://.../users/Bob:grant?access=read
 ```
 
-**Equivalent to (in C#)**
-```users["Bob"].SendSms("Hello")```
-
-:white_check_mark: **DO** pattern your URL like this to perform an action on a collection
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a collection
 **URL Pattern**
 ```http
 https://.../<resource-collection>:<action>?<input parameters>
@@ -460,8 +457,9 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 :white_check_mark: **DO** return a `200-OK` when the action completes synchronously and successfully.
 
-:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
+:ballot_box_with_check: **YOU SHOULD** use a verb as the `<action>` component of the path.
 
+:no_entry: **DO NOT** use an action operation when the operation behavior could reasonably be defined as one of the standard REST Create, Read, Update, Delete, or List operations.
 
 ### Collections
 :white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
@@ -984,7 +982,8 @@ Client libraries are required to send telemetry and distributed tracing informat
 :white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
-#### Additional References
+
+**Additional References**
 - [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
 - [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 - [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy)
