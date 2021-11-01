@@ -64,7 +64,7 @@ Where:
  | - | - |
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
  | cloud | Cloud domain name, e.g. `azure.net` (see Azure CLI's "az cloud list")
- | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containees (ex: subscription UUID)
+ | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containers (ex: subscription UUID)
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
  | resource&#x2011;id | Value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
@@ -81,7 +81,7 @@ Some customer-provided path segment values may be compared case-insensitivity if
 
 :white_check_mark: **DO** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
 
-:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segements (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
+:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segments (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
@@ -170,9 +170,9 @@ The table below lists the headers most used by Azure services:
 Header Key          | Applies to | Example
 ------------------- | ---------- | -------------
 _authorization_     | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory)
-_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
-traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
-tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
+_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
 accept              | Request    | application/json
 If-Match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
 If-None-Match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
@@ -181,7 +181,7 @@ If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Condition
 date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
 _content-type_      | Both       | application/merge-patch+json
 _content-length_    | Both       | 1024
-_x-ms-request-id_   | Response   | [see Customer Support](http://TODO:link-goes-here)
+_x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
 ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 _x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
@@ -198,6 +198,10 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 :white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 1123, Section 5.2.14](https://datatracker.ietf.org/doc/html/rfc1123#page-55), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
 
 Note: RFC 1123 defines the date format as a modification of the date format in [RFC 822, Section 5](https://datatracker.ietf.org/doc/html/rfc822#section-5) to support either a 2 or 4 digit year, and further recommends that a 4 digit year always be used.
+
+:white_check_mark: **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
+
+Your service should include the `x-ms-request-id` value in error logs so that users can submit support requests for specific failures using this value.
 
 :no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
 
@@ -674,7 +678,7 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an `api-version` query parameter with a date value
+:white_check_mark: **DO** use an `api-version` query parameter with a `YYYY-MM-DD` date value, with a `-preview` suffix for a preview service.
 
 ```http
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
@@ -806,7 +810,7 @@ Some common situations where the RELO pattern should be used:
 
 :white_check_mark: **DO** support a get method on the resource that returns a representation of the resource including the status field that indicates when the operation has completed.
 
-:white_check_mark: **DO** define the "status" field of the resource as an enum with all the values it may contain including the "terminal" values "Succeeded", "Failed", and "Canceled".
+:white_check_mark: **DO** define the "status" field of the resource as an enum with all the values it may contain including the "terminal" values "Succeeded", "Failed", and "Canceled". See [Enums & SDKs](#enums--sdks-client-libraries).
 
 :ballot_box_with_check: **YOU SHOULD** use the name `status` for the "status" field of the resource.
 
@@ -963,8 +967,8 @@ When supporting optimistic concurrency:
 | PATCH / PUT | `If-None-Match` | *     | check for _any_ version of the resource, if one is found, fail the operation |  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
 | PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` equals the latest ETag value on the server, confirming that the version of the resource is the most current | `200-OK` or </br> `201-Created` </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
 | PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` header DOES NOT equal the latest ETag value on the server, indicating a change has ocurred since after the client fetched the resource|  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| DELETE      | `If-None-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
-| DELETE      | `If-None-Match` | value of ETag     | value matches the latest value on the server | `204-No Content` | Response body SHOULD be empty.  |
+| DELETE      | `If-Match` | value of ETag     | value matches the latest value on the server | `204-No Content` | Response body SHOULD be empty.  |
+| DELETE      | `If-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
 
 #### Computing ETags
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
