@@ -73,27 +73,24 @@ addition, you can follow some of the mitigation techniques such as:
 - Avoid overgeneralized base types
 
 - Think about roll-out sequence
-
->>>Consider that Microsoft Graph does not return objects from a workload
->>>that has a type that is not configured in current metadata. To avoid
->>>inconsistencies, follow a two-step process:
-
->>>Introduce the entity type to the Graph metadata but don’t
+  - Consider that Microsoft Graph does not return objects from a workload
+that has a type that is not configured in current metadata. To avoid
+inconsistencies, follow a two-step process:
+  - Introduce the entity type to the Graph metadata but don’t
 return objects of the type in any of the heterogeneous collections.
-
->>> Enable your workload to return objects of the new type as items
+  - Enable your workload to return objects of the new type as items
 of collection.
 
-- Allow time for testing
 
->>>Inform the clients about the change and allow them to test the
+- Allow time for testing
+  - Inform the clients about the change and allow them to test the
 changes in beta. Time is required to implement the code necessary to
 deal with the new entity type, both in terms of de-serialization as well
 as integrating it into the rest of the application.
 
 - Communicate the change in semantics
 
->>>It is necessary for the client developers to incorporate the new
+  - It is necessary for the client developers to incorporate the new
 semantic into their application/service, even if the change is perceived
 to be small. This requires early communication and clear documentation
 of what the new type represents and why/how it is considered a subtype
