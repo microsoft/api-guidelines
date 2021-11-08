@@ -115,39 +115,17 @@ GET
 returns a collection where each element can be a user or a service
 principal, and has an additional property @odata.type to show subtype
 for each variant:
-```js
+```
 {
-
     "@odata.context":
 "https://graph.microsoft.com/v1.0/\$metadata\#directoryObjects",
-
     "value": [
-
         {
-
             "@**odata.type**": "\#**microsoft.graph.user**",
-
             "id": "48d31887-5fad-4d73-a9f5-3c356e68a038",
-
             "userPrincipalName": "MeganB@M365x214355.onmicrosoft.com"
-
             // ...
-
         }
-
     ]
-
 }
 ```
-### Prescriptive Guidance
-This document offers prescriptive guidance labeled as follows:
-
-:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
-
-:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
-
-:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
-
-:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
-
-:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation. 

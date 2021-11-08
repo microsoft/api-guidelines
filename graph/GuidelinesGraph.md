@@ -14,9 +14,8 @@ Table of Contents
 
 ## Introduction
 
-When building a digital ecosystem providing APIs that are easy to discover,
-simple to use, fit to purpose, and consistent across your products can make the
-difference between success and failure.
+When building a digital ecosystem you should use API-first approach and start with design and development of your APIs. Considering API usability and creating APIs that are easy to discover, simple to use, fit to purpose, and consistent across your products will make the
+difference between success and failure of your ecosystem.
 
 This document offers guidance that Graph API developer teams MUST follow to
 ensure that customers have a great experience. A new API design should meet the
@@ -53,8 +52,10 @@ a change or propose a new idea.
 ### Legend
 This document offers prescriptive guidance labeled as follows:
 
-:heavy_check_mark: **DO** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
-:no_entry: **DO NOT** use this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+:heavy_check_mark: **DO** satisfy this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
+
+:no_entry: **DO NOT** use this pattern. If not following this advice, you MUST disclose your reason during the Graph API review.
+
 :ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
 
 
@@ -62,7 +63,7 @@ This document offers prescriptive guidance labeled as follows:
 
 The design of your API is arguably the most important investment you will make
 in it. The design of your API is what creates the first impression for
-developers. Microsoft Graph APIs follow HTTP, REST, and JSON standards and
+developers. Microsoft Graph APIs follow HTTP, REST, and JSON standards and are
 described using ODATA conventions and CSDL for schema definition (see
 [Documentation · OData - the Best Way to
 REST](https://www.odata.org/documentation/)).
@@ -86,8 +87,8 @@ In general API design includes the following steps:
 
 -   Specify errors
 
-To create a good API you need to start with understanding your use cases and
-supporting domain model. We describe domain models in terms of entities, their
+To create a good API you need to start with understanding your **use cases** and
+supporting domain model. We describe domain models in terms of entities or resources, their
 properties, and relationships and further refer to it as entity data model.
 There is no one-to-one correspondence between domain model elements and API
 resources as APIs usually support only customer-facing use cases.
@@ -100,7 +101,7 @@ When resources are defined it’s time to think about the behavior of your API a
 define required operations and actions.
 
 At every step of your design you need to consider security, privacy and
-compliance as an intrinsic parts of your API implementation. And finally based
+compliance as an intrinsic components of your API implementation. And finally based
 on your API resources, their behavior, and anticipated exceptions you need to
 identify potential error scenarios with secure and descriptive messaging.
 
@@ -114,7 +115,7 @@ understand. Therefore you should follow the rules in the table below:
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | :no_entry: **DO NOT** use redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
 | :no_entry: **DO NOT** use brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
-| :no_entry: **DO NOT** using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
+| :no_entry: **DO NOT** use acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
 | :heavy_check_mark: **DO** use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
 | :heavy_check_mark: **DO** use plural nouns for collections (for listing a type or collection properties). | Right: addresses Wrong: address                                                                                           |
 | :heavy_check_mark: **DO** pluralize the noun even when followed by an adjective (a "postpositive").       | Right: passersby or mothersInLaw Wrong: notaryPublics or motherInLaws                                                     |
@@ -127,16 +128,16 @@ understand. Therefore you should follow the rules in the table below:
 | :heavy_check_mark: **DO** case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
 | :heavy_check_mark: **DO** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
 |:no_entry: **DO NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
-| :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip, changingroom or fullmoon |
+| :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip or fullmoon |
 
 #### Prefixes and Suffixes
-|Requirements|Example|
-|--------------------------------------------------------------------------------------|------------------------------------------------------------------------|
-| :heavy_check_mark: **DO** use namespaces                                                                                                      | Microsoft Graph model types can be declared within a [type namespaces](https://github.com/microsoft/api-guidelines/blob/graph/graph/type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.                                                                        |
-| :heavy_check_mark: **DO** suffix date and time properties with                                                                               | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
-| :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.                                         | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32                                                                                                         |
-|:no_entry: **DO NOT** suffix property names with primitive type names unless the type is temporal.                                    | Right: isEnabled or amount Wrong: enabledBool                                                                                                                                                                                                                                                         |
-| :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.                                                 | Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl                                                                                                                                                                                           |
+|Requirements                                  |Example|
+|----------------------------------------------------------------------------|--------------------------------------------------|
+| :heavy_check_mark: **DO** use namespaces   | Microsoft Graph model types can be declared within a [type namespaces](./type-namespaces.md) to reduce the need to prefix types with a qualifier to ensure uniqueness.  |
+| :heavy_check_mark: **DO** suffix date and time properties with | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset   |
+| :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.   | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32|
+|:no_entry: **DO NOT** suffix property names with primitive type names unless the type is temporal.| Right: isEnabled or amount Wrong: enabledBool|
+| :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.| Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl|
 | :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 
 ### Uniform Resource Locators (URLs)
@@ -309,7 +310,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | :no_entry: **DO NOT** use PUT …/{collection}/{id} for updating resources.                              | Warning |
 | :no_entry: **DO NOT** use PATCH to replaces resources or PUT to partially update resources.             | Error   |
 | :no_entry: **DO NOT** use patterns that require multiple round trips to complete a single logical action.    | Warning |
-| :ballot_box_with_check: CONSIDER supporting return and omit-nulls preferences.                                   | Warning |
+| :ballot_box_with_check: **CONSIDER** supporting return and omit-nulls preferences.                                   | Warning |
 
 
 ### Error Handling
@@ -379,7 +380,7 @@ The following examples demonstrate error modeling for common use cases:
 |---------------------------------------------------------------------------------------------|---------|
 | :heavy_check_mark: **DO** return an error property with a child code property in all error responses.            | Error   |
 | :heavy_check_mark: **DO** return a 403 Forbidden error when insufficient scopes are present on the auth token.   | Error   |
-| :ballot_box_with_check: CONSIDER returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
+| :ballot_box_with_check: **CONSIDER** returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
 | :heavy_check_mark: **DO** return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
 
 For a complete mapping of error codes to HTTP statuses please refer to the
@@ -398,8 +399,8 @@ breaking change.
 Additional Microsoft Graph rules most often observed in practice are summarized
 in the table below:
 
-| :heavy_check_mark: **DO** use **not-breaking** changes:|
- |-----------------------------------|
+:heavy_check_mark: **DO use not-breaking changes**
+ -----------------------------------
 * Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
 * Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
 * Removal, rename, or change to the type of an annotation *Introduction of paging to existing collections 
@@ -407,8 +408,8 @@ in the table below:
 * Changes to the length or format of opaque strings, such as resource IDs  
 
 
-|:no_entry: **DO NOT** use **breaking** changes |
-|-----------------------------------|
+:no_entry: **DO NOT use breaking changes** 
+-----------------------------------
 * Changes to the URL or fundamental request/response associated with a resource 
 * Changing semantics of resource representation 
 * Removal, rename, or change to the type of a declared property 
@@ -417,7 +418,7 @@ in the table below:
 * Addition of a Nullable="false" properties to existing types  
 * Addition of a Nullable="false" parameters to existing actions and functions  
 * Adding attributes to existing nodes is considered breaking. 
-* Adding annotations ags:IsHidden="true".  |
+
 
 For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
@@ -543,11 +544,11 @@ You can find references in the most common patterns in the table below:
 
 | Pattern                 | Description | Reference                                                                                                |
 |-------------------------|-------------|----------------------------------------------------------------------------------------------------------|
-| Key Property            |             | [Key Property](https://dev.azure.com/msazure/One/_wiki/wikis/Microsoft%20Graph%20Partners/103125/Design) |
+| Key Property            |             | [Key Property](./evolvable-enums.md) |
 | Entity Type             |             |                                                                                                          |
 | Complex Type            |             |                                                                                                          |
 | Shared Type             |             |                                                                                                          |
-| Type Hierarchy          |             |                                                                                                          |
+| Type Hierarchy          |             | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md)                  |
 | Dictionary              |             |                                                                                                          |
 | Evolvable Enums         |             |                                                                                                          |
 | Type Namespace          |             |                                                                                                          |
