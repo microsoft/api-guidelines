@@ -53,15 +53,12 @@ a change or propose a new idea.
 ### Legend
 This document offers prescriptive guidance labeled as follows:
 
-:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+:heavy_check_mark: **DO** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
 
-:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
+:no_entry: **AVOID** using this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
 
-:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
 
-:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
 
-:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
 ## Design Approach
 
 The design of your API is arguably the most important investment you will make
@@ -116,33 +113,32 @@ appear in API URLs and payloads and should be descriptive and easy to
 understand. Therefore you should follow the rules in the table below:
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| ✖ AVOID redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
-| ✖ AVOID using brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
-| ✖ AVOID using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
-| ✔ DO use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
-| ✔ DO use plural nouns for collections (for listing a type or collection properties). | Right: addresses Wrong: address                                                                                           |
-| ✔ DO pluralize the noun even when followed by an adjective (a "postpositive").       | Right: passersby or mothersInLaw Wrong: notaryPublics or motherInLaws                                                     |
-| ✔ DO name property as “email”                                                        | Right: email Wrong: mail                                                                                                  |
+| :no_entry: **AVOID** redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
+| :no_entry: **AVOID** using brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
+| :no_entry: **AVOID** using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
+| :heavy_check_mark: **DO** use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
+| :heavy_check_mark: **DO** use plural nouns for collections (for listing a type or collection properties). | Right: addresses Wrong: address                                                                                           |
+| :heavy_check_mark: **DO** pluralize the noun even when followed by an adjective (a "postpositive").       | Right: passersby or mothersInLaw Wrong: notaryPublics or motherInLaws                                                     |
+| :heavy_check_mark: **DO** name property as “email”                                                        | Right: email Wrong: mail                                                                                                  |
 
 #### Casing
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| ✔ DO use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | Right: automaticRepliesStatus. Wrong: kebab-case or snake_case.                            |
-| ✔ DO case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
-| ✔ DO case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
+| :heavy_check_mark: **DO** use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | Right: automaticRepliesStatus. Wrong: kebab-case or snake_case.                            |
+| :heavy_check_mark: **DO** case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
+| :heavy_check_mark: **DO** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
 | ✖ DO NOT capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
-| ✔ DO capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip, changingroom or fullmoon |
+| :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip, changingroom or fullmoon |
 
 #### Prefixes and Suffixes
-
-| ✔ DO use namespaces                                                                                                      | Microsoft Graph model types can be declared within a [type namespaces](https://github.com/microsoft/api-guidelines/blob/graph/graph/type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.                                                                        |
 |Requirements|Example|
-|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| ✔ DO suffix date and time properties with                                                                               | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
-| ✔ DO use the Duration type for durations, but if using an int, append the units.                                         | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32                                                                                                         |
+|--------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| :heavy_check_mark: **DO** use namespaces                                                                                                      | Microsoft Graph model types can be declared within a [type namespaces](https://github.com/microsoft/api-guidelines/blob/graph/graph/type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.                                                                        |
+| :heavy_check_mark: **DO** suffix date and time properties with                                                                               | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
+| :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.                                         | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32                                                                                                         |
 | ✖ DO NOT suffix property names with primitive type names unless the type is temporal.                                    | Right: isEnabled or amount Wrong: enabledBool                                                                                                                                                                                                                                                         |
-| ✔ DO prefix property names for properties concerning a different entity.                                                 | Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl                                                                                                                                                                                           |
-| ✔ DO prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
+| :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.                                                 | Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl                                                                                                                                                                                           |
+| :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 
 ### Uniform Resource Locators (URLs)
 
@@ -180,30 +176,30 @@ navigation properties.
 We define a **top-level API category** as a coherent area of API functionality
 which covers one or multiple high-level use cases defined from customer and
 enterprise perspectives and represents one of the following:
-
+>>
 1.  A core *user-centric concept* of the Graph
 
--   For example: /users, /groups or /me
+    -   For example: /users, /groups or /me
 
 1.  A Microsoft *product or service offerings* covering multiple use cases
 
--   For example: /teamwork, /directory
+    -   For example: /teamwork, /directory
 
 1.  A *feature* offering covering a single use case and *shared* across multiple
     Microsoft products
 
--   For example: /search, /notifications, /subscriptions, /files
+    -   For example: /search, /notifications, /subscriptions, /files
 
 1.  *Administrative configuration* functions for specific products. (Note: this
     is not final and may be adjusted based on the survey results)
 
--   For example: /admin/exchange
+    -   For example: /admin/exchange
 
 1.  Internal Microsoft requirements for publishing Privileged and Hidden APIs,
     routing, and load testing
 
--   For example: /loadTestEntities
-
+    -   For example: /loadTestEntities
+>>  
 Top-level API categories are aligned with documentation, developer tools, and in
 general are relatively stable. If a new category needs to be created, it should
 follow supporting governance
@@ -215,12 +211,12 @@ OData specifications and [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 |Requirements|
 |----------------------------------------------------------------------------------------------------|
-| ✔ DO support \$select, \$top, \$filter query options                                              |
-| ✔ DO support \$filter with eq, ne operations on properties of entities in the requested entity set |
+| :heavy_check_mark: **DO** support \$select, \$top, \$filter query options                                              |
+| :heavy_check_mark: **DO** support \$filter with eq, ne operations on properties of entities in the requested entity set |
 | ✔ may support \$skip, \$count                                                                      |
-| ✔ DO use batch request to avoid too long query options                                             |
-| ✔ DO use request body with the content-type text/plain for POST queries                            |
-| ✔ DO use request body with the content-type                                                        |
+| :heavy_check_mark: **DO** use batch request to avoid too long query options                                             |
+| :heavy_check_mark: **DO** use request body with the content-type text/plain for POST queries                            |
+| :heavy_check_mark: **DO** use request body with the content-type                                                        |
 
 Limitations of \$query requests made to Microsoft Graph:
 
@@ -243,14 +239,13 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 
 | Microsoft Graph rules for modeling resources|
 |-------------------------------------------------------------------------------------|
-| ✔ DO verify that the primary id of an entity type is string                         |
-| ✔ DO verify that the primary key must also be defined as a property.                |
-| ✔ DO verify that the primary key is composed of a single property and not multiple. |
+| :heavy_check_mark: **DO** verify that the primary id of an entity type is string                         |
+| :heavy_check_mark: **DO** verify that the primary key must also be defined as a property.                |
+| :heavy_check_mark: **DO** verify that the primary key is composed of a single property and not multiple. |
 | ✖ DO NOT add the property id to a complex type                                      |
-| **Serialization**                                                                   |
-| ✔ DO use an object as the root of all JSON payloads.                                |
-| ✔ DO use a value property in the root object to return a collection.                |
-| ✔ DO include @odata.type annotations when the type is ambiguous.                    |
+| :heavy_check_mark: **DO** use an object as the root of all JSON payloads.                                |
+| :heavy_check_mark: **DO** use a value property in the root object to return a collection.                |
+| :heavy_check_mark: **DO** include @odata.type annotations when the type is ambiguous.                    |
 
 ### Recommended Modeling Patterns
 
@@ -294,12 +289,12 @@ The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
-
-| ✔ DO use POST to create new entities in insertable entity sets                     |
+|Requirements|Severity|
 |------------------------------------------------------------------------------------|
-| ✔ DO use PATCH to edit updatable resources                                         |
-| ✔ DO use DELETE to delete deletable resources                                      |
-| ✔ DO return a Location header with the edit URL or read URL of a created resource  |
+| :heavy_check_mark: **DO** use POST to create new entities in insertable entity sets                     |
+| :heavy_check_mark: **DO** use PATCH to edit updatable resources                                         |
+| :heavy_check_mark: **DO** use DELETE to delete deletable resources                                      |
+| :heavy_check_mark: **DO** return a Location header with the edit URL or read URL of a created resource  |
 
 For a complete list of standard REST operations you can refer to the [Microsoft
 REST API
@@ -307,14 +302,16 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 
 #### Microsoft Graph rules for modeling behavior:
 
-| ✔ DO use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error   |
-|--------------------------------------------------------------------------------------------|---------|
-| ✔ DO use POST …/{collection} for creating resources.                                       | Error   |
-| ✔ DO use PATCH …/{collection}/{id} for updating resources.                                 | Error   |
-| ✖ AVOID using PUT …/{collection}/{id} for updating resources.                              | Warning |
+|Requirements|
+|--------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **DO** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error   |
+| :heavy_check_mark: **DO** use POST …/{collection} for creating resources.                                       | Error   |
+| :heavy_check_mark: **DO** use PATCH …/{collection}/{id} for updating resources.                                 | Error   |
+| :no_entry: **AVOID** using PUT …/{collection}/{id} for updating resources.                              | Warning |
 | ✖ DO NOT use PATCH to replaces resources or PUT to partially update resources.             | Error   |
-| ✖ AVOID patterns that require multiple round trips to complete a single logical action.    | Warning |
+| :no_entry: **AVOID** patterns that require multiple round trips to complete a single logical action.    | Warning |
 | ✔ CONSIDER supporting return and omit-nulls preferences.                                   | Warning |
+
 
 ### Error Handling
 
@@ -325,41 +322,23 @@ undiscoverable and inconsistent error messages. You can improve API traceability
 and consistency by using recommended Graph error model:
 ```
 {
-
 "error": {
-
-"code": "BadRequest",
-
-"message": "Unsupported functionality",
-
-"target": "query",
-
-"details": [
-
-{
-
-"code": "301",
-
-"target": "\$search",
-
-"message": "\$search query option not supported"
-
-}
-
-],
-
-"innererror": {
-
-"code": "301",
-
-"message": "Cannot process the request because a required field is missing.",
-
-"stacktrace": [...],
-
-}
-
-}
-
+    "code": "BadRequest",
+    "message": "Unsupported functionality",
+    "target": "query",
+    "details": [
+                {
+                "code": "301",
+                "target": "\$search",
+                "message": "\$search query option not supported"
+                }
+                ],
+    "innererror": {
+                "code": "301",
+                "message": "Cannot process the request because a required field is missing.",
+                "stacktrace": [...],
+                }
+    }
 }
 ```
 The following examples demonstrate error modeling for common use cases:
@@ -369,18 +348,13 @@ The following examples demonstrate error modeling for common use cases:
     specify the top-level error code, message and target (optional).
 ```
 {
-
-"error": {
-
-"code": "badRequest",
-
-"message": "Cannot process the request because it is malformed or incorrect.",
-
-"target": "Service X (Optional)"
-
+  "error": {
+    "code": "badRequest",
+    "message": "Cannot process the request because it is malformed or incorrect.",
+	"target": "Service X (Optional)"
+  }
 }
-
-}
+```
 
 -   **Detailed error**: A workload wants to report an error and provide
     service-specific details of the error via the innererror property of the
@@ -389,63 +363,25 @@ The following examples demonstrate error modeling for common use cases:
     error code to help differentiate errors that share the same top-level error
     code but reported for different reasons.
 
+```
 {
-
-"error": {
-
-"code": "badRequest",
-
-"message": "Cannot process the request because it is malformed or incorrect.",
-
-"innererror": {
-
-"code": "requiredFieldOrParameterMissing",
-
-"message": "Cannot process the request because a required field is missing.",
-
-"stacktrace": "[StackTrace]"
-
-}
-
-}
-
-}
-
--   **Error with collection of related errors**: A workload wants to report an
-    error together with a collection of related errors via the details
-    collection property of the error object.
-
-{
-
-"error": {
-
-"code": "forbidden",
-
-"message": "Access to the resource is restricted.",
-
-"details": [
-
-{
-
-"code": "unathorized",
-
-"message": "You are not authorized to access the resource"
-
-}
-
-]
-
-}
-
+  "error": {
+    "code": "badRequest",
+    "message": "Cannot process the request because it is malformed or incorrect.",
+    "innererror": {
+      "code": "requiredFieldOrParameterMissing",
+      "message": "Cannot process the request because a required field or parameter is missing.",
+      "stacktrace": "[StackTrace]"
+    }
+  }
 }
 ```
-#### Microsoft Graph enforces the list of following error rules:
-
-| ✔ DO return an error property with a child code property in all error responses.            | Error   |
+| Microsoft Graph enforces the following error rules|Severity|
 |---------------------------------------------------------------------------------------------|---------|
-| ✔ DO return a 403 Forbidden error when insufficient scopes are present on the auth token.   | Error   |
+| :heavy_check_mark: **DO** return an error property with a child code property in all error responses.            | Error   |
+| :heavy_check_mark: **DO** return a 403 Forbidden error when insufficient scopes are present on the auth token.   | Error   |
 | ✔ CONSIDER returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
-| ✔ DO return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
+| :heavy_check_mark: **DO** return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
 
 For a complete mapping of error codes to HTTP statuses please refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
@@ -463,7 +399,7 @@ breaking change.
 Additional Microsoft Graph rules most often observed in practice are summarized
 in the table below:
 
-| ✔ DO use **not-breaking** changes:|
+| :heavy_check_mark: **DO** use **not-breaking** changes:|
  |-----------------------------------|
 * Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
 * Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
@@ -544,37 +480,20 @@ navigation properties, functions, or actions.
 
 Example of property annotation:
 ```
-\<EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem"
-ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true"\>
-
-\<Annotation Term="Org.OData.Core.V1.Revisions"\>
-
-\<Collection\>
-
-\<Record\>
-
-\<PropertyValue Property = "Date" Date="2020-08-20"/\>
-
-\<PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/\>
-
-\<PropertyValue Property = "Kind"
-EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/\>
-
-\<PropertyValue Property = "Description" String="The Outlook tasks API is
-deprecated and will stop returning data on August 20, 2022. Please use the new
-To Do API."/\>
-
-\<PropertyValue Property = "RemovalDate" Date="2022-08-20"/\>
-
-\</Record\>
-
-\</Collection\>
-
-\</Annotation\>
-
-...
-
-\</EntityType\>
+ <EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
+    <Annotation Term="Org.OData.Core.V1.Revisions">
+      <Collection>
+        <Record>
+          <PropertyValue Property = "Date" Date="2020-08-20"/>
+          <PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/>
+          <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
+          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on August 20, 2022. Please use the new To Do API."/>
+          <PropertyValue Property = "RemovalDate" Date="2022-08-20"/>
+        </Record>
+      </Collection>
+    </Annotation>
+    ...
+  </EntityType>
 ```
 When the request URL contains a reference to a deprecated model element, the
 HTTP response includes a [Deprecation
