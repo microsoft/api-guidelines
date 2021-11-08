@@ -2,17 +2,17 @@
 
 Table of Contents
 
-[Microsoft Graph REST API Guidelines](#_Toc86861191)
+[Microsoft Graph REST API Guidelines](#_Toc87203511)
 
-[Introduction](#_Toc86861192)
+[Introduction](#_Toc87203512)
 
 [Design Approach](#design-approach)
 
-[Naming](#_Toc86861194)
+[Naming](#_Toc87203514)
 
 [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
 
-[Recommended Modeling Patterns](#_Toc86861196)
+[Recommended Modeling Patterns](#_Toc87203516)
 
 [Behavior Modeling](#behavior-modeling)
 
@@ -23,12 +23,27 @@ changes](#api-contract-and-non-backward-compatible-changes)
 
 [Versioning and Deprecation](#versioning-and-deprecation)
 
+[Deprecation Process](#deprecation-process)
+
 [Common API Patterns](#common-api-patterns)
 
 [Final thoughts](#final-thoughts)
 
-## 
+[[_TOC_]]
 
+## 
+### Prescriptive Guidance
+This document offers prescriptive guidance labeled as follows:
+
+:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+
+:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
+
+:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
+
+:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
+
+:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
 #### History
 
 | Date        | Notes                       |
@@ -49,11 +64,11 @@ following goals:
 \- Developer friendly via consistent naming, patterns, and web standards (HTTP,
 REST, JSON)
 
-\- Efficient and cost-effective
+\- Efficient and cost-effective.
 
-\- Work well with SDKs in many programming languages
+\- Work well with SDKs in many programming languages.
 
-\- Sustainable & versionable via clear API contracts .
+\- Sustainable & versionable via clear API contracts.
 
 The Microsoft Graph guidelines are an extension of the Microsoft REST API
 guidelines. Readers are assumed also be reading the Microsoft REST API
@@ -232,6 +247,8 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | ✔ DO support \$filter with eq, ne operations on properties of entities in the requested entity set |
 | ✔ may support \$skip, \$count                                                                      |
 | ✔ DO use batch request to avoid too long query options                                             |
+| ✔ DO use request body with the content-type text/plain for POST queries                            |
+| ✔ DO use request body with the content-type                                                        |
 
 Limitations of \$query requests made to Microsoft Graph:
 
@@ -242,12 +259,15 @@ Limitations of \$query requests made to Microsoft Graph:
 -   The parameters in \$query should not span multiple workloads. Support for
     \$query right now is limited to properties belonging to the same workload.
 
-An easier alternative for GET requests is to append /\$query to the resource
-path of the URL, use the POST verb instead of GET, and pass the query options
-part of the URL in the request body. The request body MUST use the content-type
-text/plain. It contains the query portion of the URL and MUST use the same
-percent-encoding as in URLs (especially: no spaces, tabs, or line breaks
-allowed) and MUST follow the syntax rules described in chapter Query Options.
+The query options part of an OData URL can be quite long, potentially exceeding
+the maximum length of URLs supported by components involved in transmitting or
+processing the request. One way to avoid this is wrapping the request in a batch
+request, which has the penalty of needing to construct a well-formed batch
+request body. An easier alternative for GET requests is to append /\$query to
+the resource path of the URL, use the POST verb instead of GET, and pass the
+query options part of the URL in the request body as described in the chapter
+[OData Query
+Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
 #### Microsoft Graph rules for modeling resources:
 
@@ -457,40 +477,48 @@ The following examples demonstrate error modeling for common use cases:
 | ✔ DO return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
 
 For a complete mapping of error codes to HTTP statuses please refer to the
-[Appendix 3: Top-level error code to HTTP status
-mapping](#_Appendix_3:_Top-level).
-
-The following table shows the mapping between the top-level error codes and
-their corresponding HTTP status codes. The list comprises of a subset of the
-[HTTP status codes](https://datatracker.ietf.org/doc/html/rfc7231#section-6.5)
-for typical error scenarios - 4xx and 5xx. Important to note also is that the
-top-level error codes are derived from the documented reason phrases
-corresponding to each HTTP status code.
-
-Graph lib error framework - Overview (azure.com)
+[rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 ### API contract and non-backward compatible changes
 
-In general, making changes to existing elements, or removing existing elements
-is considered breaking. Adding new elements is allowed and not considered
-breaking change refer to [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change)
+Microsoft Graph definition of breaking changes is based on the [Microsoft REST
+API
+Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change).
+
+In general, making changes to the API contract for existing elements is
+considered breaking. Adding new elements is allowed and not considered a
+breaking change.
+
+Additional Microsoft Graph rules most often observed in practice are summarized
+in the table below:
 
 | ✔ DO use **not-breaking** changes | Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value Addition of a member to an evolvable enumeration Removal, rename, or change to the type of an open extension Removal, rename, or change to the type of an annotation Introduction of paging to existing collections Changes to error codes Changes to the order of properties Changes to the length or format of opaque strings, such as resource IDs                                                                                                                           |
 |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ✖ DO NOT use **breaking** changes | Changes to the URL or fundamental request/response associated with a resource Changing semantics of resource representation Removal, rename, or change to the type of a declared property Removal or rename of APIs or API parameters Addition of a required request header Addition of a EnumType members for non-extensible enumerations  Addition of a Nullable="false" properties to existing types  Addition of a Nullable="false" parameters to existing actions and functions  Adding attributes to existing nodes is considered breaking. Adding annotations ags:IsHidden="true".  |
 
+For the full list of rules you can refer to [this section of the OData V4
+spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
+
 ## Versioning and Deprecation
 
-All APIs compliant with the Microsoft REST API Guidelines MUST support explicit
-versioning. It's critical that clients can count on services to be stable over
-time, and it's critical that services can add features and make changes.
+When changes are imminent you need to support explicit versioning as it's
+critical that clients can count on services to be stable over time, and it's
+critical that services can add features and make changes. Microsoft Graph API
+follows the guidance described in the Model Versioning section in the [Microsoft
+REST API
+guidelines](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning).
 
-Microsoft Graph API follows the guidance described in the Model Versioning
-section in the [Microsoft REST API
-guidelines](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning)
+The following versions of the Microsoft Graph API are currently available:
 
-API deprecation process - Overview (azure.com)
+1.  API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in
+    general availability (GA) status.
+
+2.  API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta
+    or private preview status.
+
+In general API breaking changes are not allowed in the GA version of Microsoft
+Graph API. For beta API you can expect breaking changes and deprecation of APIs
+from time to time.
 
 As new versions of the Microsoft Graph REST APIs and Microsoft Graph SDKs are
 released, earlier versions will be retired. Microsoft declares a version as
@@ -498,43 +526,103 @@ deprecated at least 24 months in advance of retiring it. Similarly, for
 individual APIs that are generally available (GA), Microsoft declares an API as
 deprecated at least 24 months in advance of removing it from the GA version.
 
-When we increment the major version of the API (for example, from v1.0 to v2.0),
-we are announcing that the current version (in this example, v1.0) is
-immediately deprecated and we will no longer support it 24 months after the
-announcement. We might make exceptions to this policy for service security or
-health reliability issues.
+### Deprecation Process
 
-When an API is marked as deprecated, we strongly recommend that you migrate to
-the latest version as soon as possible. In some cases, we will announce that new
-applications will have to start using the new APIs a short time after the
-original APIs are deprecated. In those cases, only active applications that
-currently use the deprecated APIs can continue to use them.
+If your API requires an introduction of breaking changes you must follow the
+deprecation process:
 
-The following versions of the Microsoft Graph API are currently available.
+-   After API review board approvals, add Revisions annotation to the API
+    definition CSDL with the following terms:
 
-#### Beta version
+    -   Kind of change: Deprecated (vs "added" to track added properties/types)
 
-In general, APIs debut in the beta version and are accessible in the
-https://graph.microsoft.com/beta endpoint. For beta API documentation, see
-Microsoft Graph beta endpoint reference. Expect breaking changes and deprecation
-of APIs in the beta version from time to time. Do not take a production
-dependency on beta APIs.
+    -   Human readable description of the change: Used in changelog,
+        documentation etc.
 
-We make no guarantees that a beta feature will be promoted to the current
-version. When the Microsoft Graph API team believes that a beta feature is ready
-for general availability, we will add that feature to the latest current
-version. If the promotion of the feature would result in a breaking change to
-the current version, the version number will be incremented, with the new
-version becoming the current version. Our developer community can post feature
-request on UserVoice, including requests for new features as well as requests to
-promote existing beta APIs to the current version.
+    -   Version: Used to identify group of changes. Of the format
+        "YYYY-MM/Category" where "YYYY-MM" is the month the deprecation is
+        announced, and "Category" is the category under which the change is
+        described in the ChangeLog
 
-#### Current version
+    -   Date: Date when the element was marked as deprecated
 
-The current version of Microsoft Graph is v1.0. Exposed under
-https://graph.microsoft.com/v1.0, the Microsoft Graph API v1.0 version contains
-features that are generally available and ready for production use. Browse the
-documentation for the v1.0 APIs.
+    -   RemovalDate: Date when the element may be removed
+
+The annotation can be applied to a type, entity set, singleton, property,
+navigation property, function or action. If a type is marked as deprecated, it
+is not necessary to mark members of that type as deprecated, nor is it necessary
+to annotate any usage of that type in entity sets, singletons, properties,
+navigation properties, functions, or actions.
+
+Example of property annotation:
+
+\<EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem"
+ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true"\>
+
+\<Annotation Term="Org.OData.Core.V1.Revisions"\>
+
+\<Collection\>
+
+\<Record\>
+
+\<PropertyValue Property = "Date" Date="2020-08-20"/\>
+
+\<PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/\>
+
+\<PropertyValue Property = "Kind"
+EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/\>
+
+\<PropertyValue Property = "Description" String="The Outlook tasks API is
+deprecated and will stop returning data on August 20, 2022. Please use the new
+To Do API."/\>
+
+\<PropertyValue Property = "RemovalDate" Date="2022-08-20"/\>
+
+\</Record\>
+
+\</Collection\>
+
+\</Annotation\>
+
+...
+
+\</EntityType\>
+
+When the request URL contains a reference to a deprecated model element, the
+HTTP response includes a [Deprecation
+header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
+date the element was marked as deprecated) and a Sunset header (with the date 2
+years beyond the Deprecation date). Response also includes a link header
+pointing to the breaking changes page.
+
+Deprecation header example:
+
+*Deprecation: Thursday, 30 June 2022 11:59:59 GMT  
+Sunset: Wed, 30 Mar 2022 23:59:59 GMT  
+Link:*
+[*https://docs.microsoft.com/en-us/graph/changelog\#2022-03-30_name*](https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name)
+*; rel="deprecation"; type="text/html";
+title="name",*[*https://docs.microsoft.com/en-us/graph/changelog\#2020-06-30_state*](https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state)
+*; rel="deprecation"; type="text/html"; title="state"*
+
+Deprecation cadence:
+
+-   As an API developer you can mark individual API schema elements as
+    deprecated on a quarterly basis, after going through a API review and
+    approval process. Quarterly deprecation cadence will allow the services to
+    evolve schemas over time, without waiting for a coordinated, monolithic
+    endpoint change.
+
+-   Once marked as deprecated, the elements must continue to be supported for a
+    minimum of 3 years before removal (or a minimum of 2 years if, based on
+    telemetry, the element is no longer being used).
+
+-   Tools, documentation, SDKs, and other mechanisms are driven by this explicit
+    deprecation to reach out to customers that may be affected by the changes.
+
+-   APIs in beta or preview versions can use the same mechanism but are not
+    bound by the quarterly cadence or minimal support period before removal of
+    deprecated elements.
 
 ## Common API Patterns
 
@@ -545,17 +633,10 @@ Guidelines](https://github.com/microsoft/api-guidelines/) and Graph specific are
 outlined in the table below.
 
 **API Patterns** are design documents providing best practices for MS Graph API
-development.
+development. They are to serve as the means by which API teams discuss and come
+to consensus on API guidance.
 
-They are to serve as the source of truth for API-related documentation at
-Microsoft and the means by which API teams discuss and come to consensus on API
-guidance.
-
-You can find ….The table below provides reference for the existing Graph API
-patterns:
-
-Use the following table for a more detailed discussion of REST API design
-patterns.
+You can find references in the most common patterns in the table below:
 
 | Pattern                 | Description | Reference                                                                                                |
 |-------------------------|-------------|----------------------------------------------------------------------------------------------------------|
@@ -595,5 +676,3 @@ topics:
     Documentation](https://developer.microsoft.com/en-us/graph/docs/concepts/overview)
 
 -   [Microsoft Graph Explorer](https://aka.ms/ge)
-
-<https://medium.com/better-practices/api-first-software-development-for-modern-organizations-fdbfba9a66d3>
