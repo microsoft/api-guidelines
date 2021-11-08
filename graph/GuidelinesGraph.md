@@ -2,48 +2,9 @@
 
 Table of Contents
 
-[Microsoft Graph REST API Guidelines](#_Toc87203511)
-
-[Introduction](#_Toc87203512)
-
-[Design Approach](#design-approach)
-
-[Naming](#_Toc87203514)
-
-[Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
-
-[Recommended Modeling Patterns](#_Toc87203516)
-
-[Behavior Modeling](#behavior-modeling)
-
-[Error Handling](#error-handling)
-
-[API contract and non-backward compatible
-changes](#api-contract-and-non-backward-compatible-changes)
-
-[Versioning and Deprecation](#versioning-and-deprecation)
-
-[Deprecation Process](#deprecation-process)
-
-[Common API Patterns](#common-api-patterns)
-
-[Final thoughts](#final-thoughts)
-
 [[_TOC_]]
 
 ## 
-### Prescriptive Guidance
-This document offers prescriptive guidance labeled as follows:
-
-:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
-
-:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
-
-:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
-
-:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
-
-:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
 #### History
 
 | Date        | Notes                       |
@@ -89,8 +50,18 @@ is intended to be a living document. [Open an
 issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest
 a change or propose a new idea.
 
-## 
+### Legend
+This document offers prescriptive guidance labeled as follows:
 
+:white_check_mark: **DO** fulfill this specification. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+
+:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
+
+:heavy_check_mark: **YOU MAY** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
+
+:warning: **YOU SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API Review board review.
+
+:no_entry: **DO NOT** adopt this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
 ## Design Approach
 
 The design of your API is arguably the most important investment you will make
