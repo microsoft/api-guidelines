@@ -54,9 +54,8 @@ a change or propose a new idea.
 This document offers prescriptive guidance labeled as follows:
 
 :heavy_check_mark: **DO** satisfy this specification if appropriate to your situation. No notification to the Graph API Review board is required.
-
-:no_entry: **AVOID** using this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
-
+:no_entry: **DO NOT** use this pattern. If you feel you need an exception, contact the Graph API Review board **prior** to implementation.
+:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
 
 
 ## Design Approach
@@ -113,9 +112,9 @@ appear in API URLs and payloads and should be descriptive and easy to
 understand. Therefore you should follow the rules in the table below:
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| :no_entry: **AVOID** redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
-| :no_entry: **AVOID** using brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
-| :no_entry: **AVOID** using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
+| :no_entry: **DO NOT** use redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
+| :no_entry: **DO NOT** use brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
+| :no_entry: **DO NOT** using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
 | :heavy_check_mark: **DO** use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
 | :heavy_check_mark: **DO** use plural nouns for collections (for listing a type or collection properties). | Right: addresses Wrong: address                                                                                           |
 | :heavy_check_mark: **DO** pluralize the noun even when followed by an adjective (a "postpositive").       | Right: passersby or mothersInLaw Wrong: notaryPublics or motherInLaws                                                     |
@@ -127,7 +126,7 @@ understand. Therefore you should follow the rules in the table below:
 | :heavy_check_mark: **DO** use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | Right: automaticRepliesStatus. Wrong: kebab-case or snake_case.                            |
 | :heavy_check_mark: **DO** case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
 | :heavy_check_mark: **DO** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
-| ✖ DO NOT capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
+|:no_entry: **DO NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
 | :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip, changingroom or fullmoon |
 
 #### Prefixes and Suffixes
@@ -136,7 +135,7 @@ understand. Therefore you should follow the rules in the table below:
 | :heavy_check_mark: **DO** use namespaces                                                                                                      | Microsoft Graph model types can be declared within a [type namespaces](https://github.com/microsoft/api-guidelines/blob/graph/graph/type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.                                                                        |
 | :heavy_check_mark: **DO** suffix date and time properties with                                                                               | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
 | :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.                                         | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32                                                                                                         |
-| ✖ DO NOT suffix property names with primitive type names unless the type is temporal.                                    | Right: isEnabled or amount Wrong: enabledBool                                                                                                                                                                                                                                                         |
+|:no_entry: **DO NOT** suffix property names with primitive type names unless the type is temporal.                                    | Right: isEnabled or amount Wrong: enabledBool                                                                                                                                                                                                                                                         |
 | :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.                                                 | Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl                                                                                                                                                                                           |
 | :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 
@@ -213,7 +212,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **DO** support \$select, \$top, \$filter query options                                              |
 | :heavy_check_mark: **DO** support \$filter with eq, ne operations on properties of entities in the requested entity set |
-| ✔ may support \$skip, \$count                                                                      |
+| :ballot_box_with_check: should \$skip, \$count                                                                      |
 | :heavy_check_mark: **DO** use batch request to avoid too long query options                                             |
 | :heavy_check_mark: **DO** use request body with the content-type text/plain for POST queries                            |
 | :heavy_check_mark: **DO** use request body with the content-type                                                        |
@@ -242,7 +241,7 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 | :heavy_check_mark: **DO** verify that the primary id of an entity type is string                         |
 | :heavy_check_mark: **DO** verify that the primary key must also be defined as a property.                |
 | :heavy_check_mark: **DO** verify that the primary key is composed of a single property and not multiple. |
-| ✖ DO NOT add the property id to a complex type                                      |
+| :no_entry: **DO NOT** add the property id to a complex type                                      |
 | :heavy_check_mark: **DO** use an object as the root of all JSON payloads.                                |
 | :heavy_check_mark: **DO** use a value property in the root object to return a collection.                |
 | :heavy_check_mark: **DO** include @odata.type annotations when the type is ambiguous.                    |
@@ -307,10 +306,10 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | :heavy_check_mark: **DO** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error   |
 | :heavy_check_mark: **DO** use POST …/{collection} for creating resources.                                       | Error   |
 | :heavy_check_mark: **DO** use PATCH …/{collection}/{id} for updating resources.                                 | Error   |
-| :no_entry: **AVOID** using PUT …/{collection}/{id} for updating resources.                              | Warning |
-| ✖ DO NOT use PATCH to replaces resources or PUT to partially update resources.             | Error   |
-| :no_entry: **AVOID** patterns that require multiple round trips to complete a single logical action.    | Warning |
-| ✔ CONSIDER supporting return and omit-nulls preferences.                                   | Warning |
+| :no_entry: **DO NOT** use PUT …/{collection}/{id} for updating resources.                              | Warning |
+| :no_entry: **DO NOT** use PATCH to replaces resources or PUT to partially update resources.             | Error   |
+| :no_entry: **DO NOT** use patterns that require multiple round trips to complete a single logical action.    | Warning |
+| :ballot_box_with_check: CONSIDER supporting return and omit-nulls preferences.                                   | Warning |
 
 
 ### Error Handling
@@ -380,7 +379,7 @@ The following examples demonstrate error modeling for common use cases:
 |---------------------------------------------------------------------------------------------|---------|
 | :heavy_check_mark: **DO** return an error property with a child code property in all error responses.            | Error   |
 | :heavy_check_mark: **DO** return a 403 Forbidden error when insufficient scopes are present on the auth token.   | Error   |
-| ✔ CONSIDER returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
+| :ballot_box_with_check: CONSIDER returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
 | :heavy_check_mark: **DO** return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
 
 For a complete mapping of error codes to HTTP statuses please refer to the
@@ -408,7 +407,7 @@ in the table below:
 * Changes to the length or format of opaque strings, such as resource IDs  
 
 
-| ✖ DO NOT use **breaking** changes |
+|:no_entry: **DO NOT** use **breaking** changes |
 |-----------------------------------|
 * Changes to the URL or fundamental request/response associated with a resource 
 * Changing semantics of resource representation 
