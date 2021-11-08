@@ -143,9 +143,9 @@ Consistent naming is foundational for API usability. API resources are typically
 described by nouns. You need to consider that resources and property names
 appear in API URLs and payloads and should be descriptive and easy to
 understand. Therefore you should follow the rules in the table below:
-
-| ✖ AVOID redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
+|Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| ✖ AVOID redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
 | ✖ AVOID using brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
 | ✖ AVOID using acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
 | ✔ DO use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
@@ -154,9 +154,9 @@ understand. Therefore you should follow the rules in the table below:
 | ✔ DO name property as “email”                                                        | Right: email Wrong: mail                                                                                                  |
 
 #### Casing
-
+|Requirements|Example|
+|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | ✔ DO use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | Right: automaticRepliesStatus. Wrong: kebab-case or snake_case.                            |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | ✔ DO case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
 | ✔ DO case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
 | ✖ DO NOT capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
@@ -165,8 +165,9 @@ understand. Therefore you should follow the rules in the table below:
 #### Prefixes and Suffixes
 
 | ✔ DO use namespaces                                                                                                      | Microsoft Graph model types can be declared within a [type namespaces](https://github.com/microsoft/api-guidelines/blob/graph/graph/type-namespaces) to reduce the need to prefix types with a qualifier to ensure uniqueness.                                                                        |
-|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ✔ DO suffix date and time properties with                                                                                | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
+|Requirements|Example|
+|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
+| ✔ DO suffix date and time properties with                                                                               | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset                                                                                              |
 | ✔ DO use the Duration type for durations, but if using an int, append the units.                                         | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32                                                                                                         |
 | ✖ DO NOT suffix property names with primitive type names unless the type is temporal.                                    | Right: isEnabled or amount Wrong: enabledBool                                                                                                                                                                                                                                                         |
 | ✔ DO prefix property names for properties concerning a different entity.                                                 | Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl                                                                                                                                                                                           |
@@ -241,9 +242,9 @@ follow supporting governance
 Microsoft Graph APIs should support basic query options in conformance with
 OData specifications and [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
-
-| ✔ DO support \$select, \$top, \$filter query options                                               |
+|Requirements|
 |----------------------------------------------------------------------------------------------------|
+| ✔ DO support \$select, \$top, \$filter query options                                              |
 | ✔ DO support \$filter with eq, ne operations on properties of entities in the requested entity set |
 | ✔ may support \$skip, \$count                                                                      |
 | ✔ DO use batch request to avoid too long query options                                             |
@@ -269,10 +270,9 @@ query options part of the URL in the request body as described in the chapter
 [OData Query
 Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-#### Microsoft Graph rules for modeling resources:
-
-| ✔ DO verify that the primary id of an entity type is string                         |
+| Microsoft Graph rules for modeling resources|
 |-------------------------------------------------------------------------------------|
+| ✔ DO verify that the primary id of an entity type is string                         |
 | ✔ DO verify that the primary key must also be defined as a property.                |
 | ✔ DO verify that the primary key is composed of a single property and not multiple. |
 | ✖ DO NOT add the property id to a complex type                                      |
@@ -352,7 +352,7 @@ follow when returning error condition responses. However, the structure, form
 and content of the error response payloads is currently not enforced leading to
 undiscoverable and inconsistent error messages. You can improve API traceability
 and consistency by using recommended Graph error model:
-
+```
 {
 
 "error": {
@@ -390,13 +390,13 @@ and consistency by using recommended Graph error model:
 }
 
 }
-
+```
 The following examples demonstrate error modeling for common use cases:
 
 -   **Simple error**: A workload wants to report an error with top-level details
     only. The library allows the workload to create the error object and just
     specify the top-level error code, message and target (optional).
-
+```
 {
 
 "error": {
@@ -467,7 +467,7 @@ The following examples demonstrate error modeling for common use cases:
 }
 
 }
-
+```
 #### Microsoft Graph enforces the list of following error rules:
 
 | ✔ DO return an error property with a child code property in all error responses.            | Error   |
@@ -492,9 +492,26 @@ breaking change.
 Additional Microsoft Graph rules most often observed in practice are summarized
 in the table below:
 
-| ✔ DO use **not-breaking** changes | Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value Addition of a member to an evolvable enumeration Removal, rename, or change to the type of an open extension Removal, rename, or change to the type of an annotation Introduction of paging to existing collections Changes to error codes Changes to the order of properties Changes to the length or format of opaque strings, such as resource IDs                                                                                                                           |
-|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ✖ DO NOT use **breaking** changes | Changes to the URL or fundamental request/response associated with a resource Changing semantics of resource representation Removal, rename, or change to the type of a declared property Removal or rename of APIs or API parameters Addition of a required request header Addition of a EnumType members for non-extensible enumerations  Addition of a Nullable="false" properties to existing types  Addition of a Nullable="false" parameters to existing actions and functions  Adding attributes to existing nodes is considered breaking. Adding annotations ags:IsHidden="true".  |
+| ✔ DO use **not-breaking** changes:|
+ |-----------------------------------|
+* Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
+* Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
+* Removal, rename, or change to the type of an annotation *Introduction of paging to existing collections 
+* Changes to error codes Changes to the order of properties 
+* Changes to the length or format of opaque strings, such as resource IDs  
+
+
+| ✖ DO NOT use **breaking** changes |
+|-----------------------------------|
+* Changes to the URL or fundamental request/response associated with a resource 
+* Changing semantics of resource representation 
+* Removal, rename, or change to the type of a declared property 
+* Removal or rename of APIs or API parameters Addition of a required request header 
+* Addition of a EnumType members for non-extensible enumerations  
+* Addition of a Nullable="false" properties to existing types  
+* Addition of a Nullable="false" parameters to existing actions and functions  
+* Adding attributes to existing nodes is considered breaking. 
+* Adding annotations ags:IsHidden="true".  |
 
 For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
@@ -555,7 +572,7 @@ to annotate any usage of that type in entity sets, singletons, properties,
 navigation properties, functions, or actions.
 
 Example of property annotation:
-
+```
 \<EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem"
 ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true"\>
 
@@ -587,7 +604,7 @@ To Do API."/\>
 ...
 
 \</EntityType\>
-
+```
 When the request URL contains a reference to a deprecated model element, the
 HTTP response includes a [Deprecation
 header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
@@ -596,15 +613,12 @@ years beyond the Deprecation date). Response also includes a link header
 pointing to the breaking changes page.
 
 Deprecation header example:
+```
+Deprecation: Thursday, 30 June 2022 11:59:59 GMT
+Sunset: Wed, 30 Mar 2022 23:59:59 GMT
+Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
 
-*Deprecation: Thursday, 30 June 2022 11:59:59 GMT  
-Sunset: Wed, 30 Mar 2022 23:59:59 GMT  
-Link:*
-[*https://docs.microsoft.com/en-us/graph/changelog\#2022-03-30_name*](https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name)
-*; rel="deprecation"; type="text/html";
-title="name",*[*https://docs.microsoft.com/en-us/graph/changelog\#2020-06-30_state*](https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state)
-*; rel="deprecation"; type="text/html"; title="state"*
-
+```
 Deprecation cadence:
 
 -   As an API developer you can mark individual API schema elements as
