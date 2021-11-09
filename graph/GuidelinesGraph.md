@@ -203,10 +203,9 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **DO** support \$select, \$top, \$filter query options                                              |
 | :heavy_check_mark: **DO** support \$filter with eq, ne operations on properties of entities in the requested entity set |
-| :ballot_box_with_check: **CONSIDER** supporting \$skip, \$count                                                         |
 | :heavy_check_mark: **DO** use batch request to avoid too long query options                                             |
-| :heavy_check_mark: **DO** use request body with the content-type text/plain for POST queries                            |
-| :heavy_check_mark: **DO** use request body with the content-type                                                        |
+| :heavy_check_mark: **DO** use content-type text/plain for POST queries |
+| :ballot_box_with_check: **CONSIDER** supporting \$skip, \$count                                                         |
 
 Limitations of \$query requests made to Microsoft Graph:
 
@@ -232,10 +231,10 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 | :heavy_check_mark: **DO** verify that the primary id of an entity type is string                         |
 | :heavy_check_mark: **DO** verify that the primary key must also be defined as a property.                |
 | :heavy_check_mark: **DO** verify that the primary key is composed of a single property and not multiple. |
-| :no_entry: **DO NOT** add the property id to a complex type                                      |
 | :heavy_check_mark: **DO** use an object as the root of all JSON payloads.                                |
 | :heavy_check_mark: **DO** use a value property in the root object to return a collection.                |
 | :heavy_check_mark: **DO** include @odata.type annotations when the type is ambiguous.                    |
+| :no_entry: **DO NOT** add the property id to a complex type                                      |
 
 ### Recommended Modeling Patterns
 
