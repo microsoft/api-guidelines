@@ -131,12 +131,12 @@ understand. Therefore you should follow the rules in the table below:
 | :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip or fullmoon |
 
 #### Prefixes and Suffixes
-|Requirements                                  |Example|
-|----------------------------------------------------------------------------|--------------------------------------------------|
+|Requirements                                              |Example|
+|----------------------------------------------------------|------------------------------------------------|
 | :heavy_check_mark: **DO** use namespaces   | Microsoft Graph model types can be declared within a [type namespaces](./type-namespaces.md) to reduce the need to prefix types with a qualifier to ensure uniqueness.  |
 | :heavy_check_mark: **DO** suffix date and time properties with | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset   |
 | :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.   | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32|
-|:no_entry: **DO NOT** suffix property names with primitive type names unless the type is temporal.| Right: isEnabled or amount Wrong: enabledBool|
+|:no_entry: **DO NOT** use suffix property names with primitive type names unless the type is temporal.| Right: isEnabled or amount Wrong: enabledBool|
 | :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.| Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl|
 | :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 
@@ -178,31 +178,21 @@ which covers one or multiple high-level use cases defined from customer and
 enterprise perspectives and represents one of the following:
 >>
 1.  A core *user-centric concept* of the Graph
-
     -   For example: /users, /groups or /me
-
 1.  A Microsoft *product or service offerings* covering multiple use cases
-
     -   For example: /teamwork, /directory
-
 1.  A *feature* offering covering a single use case and *shared* across multiple
     Microsoft products
-
     -   For example: /search, /notifications, /subscriptions, /files
-
 1.  *Administrative configuration* functions for specific products. (Note: this
     is not final and may be adjusted based on the survey results)
-
     -   For example: /admin/exchange
-
 1.  Internal Microsoft requirements for publishing Privileged and Hidden APIs,
     routing, and load testing
-
     -   For example: /loadTestEntities
 >>  
 Top-level API categories are aligned with documentation, developer tools, and in
-general are relatively stable. If a new category needs to be created, it should
-follow supporting governance
+general are relatively stable. If a new category needs to be created, it requires an API REview and an API Council approval.
 
 #### Query
 
@@ -213,7 +203,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **DO** support \$select, \$top, \$filter query options                                              |
 | :heavy_check_mark: **DO** support \$filter with eq, ne operations on properties of entities in the requested entity set |
-| :ballot_box_with_check: should \$skip, \$count                                                                      |
+| :ballot_box_with_check: **CONSIDER** supporting \$skip, \$count                                                         |
 | :heavy_check_mark: **DO** use batch request to avoid too long query options                                             |
 | :heavy_check_mark: **DO** use request body with the content-type text/plain for POST queries                            |
 | :heavy_check_mark: **DO** use request body with the content-type                                                        |
@@ -237,7 +227,7 @@ query options part of the URL in the request body as described in the chapter
 [OData Query
 Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-| Microsoft Graph rules for modeling resources|
+| Additional Microsoft Graph rules for modeling resources|
 |-------------------------------------------------------------------------------------|
 | :heavy_check_mark: **DO** verify that the primary id of an entity type is string                         |
 | :heavy_check_mark: **DO** verify that the primary key must also be defined as a property.                |
@@ -255,22 +245,18 @@ of properties are three most often used patterns in Microsoft Graph today:
 
 -   Type hierarchy is represented by one abstract base type with a few common
     properties and one sub-type for each variant
-    [api-guidelines/adding-subtypes.md at graph · microsoft/api-guidelines
-    (github.com)](https://github.com/microsoft/api-guidelines/blob/graph/graph/adding-subtypes.md)
+    [Modelling with Subtypes Pattern](./Modelling%20with%20Subtypes%20Pattern.md)
 
 -   Facets are represented by a single entity type with common properties and
     one facet property (of complex type) per variant. The facet properties only
     have a value when the object represents that variant
-    [api-guidelines/adding-subtypes.md at graph · microsoft/api-guidelines
-    (github.com)](https://github.com/microsoft/api-guidelines/blob/graph/graph/adding-subtypes.md)
+    [Modelling with Facets Pattern](./Modelling%20with%20Facets%20Pattern.md)
 
 -   Flat bag of properties is represented by one entity type with all the
     potential properties plus an additional property to distinguish the
     variants, often called type. The type property describes the variant and
     also defines properties that are required/meaningful for the variant given
-    by the type property. [api-guidelines/adding-subtypes.md at graph ·
-    microsoft/api-guidelines
-    (github.com)](https://github.com/microsoft/api-guidelines/blob/graph/graph/adding-subtypes.md)
+    by the type property. [Modelling with Flat Bag Pattern](./Modelling%20with%20Flat%20Bag%20Pattern.md)
 
 The following table describes shows summary of main qualities for each pattern
 and will help to select a pattern preferred for your use case.
@@ -289,21 +275,15 @@ The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
-|Requirements|Severity|
-|------------------------------------------------------------------------------------|
-| :heavy_check_mark: **DO** use POST to create new entities in insertable entity sets                     |
-| :heavy_check_mark: **DO** use PATCH to edit updatable resources                                         |
-| :heavy_check_mark: **DO** use DELETE to delete deletable resources                                      |
-| :heavy_check_mark: **DO** return a Location header with the edit URL or read URL of a created resource  |
-
-For a complete list of standard REST operations you can refer to the [Microsoft
-REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 
 #### Microsoft Graph rules for modeling behavior:
 
-|Requirements|
+|Requirements|Severity|
 |--------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **DO** use POST to create new entities in insertable entity sets                     | Error   |
+| :heavy_check_mark: **DO** use PATCH to edit updatable resources                                         | Error   |
+| :heavy_check_mark: **DO** use DELETE to delete deletable resources                                      | Error   |
+| :heavy_check_mark: **DO** return a Location header with the edit URL or read URL of a created resource  | Error   |
 | :heavy_check_mark: **DO** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error   |
 | :heavy_check_mark: **DO** use POST …/{collection} for creating resources.                                       | Error   |
 | :heavy_check_mark: **DO** use PATCH …/{collection}/{id} for updating resources.                                 | Error   |
@@ -312,6 +292,9 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | :no_entry: **DO NOT** use patterns that require multiple round trips to complete a single logical action.    | Warning |
 | :ballot_box_with_check: **CONSIDER** supporting return and omit-nulls preferences.                                   | Warning |
 
+For a complete list of standard REST operations you can refer to the [Microsoft
+REST API
+Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 
 ### Error Handling
 
@@ -396,20 +379,14 @@ In general, making changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
 
-Additional Microsoft Graph rules most often observed in practice are summarized
-in the table below:
-
-:heavy_check_mark: **DO use not-breaking changes**
- -----------------------------------
+:heavy_check_mark: **DO use not-breaking changes:**
 * Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
 * Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
 * Removal, rename, or change to the type of an annotation *Introduction of paging to existing collections 
 * Changes to error codes Changes to the order of properties 
 * Changes to the length or format of opaque strings, such as resource IDs  
 
-
-:no_entry: **DO NOT use breaking changes** 
------------------------------------
+:no_entry: **DO NOT use breaking changes:**
 * Changes to the URL or fundamental request/response associated with a resource 
 * Changing semantics of resource representation 
 * Removal, rename, or change to the type of a declared property 
