@@ -278,8 +278,8 @@ response pattern should be one of the first implementation decisions you make.
 
 #### Microsoft Graph rules for modeling behavior:
 
-|Requirements|Severity|
-|--------------------------------------------------------------------------------------------|
+|Requirements                                                                                             |Severity|
+|----------------------------------------------|----------------------------------------------|
 | :heavy_check_mark: **DO** use POST to create new entities in insertable entity sets                     | Error   |
 | :heavy_check_mark: **DO** use PATCH to edit updatable resources                                         | Error   |
 | :heavy_check_mark: **DO** use DELETE to delete deletable resources                                      | Error   |
@@ -290,7 +290,7 @@ response pattern should be one of the first implementation decisions you make.
 | :no_entry: **DO NOT** use PUT …/{collection}/{id} for updating resources.                              | Warning |
 | :no_entry: **DO NOT** use PATCH to replaces resources or PUT to partially update resources.             | Error   |
 | :no_entry: **DO NOT** use patterns that require multiple round trips to complete a single logical action.    | Warning |
-| :ballot_box_with_check: **CONSIDER** supporting return and omit-nulls preferences.                                   | Warning |
+| :ballot_box_with_check: **CONSIDER** supporting return and omit-nulls preferences.                           | Warning |
 
 For a complete list of standard REST operations you can refer to the [Microsoft
 REST API
