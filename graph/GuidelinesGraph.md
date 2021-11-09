@@ -98,7 +98,7 @@ that the API will be discoverable and intuitive for developers, and consistent
 with other Graph resources.
 
 When resources are defined it’s time to think about the behavior of your API and
-define required operations and actions.
+define required operations and actions.There are read-only and write scenarios where a resource can be used to represent some kind of data processing operation. The terms function and action are used to identify read and write operation style resources, respectively.
 
 At every step of your design you need to consider security, privacy and
 compliance as an intrinsic components of your API implementation. And finally based
@@ -113,32 +113,32 @@ appear in API URLs and payloads and should be descriptive and easy to
 understand. Therefore you should follow the rules in the table below:
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| :no_entry: **DO NOT** use redundant words in names.                                                    | Right: /places/{id}/**type** and /phones/{id}/**number** Wrong: /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
-| :no_entry: **DO NOT** use brand names in type or property names.                                 | Right: chat Wrong: teamsChat                                                                                              |
-| :no_entry: **DO NOT** use acronyms or abbreviations unless they are broadly understood.          | Right: url or htmlSignature Wrong: msodsUrl or dlp                                                                        |
-| :heavy_check_mark: **DO** use singular nouns for type names.                                              | Right: address Wrong: addresses                                                                                           |
-| :heavy_check_mark: **DO** use plural nouns for collections (for listing a type or collection properties). | Right: addresses Wrong: address                                                                                           |
-| :heavy_check_mark: **DO** pluralize the noun even when followed by an adjective (a "postpositive").       | Right: passersby or mothersInLaw Wrong: notaryPublics or motherInLaws                                                     |
-| :heavy_check_mark: **DO** name property as “email”                                                        | Right: email Wrong: mail                                                                                                  |
+| :no_entry: **DO NOT** use redundant words in names.                                                    |- **Right:** /places/{id}/**type** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
+| :no_entry: **DO NOT** use brand names in type or property names.                                 | - **Right:** chat   <BR> -  **Wrong** teamsChat                                                                                              |
+| :no_entry: **DO NOT** use acronyms or abbreviations unless they are broadly understood.          | - **Right:** url or htmlSignature <BR> - **Wrong** msodsUrl or dlp                                                                        |
+| :heavy_check_mark: **DO** use singular nouns for type names.                                              | - **Right:** address  <BR> - **Wrong** addresses                                                                                           |
+| :heavy_check_mark: **DO** use plural nouns for collections (for listing a type or collection properties). | - **Right:** addresses <BR> - **Wrong** address                                                                                           |
+| :heavy_check_mark: **DO** pluralize the noun even when followed by an adjective (a "postpositive").       | - **Right:** passersby or mothersInLaw    <BR> -  **Wrong** notaryPublics or motherInLaws                                                     |
+| :heavy_check_mark: **DO** name property as “email”                                                        | - **Right:** email <BR> - **Wrong** mail                                                                                                  |
 
 #### Casing
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **DO** use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | Right: automaticRepliesStatus. Wrong: kebab-case or snake_case.                            |
-| :heavy_check_mark: **DO** case two-letter acronyms with the same case.                                                                                                                                                                                                                     | Right: ioLimit or totalIOAmount Wrong: iOLimit or totalIoAmount                            |
-| :heavy_check_mark: **DO** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | Right: fidoKey or oauthUrl Wrong: webHTML                                                  |
-|:no_entry: **DO NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | Right: subcategory, geocoordinate or crosswalk Wrong: metaData, semiCircle or airPlane     |
-| :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | Right: fiveYearOld, daughterInLaw or postOffice Wrong: paperclip or fullmoon |
+| :heavy_check_mark: **DO** use lower camel case for *all* names and namespaces                                                                                                                                                                                                              | - **Right:** automaticRepliesStatus. <BR> -  **Wrong** kebab-case or snake_case.                            |
+| :heavy_check_mark: **DO** case two-letter acronyms with the same case.                                                                                                                                                                                                                     | - **Right:** ioLimit or totalIOAmount <BR> -  **Wrong** iOLimit or totalIoAmount                            |
+| :heavy_check_mark: **DO** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                           | - **Right:** fidoKey or oauthUrl <BR> -  **Wrong** webHTML                                                  |
+|:no_entry: **DO NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | - **Right:** subcategory, geocoordinate or crosswalk <BR> -  **Wrong** metaData, semiCircle or airPlane     |
+| :heavy_check_mark: **DO** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                                   | - **Right:** fiveYearOld, daughterInLaw or postOffice <BR> -  **Wrong** paperclip or fullmoon |
 
 #### Prefixes and Suffixes
 |Requirements                                              |Example|
 |----------------------------------------------------------|------------------------------------------------|
 | :heavy_check_mark: **DO** use namespaces   | Microsoft Graph model types can be declared within a [type namespaces](./type-namespaces.md) to reduce the need to prefix types with a qualifier to ensure uniqueness.  |
-| :heavy_check_mark: **DO** suffix date and time properties with | Right: dueDate — an Edm.Date Right: createdDateTime — an Edm.DateTimeOffset Right: recurringMeetingTime — an Edm.TimeOfDay Wrong: dueOn or startTime Right: instead both above are an Edm.DateTimeOffset   |
-| :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.   | Right: passwordValidityPeriod — an Edm.Duration Right: passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) Wrong: passwordValidityPeriod — an Edm.Int32|
-|:no_entry: **DO NOT** use suffix property names with primitive type names unless the type is temporal.| Right: isEnabled or amount Wrong: enabledBool|
-| :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.| Right: siteWebUrl on driveItem, or userId on auditActor Wrong: webUrl on contact when its the companyWebUrl|
-| :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | • Right: isEnabled or isResourceAccount • Wrong: enabled or allowResourcAccount • Right: allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • Wrong: isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
+| :heavy_check_mark: **DO** suffix date and time properties with | - **Right:** dueDate — an Edm.Date <BR> - **Right:** createdDateTime — an Edm.DateTimeOffset <BR> - **Right:** recurringMeetingTime — an Edm.TimeOfDay <BR> -  **Wrong** dueOn or startTime -  <BR> - **Right:** instead both above are an Edm.DateTimeOffset   |
+| :heavy_check_mark: **DO** use the Duration type for durations, but if using an int, append the units.   | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) <BR> -  **Wrong** passwordValidityPeriod — an Edm.Int32|
+|:no_entry: **DO NOT** use suffix property names with primitive type names unless the type is temporal.| - **Right:** isEnabled or amount <BR> -  **Wrong** enabledBool|
+| :heavy_check_mark: **DO** prefix property names for properties concerning a different entity.| - **Right:** siteWebUrl on driveItem, or userId on auditActor <BR> -  **Wrong** webUrl on contact when its the companyWebUrl|
+| :heavy_check_mark: **DO** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount • <BR> -  **Wrong** enabled or allowResourcAccount  <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below • <BR> -  **Wrong** isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 
 ### Uniform Resource Locators (URLs)
 
@@ -517,17 +517,19 @@ You can find references in the most common patterns in the table below:
 
 | Pattern                 | Description | Reference                                                                                                |
 |-------------------------|-------------|----------------------------------------------------------------------------------------------------------|
-| Key Property            |             | [Key Property](./evolvable-enums.md) |
+| Key Property            |The ability to uniquely identify an object through the key             | [Key Property](./evolvable-enums.md) |
 | Entity Type             |             |                                                                                                          |
 | Complex Type            |             |                                                                                                          |
-| Shared Type             |             |                                                                                                          |
-| Type Hierarchy          |             | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md)                  |
-| Dictionary              |             |                                                                                                          |
-| Evolvable Enums         |             |                                                                                                          |
-| Type Namespace          |             |                                                                                                          |
-| Change Tracking         |             |                                                                                                          |
-| Long Running Operations |             |                                                                                                          |
-| Delta Queries           |             |                                                                                                          |
+| Shared Type             |  The ability to reuse a type defined by another service.            |                                                                                                          |
+| Type Hierarchy          |   The ability to model parent-child relationships using subtypes.      | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md)                  |
+| Dictionary              |  The ability to persist a variable number of properties.                      |
+| Evolvable Enums         |  The ability to enable non-breaking changes for Enum type.      |                                                                                                          |
+| Type Namespace          |  The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.     |
+| Change Tracking         |  The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph       |
+| Long Running Operations |The ability to model asynch operations.             |                                                                                                          |
+| Delta Queries           |      The ability to query changes in the data exposed by Microsoft Graph       |                                                                                                          |
+|Navigation Properties |  |
+|Viewpoint   |  |
 
 
 ## References
