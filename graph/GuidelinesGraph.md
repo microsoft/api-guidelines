@@ -1,8 +1,28 @@
 # Microsoft Graph REST API Guidelines
 
 Table of Contents
-
-[[_TOC_]]
+- [Microsoft Graph REST API Guidelines](#microsoft-graph-rest-api-guidelines)
+  - [](#)
+      - [History](#history)
+  - [Introduction](#introduction)
+    - [Legend](#legend)
+  - [Design Approach](#design-approach)
+    - [Naming](#naming)
+      - [Casing](#casing)
+      - [Prefixes and Suffixes](#prefixes-and-suffixes)
+    - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
+      - [Category](#category)
+    - [Query Support](#query-support)
+    - [Recommended Modeling Patterns](#recommended-modeling-patterns)
+  - [Behavior Modeling](#behavior-modeling)
+      - [HTTP Operations](#http-operations)
+      - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
+    - [Error Handling](#error-handling)
+    - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
+  - [Versioning and Deprecation](#versioning-and-deprecation)
+    - [Deprecation Process](#deprecation-process)
+  - [Common API Patterns](#common-api-patterns)
+  - [References](#references)
 
 ## 
 #### History
@@ -194,7 +214,7 @@ enterprise perspectives and represents one of the following:
 Top-level API categories are aligned with documentation, developer tools, and in
 general are relatively stable. If a new category needs to be created, it requires an API REview and an API Council approval.
 
-#### Query
+### Query Support
 
 Microsoft Graph APIs should support basic query options in conformance with
 OData specifications and [Microsoft REST API
@@ -275,7 +295,7 @@ its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
 
-#### Microsoft Graph rules for modeling behavior:
+#### Microsoft Graph rules for modeling behavior
 
 |Requirements                                                                                             |Severity|
 |----------------------------------------------|----------------------------------------------|
