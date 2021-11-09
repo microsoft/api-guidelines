@@ -395,7 +395,7 @@ In general, making changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
 
-:heavy_check_mark: **DO use not-breaking changes:**
+:heavy_check_mark: **DO use non-breaking changes:**
 * Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
 * Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
 * Removal, rename, or change to the type of an annotation *Introduction of paging to existing collections 
