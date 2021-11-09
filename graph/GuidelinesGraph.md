@@ -292,7 +292,7 @@ response pattern should be one of the first implementation decisions you make.
 | :no_entry: **DO NOT** use patterns that require multiple round trips to complete a single logical action.    | Warning |
 | :ballot_box_with_check: **CONSIDER** supporting return and omit-nulls preferences.                           | Warning |
 
-For a complete list of standard REST operations you can refer to the [Microsoft
+For a complete list of standard HTTP operations you can refer to the [Microsoft
 REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 
@@ -327,8 +327,7 @@ and consistency by using recommended Graph error model:
 The following examples demonstrate error modeling for common use cases:
 
 -   **Simple error**: A workload wants to report an error with top-level details
-    only. The library allows the workload to create the error object and just
-    specify the top-level error code, message and target (optional).
+    only. Then the error object contains the top-level error code, message and target (optional).
 ```
 {
   "error": {
@@ -339,10 +338,9 @@ The following examples demonstrate error modeling for common use cases:
 }
 ```
 
--   **Detailed error**: A workload wants to report an error and provide
-    service-specific details of the error via the innererror property of the
+-   **Detailed error**: An API needs to provide service-specific details of the error via the innererror property of the
     error object. The code property in innererror is optional but highly
-    recommended. It is intended to allow workloads to supply a service-specific
+    recommended. It is intended to allow services to supply a specific
     error code to help differentiate errors that share the same top-level error
     code but reported for different reasons.
 
@@ -363,10 +361,10 @@ The following examples demonstrate error modeling for common use cases:
 |---------------------------------------------------------------------------------------------|---------|
 | :heavy_check_mark: **DO** return an error property with a child code property in all error responses.            | Error   |
 | :heavy_check_mark: **DO** return a 403 Forbidden error when insufficient scopes are present on the auth token.   | Error   |
-| :ballot_box_with_check: **CONSIDER** returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
 | :heavy_check_mark: **DO** return a 429 Too many requests error when the caller has exceeded throttling limits.   | Error   |
+| :ballot_box_with_check: **CONSIDER** returning a 404 Not found error if a 403 would result in information disclosure. | Warning |
 
-For a complete mapping of error codes to HTTP statuses please refer to the
+For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 ### API contract and non-backward compatible changes
@@ -374,7 +372,6 @@ For a complete mapping of error codes to HTTP statuses please refer to the
 Microsoft Graph definition of breaking changes is based on the [Microsoft REST
 API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change).
-
 In general, making changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
@@ -405,7 +402,7 @@ spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-pr
 When changes are imminent you need to support explicit versioning as it's
 critical that clients can count on services to be stable over time, and it's
 critical that services can add features and make changes. Microsoft Graph API
-follows the guidance described in the Model Versioning section in the [Microsoft
+follows the guidance described in the Model Versioning section of the [Microsoft
 REST API
 guidelines](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning).
 
@@ -455,7 +452,7 @@ is not necessary to mark members of that type as deprecated, nor is it necessary
 to annotate any usage of that type in entity sets, singletons, properties,
 navigation properties, functions, or actions.
 
-Example of property annotation:
+**Example of property annotation:**
 ```
  <EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
     <Annotation Term="Org.OData.Core.V1.Revisions">
@@ -479,17 +476,17 @@ date the element was marked as deprecated) and a Sunset header (with the date 2
 years beyond the Deprecation date). Response also includes a link header
 pointing to the breaking changes page.
 
-Deprecation header example:
+**Deprecation header example:**
 ```
 Deprecation: Thursday, 30 June 2022 11:59:59 GMT
 Sunset: Wed, 30 Mar 2022 23:59:59 GMT
 Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
 
 ```
-Deprecation cadence:
+**Deprecation cadence:**
 
 -   As an API developer you can mark individual API schema elements as
-    deprecated on a quarterly basis, after going through a API review and
+    deprecated on a quarterly basis, after going through an API review and
     approval process. Quarterly deprecation cadence will allow the services to
     evolve schemas over time, without waiting for a coordinated, monolithic
     endpoint change.
@@ -507,15 +504,15 @@ Deprecation cadence:
 
 ## Common API Patterns
 
-The guidelines in previous sections are intentionally high-level and provide a
-jump start for Graph API design. More detailed design guidance on REST APIs is
+The guidelines in previous sections are intentionally brief and provide a
+jump start for a Graph API developer. More detailed design guidance on REST APIs is
 published at the [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/) and Graph specific are
 outlined in the table below.
 
 **API Patterns** are design documents providing best practices for MS Graph API
 development. They are to serve as the means by which API teams discuss and come
-to consensus on API guidance.
+to consensus on API guidance and review API designs.
 
 You can find references in the most common patterns in the table below:
 
@@ -533,17 +530,8 @@ You can find references in the most common patterns in the table below:
 | Long Running Operations |             |                                                                                                          |
 | Delta Queries           |             |                                                                                                          |
 
-These patterns are provided as instruction for API desiners to help write
-simple, intuitive, and consistent APIs, and are used by API reviewers as a basis
-for review comments.
 
-## Final thoughts
-
-These guidelines describe the upfront design considerations, technology building
-blocks, and common patterns that teams encounter when building their Graph APIs.
-
-The links below provide references to the foundational documentation on related
-topics:
+## References
 
 -   [Microsoft REST API
     Guidelines](https://github.com/microsoft/api-guidelines/)
