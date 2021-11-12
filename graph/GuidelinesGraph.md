@@ -15,13 +15,12 @@ Table of Contents
     - [Query Support](#query-support)
     - [Recommended Modeling Patterns](#recommended-modeling-patterns)
   - [Behavior Modeling](#behavior-modeling)
-      - [HTTP Operations](#http-operations)
       - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
     - [Error Handling](#error-handling)
     - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
   - [Versioning and Deprecation](#versioning-and-deprecation)
     - [Deprecation Process](#deprecation-process)
-  - [Common API Patterns](#common-api-patterns)
+  - [Recommended API Patterns](#recommended-api-patterns)
   - [References](#references)
 
 ## 
@@ -55,6 +54,9 @@ guidelines. Readers are assumed also be reading the Microsoft REST API
 guidelines and be familiar with them. Graph guidance is a superset of the
 Microsoft API guidelines and services should follow them except where this
 document outlines specific differences or exceptions to those guidelines.
+Together these guidelines and a library of API patterns serve as the means by which API teams discuss and come
+to consensus on API review recommendations.
+
 
 This document borrows heavily from multiple public sources such as:
 
@@ -70,6 +72,7 @@ issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest
 a change or propose a new idea.
 
 ### Legend
+
 This document offers prescriptive guidance labeled as follows:
 
 :heavy_check_mark: **DO** satisfy this specification. If not following this advice, you MUST disclose your reason during the Graph API review.
@@ -130,7 +133,7 @@ identify potential error scenarios with secure and descriptive messaging.
 Consistent naming is foundational for API usability. API resources are typically
 described by nouns. You need to consider that resources and property names
 appear in API URLs and payloads and should be descriptive and easy to
-understand. Therefore you should follow the rules in the table below:
+understand. Therefore you should satisfy the following requirements summarized in the table below:
 |Requirements|Example|
 |--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | :no_entry: **DO NOT** use redundant words in names.                                                    |- **Right:** /places/{id}/**type** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
@@ -165,7 +168,7 @@ understand. Therefore you should follow the rules in the table below:
 A Uniform Resource Locator (URL) is how developers access the resources of your
 API.
 
-Navigation path to Graph resources generally broken into multiple segments:
+Navigation path to the Microsoft Graph resources generally broken into multiple segments:
 
 **{scheme}://{host}/{version}/{category}/{resourcePath}[?{query}]** where
 
@@ -177,7 +180,7 @@ Navigation path to Graph resources generally broken into multiple segments:
 -   **category** segment is modeled as an entity set or a singleton representing
     logical top-level API category;
 
--   **resourcePath segment**  can address an entity, collection of entities,
+-   **resourcePath** segment  can address an entity, collection of entities,
     property or operation available for an entity. Structure of the resource
     path is covered in detail in the [OData Version 4.01. Part 2: URL
     Conventions](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html);
@@ -186,9 +189,8 @@ Navigation path to Graph resources generally broken into multiple segments:
     and is covered in [Query](#query) section.
 
 While HTTP defines no constraints on how different resources are related
-together, it does encourage the use of URL path segment hierarchies to convey a
-relationship. In Microsoft Graph lifetime relationships between resources
-supported by the notions of singletons, entitySets, entities, complex types and
+together, it does encourage the use of URL path segment hierarchies to convey relationships. In Microsoft Graph lifetime relationships between resources are
+supported by the OData concepts of singletons, entitySets, entities, complex types and
 navigation properties.
 
 #### Category
@@ -212,8 +214,7 @@ enterprise perspectives and represents one of the following:
     -   For example: /loadTestEntities
 >>  
 Top-level API categories are aligned with documentation, developer tools, and in
-general are relatively stable. If a new category needs to be created, it requires an API REview and an API Council approval.
-
+general are relatively stable. If a new category needs to be created, it requires an API Review and an API Council approval.
 ### Query Support
 
 Microsoft Graph APIs should support basic query options in conformance with
@@ -238,10 +239,7 @@ Limitations of \$query requests made to Microsoft Graph:
 
 The query options part of an OData URL can be quite long, potentially exceeding
 the maximum length of URLs supported by components involved in transmitting or
-processing the request. One way to avoid this is wrapping the request in a batch
-request, which has the penalty of needing to construct a well-formed batch
-request body. An easier alternative for GET requests is to append /\$query to
-the resource path of the URL, use the POST verb instead of GET, and pass the
+processing the request. One way to avoid this is to use the POST verb instead of GET, and pass the
 query options part of the URL in the request body as described in the chapter
 [OData Query
 Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
@@ -277,7 +275,7 @@ of properties are three most often used patterns in Microsoft Graph today:
     also defines properties that are required/meaningful for the variant given
     by the type property. [Modelling with Flat Bag Pattern](./Modelling%20with%20Flat%20Bag%20Pattern.md)
 
-The following table describes shows summary of main qualities for each pattern
+The following table shows summary of main qualities for each pattern
 and will help to select a pattern preferred for your use case.
 
 |  API qualities   Patterns | Properties and behavior described in metadata  | Suited for strongly typed languages | Simple query construction | Syntactical backward compatible |
@@ -287,8 +285,6 @@ and will help to select a pattern preferred for your use case.
 | Flat bag                  | no                                             | no                                  | yes                       | yes                             |
 
 ## Behavior Modeling
-
-#### HTTP Operations
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
@@ -395,14 +391,14 @@ In general, making changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
 
-:heavy_check_mark: **DO use not-breaking changes:**
+** Non-breaking changes:**
 * Addition of an annotation OpenType="true" Addition of properties that are nullable or have a default value  
 * Addition of a member to an evolvable enumeration  1. Removal, rename, or change to the type of an open extension 
 * Removal, rename, or change to the type of an annotation *Introduction of paging to existing collections 
 * Changes to error codes Changes to the order of properties 
 * Changes to the length or format of opaque strings, such as resource IDs  
 
-:no_entry: **DO NOT use breaking changes:**
+** Breaking changes:**
 * Changes to the URL or fundamental request/response associated with a resource 
 * Changing semantics of resource representation 
 * Removal, rename, or change to the type of a declared property 
@@ -521,19 +517,15 @@ Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="de
     bound by the quarterly cadence or minimal support period before removal of
     deprecated elements.
 
-## Common API Patterns
+## Recommended API Patterns
 
 The guidelines in previous sections are intentionally brief and provide a
-jump start for a Graph API developer. More detailed design guidance on REST APIs is
+jump start for Graph API developers. More detailed design guidance on REST APIs is
 published at the [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/) and Graph specific are
+Guidelines](https://github.com/microsoft/api-guidelines/) and Graph specific patterns are
 outlined in the table below.
 
-**API Patterns** are design documents providing best practices for MS Graph API
-development. They are to serve as the means by which API teams discuss and come
-to consensus on API guidance and review API designs.
-
-You can find references in the most common patterns in the table below:
+Recommended API Design patterns:
 
 | Pattern                 | Description | Reference                                                                                                |
 |-------------------------|-------------|----------------------------------------------------------------------------------------------------------|
@@ -546,7 +538,7 @@ You can find references in the most common patterns in the table below:
 | Evolvable Enums         |  The ability to enable non-breaking changes for Enum type.      |                                                                                                          |
 | Type Namespace          |  The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.     |
 | Change Tracking         |  The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph       |
-| Long Running Operations |The ability to model asynch operations.             |                                                                                                          |
+| Long Running Operations |The ability to model asynchronous operations.             |                                                                                                          |
 | Delta Queries           |      The ability to query changes in the data exposed by Microsoft Graph       |                                                                                                          |
 |Navigation Properties |  |
 |Viewpoint   |  |
