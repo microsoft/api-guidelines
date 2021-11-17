@@ -98,4 +98,5 @@ _Note: unrelated properties on entities omitted for easier readiability_
             }
         }
     ]
+}
 ```
