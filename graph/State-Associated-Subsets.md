@@ -22,9 +22,20 @@ Existing patterns for this require us to either have special cased 'strings' or 
 
 Have an abstract base class the upper level container will point to and all 'flavors' of the subset are then derived types from the base subset. You can find general subtyping guidance [here](https://github.com/microsoft/api-guidelines/blob/op-graphPatterns/graph/Modelling%20with%20Subtypes%20Pattern.md).
 
+The abstract base class should also hold an enum for all possible flavors. The purpose of including this is to allow for easier ways to do query and filter operations on flavors like 'all' and 'none' without relying on isof functions.
+
 Base Type
 ```xml
-    <ComplexType Name="membership" IsAbstract="true"/>
+    <ComplexType Name="membership" IsAbstract="true">
+      <Property Name="membershipKind" Type="graph.membershipKind"/>
+    </ComplexType>
+
+    <Enum Name="membershipKind">
+      <Member Name="all"/>
+      <Member Name="enumerated"/>
+      <Member Name="none"/>
+    </Enum>
+
 ```
 
 Derived Types
