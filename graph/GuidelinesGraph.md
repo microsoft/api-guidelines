@@ -76,15 +76,17 @@ a change or propose a new idea.
 
 This document offers prescriptive guidance labeled as follows:
 
-:heavy_check_mark: **DO** satisfy this specification. If not following this
+:heavy_check_mark: **MUST** satisfy this specification. If not following this
 advice, you MUST disclose your reason during the Graph API review.
 
-:no_entry: **DO NOT** use this pattern. If not following this advice, you MUST
+:no_entry: **MUST NOT** use this pattern. If not following this advice, you MUST
 disclose your reason during the Graph API review.
 
-:ballot_box_with_check: **YOU SHOULD** fulfill this specification. If not
+:ballot_box_with_check: **SHOULD** fulfill this specification. If not
 following this advice, you MUST disclose your reason during the Graph API
 review.
+
+:warning: **SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API review.
 
 ## Design Approach
 
@@ -120,6 +122,8 @@ resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
 and API resources as APIs usually support only customer-facing use cases.
 
+[Domain model example](DomainModel.png)
+
 After API resources are identified you need to name them and their properties so
 that the API will be discoverable and intuitive for developers, and consistent
 with other Graph resources.
@@ -147,23 +151,23 @@ Below is a short summary of the most often used conventions.
 | Requirements                                                                                                         | Example                                                                                                                                                                                                                                                                                                                 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | :no_entry: **MUST NOT** use redundant words in names.   |- **Right:** /places/{id}/**type** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
-| :no_entry: **SHOULD NOT** use brand names in type or property names.                                 | - **Right:** chat   <BR> -  **Wrong** teamsChat                                                                                              |
-| :no_entry: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood.          | - **Right:** url or htmlSignature <BR> - **Wrong** msodsUrl or dlp                                                                        |
+| :warning: **SHOULD NOT** use brand names in type or property names.                                 | - **Right:** chat   <BR> -  **Wrong** teamsChat                                                                                              |
+| :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood.          | - **Right:** url or htmlSignature <BR> - **Wrong** msodsUrl or dlp                                                                        |
 | :heavy_check_mark: **MUST** use singular nouns for type names.                                              | - **Right:** address  <BR> - **Wrong** addresses                                                                                           |
 | :heavy_check_mark: **MUST** use plural nouns for collections (for listing a type or collection properties). | - **Right:** addresses <BR> - **Wrong** address                                                                                           |
-| :heavy_check_mark: **SHOULD** pluralize the noun even when followed by an adjective (a "postpositive").       | - **Right:** passersby or mothersInLaw    <BR> -  **Wrong** notaryPublics or motherInLaws                                                     |
+| :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a "postpositive").       | - **Right:** passersby or mothersInLaw    <BR> -  **Wrong** notaryPublics or motherInLaws                                                     |
 | **casing** | |
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces                                                                                                                                                                                                      | - **Right:** automaticRepliesStatus. <BR> - **Wrong** kebab-case or snake_case.                        |
-| :heavy_check_mark: **SHOULD** case two-letter acronyms with the same case.                                                                                                                                                                                                           | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong** iOLimit or totalIoAmount                        |
-| :heavy_check_mark: **SHOULD** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                 | - **Right:** fidoKey or oauthUrl <BR> - **Wrong** webHTML                                              |
+| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.                                                                                                                                                                                                           | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong** iOLimit or totalIoAmount                        |
+| :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.                                                                                                                                                                                                 | - **Right:** fidoKey or oauthUrl <BR> - **Wrong** webHTML                                              |
 | :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm). | - **Right:** subcategory, geocoordinate or crosswalk <BR> - **Wrong** metaData, semiCircle or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words.                                                                                                                                                                                           | - **Right:** fiveYearOld, daughterInLaw or postOffice <BR> - **Wrong** paperclip or fullmoon           |
 | **prefixes and suffixes** | |
 | :heavy_check_mark: **MUST** suffix date and time properties with                                                                                  | - **Right:** dueDate — an Edm.Date <BR> - **Right:** createdDateTime — an Edm.DateTimeOffset <BR> - **Right:** recurringMeetingTime — an Edm.TimeOfDay <BR>- **Wrong** dueOn or startTime - <BR> - **Right:** instead both above are an Edm.DateTimeOffset                                                                                 |
-| :heavy_check_mark: **SHOULD** use the Duration type for durations, but if using an int, append the units.                                         | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) <BR>- **Wrong** passwordValidityPeriod — an Edm.Int32                                                                                                          |
+| :ballot_box_with_check: **SHOULD** use the Duration type for durations, but if using an int, append the units.                                         | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) <BR>- **Wrong** passwordValidityPeriod — an Edm.Int32                                                                                                          |
 | :no_entry: **MUST NOT** use suffix property names with primitive type names unless the type is temporal.                                          | - **Right:** isEnabled or amount <BR> - **Wrong** enabledBool                                                                                                                                                                                                                                                                |
-| :heavy_check_mark: **SHOULD** prefix property names for properties concerning a different entity.                                                 | - **Right:** siteWebUrl on driveItem, or userId on auditActor <BR> - **Wrong** webUrl on contact when its the companyWebUrl                                                                                                                                                                                                  |
-| :heavy_check_mark: **SHOULD** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong** enabled or allowResourcAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below <BR> - **Wrong** isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
+| :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.                                                 | - **Right:** siteWebUrl on driveItem, or userId on auditActor <BR> - **Wrong** webUrl on contact when its the companyWebUrl                                                                                                                                                                                                  |
+| :ballot_box_with_check: **SHOULD** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong** enabled or allowResourcAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the examples below <BR> - **Wrong** isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the examples above |
 | :no_entry: **MUST NOT** use 'collection', 'response', 'request ' suffixes .                                          |- **Right:** addresses <BR> - **Wrong** addressCollection                                                                                                                                                                                                          |
 
 ### Uniform Resource Locators (URLs)
@@ -232,8 +236,8 @@ OData specifications and [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 |Requirements|
 |----------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **SHOULD** support \$select on resource to enable properties projection |
-| :heavy_check_mark: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
+| :ballot_box_with_check: **SHOULD** support \$select on resource to enable properties projection |
+|:ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
 | :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
 
 Limitations of \$query requests made to Microsoft Graph:
@@ -255,11 +259,11 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 | Additional Microsoft Graph rules for modeling resources                                                  |
 |----------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** use String type for ID      |
-| :heavy_check_mark: **SHOULD** use a primary key composed of a single property and not multiple. |
+| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property and not multiple. |
 | :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
 | :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
 | :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
-| :no_entry: **SHOULD NOT** add the property id to a complex type                                              |
+| :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
 ### Recommended Modeling Patterns
 
@@ -286,10 +290,10 @@ of properties are three most often used patterns in Microsoft Graph today:
 The following table shows summary of main qualities for each pattern and will
 help to select a pattern preferred for your use case.
 
-| API qualities Patterns | Properties and behavior described in metadata | Suited for strongly typed languages | Simple query construction | Syntactical backward compatible |
+| API qualities Patterns | Properties and behavior described in metadata | Suited for multiple inheritance | Simple query construction | Syntactical backward compatible |
 |------------------------|-----------------------------------------------|-------------------------------------|---------------------------|---------------------------------|
-| Type hierarchy         | yes                                           | yes                                 | no                        | yes                             |
-| Facets                 | ok                                            | ok                                  | yes                       | yes                             |
+| Type hierarchy         | yes                                           | no                                 | no                        | yes                             |
+| Facets                 | ok                                            | yes                                  | yes                       | yes                             |
 | Flat bag               | no                                            | no                                  | yes                       | yes                             |
 
 ## Behavior Modeling
@@ -310,9 +314,9 @@ response pattern should be one of the first implementation decisions you make.
 | :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error    |
 | :heavy_check_mark: **MUST** use POST …/{collection} for creating resources.                                       | Error    |
 | :heavy_check_mark: **MUST** use PATCH …/{collection}/{id} for updating resources.                                 | Error    |
-| :no_entry: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | Warning  |
+| :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | Warning  |
 | :no_entry: **MUST NOT** use PATCH to replaces resources or PUT to partially update resources.                     | Error    |
-| :no_entry: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | Warning  |
+| :warning: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | Warning  |
 | :ballot_box_with_check: **MAY** supporting return and omit-nulls preferences.                              | Warning  |
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
@@ -563,19 +567,19 @@ Recommended API Design patterns:
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
 | Key Property            | The ability to uniquely identify an object through the key                                     | [Key Property](./evolvable-enums.md)                                 |
-| Entity Type             |                                                                                                |                                                                      |
-| Complex Type            |                                                                                                |                                                                      |
-| Shared Type             | The ability to reuse a type defined by another service.                                        |                                                                      |
+| Entity Type             |                                                                                                | TBD                                                                  |
+| Complex Type            |                                                                                                | TBD                                                                    |
+| Shared Type             | The ability to reuse a type defined by another service.                                        | TBD   | TBD                                                                    |
 | Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md) |
-| Dictionary              | The ability to persist a variable number of properties.                                        |                                                                      |
-| Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      |                                                                      |
-| Type Namespace          | The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.          |                                                                      |
-| Change Tracking         | The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph |                                                                      |
-| Long Running Operations | The ability to model asynchronous operations.                                                  |                                                                      |
-| Delta Queries           | The ability to query changes in the data exposed by Microsoft Graph                            |                                                                      |
-| Navigation Properties   |                                                                                                |                                                                      |
-| Viewpoint               |                                                                                                |                                                                      |
-|Property projection $select||
+| Dictionary              | The ability to persist a variable number of properties.                                        | TBD                                                                      |
+| Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      | TBD                                                                      |
+| Type Namespace          | The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.          | TBD                                                                    |
+| Change Tracking         | The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph | TBD                                                                      |
+| Long Running Operations | The ability to model asynchronous operations.                                                  | TBD                                                                       |
+| Delta Queries           | The ability to query changes in the data exposed by Microsoft Graph                           | TBD                                                                      |
+| Navigation Properties   |                                                                                                | TBD                                                                      |
+| Viewpoint               |                                                                                               | TBD                                                                      |
+|Property projection $select|  |TBD
 
 ## References
 
