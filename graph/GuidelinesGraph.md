@@ -120,7 +120,7 @@ To create a good API you need to start with understanding your **use cases** and
 supporting domain model. We describe domain models in terms of entities or
 resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
-and API resources as APIs usually support only customer-facing use cases.
+and API resources as APIs usually support only customer-facing use cases. A simple resource diagram makes it easier to reason about resource relationships and a shape of your API.
 
 ![Domain model example](ResourceModel.png)
 
