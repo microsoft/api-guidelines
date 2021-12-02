@@ -10,7 +10,9 @@ Microsoft Graph API Design Pattern
 
 ## Context
 
-Let’s assume you need to model an API to manage groups in an
+Often an API needs to serve business entities which come in slightly different variation. These entities can be represented as a type hierarchy similar to the OOP inheritance concept. The hierarchy will be modeled as a base type and multiple subtypes which represent variations in metadata and behavior. In this model common elements of the base type can be reused, extended, or modified by subtypes. 
+
+For example let’s assume you need to model an API to manage groups in an
 organization, where employees can create groups and become owners of the
 group by default. At the same time to support business processes some
 groups may be created automatically by daemon applications using a
@@ -24,13 +26,12 @@ description.
 
 
 ## Problem
+ How to design an API to work with a collection of heterogeneous elements that have a set of common properties and behaviors, and some unique properties for each variant. Furthermore, it should be straightforward to add new variants to the API as needed in the future. 
 
-How to model group owners to allow a heterogeneous collection of users
-and principles so that API design can reflect common and relevant
-properties for each subset of owners and accommodate new owner types in
-future?
 
-A more general problem is how to model a collection of heterogeneous elements that have a set of common properties and behaviors, and some unique properties for each variant. Furthermore, it should be straightforward to add new variants to the API as needed in the future. 
+Or as in previous example how to model group owners to allow a heterogeneous collection of users
+and principles and be able to accommodate new owner types in future?
+
 
 ## Solution
 --------
