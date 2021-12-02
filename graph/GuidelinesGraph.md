@@ -122,7 +122,7 @@ resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
 and API resources as APIs usually support only customer-facing use cases.
 
-[Domain model example](DomainModel.png)
+![Domain model example](ResourceModel.png)
 
 After API resources are identified you need to name them and their properties so
 that the API will be discoverable and intuitive for developers, and consistent
