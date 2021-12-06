@@ -7,7 +7,7 @@ Microsoft Graph API Design Pattern
 ## Problem
 --------
 
-The API design requires a resource to include an unknown quantity of similar data elements that need to be named using values provided by the API consumer.
+The API design requires a resource to include an unknown quantity of data elements of the same type that must be named using values provided by the API consumer.
 
 ## Solution
 --------
