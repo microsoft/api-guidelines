@@ -14,7 +14,7 @@ The API design requires a resource to include an unknown quantity of data elemen
 
 API designers use a JSON object to represent a dictionary in a `application/json`response payload. When describing the model in CSDL, a new complex type can be created that derives from `Org.OData.Core.V1.Dictionary` and then use the `Org.OData.Validation.V1.OpenPropertyTypeConstraint`to constrain the type that can be used for the values in the dictionary.
 
-Dictionary entries can be added via `POST`, updated via `PATCH`, and they can be removed by setting the entry value to `null`. Multiple dictionaries can be updated at once by using `PATCH` on the dictionary property.
+Dictionary entries can be added via `POST`, updated via `PATCH`, and they can be removed by setting the entry value to `null`. Multiple entries can be updated at once by using `PATCH` on the dictionary property.
 
 ## Issues and Considerations
 -------------------------
