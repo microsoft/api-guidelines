@@ -230,7 +230,7 @@ status monitor LRO, whereas the status of all RELO operations is combined into t
 So status monitor LROs are "one-to-one" with their operation status, whereas RELO-style LROs are "many-to-one".
 
 ## Errors
-One of the most important parts of service design is also one of the most overlooked.  The errors returned by your service are a critical part of your developer experience.  Your service and your customer's application together form a distributed system.  Errors are inevitable, but well designed errors enabling customers to self-diagnose and recover from faults won't take down their applications or incur overwhelming customer support costs for you.
+One of the most important parts of service design is also one of the most overlooked.  The errors returned by your service are a critical part of your developer experience.  Your service and your customer's application together form a distributed system.  Errors are inevitable, but well-designed errors can help you avoid costly customer support incidents by empowering customers to self-diagnose problems.
 
 First, you should always try to design errors out of existence if possible.  You'll get a lot of this for free by following the Guidelines.  Some examples include:
 - Idempotent APIs solve a whole class of network issues where customers have no idea how to proceed if they send a request to the service but never get a response.
@@ -239,7 +239,7 @@ First, you should always try to design errors out of existence if possible.  You
 
 There are two types of errors returned from your service and customers handle them differently.
 - Usage errors where the customer is calling your API incorrectly.  The customer can easily make these errors go away by fixing their code.  We expect most usage errors to be found during testing.
-- Runtime errors that can't be prevented by the customer and need to be recovered from.  Some runtime errors like `429` throttling will be handled automatically by client libraries, but most will be situations like a `409` conflict that requires knowledge about the customer's application to remedy.
+- Runtime errors that can't be prevented by the customer and need to be recovered from.  Some runtime errors like `429` throttling will be handled automatically by client libraries, but most will be situations like a `409` conflict requiring knowledge about the customer's application to remedy.
 
 We provide appropriate [HTTP status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status#client_error_responses) for customers to handle errors generically and error code strings in our common error schema and the `x-ms-error-code` header for customers to handle errors specifically.  As an example, consider what a customer would do when trying to get the properties of a Storage blob:
 - A `404` status code tells them the blob doesn't exist and the customer can report the error to their users
