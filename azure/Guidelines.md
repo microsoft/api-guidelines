@@ -292,11 +292,15 @@ There are 2 kinds of errors:
 
 :white_check_mark: **DO** return an `x-ms-error-code` response header with a string error code indicating what went wrong.
 
-*NOTE: Error code values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
+*NOTE: `x-ms-error-code` values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
-:white_check_mark: **DO** carefully craft `x-ms-error-code` string values for errors that are recoverable at runtime.
+:heavy_check_mark: **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a different top-level error code.
 
-:white_check_mark: **DO** ensure that the top-level `code` field's value is identical to the `x-ms-error-code` header's value.
+:warning: **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
+
+:white_check_mark: **DO** carefully craft unique `x-ms-error-code` string values for errors that are recoverable at runtime.  Reuse common error codes for usage errors that are not recoverable.
+
+:white_check_mark: **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
 
 :white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
 
@@ -306,7 +310,7 @@ There are 2 kinds of errors:
 
 Property | Type | Required | Description
 -------- | ---- | :------: | -----------
-`error` | ErrorDetail | ✔ | The error object.
+`error` | ErrorDetail | ✔ | The top-level error object whose `code` matches `x-ms-error-code`
 
 **ErrorDetail** : Object
 
@@ -317,6 +321,7 @@ Property | Type | Required | Description
 `target` | String |  | The target of the error.
 `details` | ErrorDetail[] |  | An array of details about specific errors that led to this reported error.
 `innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+_additional properties_ |   | | Additional properties that can be useful when debugging.
 
 **InnerError** : Object
 
@@ -344,6 +349,11 @@ Example:
 
 :heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are _not_ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
 
+:heavy_check_mark: **YOU MAY** add additional properties for any data values in your error message so customers don't resort to parsing your error message.  For example, an error with `"message": "A maximum of 16 keys are allowed per account."` might also add a `"maximumKeys": 16` property.  This is not part of your API contract and should only be used for diagnosing problems.
+
+*Note: Do not use this mechanism to provide information developers need to rely on in code (ex: the error message can give details about why you've been throttled, but the `Retry-After` should be what developers rely on to back off).*
+
+:warning: **YOU SHOULD NOT** use your OpenAPI/Swagger specification to document every failing status code or error code for each operation.
 
 ### JSON
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
