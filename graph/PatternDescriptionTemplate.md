@@ -24,7 +24,12 @@ Microsoft Graph API Design Pattern
 
 *Describe how to implement the solution to solve the problem.*
 *Describe related patterns.*
+
 * *
+## When to Use this Pattern
+------------------------
+
+*Describe when and why the solution is applicable and when it may not.*
 
 ## Issues and Considerations
 -------------------------
@@ -32,12 +37,6 @@ Microsoft Graph API Design Pattern
 *Describe tradeoffs of the solution.*
  
 
-## When to Use this Pattern
-------------------------
-
-*Describe when and why the solution is applicable and when it may not.*
-
- 
 
 ## Example
 -------

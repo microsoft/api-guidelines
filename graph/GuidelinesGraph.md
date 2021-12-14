@@ -13,11 +13,10 @@ Table of Contents
     - [Query Support](#query-support)
     - [Recommended Modeling Patterns](#recommended-modeling-patterns)
   - [Behavior Modeling](#behavior-modeling)
-      - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
+      - [Microsoft Graph rules for modeling behavior COMBINE ACCORDINGLY](#microsoft-graph-rules-for-modeling-behavior-combine-accordingly)
     - [Error Handling](#error-handling)
     - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
   - [Versioning and Deprecation](#versioning-and-deprecation)
-    - [Deprecation Process](#deprecation-process)
   - [Recommended API Patterns](#recommended-api-patterns)
   - [References](#references)
 
@@ -122,7 +121,7 @@ resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
 and API resources as APIs usually support only customer-facing use cases. A simple resource diagram makes it easier to reason about resource relationships and a shape of your API.
 
-![Domain model example](ResourceModel.png)
+![Resource model example](ModelExample.png)
 
 After API resources are identified you need to name them and their properties so
 that the API will be discoverable and intuitive for developers, and consistent
@@ -203,28 +202,18 @@ types and navigation properties.
 In Microsoft Graph a top-level API category may represent one of the following
 groupings:
 
-1.  A core *user-centric concept* of the Graph
+1.  A core *user-centric concept* of the Graph, i.e. /users, /groups or /me.
 
-    1.  For example: /users, /groups or /me
-
-2.  A Microsoft *product or service offerings* covering multiple use cases
-
-    1.  For example: /teamwork, /directory
+2.  A Microsoft *product or service offerings* covering multiple use cases, i.e. /teamwork, /directory.
 
 3.  A *feature* offering covering a single use case and *shared* across multiple
-    Microsoft products
-
-    1.  For example: /search, /notifications, /subscriptions, /files
+    Microsoft products, i.e. /search, /notifications, /subscriptions, /files.
 
 4.  *Administrative configuration* functions for specific products. (Note: this
-    is not final and may be adjusted based on the survey results)
-
-    1.  For example: /admin/exchange
+    is not final and may be adjusted based on the survey results), i.e. /admin/exchange.
 
 5.  Internal Microsoft requirements for publishing Privileged and Hidden APIs,
-    routing, and load testing
-
-    1.  For example: /loadTestEntities
+    routing, and load testing, i.e./loadTestEntities.
 
 Effectively top-level categories define a perimeter for the API surface thus a
 new category creation requires additional rigor and governance.
@@ -289,12 +278,14 @@ of properties are three most often used patterns in Microsoft Graph today:
 
 The following table shows summary of main qualities for each pattern and will
 help to select a pattern preferred for your use case.
+| Use case |  |  |  | Recommended Pattern  |
 
-| API qualities Patterns | Properties and behavior described in metadata | Suited for multiple inheritance | Simple query construction | Syntactical backward compatible |
-|------------------------|-----------------------------------------------|-------------------------------------|---------------------------|---------------------------------|
-| Type hierarchy         | yes                                           | no                                 | no                        | yes                             |
-| Facets                 | ok                                            | yes                                  | yes                       | yes                             |
-| Flat bag               | no                                            | no                                  | yes                       | yes                             |
+
+| API qualities\ | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Syntactical backward compatible |
+|------------------------|-----------------------------------------------|-------------------------------------|---------------------------|---------------------------------|---------------------------|
+| Use Case 1        | yes                                           | no                                 | no                        | yes                             |Type hierarchy         |
+| Use Case 2                 | ok                                            | yes                                  | yes                       | yes                             |Facets                 | 
+| Use Case 3               | no                                            | no                                  | yes                       | yes                             |Flat bag               |
 
 ## Behavior Modeling
 
@@ -303,21 +294,21 @@ its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
 
-#### Microsoft Graph rules for modeling behavior
-
-| Requirements                                                                                                    | Severity |
-|-----------------------------------------------------------------------------------------------------------------|----------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets                             | Error    |
-| :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | Error    |
-| :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | Error    |
-| :heavy_check_mark: **MUST** return a Location header with the edit URL or read URL of a created resource          | Error    |
-| :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error    |
-| :heavy_check_mark: **MUST** use POST …/{collection} for creating resources.                                       | Error    |
-| :heavy_check_mark: **MUST** use PATCH …/{collection}/{id} for updating resources.                                 | Error    |
-| :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | Warning  |
-| :no_entry: **MUST NOT** use PATCH to replaces resources or PUT to partially update resources.                     | Error    |
-| :warning: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | Warning  |
-| :ballot_box_with_check: **MAY** supporting return and omit-nulls preferences.                              | Warning  |
+#### Microsoft Graph rules for modeling behavior COMBINE ACCORDINGLY
+COMBINE ACCORDINGLY
+| Microsoft Graph Requirements   for modeling behavior                                                                                                 |
+|-----------------------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets                             | 
+| :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
+| :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
+| :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | 
+| :heavy_check_mark: **MUST** use POST …/{collection} for creating resources.                                       | 
+| :heavy_check_mark: **MUST** use PATCH …/{collection}/{id} for updating resources.                                 | 
+| :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | 
+| :no_entry: **MUST NOT** use PATCH to replaces composite resources |
+| :no_entry: **MUST NOT** PUT to partially update resources.                     | 
+| :warning: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | 
+COMBINE ACCORDINGLY
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
 REST API
@@ -326,9 +317,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 ### Error Handling
 
 Microsoft REST API Guidelines provide guidelines that Microsoft REST APIs should
-follow when returning error condition responses. However, the structure, form
-and content of the error response payloads is currently not enforced leading to
-undiscoverable and inconsistent error messages. You can improve API traceability
+follow when returning error condition responses. You can improve API traceability
 and consistency by using recommended Graph error model:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -336,18 +325,11 @@ and consistency by using recommended Graph error model:
 "error": {
     "code": "BadRequest",
     "message": "Unsupported functionality",
-    "target": "query",
-    "details": [
-                {
-                "code": "301",
-                "target": "\$search",
-                "message": "\$search query option not supported"
-                }
-                ],
+    "target": "query",    
     "innererror": {
                 "code": "301",
                 "message": "Cannot process the request because a required field is missing.",
-                "stacktrace": [...],
+             
                 }
     }
 }
@@ -364,7 +346,7 @@ The following examples demonstrate error modeling for common use cases:
   "error": {
     "code": "badRequest",
     "message": "Cannot process the request because it is malformed or incorrect.",
-	"target": "Service X (Optional)"
+	"target": "Resource X (Optional)"
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,19 +364,18 @@ The following examples demonstrate error modeling for common use cases:
     "message": "Cannot process the request because it is malformed or incorrect.",
     "innererror": {
       "code": "requiredFieldOrParameterMissing",
-      "message": "Cannot process the request because a required field or parameter is missing.",
-      "stacktrace": "[StackTrace]"
+           
     }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-| Microsoft Graph enforces the following error rules                                                                    | Severity |
-|-----------------------------------------------------------------------------------------------------------------------|----------|
-| :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | Error    |
-| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present on the auth token.        | Error    |
-| :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | Error    |
-| :ballot_box_with_check: **MAY** returning a 404 Not found error if a 403 would result in information disclosure. | Warning  |
+| Microsoft Graph enforces the following error rules                                                                    | 
+|-----------------------------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | 
+| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present on the auth token.        | 
+| :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | 
+| :ballot_box_with_check: **SHOULD** returning a 404 Not found error if a 403 would result in information disclosure. |
 
 For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
@@ -412,147 +393,43 @@ breaking change.
 
 -   Addition of an annotation OpenType="true" Addition of properties that are
     nullable or have a default value
-
 -   Addition of a member to an evolvable enumeration 1. Removal, rename, or
     change to the type of an open extension
-
 -   Removal, rename, or change to the type of an annotation \*Introduction of
     paging to existing collections
-
 -   Changes to error codes Changes to the order of properties
-
 -   Changes to the length or format of opaque strings, such as resource IDs
 
 \*\* Breaking changes:\*\*
 
 -   Changes to the URL or fundamental request/response associated with a
     resource
-
 -   Changing semantics of resource representation
-
 -   Removal, rename, or change to the type of a declared property
-
 -   Removal or rename of APIs or API parameters Addition of a required request
     header
-
 -   Addition of a EnumType members for non-extensible enumerations
-
 -   Addition of a Nullable="false" properties to existing types
-
 -   Addition of a Nullable="false" parameters to existing actions and functions
-
 -   Adding attributes to existing nodes is considered breaking.
 
 For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
 
 ## Versioning and Deprecation
+As the market and technology evolves your APIs will require changes in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
+Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process before retirement. You must create a new version when:
+  - Renaming any element of your API or
+  -	Restructuring a resource type.
 
-When changes are imminent you need to support explicit versioning as it's
-critical that clients can count on services to be stable over time, and it's
-critical that services can add features and make changes. Microsoft Graph API
-follows the guidance described in the Model Versioning section of the [Microsoft
-REST API
-guidelines](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning).
+Microsoft Graph provides two public endpoints to support API lifecycle:
+1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
+2.	API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta or private preview status.
 
-The following versions of the Microsoft Graph API are currently available:
+Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support the deprecated elements for a minimum of 36 months. 
+On the beta endpoint breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is the best practice to test new element versions on the beta endpoint at first then promote API changes to the GA.
+Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
 
-1.  API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in
-    general availability (GA) status.
-
-2.  API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta
-    or private preview status.
-
-In general API breaking changes are not allowed in the GA version of Microsoft
-Graph API. For beta API you can expect breaking changes and deprecation of APIs
-from time to time.
-
-As new versions of the Microsoft Graph REST APIs and Microsoft Graph SDKs are
-released, earlier versions will be retired. Microsoft declares a version as
-deprecated at least 24 months in advance of retiring it. Similarly, for
-individual APIs that are generally available (GA), Microsoft declares an API as
-deprecated at least 24 months in advance of removing it from the GA version.
-
-### Deprecation Process
-
-If your API requires an introduction of breaking changes you must follow the
-deprecation process:
-
--   After API review board approvals, add Revisions annotation to the API
-    definition CSDL with the following terms:
-
-    -   Kind of change: Deprecated (vs "added" to track added properties/types)
-
-    -   Human readable description of the change: Used in changelog,
-        documentation etc.
-
-    -   Version: Used to identify group of changes. Of the format
-        "YYYY-MM/Category" where "YYYY-MM" is the month the deprecation is
-        announced, and "Category" is the category under which the change is
-        described in the ChangeLog
-
-    -   Date: Date when the element was marked as deprecated
-
-    -   RemovalDate: Date when the element may be removed
-
-The annotation can be applied to a type, entity set, singleton, property,
-navigation property, function or action. If a type is marked as deprecated, it
-is not necessary to mark members of that type as deprecated, nor is it necessary
-to annotate any usage of that type in entity sets, singletons, properties,
-navigation properties, functions, or actions.
-
-**Example of property annotation:**
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- <EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
-    <Annotation Term="Org.OData.Core.V1.Revisions">
-      <Collection>
-        <Record>
-          <PropertyValue Property = "Date" Date="2020-08-20"/>
-          <PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/>
-          <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
-          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on August 20, 2022. Please use the new To Do API."/>
-          <PropertyValue Property = "RemovalDate" Date="2022-08-20"/>
-        </Record>
-      </Collection>
-    </Annotation>
-    ...
-  </EntityType>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When the request URL contains a reference to a deprecated model element, the
-HTTP response includes a [Deprecation
-header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
-date the element was marked as deprecated) and a Sunset header (with the date 2
-years beyond the Deprecation date). Response also includes a link header
-pointing to the breaking changes page.
-
-**Deprecation header example:**
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Deprecation: Thursday, 30 June 2022 11:59:59 GMT
-Sunset: Wed, 30 Mar 2022 23:59:59 GMT
-Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Deprecation cadence:**
-
--   As an API developer you can mark individual API schema elements as
-    deprecated on a quarterly basis, after going through an API review and
-    approval process. Quarterly deprecation cadence will allow the services to
-    evolve schemas over time, without waiting for a coordinated, monolithic
-    endpoint change.
-
--   Once marked as deprecated, the elements must continue to be supported for a
-    minimum of 3 years before removal (or a minimum of 2 years if, based on
-    telemetry, the element is no longer being used).
-
--   Tools, documentation, SDKs, and other mechanisms are driven by this explicit
-    deprecation to reach out to customers that may be affected by the changes.
-
--   APIs in beta or preview versions can use the same mechanism but are not
-    bound by the quarterly cadence or minimal support period before removal of
-    deprecated elements.
 
 ## Recommended API Patterns
 
