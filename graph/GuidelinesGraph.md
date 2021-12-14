@@ -38,23 +38,19 @@ across your products will make the difference between success and failure of
 your ecosystem.
 
 This document offers guidance that Graph API developer teams MUST follow to
-ensure that customers have a great experience. A new API design should meet the
+ensure that Microsoft Graph has a consistent and easy to use API surface. A new API design should meet the
 following goals:
 
 \- Developer friendly via consistent naming, patterns, and web standards (HTTP,
 REST, JSON)
 
-\- Efficient and cost-effective.
-
 \- Work well with SDKs in many programming languages.
 
-\- Sustainable & versionable via clear API contracts.
+\- Sustainable & evolvable via clear API contracts.
 
 The Microsoft Graph guidelines are an extension of the Microsoft REST API
-guidelines. Readers are assumed also be reading the Microsoft REST API
-guidelines and be familiar with them. Graph guidance is a superset of the
-Microsoft API guidelines and services should follow them except where this
-document outlines specific differences or exceptions to those guidelines.
+guidelines. Readers are assumed also be reading and following the Microsoft REST API
+guidelines except where this document outlines specific differences or exceptions to those guidelines.
 Together these guidelines and a library of API patterns serve as the means by
 which API teams discuss and come to consensus on API review recommendations.
 
@@ -248,7 +244,7 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 | Additional Microsoft Graph rules for modeling resources                                                  |
 |----------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** use String type for ID      |
-| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property and not multiple. |
+| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
 | :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
 | :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
 | :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
@@ -316,7 +312,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 
 ### Error Handling
 
-Microsoft REST API Guidelines provide guidelines that Microsoft REST APIs should
+Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should
 follow when returning error condition responses. You can improve API traceability
 and consistency by using recommended Graph error model:
 
@@ -335,6 +331,7 @@ and consistency by using recommended Graph error model:
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The top-level error code must be aligned with HTTP response status codes according to [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6). 
 The following examples demonstrate error modeling for common use cases:
 
 -   **Simple error**: A workload wants to report an error with top-level details
@@ -375,7 +372,7 @@ The following examples demonstrate error modeling for common use cases:
 | :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | 
 | :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present on the auth token.        | 
 | :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | 
-| :ballot_box_with_check: **SHOULD** returning a 404 Not found error if a 403 would result in information disclosure. |
+| :ballot_box_with_check: **SHOULD** return a 404 Not found error if a 403 would result in information disclosure. |
 
 For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
@@ -417,17 +414,19 @@ For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
 
 ## Versioning and Deprecation
-As the market and technology evolves your APIs will require changes in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
+As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
 Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process before retirement. You must create a new version when:
   - Renaming any element of your API or
   -	Restructuring a resource type.
+
+If the current element name is best, a new property is added that has the existing name plus the suffix _v2, indicating that it is the successor to the original property. The original property is then marked as deprecated using annotations.
 
 Microsoft Graph provides two public endpoints to support API lifecycle:
 1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
 2.	API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta or private preview status.
 
-Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support the deprecated elements for a minimum of 36 months. 
-On the beta endpoint breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is the best practice to test new element versions on the beta endpoint at first then promote API changes to the GA.
+Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support deprecated elements for a minimum of 36 months. 
+On the beta endpoint breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is best practice to test new element versions on the beta endpoint at first then promote API changes to the GA endpoint.
 Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
 
 

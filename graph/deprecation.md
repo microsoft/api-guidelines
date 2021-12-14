@@ -59,23 +59,3 @@ Deprecation: Thursday, 30 June 2022 11:59:59 GMT
 Sunset: Wed, 30 Mar 2022 23:59:59 GMT
 Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Deprecation sequence:**
-
--   As an API developer you can mark individual API schema elements as
-    deprecated 
-    TODO
-     deprecation cadence will allow the services to
-    evolve schemas over time, without waiting for a coordinated, monolithic
-    endpoint change.
-
--   Once marked as deprecated, the elements must continue to be supported for a
-    minimum of 3 years before removal (or a minimum of 2 years if, based on
-    telemetry, the element is no longer being used).
-
--   Tools, documentation, SDKs, and other mechanisms are driven by this explicit
-    deprecation to reach out to customers that may be affected by the changes.
-
--   APIs in beta or preview versions can use the same mechanism but are not
-    bound by the quarterly cadence or minimal support period before removal of
-    deprecated elements.
