@@ -13,7 +13,7 @@ Table of Contents
     - [Query Support](#query-support)
     - [Recommended Modeling Patterns](#recommended-modeling-patterns)
   - [Behavior Modeling](#behavior-modeling)
-      - [Microsoft Graph rules for modeling behavior COMBINE ACCORDINGLY](#microsoft-graph-rules-for-modeling-behavior-combine-accordingly)
+    - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
     - [Error Handling](#error-handling)
     - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
   - [Versioning and Deprecation](#versioning-and-deprecation)
@@ -26,7 +26,7 @@ Table of Contents
 
 | Date        | Notes                       |
 |-------------|-----------------------------|
-| 2021-Sep-28 | Alignment with Azure style. |
+| 2021-Sep-28 | Using summary and patterns style. |
 | 2020-Oct-04 | Initial version in Wiki.    |
 
 ## Introduction
@@ -115,7 +115,7 @@ To create a good API you need to start with understanding your **use cases** and
 supporting domain model. We describe domain models in terms of entities or
 resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
-and API resources as APIs usually support only customer-facing use cases. A simple resource diagram makes it easier to reason about resource relationships and a shape of your API.
+and API resources as APIs usually support only customer-facing use cases. A simple resource diagram, like below, makes it easier to reason about resource relationships and a shape of your API.
 
 ![Resource model example](ModelExample.png)
 
@@ -252,8 +252,8 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 
 ### Recommended Modeling Patterns
 
-There are different approaches to design an API resource model in situations
-with multiple variants of common concept. Type Hierarchy, Facets, and Flat bag
+There are different approaches for designing an API resource model in situations
+with multiple variants of a common concept. Type Hierarchy, Facets, and Flat bag
 of properties are three most often used patterns in Microsoft Graph today:
 
 -   Type hierarchy is represented by one abstract base type with a few common
@@ -274,12 +274,10 @@ of properties are three most often used patterns in Microsoft Graph today:
 
 The following table shows summary of main qualities for each pattern and will
 help to select a pattern preferred for your use case.
-| Use case |  |  |  | Recommended Pattern  |
 
-
-| API qualities\ | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Syntactical backward compatible |
-|------------------------|-----------------------------------------------|-------------------------------------|---------------------------|---------------------------------|---------------------------|
-| Use Case 1        | yes                                           | no                                 | no                        | yes                             |Type hierarchy         |
+| API qualities\ <BR> Use Cases | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Syntactically backward compatible |Recommended Pattern  |
+|----------------------|------------------------------------------|----------------------------------------|---------------------------|---------------------------------|---------------------------|
+| Use Case 1        | yes                                        | no                                                  | no                        | yes                             |Type hierarchy         |
 | Use Case 2                 | ok                                            | yes                                  | yes                       | yes                             |Facets                 | 
 | Use Case 3               | no                                            | no                                  | yes                       | yes                             |Flat bag               |
 
@@ -290,21 +288,17 @@ its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
 
-#### Microsoft Graph rules for modeling behavior COMBINE ACCORDINGLY
-COMBINE ACCORDINGLY
-| Microsoft Graph Requirements   for modeling behavior                                                                                                 |
+### Microsoft Graph rules for modeling behavior
+
+|  Requirements                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets                             | 
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collection …/{collection}                             | 
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
 | :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | 
-| :heavy_check_mark: **MUST** use POST …/{collection} for creating resources.                                       | 
-| :heavy_check_mark: **MUST** use PATCH …/{collection}/{id} for updating resources.                                 | 
 | :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | 
-| :no_entry: **MUST NOT** use PATCH to replaces composite resources |
-| :no_entry: **MUST NOT** PUT to partially update resources.                     | 
-| :warning: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | 
-COMBINE ACCORDINGLY
+| :no_entry: **MUST NOT** use PATCH to replaces composite resources |                    | 
+|:ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
 REST API
