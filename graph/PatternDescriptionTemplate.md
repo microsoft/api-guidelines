@@ -6,15 +6,10 @@ Microsoft Graph API Design Pattern
 
 *Provide a short description of the pattern.*
 
-## Context
-
-*Describe business context relevant for the pattern.*
-
-* *
 
 ## Problem
 --------
-
+*Describe business context relevant for the pattern.*
 *Provide a short description of the problem.*
 
 * *
@@ -31,19 +26,22 @@ Microsoft Graph API Design Pattern
 
 *Describe when and why the solution is applicable and when it may not.*
 
+* *
+
 ## Issues and Considerations
 -------------------------
 
 *Describe tradeoffs of the solution.*
- 
 
+ 
+* *
 
 ## Example
 -------
 
 *Provide a short example from real life*
 
- 
+* * 
 
  
 

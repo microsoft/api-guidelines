@@ -54,7 +54,7 @@ guidelines except where this document outlines specific differences or exception
 Together these guidelines and a library of API patterns serve as the means by
 which API teams discuss and come to consensus on API review recommendations.
 
-This document borrows heavily from multiple public sources such as:
+This document borrows from multiple public sources such as:
 
 1.  Microsoft Azure REST API Guidelines
 

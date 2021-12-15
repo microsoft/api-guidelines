@@ -6,17 +6,12 @@ Not supposed to be precise but easy to understand 
 
 *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-## Context
-
- These entities can be represented as a type hierarchy similar to the OOP inheritance concept. The hierarchy will be modeled as a base type and multiple subtypes which represent variations in metadata and behavior. In this model common elements of the base type can be reused, extended, or modified by subtypes. 
-
+<BR>
 
 
 ## Problem
-How to design API ... it should be straightforward to add new variants to the API as needed in the future. 
-
+--------
+The API design requires to model a set of entities based on a common concept that can be further grouped into mutually exclusive variants with specific properties and behaviors. The API design should be evolvable and allow addition of new variants without breaking changes.
 
 
 
@@ -27,9 +22,7 @@ How to design API ... it should be straightforward to add new variants to the AP
 OData allows us to design collections of entities (entity sets, multi
 valued navigation properties) with values of different types using
 **type hierarchy**, where there is one abstract base type with a few
-common properties and one sub-type for each variant of the entity. In
-the current version of Microsoft Graph there are many collections of
-items that represent slightly different things, variants of one concept.
+common properties and one sub-type for each variant of the entity. 
 
 ## Issues and Considerations
 -------------------------
