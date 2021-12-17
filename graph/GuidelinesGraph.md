@@ -81,19 +81,11 @@ review.
 
 ## Design Approach
 
-The design of your API is arguably the most important investment you will make
-in it. The design of your API is what creates the first impression for
-developers. Microsoft Graph APIs follow HTTP, REST, and JSON standards and are
-described using ODATA conventions and CSDL for schema definition (see
-[Documentation · OData - the Best Way to
-REST](https://www.odata.org/documentation/)).
-
-We promote API-first design approach where you begin by creating an interface or
-API for your service first. Subsequently you follow with the service
-implementation which relies on the specified interface. API -first approach is
-essential for agility, predictability, and reuse of your APIs as it promotes
-good understanding of your modeling domain, consistent interface contract, and
-understanding of how supporting service will evolve.
+The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. 
+We promote API-first design approach where you begin your product design by creating an interface contract for your service first and later you follow with the service design and implementation to support the interface. This approach ensures decoupling of the interface and implementation and is
+essential for agility, predictability, and reuse of your APIs. Starting with user-facing contracts also promotes good understanding of user interactions, your modeling domain, and understanding of how supporting service will evolve. 
+Microsoft Graph supports RESTful API style which follows HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and CSDL for schema definition (see
+[Documentation · OData - the Best Way to REST](https://www.odata.org/documentation/)).
 
 In general API design includes the following steps:
 
@@ -111,19 +103,12 @@ To create a good API you need to start with understanding your **use cases** and
 supporting domain model. We describe domain models in terms of entities or
 resources, their properties, and relationships and further refer to it as entity
 data model. There is no one-to-one correspondence between domain model elements
-and API resources as APIs usually support only customer-facing use cases. A simple resource diagram, like below, makes it easier to reason about resource relationships and a shape of your API.
+and API resources as APIs usually support only customer-facing use cases. A simple resource diagram, like below, makes it easier to reason about resource relationships and the shape of your API.
 
 ![Resource model example](ModelExample.png)
 
-After API resources are identified you need to name them and their properties so
-that the API will be discoverable and intuitive for developers, and consistent
-with other Graph resources.
-
-When resources are defined it’s time to think about the behavior of your API and
-define required operations and actions. There are read-only and write scenarios
-where a resource can be used to represent some kind of data processing
-operation. The terms function and action are used to identify read and write
-operation style resources, respectively.
+While designing your API resources you need to name them and their properties so that it will be intuitive for developers, consistent with other Graph resources and within the product domain.
+After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions.
 
 At every step of your design you need to consider security, privacy and
 compliance as an intrinsic components of your API implementation. And finally
@@ -132,11 +117,9 @@ to identify potential error scenarios with secure and descriptive messaging.
 
 ### Naming
 
-Consistent naming is foundational for API usability. API resources are typically
-described by nouns. You need to consider that resources and property names
-appear in API URLs and payloads and should be descriptive and easy to
-understand. Microsoft Graph naming conventions follow [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md).
+API resources and their properties are typically described by nouns and appear in API URLs, input parameters,and output resources therefor should be descriptive and easy to understand. Microsoft Graph naming conventions follow [Microsoft REST API
+Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md). When thinking about naming consistency you should consider consistency with industry standards, product namespace and other Graph APIs.
+
 Below is a short summary of the most often used conventions.
 
 | Requirements                                                                                                         | Example                                                                                                                                                                                                                                                                                                                 |
@@ -282,23 +265,27 @@ help to select a pattern preferred for your use case.
 The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
-response pattern should be one of the first implementation decisions you make.
+response pattern should be one of the first implementation decisions you make. You also may utilize operational resources such as functions and actions. According to [ODATA standards]( http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2) a function represents an operation which returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action may have side effects and may return a result represented as a single entity or collection of any type.
 
 ### Microsoft Graph rules for modeling behavior
 
 |  Requirements                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collection …/{collection}                             | 
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collection …/{collection}| 
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
 | :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | 
 | :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | 
 | :no_entry: **MUST NOT** use PATCH to replaces composite resources |                    | 
-|:ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
+| :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
+| :no_entry: **MUST NOT** use unbounded actions and functions| 
+
+As Microsoft Graph supports only bound operations they must have a binding parameter matching the type of the bound resource. The binding parameter MAY be Nullable.
+In addition both actions and functions support overloading, meaning an API definition may contain multiple actions or functions with the same name.
+Microsoft Graph supports the use of optional parameters. You can use the optional parameter annotation instead of creating function or action overloads when unnecessary.
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
-REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
+REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 
 ### Error Handling
 
@@ -360,7 +347,7 @@ The following examples demonstrate error modeling for common use cases:
 | Microsoft Graph enforces the following error rules                                                                    | 
 |-----------------------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | 
-| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present on the auth token.        | 
+| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present in the auth token.        | 
 | :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | 
 | :ballot_box_with_check: **SHOULD** return a 404 Not found error if a 403 would result in information disclosure. |
 
@@ -378,13 +365,14 @@ breaking change.
 
 \*\* Non-breaking changes:\*\*
 
--   Addition of an annotation OpenType="true" Addition of properties that are
-    nullable or have a default value
--   Addition of a member to an evolvable enumeration 1. Removal, rename, or
-    change to the type of an open extension
--   Removal, rename, or change to the type of an annotation \*Introduction of
-    paging to existing collections
--   Changes to error codes Changes to the order of properties
+-   Addition of an annotation OpenType="true" 
+-   Addition of properties that are nullable or have a default value
+-   Addition of a member to an evolvable enumeration 
+-   Removal, rename, or change to the type of an open extension
+-   Removal, rename, or change to the type of an annotation 
+-   Introduction of paging to existing collections
+-   **Changes to error codes?????**
+-   Changes to the order of properties
 -   Changes to the length or format of opaque strings, such as resource IDs
 
 \*\* Breaking changes:\*\*
@@ -393,12 +381,12 @@ breaking change.
     resource
 -   Changing semantics of resource representation
 -   Removal, rename, or change to the type of a declared property
--   Removal or rename of APIs or API parameters Addition of a required request
-    header
+-   Removal or rename of APIs or API parameters
+-   Addition of a required request header
 -   Addition of a EnumType members for non-extensible enumerations
 -   Addition of a Nullable="false" properties to existing types
 -   Addition of a Nullable="false" parameters to existing actions and functions
--   Adding attributes to existing nodes is considered breaking.
+-   **Adding attributes to existing nodes is considered breaking??**
 
 For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
