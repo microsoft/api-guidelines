@@ -31,11 +31,7 @@ Table of Contents
 
 ## Introduction
 
-When building a digital ecosystem you should use API-first approach and start
-with design and development of your APIs. Considering API usability and creating
-APIs that are easy to discover, simple to use, fit to purpose, and consistent
-across your products will make the difference between success and failure of
-your ecosystem.
+When building a digital ecosystem API usability becomes a business priority. Success of your ecosystem depends on APIs that are easy to discover, simple to use, fit to purpose, and consistent across your products.
 
 This document offers guidance that Graph API developer teams MUST follow to
 ensure that Microsoft Graph has a consistent and easy to use API surface. A new API design should meet the
