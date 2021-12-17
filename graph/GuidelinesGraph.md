@@ -11,12 +11,11 @@ Table of Contents
     - [Naming](#naming)
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
     - [Query Support](#query-support)
-    - [Recommended Modeling Patterns](#recommended-modeling-patterns)
-  - [Behavior Modeling](#behavior-modeling)
-    - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
+    - [Resource Modeling Patterns](#resource-modeling-patterns)
+    - [Behavior Modeling](#behavior-modeling)
     - [Error Handling](#error-handling)
-    - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
-  - [Versioning and Deprecation](#versioning-and-deprecation)
+  - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
+    - [Versioning and Deprecation](#versioning-and-deprecation)
   - [Recommended API Patterns](#recommended-api-patterns)
   - [References](#references)
 
@@ -229,7 +228,7 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 | :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
 | :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
-### Recommended Modeling Patterns
+### Resource Modeling Patterns
 
 There are different approaches for designing an API resource model in situations
 with multiple variants of a common concept. Type Hierarchy, Facets, and Flat bag
@@ -260,16 +259,14 @@ help to select a pattern preferred for your use case.
 | Use Case 2                 | ok                                            | yes                                  | yes                       | yes                             |Facets                 | 
 | Use Case 3               | no                                            | no                                  | yes                       | yes                             |Flat bag               |
 
-## Behavior Modeling
+### Behavior Modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make. You also may utilize operational resources such as functions and actions. According to [ODATA standards]( http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2) a function represents an operation which returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action may have side effects and may return a result represented as a single entity or collection of any type.
 
-### Microsoft Graph rules for modeling behavior
-
-|  Requirements                                                                                              |
+|  Microsoft Graph rules for modeling behavior                                                                                          |
 |-----------------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collection …/{collection}| 
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
@@ -354,7 +351,7 @@ The following examples demonstrate error modeling for common use cases:
 For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
-### API contract and non-backward compatible changes
+## API contract and non-backward compatible changes
 
 Microsoft Graph definition of breaking changes is based on the [Microsoft REST
 API
@@ -391,7 +388,7 @@ breaking change.
 For the full list of rules you can refer to [this section of the OData V4
 spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
 
-## Versioning and Deprecation
+### Versioning and Deprecation
 As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
 Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process before retirement. You must create a new version when:
   - Renaming any element of your API or
