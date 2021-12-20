@@ -107,8 +107,9 @@ properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
 
 ## Example
 
-GET
+`GET
 <https://graph.microsoft.com/v1.0/groups/02bd9fd6-8f93-4758-87c3-1fb73740a315/owners>
+`
 returns a collection where each element can be a user or a service principal,
 and has an additional property @odata.type to show subtype for each variant:
 
