@@ -206,16 +206,28 @@ GET, and pass the query options part of the URL in the request body as described
 in the chapter [OData Query
 Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-| Additional Microsoft Graph rules for modeling resources                                                  |
-|----------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use String type for ID      |
-| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
-| :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
-| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
-| :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
-| :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
 ### Resource Modeling Patterns
+
+You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity types declare a key property to uniquely identify its objects and  Complex Types don't. In Microsoft Graph this key property has "id" as a prescribed name.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must use Entity Type to model addressable resources. Complex types are better suited to represent composite properties of API entities.
+
+```XML
+ <EntityType Name="Author">
+    <Key>
+        <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Edm.Int32" Nullable="false" />
+    <Property Name="name" Type="Edm.String" />
+    <Property Name="address" Type="microsoft.graph.Address" />
+</EntityType>
+<ComplexType Name="Address">
+    <Property Name="city" Type="Edm.String" />
+    <Property Name="street" Type="Edm.String" />
+    <Property Name="stateOrProvince" Type="Edm.String" />
+    <Property Name="country" Type="Edm.String" />
+</ComplexType>
+```
 
 There are different approaches for designing an API resource model in situations
 with multiple variants of a common concept. Type Hierarchy, Facets, and Flat bag
@@ -245,6 +257,16 @@ help to select a pattern preferred for your use case.
 | Use Case 1        | yes                                        | no                                                  | no                        | yes                             |Type hierarchy         |
 | Use Case 2                 | ok                                            | yes                                  | yes                       | yes                             |Facets                 | 
 | Use Case 3               | no                                            | no                                  | yes                       | yes                             |Flat bag               |
+
+| Additional Microsoft Graph rules for modeling resources                                                  |
+|----------------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** use String type for ID      |
+| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
+| :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
+| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
+| :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
+| :warning: **SHOULD NOT** add the property id to a complex type                                              |
+
 
 ### Behavior Modeling
 
