@@ -80,10 +80,7 @@ review.
 
 ## Design Approach
 
-The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. 
-We promote API-first design approach where you begin your product design by creating an interface contract for your service first and later you follow with the service design and implementation to support the interface. This approach ensures decoupling of the interface and implementation and is
-essential for agility, predictability, and reuse of your APIs. Starting with user-facing contracts also promotes good understanding of user interactions, your modeling domain, and understanding of how supporting service will evolve. 
-Microsoft Graph supports RESTful API style which follows HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and CSDL for schema definition (see
+The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote API-first design approach where you begin your product design by focusing on how information will be exchanged and represented and creating an interface contract for your API which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface and is essential for agility, predictability, and reuse of your APIs. Starting with user-facing contracts also promotes good understanding of user interactions, your modeling domain, and understanding of how the service will evolve. Microsoft Graph supports resource and query based API styles which follow HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and schema definition (see Documentation · OData - the Best Way to REST).
 [Documentation · OData - the Best Way to REST](https://www.odata.org/documentation/)).
 
 In general API design includes the following steps:
@@ -98,26 +95,16 @@ In general API design includes the following steps:
 
 -   Specify errors
 
-To create a good API you need to start with understanding your **use cases** and
-supporting domain model. We describe domain models in terms of entities or
-resources, their properties, and relationships and further refer to it as entity
-data model. There is no one-to-one correspondence between domain model elements
-and API resources as APIs usually support only customer-facing use cases. A simple resource diagram, like below, makes it easier to reason about resource relationships and the shape of your API.
-
+When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on use cases. Therefore it is essential to understand and document your use cases as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because APIs usually are often simplified to support only customer-facing use cases and obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
 ![Resource model example](ModelExample.png)
 
-While designing your API resources you need to name them and their properties so that it will be intuitive for developers, consistent with other Graph resources and within the product domain.
-After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions.
+After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior you identify a happy path and various exceptions and deviations which will be expressed as errors and represented using HTTP codes and error messages.
+At every step of your design you need to consider security, privacy and compliance as an intrinsic components of your API implementation.
 
-At every step of your design you need to consider security, privacy and
-compliance as an intrinsic components of your API implementation. And finally
-based on your API resources, their behavior, and anticipated exceptions you need
-to identify potential error scenarios with secure and descriptive messaging.
 
 ### Naming
 
-API resources and their properties are typically described by nouns and appear in API URLs, input parameters,and output resources therefor should be descriptive and easy to understand. Microsoft Graph naming conventions follow [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md). When thinking about naming consistency you should consider consistency with industry standards, product namespace and other Graph APIs.
+API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with industry standards, product namespace and other Graph APIs. Microsoft Graph naming conventions follow Microsoft REST API Guidelines.
 
 Below is a short summary of the most often used conventions.
 
