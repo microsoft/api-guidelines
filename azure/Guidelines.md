@@ -294,7 +294,7 @@ There are 2 kinds of errors:
 
 *NOTE: `x-ms-error-code` values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
-:heavy_check_mark: **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a different top-level error code.
+:heavy_check_mark: **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
 
 :warning: **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
 
@@ -353,7 +353,7 @@ Example:
 
 *Note: Do not use this mechanism to provide information developers need to rely on in code (ex: the error message can give details about why you've been throttled, but the `Retry-After` should be what developers rely on to back off).*
 
-:warning: **YOU SHOULD NOT** use your OpenAPI/Swagger specification to document every failing status code or error code for each operation.
+:warning: **YOU SHOULD NOT** document specific error status codes in your OpenAPI/Swagger spec unless the "default" response cannot properly describe the specific error response (e.g. body schema is different).
 
 ### JSON
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
