@@ -76,9 +76,6 @@ Response shortened for readability:
     "value": [
         {
             "createdDateTime": "2021-07-07T13:59:47Z",
-            "eTag": "\"{2A158A2F-07E6-4F8F-A000-24C379D0CEE7},1\"",
-            "id": "01XXNRXFBPRIKSVZQHXXXXXABEYN45BTXH",
-            "lastModifiedDateTime": "2021-07-07T13:59:47Z",
             "name": "Microsoft Teams Chat Files",
              ...,
             "folder": {
@@ -87,11 +84,7 @@ Response shortened for readability:
         },
         ...
        {
-            "@microsoft.graph.downloadUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/_layouts/15/download.SU9ZM2FCa2xaM2UyaC85d0hUNmN4bmU2cEJDZGdncEdtQ0FmM0llR0tUbz0&ApiVersion=2.0",
             "createdDateTime": "2021-12-15T00:07:36Z",
-            "eTag": "\"{66428197-FB89-4611-91F7-77E6D03245B4},2\"",
-            "id": "01XXNRXFEXQFBGNCP3CFDXXXXX43IDERNU",
-            "lastModifiedDateTime": "2021-12-15T00:07:36Z",
             "name": "Versioning and Deprecation.docx",          
             ...,           
             "file": {
@@ -103,12 +96,7 @@ Response shortened for readability:
            ...
         },
         {
-            "@microsoft.graph.downloadUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/_layouts/15/download.TWdMOUhoNDlvSEN5UHM5S3VoMms3Nk9IRldPVWJzSDBlb0xRV3Vld244bz0&ApiVersion=2.0",
             "createdDateTime": "2021-12-21T16:32:51Z",
-            "eTag": "\"{"01XXNRXFBPRIKSVZQHXXXXXABEYN45BTXH",
-},1\"",
-            "id": "01XXNRXFHKI47NDW5GGXXX77PIFW7QDS2R",
-            "lastModifiedDateTime": "2021-12-21T16:32:51Z",
             "name": "WhaleShark.jpg",
             ...
             "file": {
