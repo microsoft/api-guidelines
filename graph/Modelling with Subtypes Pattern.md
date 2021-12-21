@@ -17,54 +17,24 @@ of new variants without breaking changes.
 
 API designers can use OData **type hierarchy**, where there is one abstract base
 type with a few shared properties representing the common concept and one
-sub-type for each variant of the entity.
+sub-type for each variant of the entity. In hierarchy, the interdependencies of properties, i.e. which properties are relevant for which variants, is fully captured in metadata and client code can potentially leverage that to construct and/or validate requests.
 
 ## Issues and Considerations
 
 When introducing a new subtype to the hierarchy, developers need to ensure that
 the new subtype doesn't change the semantic of the type hierarchy with its
 implicit constraints.
+To retrieve properties specific for a derived type an API request URL may need to include casting to the derived type. If type hierarchy is very deep then resulting URL may become very long and not easily readable.  
 
-There are a **few potential risks** for client applications when new sub-types
+There are a few consideration to take into account when new sub-types
 are introduced:
 
--   De-serialization code might break because of missing properties in returned
-    collection items. Even though property X was mandatory on all subtypes
-    previously returned, the new subtype might not have this property and the
-    client code needs to deal with that.
-
--   Client libraries for strongly typed language might ignore some of the values
+-  TODO add something about SDK dependencies and required actions
+-  TODO Client libraries for strongly typed language might ignore some of the values
     in the @odata.type property without further configuration and need to be
     updated to be able to pick the right (client) type to deserialize into.
+TODO something about In addition, you can follow some of the mitigation techniques such as:
 
-In addition, you can follow some of the mitigation techniques such as:
-
--   Think about gradual roll-out sequence
-
-    -   Consider that Microsoft Graph does not return objects from a workload
-        that has a type that is not configured in current metadata. To avoid
-        inconsistencies, follow a two-step process:
-
-        -   Introduce the entity type to the Graph metadata but don’t return
-            objects of the type in any of the heterogeneous collections.
-
-        -   Enable your workload to return objects of the new type as items of
-            collection.
-
--   Allow time for testing
-
-    -   Inform the clients about the change and allow them to test the changes
-        in beta. Time is required to implement the code necessary to deal with
-        the new entity type, both in terms of de-serialization as well as
-        integrating it into the rest of the application.
-
--   Communicate the change in semantics
-
-    -   It is necessary for the client developers to incorporate the new
-        semantic into their application/service, even if the change is perceived
-        to be small. This requires early communication and clear documentation
-        of what the new type represents and why/how it is considered a subtype
-        of the original abstract type of the collection.
 
 ## When to Use this Pattern
 
@@ -81,7 +51,7 @@ properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
 
 The directoryObject type is the main abstraction for many directory
 types such as users, organizational contacts, devices, service principals
-and groups stored in Azure Active Directory. Since any directoryObject object is a unique entity the directoryObject type itself is derived from the  graph.entity base type.
+and groups stored in Azure Active Directory. Since any a directoryObject object is a unique entity, the directoryObject type itself is derived from the graph.entity base type.
 
 ```XML
 <EntityType Name="entity" Abstract="true">
@@ -115,8 +85,8 @@ additional property @odata.type for a variant subtype:
 
 ```
 GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members?$select=id,displayName
-…
-Response payload:
+
+Response payload shortened for readability:
 
 {
      "@odata.context":
@@ -132,7 +102,25 @@ Response payload:
             "id": "45f25951-d04f-4c44-b9b0-2a79e915658d",
             "displayName": "Department 456"
         },
-…        
+        ...        
     ]
+}
+```
+API request for a subtype specific property requires type casting to the subtype, i.e. to retrieve jobTitle property, enabled for the user type, you need to cast from the directoryObject collection items to the microsoft.graph.group derived type.
+
+```
+GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members/microsoft.graph.user?$select=displayName,jobTitle
+
+Response payload shortened for readability:
+
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(displayName,jobTitle)",
+    "value": [
+        {
+            "displayName": "John Cob",
+            "jobTitle": "RESEARCHER II"
+        },
+       ...
+    ]
 }
 ```
