@@ -113,7 +113,7 @@ API request to get members of a group returns a heterogeneous collection of
 users and groups where each element can be a user or a group, and has an
 additional property @odata.type for a variant subtype:
 
-```JSON
+```
 GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members?$select=id,displayName
 …
 Response payload:
