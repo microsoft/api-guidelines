@@ -95,10 +95,11 @@ In general API design includes the following steps:
 
 -   Specify errors
 
-When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on use cases. Therefore it is essential to understand and document your use cases as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because APIs usually are often simplified to support only customer-facing use cases and obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
+When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on use cases. Good API design goes beyond modeling the current state of resources and it is important to plan ahead how API evolves. For this it is essential to understand and document your use cases as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
 ![Resource model example](ModelExample.png)
 
 After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior you identify a happy path and various exceptions and deviations which will be expressed as errors and represented using HTTP codes and error messages.
+
 At every step of your design you need to consider security, privacy and compliance as an intrinsic components of your API implementation.
 
 
@@ -217,7 +218,7 @@ Since objects of complex types on Graph don’t have unique identifiers, they ar
     <Key>
         <PropertyRef Name="id" />
     </Key>
-    <Property Name="id" Type="Edm.Int32" Nullable="false" />
+    <Property Name="id" Type="Edm.String" Nullable="false" />
     <Property Name="name" Type="Edm.String" />
     <Property Name="address" Type="microsoft.graph.Address" />
 </EntityType>
@@ -228,6 +229,14 @@ Since objects of complex types on Graph don’t have unique identifiers, they ar
     <Property Name="country" Type="Edm.String" />
 </ComplexType>
 ```
+|  Microsoft Graph rules for modeling complex resources                                  |       |
+|---------------------------------------|------------------------------------------------------------|
+| :heavy_check_mark: **MUST** use String type for ID      |
+| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
+| :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
+| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
+| :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
+| :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
 There are different approaches for designing an API resource model in situations
 with multiple variants of a common concept. Type Hierarchy, Facets, and Flat bag
@@ -250,22 +259,15 @@ of properties are three most often used patterns in Microsoft Graph today:
     Pattern](./Modelling%20with%20Flat%20Bag%20Pattern.md)
 
 The following table shows summary of main qualities for each pattern and will
-help to select a pattern preferred for your use case.
+help to select an syntactically backward compatible pattern fit for your use case.
 
-| API qualities\ <BR> Use Cases | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Syntactically backward compatible |Recommended Pattern  |
-|----------------------|------------------------------------------|----------------------------------------|---------------------------|---------------------------------|---------------------------|
-| Use Case 1        | yes                                        | no                                                  | no                        | yes                             |Type hierarchy         |
-| Use Case 2                 | ok                                            | yes                                  | yes                       | yes                             |Facets                 | 
-| Use Case 3               | no                                            | no                                  | yes                       | yes                             |Flat bag               |
+| API qualities\ <BR> Use Cases | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Recommended Pattern  |
+|--------------------------------|-------------------------------------|-----------------------------------|---------------------------|---------------------------------|
+| Use Case 1        | yes                                        | no                                                  | no                        | Type hierarchy         |
+| Use Case 2                 | ok                                            | yes                                  | yes                       |Facets                 | 
+| Use Case 3               | no                                            | no                                  | yes                       | Flat bag               |
 
-| Additional Microsoft Graph rules for modeling resources                                                  |
-|----------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use String type for ID      |
-| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
-| :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
-| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
-| :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
-| :warning: **SHOULD NOT** add the property id to a complex type                                              |
+
 
 
 ### Behavior Modeling
@@ -426,11 +428,10 @@ Recommended API Design patterns:
 
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| Key Property            | The ability to uniquely identify an object through the key                                     | [Key Property](./evolvable-enums.md)                                 |
-| Entity Type             |                                                                                                | TBD                                                                  |
-| Complex Type            |                                                                                                | TBD                                                                    |
-| Shared Type             | The ability to reuse a type defined by another service.                                        | TBD   | TBD                                                                    |
+| Addressable Entity      |  The ability to uniquely identify an object through the key                                    | TBD                                                                  |
+| Shared Type             | The ability to reuse a type defined by another service.                                        | TBD                                                                |
 | Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md) |
+| Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Modeling with Facets](./Modelling%20with%20Subtypes%20Pattern.md) |
 | Dictionary              | The ability to persist a variable number of properties.                                        | TBD                                                                      |
 | Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      | TBD                                                                      |
 | Type Namespace          | The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.          | TBD                                                                    |

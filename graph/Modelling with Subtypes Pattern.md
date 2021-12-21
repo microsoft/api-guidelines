@@ -4,7 +4,7 @@ Microsoft Graph API Design Pattern
 
 “Not supposed to be precise but easy to understand”
 
-## *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
+### *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
 
 ## Problem
 
@@ -35,11 +35,11 @@ are introduced:
 
 -   Client libraries for strongly typed language might ignore some of the values
     in the @odata.type property without further configuration and need to be
-    configured to be able to pick the right (client) type to deserialize into.
+    updated to be able to pick the right (client) type to deserialize into.
 
 In addition, you can follow some of the mitigation techniques such as:
 
--   Think about roll-out sequence
+-   Think about gradual roll-out sequence
 
     -   Consider that Microsoft Graph does not return objects from a workload
         that has a type that is not configured in current metadata. To avoid

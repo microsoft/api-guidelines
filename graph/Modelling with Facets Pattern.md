@@ -2,49 +2,26 @@
 
 Microsoft Graph API Design Pattern
 
-## *A frequent pattern in Microsoft Graph is to model multiple variants of a common concept as a single entity type with common properties and one facet property (of complex type) per variant.*
+### *A frequent pattern in Microsoft Graph is to model multiple variants of a common concept as a single entity type with common properties and facets for variants.*
 
-## Context
-
-Let’s assume you need to create an API to manage documents, pictures, files of
-different formats which are organized in different folder hierarchies across
-multiple local and shared drives. These items have many common properties such
-as Name, Owner, Creation Date, common relationships like activities and
-subscriptions, and a common set of behaviors like CRUD operations and sharing.
-
-There are also subsets of values that are specific for each variant, for example
-hashes and Mime type for files and eight different properties for photo like
-camera model and settings.
-
-Since usually individual users or organizations deal with a vast amount of
-information stored in files there is a need for easy filtering and querying
-information based on its metadata.
-
-While modeling for existing requirements we need to create a flexible API design
-to be able accommodate future needs like new metadata or behavior.
 
 ## Problem
-
-How to model files and folders as API resources to be able to easily mange them,
-query and filter using metadata, and
-
-A more general problem is how to model a collection of heterogeneous elements
-that have a set of common properties and behaviors, and some unique properties
-for each variant.
+API developer needs to model a set of heterogeneous resources that have common properties and behaviors, and may express features of multiple variants at a time.
+For example a movie clip stored on OneDrive has properties of File Type and Video Type.
 
 ## Solution
 
-OData allows us to design collections of entities (entity sets, multi valued
-navigation properties) with values of different types using **type hierarchy**,
-where there is one abstract base type with a few common properties and one
-sub-type for each variant of the entity. In the current version of Microsoft
-Graph there are many collections of items that represent slightly different
-things, variants of one concept.
+API designers can create multiple complex types to bundle properties for each variant then define a parent entity type with common properties and one property of a complex type per variant.
+In this solution a child variant is identified by a presence of one or multiple facets in the parent object.
 
 ## Issues and Considerations
 
 When introducing a new subtype, you need to ensure that the new subtype doesn't
-change the semantic of the type hierarchy with it's implicit constraints.
+change the semantic of the type hierarchy with it's implicit constraints. For example 
+
+When introducing a new subtype to the hierarchy, developers need to ensure that
+the new subtype doesn't change the semantic of the type hierarchy with its
+implicit constraints.
 
 There are a **few potential risks** for client applications when new sub-types
 are introduced:
@@ -56,29 +33,21 @@ are introduced:
 
 -   Client libraries for strongly typed language might ignore some of the values
     in the @odata.type property without further configuration and need to be
-    configured to be able to pick the right (client) type to deserialize into.
+    updated to be able to pick the right (client) type to deserialize into.
 
-To minimize impact on clients type hierarchy can be refined by annotating the
-collections with OData derived type constraints (see validation vocabulary).
-This annotation restricts the values to certain sub-trees of an inheritance
-hierarchy. It makes it very explicit that the collection only contains elements
-of some of the subtypes and helps to not return objects of a type that is
-semantically not suitable. In addition, you can follow some of the mitigation
-techniques such as:
+In addition, you can follow some of the mitigation techniques such as:
 
--   Avoid overgeneralized base types
-
--   Think about roll-out sequence
+-   Think about gradual roll-out sequence
 
     -   Consider that Microsoft Graph does not return objects from a workload
         that has a type that is not configured in current metadata. To avoid
         inconsistencies, follow a two-step process:
 
-    -   Introduce the entity type to the Graph metadata but don’t return objects
-        of the type in any of the heterogeneous collections.
+        -   Introduce the entity type to the Graph metadata but don’t return
+            objects of the type in any of the heterogeneous collections.
 
-    -   Enable your workload to return objects of the new type as items of
-        collection.
+        -   Enable your workload to return objects of the new type as items of
+            collection.
 
 -   Allow time for testing
 
@@ -97,33 +66,97 @@ techniques such as:
 
 ## When to Use this Pattern
 
-The Type hierarchy pattern is well familiar to OOP developers and well suited
-for strongly typed client programming languages.
+The facet pattern is useful when ... 
+ make it easier to query resources using OData $filter expression
+This pattern is useful with relatively small number of subtypes otherwise the main object become very sparsely populated.
 
 There are related patterns to consider such as
-[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat
+[Type Hierarchy](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat
 bag of
 properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
 
 ## Example
+```XML
+  <EntityType Name="driveItem" BaseType="graph.baseItem" OpenType="true" ags:MasterService="Microsoft.FileServices" ags:WorkloadIds="Microsoft.Excel,Microsoft.Powerpoint,Microsoft.Teams.GraphSvc,Microsoft.Word">
+        <Property Name="audio" Type="graph.audio" />
+        <Property Name="bundle" Type="graph.bundle" />
+        <Property Name="content" Type="Edm.Stream" />
+        <Property Name="cTag" Type="Edm.String" />
+        <Property Name="deleted" Type="graph.deleted" />
+        <Property Name="file" Type="graph.file" />
+        <Property Name="fileSystemInfo" Type="graph.fileSystemInfo" />
+        <Property Name="folder" Type="graph.folder" />
+        <Property Name="image" Type="graph.image" />
+        <Property Name="location" Type="graph.geoCoordinates" />
+        <Property Name="malware" Type="graph.malware" />
+        <Property Name="media" Type="graph.media" />
+        <Property Name="package" Type="graph.package" />
+        <Property Name="pendingOperations" Type="graph.pendingOperations" />
+        <Property Name="photo" Type="graph.photo" />
+        <Property Name="publication" Type="graph.publicationFacet" />
+        <Property Name="remoteItem" Type="graph.remoteItem" />
+        <Property Name="root" Type="graph.root" />
+        <Property Name="searchResult" Type="graph.searchResult" />
+        <Property Name="shared" Type="graph.shared" />
+        <Property Name="sharepointIds" Type="graph.sharepointIds" />
+        <Property Name="size" Type="Edm.Int64" />
+        <Property Name="source" Type="graph.driveItemSource" />
+        <Property Name="specialFolder" Type="graph.specialFolder" />
+        <Property Name="video" Type="graph.video" />
+        <Property Name="webDavUrl" Type="Edm.String" />
+     ...
+      </EntityType>
+```
 
-`GET
-<https://graph.microsoft.com/v1.0/groups/02bd9fd6-8f93-4758-87c3-1fb73740a315/owners>
-`
-returns a collection where each element can be a user or a service principal,
-and has an additional property @odata.type to show subtype for each variant:
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-{
-    "@odata.context":
-"https://graph.microsoft.com/v1.0/\$metadata\#directoryObjects",
-    "value": [
-        {
-            "@**odata.type**": "\#**microsoft.graph.user**",
-            "id": "48d31887-5fad-4d73-a9f5-3c356e68a038",
-            "userPrincipalName": "MeganB@M365x214355.onmicrosoft.com"
-            // ...
-        }
-    ]
-}
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+```JSON
+https://graph.microsoft.com/beta/me/drive/root/children
+
+Response shortened for readability:
+  {
+            "@microsoft.graph.downloadUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/_layouts/15/download.aspx?UniqueId=66428197-fb89-4611-91f7-77e6d03245b4&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.J1c2VQZXJzaXN0ZW50Q29va2llIjpudWxsLCJpcGFkZHIiOiIyMC4xOTAuMTM1LjQzIn0.SU9ZM2FCa2xaM2UyaC85d0hUNmN4bmU2cEJDZGdncEdtQ0FmM0llR0tUbz0&ApiVersion=2.0",
+            "createdDateTime": "2021-12-15T00:07:36Z",
+            "eTag": "\"{66428197-FB89-4611-91F7-77E6D03245B4},2\"",
+            "id": "01XXNRXFEXQFBGNCP3CFDJD53X43IDERNU",
+            "lastModifiedDateTime": "2021-12-15T00:07:36Z",
+            "name": "Versioning and Deprecation.docx",
+            "webUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/_layouts/15/Doc.aspx?sourcedoc=%7B66428197-FB89-4611-91F7-77E6D03245B4%7D&file=Versioning%20and%20Deprecation.docx&action=default&mobileredirect=true",
+            "cTag": "\"c:{66428197-FB89-4611-91F7-77E6D03245B4},1\"",
+            "size": 21400,
+           ...           
+            "file": {
+                "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "hashes": {
+                    "quickXorHash": "r2d9uZilW0zEIXwycymsUQzhV+U="
+                }
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-12-15T00:07:36Z",
+                "lastModifiedDateTime": "2021-12-15T00:07:36Z"
+            }
+        },
+        {
+            "@microsoft.graph.downloadUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/_layouts/15/download.aspx?UniqueId=d13e47ea-a6db-4d30-affd-e82dbf01cb51&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.J1c2VQZXJzaXN0ZW50Q29va2llIjpudWxsLCJpcGFkZHIiOiIyMC4xOTAuMTM1LjQzIn0.TWdMOUhoNDlvSEN5UHM5S3VoMms3Nk9IRldPVWJzSDBlb0xRV3Vld244bz0&ApiVersion=2.0",
+            "createdDateTime": "2021-12-21T16:32:51Z",
+            "eTag": "\"{D13E47EA-A6DB-4D30-AFFD-E82DBF01CB51},1\"",
+            "id": "01XXNRXFHKI47NDW5GGBG277PIFW7QDS2R",
+            "lastModifiedDateTime": "2021-12-21T16:32:51Z",
+            "name": "WhaleShark.jpg",
+            "webUrl": "https://microsoft-my.sharepoint-df.com/personal/opodolyako_microsoft_com/Documents/WhaleShark.jpg",
+            "cTag": "\"c:{D13E47EA-A6DB-4D30-AFFD-E82DBF01CB51},1\"",
+            "size": 29097,
+            .....
+            "file": {
+                "mimeType": "image/jpeg",
+                "hashes": {
+                    "quickXorHash": "2vHpAA7RDZJteIwl1pXR980xuh4="
+                }
+            },
+            "fileSystemInfo": {
+                "createdDateTime": "2021-12-21T16:32:51Z",
+                "lastModifiedDateTime": "2021-12-21T16:32:51Z"
+            },
+            "image": {}
+        },
+```
