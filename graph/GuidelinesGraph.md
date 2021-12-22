@@ -88,6 +88,8 @@ In general API design includes the following steps:
 -   Define your domain model
 
 -   Derive and name your API resources
+  
+-   Describe relationships between resources
 
 -   Determine required behavior
 
