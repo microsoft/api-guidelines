@@ -105,7 +105,7 @@ At every step of your design you need to consider security, privacy and complian
 
 ### Naming
 
-API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with industry standards, product namespace and other Graph APIs. Microsoft Graph naming conventions follow Microsoft REST API Guidelines.
+API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with **??industry standards, product namespace and other Graph APIs**. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
 
 Below is a short summary of the most often used conventions.
 
@@ -168,7 +168,7 @@ groupings:
 
 2.  A Microsoft *product or service offerings* covering multiple use cases, i.e. /teamwork, /directory.
 
-3.  A *feature* offering covering a single use case and *shared* across multiple
+3.  A *feature offering* covering a single use case and *shared* across multiple
     Microsoft products, i.e. /search, /notifications, /subscriptions, /files.
 
 4.  *Administrative configuration* functions for specific products. (Note: this
@@ -210,8 +210,8 @@ Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conv
 
 ### Resource Modeling Patterns
 
-You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity types declare a key property to uniquely identify its objects and  Complex Types don't. In Microsoft Graph this key property has "id" as a prescribed name.
-Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must use Entity Type to model addressable resources. Complex types are better suited to represent composite properties of API entities.
+You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property has "id" as a prescribed name.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources. Complex types are better suited to represent composite properties of API entities.
 
 ```XML
  <EntityType Name="Author">
