@@ -12,7 +12,7 @@ For example a movie clip stored on OneDrive is both a file and a video. There ar
 ## Solution
 
 API designers create multiple complex types to bundle properties for each variant then define an entity type with a property for each complex type to hold the properties of the variant.
-In this solution a child variant is identified by a presence of one or multiple facets in the parent object.
+In this solution a child variant is identified by a presence of one or more facets in the parent object.
 
 ## Issues and Considerations
 
