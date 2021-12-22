@@ -7,12 +7,12 @@ Microsoft Graph API Design Pattern
 
 ## Problem
 API designer needs to model a set of heterogeneous resources that have common properties and behaviors, and may express features of multiple variants at a time because variants are not mutually exclusive.
-For example a movie clip stored on OneDrive is a file and have additional properties for the video variant.
+For example a movie clip stored on OneDrive is both a file and a video. There are properties associated to each variant.
 
 ## Solution
 
-API designers creates multiple complex types to bundle properties for each variant then define entity type with common properties across variants and one property of complex type per variant.
-In this solution a child variant is identified by a presence of one or multiple facets in the parent object.
+API designers create multiple complex types to bundle properties for each variant then define an entity type with a property for each complex type to hold the properties of the variant.
+In this solution a child variant is identified by a presence of one or more facets in the parent object.
 
 ## Issues and Considerations
 
@@ -65,7 +65,7 @@ The driveItem resource represents a file, folder,image or other item stored in a
       </EntityType>
 ```
 
-API request to get all items from a personal OneDrive will return a hetereogenius collection with different facets populated. In the example below there is a folder,a file and an image in the collection. The image entity has two facets populated: file and image.
+API request to get all items from a personal OneDrive will return a heterogenous collection with different facets populated. In the example below there is a folder, a file and an image in the collection. The image entity has two facets populated: file and image.
 
 ```
 https://graph.microsoft.com/beta/me/drive/root/children
