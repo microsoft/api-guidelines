@@ -16,13 +16,12 @@ In this solution a child variant is identified by a presence of one or more face
 
 ## Issues and Considerations
 
-When introducing a new subtype, you need to ensure that the new subtype doesn't
-change the semantic of the type hierarchy with it's implicit constraints. 
-This pattern may not work well for many mutually exclusive variants because the main entity type will be sparcely populated and may become difficult to reason about.
+When introducing a new facet, you need to ensure that the new facet doesn't change the semantic of the model with it's implicit constraints. 
+
 
 ## When to Use this Pattern
 
-The facet pattern is useful when there is a small number of variants and they are not mutually exclusive. It also makes syntactically easier to query resources using OData $filter expression since it doesn't require casting
+The facet pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes syntactically easier to query resources using OData $filter expression since it doesn't require casting.
 
 There are related patterns to consider such as
 [Type Hierarchy](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat

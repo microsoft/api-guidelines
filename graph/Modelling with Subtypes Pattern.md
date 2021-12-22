@@ -2,14 +2,13 @@
 
 Microsoft Graph API Design Pattern
 
-“Not supposed to be precise but easy to understand”
 
 ### *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
 
 ## Problem
 
 The API design requires to model a set of entities based on a common concept
-that can be further grouped into mutually exclusive variants with specific
+that can be further grouped into **mutually exclusive variants** with specific
 properties and behaviors. The API design should be evolvable and allow addition
 of new variants without breaking changes.
 
@@ -33,7 +32,8 @@ are introduced:
 -  TODO Client libraries for strongly typed language might ignore some of the values
     in the @odata.type property without further configuration and need to be
     updated to be able to pick the right (client) type to deserialize into.
-TODO something about In addition, you can follow some of the mitigation techniques such as:
+-  In the case of public APIs in GA versions clients may develop their applications to support exclusively the current set of subtypes and don’t expect new variations. To mitigate the risk of clients disruption, when introducing a new subtype, allow ample time for communication and rollout.
+
 
 
 ## When to Use this Pattern

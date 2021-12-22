@@ -105,7 +105,7 @@ At every step of your design you need to consider security, privacy and complian
 
 ### Naming
 
-API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with **??industry standards, product namespace and other Graph APIs**. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
+API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with other Graph APIs, industry standards,and names in the product user interface. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
 
 Below is a short summary of the most often used conventions.
 
@@ -373,33 +373,36 @@ breaking change.
 
 \*\* Non-breaking changes:\*\*
 
--   Addition of an annotation OpenType="true" 
+
 -   Addition of properties that are nullable or have a default value
 -   Addition of a member to an evolvable enumeration 
--   Removal, rename, or change to the type of an open extension
--   Removal, rename, or change to the type of an annotation 
--   Introduction of paging to existing collections
--   **Changes to error codes?????**
+-   Removal, rename, or change to the type of an annotation   
 -   Changes to the order of properties
 -   Changes to the length or format of opaque strings, such as resource IDs
+-   Addition or removal of an annotation OpenType="true" 
 
 \*\* Breaking changes:\*\*
 
 -   Changes to the URL or fundamental request/response associated with a
     resource
--   Changing semantics of resource representation
 -   Removal, rename, or change to the type of a declared property
 -   Removal or rename of APIs or API parameters
 -   Addition of a required request header
--   Addition of a EnumType members for non-extensible enumerations
+-   Addition of a EnumType members for non-evolvable enumerations
 -   Addition of a Nullable="false" properties to existing types
 -   Addition of a Nullable="false" parameters to existing actions and functions
--   **Adding attributes to existing nodes is considered breaking??**
+-    Changes to top-level error codes
+-    Introduction of paging to existing collections
+-    Changes to the default order of collection elements
+-    Significant changes to the performance of APIs such as increased latency, rate limits or concurrency.
+
 
 
 ### Versioning and Deprecation
 As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
-Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process. You must create a new version of your element for any breaking change and name it uniquely. 
+Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process.
+
+You must create a new version of your element for any breaking change and name it uniquely. 
 If the current element name is best, a new element is added that has the existing name plus the suffix _v2, indicating that it is the successor to the original. The original element is then marked as deprecated using annotations.
 
 Microsoft Graph provides two public endpoints to support API lifecycle:
@@ -423,13 +426,11 @@ Recommended API Design patterns:
 
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| Addressable Entity      |  The ability to uniquely identify an object through the key                                    | TBD                                                                  |
 | Shared Type             | The ability to reuse a type defined by another service.                                        | TBD                                                                |
 | Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md) |
 | Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Modeling with Facets](./Modelling%20with%20Subtypes%20Pattern.md) |
 | Dictionary              | The ability to persist a variable number of properties.                                        | TBD                                                                      |
 | Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      | TBD                                                                      |
-| Type Namespace          | The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.          | TBD                                                                    |
 | Change Tracking         | The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph | TBD                                                                      |
 | Long Running Operations | The ability to model asynchronous operations.                                                  | TBD                                                                       |
 | Delta Queries           | The ability to query changes in the data exposed by Microsoft Graph                           | TBD                                                                      |
