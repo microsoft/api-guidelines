@@ -7,7 +7,7 @@ Microsoft Graph API Design Pattern
 
 ## Problem
 API designer needs to model a set of heterogeneous resources that have common properties and behaviors, and may express features of multiple variants at a time because variants are not mutually exclusive.
-For example a movie clip stored on OneDrive is a file and have additional properties for the video variant.
+For example a movie clip stored on OneDrive is both a file and a video. There are properties associated to each variant.
 
 ## Solution
 
