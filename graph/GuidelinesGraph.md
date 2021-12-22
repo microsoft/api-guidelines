@@ -396,8 +396,6 @@ breaking change.
 -   Addition of a Nullable="false" parameters to existing actions and functions
 -   **Adding attributes to existing nodes is considered breaking??**
 
-For the full list of rules you can refer to [this section of the OData V4
-spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
 
 ### Versioning and Deprecation
 As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
