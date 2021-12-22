@@ -399,11 +399,8 @@ breaking change.
 
 ### Versioning and Deprecation
 As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
-Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process before retirement. You must create a new version when:
-  - Renaming any element of your API or
-  -	Restructuring a resource type.
-
-If the current element name is best, a new property is added that has the existing name plus the suffix _v2, indicating that it is the successor to the original property. The original property is then marked as deprecated using annotations.
+Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process. You must create a new version of your element for any breaking change and name it uniquely. 
+If the current element name is best, a new element is added that has the existing name plus the suffix _v2, indicating that it is the successor to the original. The original element is then marked as deprecated using annotations.
 
 Microsoft Graph provides two public endpoints to support API lifecycle:
 1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
