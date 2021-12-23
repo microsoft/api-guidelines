@@ -124,3 +124,15 @@ Response payload shortened for readability:
     ]
 }
 ```
+API request to create a subtype object in a polymorphic collection requires "@odata.type" specified in the request body.
+```
+POST https://graph.microsoft.com/v1.0/directoryObjects
+
+{
+    "@odata.type": "#microsoft.graph.group",
+    "displayName": "Library Assist",
+    "mailEnabled": false,
+    "mailNickname": "library",
+    "securityEnabled": true
+}
+```
