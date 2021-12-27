@@ -167,25 +167,27 @@ Array      | One of a) a comma-separated list of values (preferred), or b) separ
 
 The table below lists the headers most used by Azure services:
 
-Header Key          | Applies to | Example
-------------------- | ---------- | -------------
-_authorization_     | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory)
-_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
-traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
-tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
-accept              | Request    | application/json
-If-Match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
-If-None-Match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
-If-Modified-Since   | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
-If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
-date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
-_content-type_      | Both       | application/merge-patch+json
-_content-length_    | Both       | 1024
-_x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
-ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
-last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
-_x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
-retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
+Header Key              | Applies to | Example
+----------------------- | ---------- | -------------
+_authorization_         | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory)
+_x-ms-useragent_        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+traceparent             | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+tracecontext            | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+accept                  | Request    | application/json
+If-Match                | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+If-None-Match           | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
+If-Modified-Since       | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
+If-Unmodified-Since     | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#Conditional-Requests))
+date                    | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
+_content-type_          | Both       | application/merge-patch+json
+_content-length_        | Both       | 1024
+_x-ms-request-id_       | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0 (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+_x-ms-client-request-id_| Both       | 227cdc5-9f48-4e84-921a-10967cb785a1 (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+_x-ms-return-client-request-id_| Request | true (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+ETag                    | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
+last-modified           | Response   | Sun, 06 Nov 1994 08:49:37 GMT
+_x-ms-error-code_       | Response   | (see [Handling Errors](#Handling-Errors))
+retry-after             | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in _italics_
 
@@ -767,7 +769,14 @@ In the rare case where a server rolls back a version that clients are already us
 
 ### Repeatability of requests
 
-The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
+The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient 
+
+
+
+
+
+
+uted applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
 
 :ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
 
@@ -992,6 +1001,14 @@ Client libraries are required to send telemetry and distributed tracing informat
 - [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 - [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy)
 - [Open Telemetry](https://opentelemetry.io/)
+
+In addition to distributed tracing, Azure also uses a set of common correlation headers:
+
+|Name                         |Applies to|Description|
+|-----------------------------|----------|-----------|
+|x-ms-client-request-id.      |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** log this with their traces to facilitate tracing a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
+|x-ms-return-client-request-id|Request.  |Optional. If specified, the service **must** include a `x-ms-client-request-id` header with the corresponding value in the response. Allows clients to correlate responses with requests.
+|x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoratoin such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this valu is globally unique. Services should log this value with their traces to facilitate tracing of a single request.
 
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
