@@ -769,14 +769,7 @@ In the rare case where a server rolls back a version that clients are already us
 
 ### Repeatability of requests
 
-The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient 
-
-
-
-
-
-
-uted applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
+The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
 
 :ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
 
