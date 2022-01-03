@@ -47,15 +47,7 @@ The Microsoft Graph guidelines are an extension of the Microsoft REST API
 guidelines. Readers are assumed also be reading and following the Microsoft REST API
 guidelines except where this document outlines specific differences or exceptions to those guidelines.
 Together these guidelines and a library of API patterns serve as the means by
-which API teams discuss and come to consensus on API review recommendations.
-
-This document borrows from multiple public sources such as:
-
-1.  Microsoft Azure REST API Guidelines
-
-2.  Google Cloud Platform APIs
-
-3.  WSO2 Rest API Design Guidelines and others.
+which API teams discuss and come to consensus on API review requirements.
 
 Technology and software are constantly changing and evolving, and as such, this
 is intended to be a living document. [Open an
@@ -66,21 +58,19 @@ a change or propose a new idea.
 
 This document offers prescriptive guidance labeled as follows:
 
-:heavy_check_mark: **MUST** satisfy this specification. If not following this
-advice, you MUST disclose your reason during the Graph API review.
+:heavy_check_mark: **MUST** satisfy this specification. 
 
-:no_entry: **MUST NOT** use this pattern. If not following this advice, you MUST
-disclose your reason during the Graph API review.
+:no_entry: **MUST NOT** use this pattern. 
 
-:ballot_box_with_check: **SHOULD** fulfill this specification. If not
-following this advice, you MUST disclose your reason during the Graph API
-review.
+:ballot_box_with_check: **SHOULD** fulfill this specification. 
 
-:warning: **SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API review.
+:warning: **SHOULD NOT** adopt this pattern. 
+
+If not following these advices, you MUST disclose your reasons during the Graph API review.
 
 ## Design Approach
 
-The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote API-first design approach where you begin your product design by focusing on how information will be exchanged and represented and creating an interface contract for your API which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface and is essential for agility, predictability, and reuse of your APIs. Starting with user-facing contracts also promotes good understanding of user interactions, your modeling domain, and understanding of how the service will evolve. Microsoft Graph supports resource and query based API styles which follow HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and schema definition (see Documentation · OData - the Best Way to REST).
+The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote API-first design approach where you begin your product design by focusing on how information will be exchanged and represented and creating an interface contract for your API which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs. Established interface contract allows developers to use your API while internal teams are still working on implementation, API specifications enable designing of user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and understanding of how the service will evolve. Microsoft Graph supports resource and query-based API styles which follow HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and schema definition (see Documentation · OData - the Best Way to REST).
 [Documentation · OData - the Best Way to REST](https://www.odata.org/documentation/)).
 
 In general API design includes the following steps:
@@ -93,21 +83,21 @@ In general API design includes the following steps:
 
 -   Determine required behavior
 
--   Determine user roles and permissions
+-   Determine user roles and application permissions
 
 -   Specify errors
 
-When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on use cases. Good API design goes beyond modeling the current state of resources and it is important to plan ahead how API evolves. For this it is essential to understand and document your use cases as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
+When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources and it is important to plan ahead how API evolves. For this it is essential to understand and document your user scenarios as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
 ![Resource model example](ModelExample.png)
 
 After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior you identify a happy path and various exceptions and deviations which will be expressed as errors and represented using HTTP codes and error messages.
 
-At every step of your design you need to consider security, privacy and compliance as an intrinsic components of your API implementation.
+At every step of your design you need to consider security, privacy and compliance as intrinsic components of your API implementation.
 
 
 ### Naming
 
-API resources are typically described by nouns. Resource and properties names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should consider consistency with other Graph APIs, industry standards,and names in the product user interface. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should favor consistency with other Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
 
 Below is a short summary of the most often used conventions.
 
@@ -138,7 +128,7 @@ Below is a short summary of the most often used conventions.
 A Uniform Resource Locator (URL) is how developers access the resources of your
 API.
 
-Navigation path to the Microsoft Graph resources generally broken into multiple
+Navigation paths to Microsoft Graph resources are generally broken into multiple
 segments:
 
 **{scheme}://{host}/{version}/{category}/[{pathSegment}][?{query}]** where
@@ -171,16 +161,15 @@ groupings:
 2.  A Microsoft *product or service offerings* covering multiple use cases, i.e. /teamwork, /directory.
 
 3.  A *feature offering* covering a single use case and *shared* across multiple
-    Microsoft products, i.e. /search, /notifications, /subscriptions, /files.
+    Microsoft products, i.e. /search, /notifications, /subscriptions.
 
-4.  *Administrative configuration* functions for specific products. (Note: this
-    is not final and may be adjusted based on the survey results), i.e. /admin/exchange.
+4.  *Administrative configuration* functions for specific products. i.e. /admin/exchange.
 
 5.  Internal Microsoft requirements for publishing Privileged and Hidden APIs,
     routing, and load testing, i.e./loadTestEntities.
 
 Effectively top-level categories define a perimeter for the API surface thus a
-new category creation requires additional rigor and governance.
+new category creation requires additional rigor and governance approval.
 
 ### Query Support
 
@@ -189,8 +178,8 @@ OData specifications and [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 |Requirements|
 |----------------------------------------------------------------------------------------------------|
-| :ballot_box_with_check: **SHOULD** support \$select on resource to enable properties projection |
-|:ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
+| :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
+| :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
 | :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
 
 Limitations of \$query requests made to Microsoft Graph:
