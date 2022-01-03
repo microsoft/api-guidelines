@@ -30,7 +30,7 @@ Table of Contents
 
 ## Introduction
 
-When building a digital ecosystem API usability becomes a business priority. Success of your ecosystem depends on APIs that are easy to discover, simple to use, fit to purpose, and consistent across your products.
+When building a digital ecosystem API usability becomes a business priority. Success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API developer teams MUST follow to
 ensure that Microsoft Graph has a consistent and easy to use API surface. A new API design should meet the
@@ -50,7 +50,7 @@ Together these guidelines and a library of API patterns serve as the means by
 which API teams discuss and come to consensus on API review requirements.
 
 Technology and software are constantly changing and evolving, and as such, this
-is intended to be a living document. [Open an
+is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will more frequently change to add guidance in areas previously uncovered, or to clarify existing guidance. It will less frequently change the directional guidance it has already provided. [Open an
 issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest
 a change or propose a new idea.
 
@@ -179,7 +179,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |Requirements|
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
-| :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
+| :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
 | :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
 
 Limitations of \$query requests made to Microsoft Graph:
