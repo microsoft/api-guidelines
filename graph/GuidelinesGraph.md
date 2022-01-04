@@ -180,7 +180,15 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
+| :heavy_check_mark: **MUST** support server-side pagination for collections |
+| :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
+
+The query options part of an OData URL can be quite long, potentially exceeding
+the maximum length of URLs supported by components involved in transmitting or
+processing the request. One way to avoid this is to use the POST verb instead of
+GET with $query segment, and pass the query options part of the URL in the request body as described
+in the chapter [OData Query
+Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
 Limitations of \$query requests made to Microsoft Graph:
 
@@ -188,15 +196,8 @@ Limitations of \$query requests made to Microsoft Graph:
     request body or completely in the request url. Graph doesn't support query
     options present in both places.
 
--   The parameters in \$query should not span multiple workloads. Support for
-    \$query right now is limited to properties belonging to the same workload.
-
-The query options part of an OData URL can be quite long, potentially exceeding
-the maximum length of URLs supported by components involved in transmitting or
-processing the request. One way to avoid this is to use the POST verb instead of
-GET, and pass the query options part of the URL in the request body as described
-in the chapter [OData Query
-Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
+-   The parameters in \$query segment should not span multiple workloads. Support for
+    \$query segment right now is limited to properties belonging to the same workload.
 
 
 ### Resource Modeling Patterns
@@ -222,10 +223,10 @@ Since objects of complex types on Graph don’t have unique identifiers, they ar
 ```
 |  Microsoft Graph rules for modeling complex resources                                  |       |
 |---------------------------------------|------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use String type for ID      |
-| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property  |
+| :heavy_check_mark: **MUST** use String type for id      |
+| :heavy_check_mark: **MUST** use a primary key composed of a single property  |
 | :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
-| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
+| :heavy_check_mark: **MUST** use a root object with  a value property to return a collection                |
 | :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
 | :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
@@ -250,13 +251,13 @@ of properties are three most often used patterns in Microsoft Graph today:
     Pattern](./Modelling%20with%20Flat%20Bag%20Pattern.md)
 
 The following table shows summary of main qualities for each pattern and will
-help to select an syntactically backward compatible pattern fit for your use case.
+help to select a pattern fit for your use case.
 
-| API qualities\ <BR> Use Cases | Properties and behavior described in metadata | Suited for combinations of properties and behaviors | Simple query construction | Recommended Pattern  |
-|--------------------------------|-------------------------------------|-----------------------------------|---------------------------|---------------------------------|
-| Use Case 1        | yes                                        | no                                                  | no                        | Type hierarchy         |
-| Use Case 2                 | ok                                            | yes                                  | yes                       |Facets                 | 
-| Use Case 3               | no                                            | no                                  | yes                       | Flat bag               |
+| API qualities\   <BR> Patterns         | Properties and behavior <BR> described in metadata | Supports combinations <BR> of properties and behaviors | Simple query construction | 
+|---------------------------------------------------|-------------------------------------|-----------------------------------|---------------------------|
+| Type hierarchy            | yes                                        | no                                                  | no                        | 
+| Facets                    | partially                                            | yes                                  | yes                       |
+|Flat bag                   | no                                            | no                                  | yes                       | 
 
 
 
@@ -266,22 +267,23 @@ help to select an syntactically backward compatible pattern fit for your use cas
 The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
-response pattern should be one of the first implementation decisions you make. You also may utilize operational resources such as functions and actions. According to [ODATA standards]( http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2) a function represents an operation which returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action may have side effects and may return a result represented as a single entity or collection of any type.
+response pattern should be one of the first implementation decisions you make.
+APIs SHOULD use resource-based designs with standard HTTP methods rather than operation resources if possible.
+ Operation resources are either functions or actions. According to [ODATA standards]( http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2) a function represents an operation which returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action may have side effects and may return a result represented as a single entity or collection of any type.
 
 |  Microsoft Graph rules for modeling behavior                                                                                          |
 |-----------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collection …/{collection}| 
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections | 
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
-| :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | 
-| :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | 
-| :no_entry: **MUST NOT** use PATCH to replaces composite resources |                    | 
+| :heavy_check_mark: **MUST** use GET for listing and reading resources. | 
+| :warning: **SHOULD NOT** use PUT for updating resources.                                       | 
 | :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
-| :no_entry: **MUST NOT** use unbounded actions and functions| 
 
-As Microsoft Graph supports only bound operations they must have a binding parameter matching the type of the bound resource. The binding parameter MAY be Nullable.
+
+Bound operations must have a binding parameter matching the type of the bound resource. 
 In addition both actions and functions support overloading, meaning an API definition may contain multiple actions or functions with the same name.
-Microsoft Graph supports the use of optional parameters. You can use the optional parameter annotation instead of creating function or action overloads when unnecessary.
+Microsoft Graph supports the use of optional parameters. You can use the optional parameter annotation instead of creating function or action overloads.
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
 REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
@@ -290,18 +292,17 @@ REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Gui
 
 Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should
 follow when returning error condition responses. You can improve API traceability
-and consistency by using recommended Graph error model:
+and consistency by using recommended Graph error model and the Graph Utilities library to provide a standard implementation for your service :
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
 "error": {
     "code": "BadRequest",
-    "message": "Unsupported functionality",
+    "message": "Cannot process the request because a required field is missing.",
     "target": "query",    
     "innererror": {
-                "code": "301",
-                "message": "Cannot process the request because a required field is missing.",
-             
+                "code": "RequiredFieldMissing",
+                           
                 }
     }
 }
@@ -317,7 +318,7 @@ The following examples demonstrate error modeling for common use cases:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
   "error": {
-    "code": "badRequest",
+    "code": "BadRequest",
     "message": "Cannot process the request because it is malformed or incorrect.",
 	"target": "Resource X (Optional)"
   }
@@ -325,15 +326,14 @@ The following examples demonstrate error modeling for common use cases:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -   **Detailed error**: An API needs to provide service-specific details of the
-    error via the innererror property of the error object. The code property in
-    innererror is optional but highly recommended. It is intended to allow
+    error via the innererror property of the error object. It is intended to allow
     services to supply a specific error code to help differentiate errors that
     share the same top-level error code but reported for different reasons.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
   "error": {
-    "code": "badRequest",
+    "code": "BadRequest",
     "message": "Cannot process the request because it is malformed or incorrect.",
     "innererror": {
       "code": "requiredFieldOrParameterMissing",
@@ -383,7 +383,7 @@ breaking change.
 -   Addition of a Nullable="false" properties to existing types
 -   Addition of a Nullable="false" parameters to existing actions and functions
 -    Changes to top-level error codes
--    Introduction of paging to existing collections
+-    Introduction of server-side pagination to existing collections
 -    Changes to the default order of collection elements
 -    Significant changes to the performance of APIs such as increased latency, rate limits or concurrency.
 
