@@ -180,7 +180,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
+| :ballot_box_with_check: **SHOULD** support pagination $top and $count for collections |
 
 Limitations of \$query requests made to Microsoft Graph:
 
