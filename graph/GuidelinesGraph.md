@@ -358,7 +358,7 @@ For a complete mapping of error codes to HTTP statuses you can refer to the
 Microsoft Graph definition of breaking changes is based on the [Microsoft REST
 API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change).
-In general, making changes to the API contract for existing elements is
+In general, making all but additive changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
 
@@ -390,11 +390,12 @@ breaking change.
 
 
 ### Versioning and Deprecation
-As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If it is not possible then you must version elements of your APIs.
+As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If that is not possible then you must version elements of your APIs.
 Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process.
 
 You must create a new version of your element for any breaking change and name it uniquely. 
-If the current element name is best, a new element is added that has the existing name plus the suffix _v2, indicating that it is the successor to the original. The original element is then marked as deprecated using annotations.
+In some cases, the API will have evolved such that there is a new, natural unique name.   In other cases, the original name may still be the most descriptive for the evolved element.  In the latter case, the suffix _v2 must be added to the original name to make it unique.
+The original element is then marked as deprecated using annotations.
 
 Microsoft Graph provides two public endpoints to support API lifecycle:
 1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
@@ -417,17 +418,10 @@ Recommended API Design patterns:
 
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| Shared Type             | The ability to reuse a type defined by another service.                                        | TBD                                                                |
 | Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md) |
 | Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Modeling with Facets](./Modelling%20with%20Subtypes%20Pattern.md) |
-| Dictionary              | The ability to persist a variable number of properties.                                        | TBD                                                                      |
-| Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      | TBD                                                                      |
-| Change Tracking         | The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph | TBD                                                                      |
-| Long Running Operations | The ability to model asynchronous operations.                                                  | TBD                                                                       |
-| Delta Queries           | The ability to query changes in the data exposed by Microsoft Graph                           | TBD                                                                      |
-| Navigation Properties   |                                                                                                | TBD                                                                      |
-| Viewpoint               |                                                                                               | TBD                                                                      |
-|Property projection $select|  |TBD
+                                                                     |
+
 
 ## References
 
