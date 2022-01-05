@@ -1,30 +1,18 @@
-### Deprecation Process
+### Deprecation Guidelines
 
-If your API requires an introduction of breaking changes you must follow the
-deprecation process:
+If your API requires the introduction of breaking changes you must add Revisions annotations to the API definition with the following terms:
 
--   After API review board approvals, add Revisions annotation to the API
-    definition CSDL with the following terms:
+    
+    -   Date: Date when the element was marked as deprecated.
+    -   Version: Used to organize the ChangeLog. Use the format "YYYY-MM/Category" where "YYYY-MM" is the month the deprecation is announced, and "Category" is the category under which the change is described.
+    -   Kind: Deprecated - 
+    -   Description: Human readable description of the change: Used in changelog, documentation etc.
+    -   RemovalDate: Earliest date when the element may be removed.
 
-    -   Kind of change: Deprecated (vs "added" to track added properties/types)
-
-    -   Human readable description of the change: Used in changelog,
-        documentation etc.
-
-    -   Version: Used to identify group of changes. Of the format
-        "YYYY-MM/Category" where "YYYY-MM" is the month the deprecation is
-        announced, and "Category" is the category under which the change is
-        described in the ChangeLog
-
-    -   Date: Date when the element was marked as deprecated
-
-    -   RemovalDate: Date when the element may be removed
-
-The annotation can be applied to a type, entity set, singleton, property,
-navigation property, function or action. If a type is marked as deprecated, it
-is not necessary to mark members of that type as deprecated, nor is it necessary
-to annotate any usage of that type in entity sets, singletons, properties,
-navigation properties, functions, or actions.
+The annotation can be applied to a type, an entity set, a singleton,a property, a
+navigation property, a function or an action. If a type is marked as deprecated, it
+is not necessary to mark the members of that type as deprecated, nor is it necessary
+to annotate any usages of that type.
 
 **Example of property annotation:**
 
@@ -45,12 +33,10 @@ navigation properties, functions, or actions.
   </EntityType>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When the request URL contains a reference to a deprecated model element, the
-HTTP response includes a [Deprecation
+When the request URL contains a reference to a deprecated model element, the gateway will add a [Deprecation
 header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
 date the element was marked as deprecated) and a Sunset header (with the date 2
-years beyond the Deprecation date). Response also includes a link header
-pointing to the breaking changes page.
+years beyond the Deprecation date) to the response.
 
 **Deprecation header example:**
 
