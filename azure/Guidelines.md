@@ -183,7 +183,6 @@ _content-type_          | Both       | application/merge-patch+json
 _content-length_        | Both       | 1024
 _x-ms-request-id_       | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0 (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
 _x-ms-client-request-id_| Both       | 227cdc5-9f48-4e84-921a-10967cb785a1 (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
-_x-ms-return-client-request-id_| Request | true (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
 ETag                    | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified           | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 _x-ms-error-code_       | Response   | (see [Handling Errors](#Handling-Errors))
@@ -999,9 +998,8 @@ In addition to distributed tracing, Azure also uses a set of common correlation 
 
 |Name                         |Applies to|Description|
 |-----------------------------|----------|-----------|
-|x-ms-client-request-id.      |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** log this with their traces to facilitate tracing a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
-|x-ms-return-client-request-id|Request.  |Optional. If specified, the service **must** include a `x-ms-client-request-id` header with the corresponding value in the response. Allows clients to correlate responses with requests.
-|x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoratoin such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this valu is globally unique. Services should log this value with their traces to facilitate tracing of a single request.
+|x-ms-client-request-id       |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** include this in their log entries to facilitate correlation of log entries for a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
+|x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoration such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this value is globally unique. Services should log this value with their traces to facilitate correlation of log entries for a single request.
 
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
