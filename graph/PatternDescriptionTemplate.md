@@ -1,53 +1,49 @@
-Pattern Name {align="center" style="text-align:center"}
-============
+# Pattern Name
 
 Microsoft Graph API Design Pattern
 
  
 
-*Provide a short description of the pattern.*
+### *Provide a short description of the pattern.*
 
-Context
--------
-
+<BR>
+## Problem
+--------
 *Describe business context relevant for the pattern.*
-
-* *
-
-Problem:
-
 *Provide a short description of the problem.*
 
 * *
 
-Solution
+## Solution
 --------
 
 *Describe how to implement the solution to solve the problem.*
 *Describe related patterns.*
+
 * *
 
-Issues and Considerations
--------------------------
-
-*Describe tradeoffs of the solution.*
-
- 
-
-When to Use this Pattern
+## When to Use this Pattern
 ------------------------
 
 *Describe when and why the solution is applicable and when it may not.*
 
- 
+* *
 
-Example
+## Issues and Considerations
+-------------------------
+
+*Describe tradeoffs of the solution.*
+
+
+* *
+
+## Example
 -------
 
 *Provide a short example from real life*
 
- 
+* * 
 
- 
 
- 
+
+
