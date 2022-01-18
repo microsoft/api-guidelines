@@ -376,7 +376,7 @@ breaking change.
 
 -   Changes to the URL or fundamental request/response associated with a
     resource
--   Removal, rename, or change to the type of a declared property
+-   Removal, rename, or change to an incompatible type of a declared property
 -   Removal or rename of APIs or API parameters
 -   Addition of a required request header
 -   Addition of a EnumType members for non-evolvable enumerations
