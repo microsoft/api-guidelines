@@ -24,7 +24,7 @@ Dictionaries, sometimes called maps, are a collection of name-value pairs. They 
 As dictionary entries are removed via setting the value to null, this means that dictionaries can only support values that are non-nullable.
 
   OpenQuestions:
-  -  Can/should PUT be supported on the dictionary property and/or the entry value 
+  - Can/should PUT be supported on the dictionary property and/or the entry value 
   - What does OData say about being able to POST to a structured property? Will OData Web API allow that?
   - Must an implementer support PATCH at both the dictionary level and the entry level?
 
