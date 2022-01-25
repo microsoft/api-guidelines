@@ -310,7 +310,7 @@ There are 2 kinds of errors:
 
 Property | Type | Required | Description
 -------- | ---- | :------: | -----------
-`error` | ErrorDetail | ✔ | The top-level error object whose `code` matches `x-ms-error-code`
+`error` | ErrorDetail | ✔ | The top-level error object whose `code` matches the `x-ms-error-code` response header
 
 **ErrorDetail** : Object
 
