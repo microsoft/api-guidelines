@@ -11,13 +11,11 @@ Table of Contents
     - [Naming](#naming)
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
     - [Query Support](#query-support)
-    - [Recommended Modeling Patterns](#recommended-modeling-patterns)
-  - [Behavior Modeling](#behavior-modeling)
-      - [Microsoft Graph rules for modeling behavior](#microsoft-graph-rules-for-modeling-behavior)
+    - [Resource Modeling Patterns](#resource-modeling-patterns)
+    - [Behavior Modeling](#behavior-modeling)
     - [Error Handling](#error-handling)
-    - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
-  - [Versioning and Deprecation](#versioning-and-deprecation)
-    - [Deprecation Process](#deprecation-process)
+  - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
+    - [Versioning and Deprecation](#versioning-and-deprecation)
   - [Recommended API Patterns](#recommended-api-patterns)
   - [References](#references)
 
@@ -27,48 +25,32 @@ Table of Contents
 
 | Date        | Notes                       |
 |-------------|-----------------------------|
-| 2021-Sep-28 | Alignment with Azure style. |
+| 2021-Sep-28 | Using summary and patterns style. |
 | 2020-Oct-04 | Initial version in Wiki.    |
 
 ## Introduction
 
-When building a digital ecosystem you should use API-first approach and start
-with design and development of your APIs. Considering API usability and creating
-APIs that are easy to discover, simple to use, fit to purpose, and consistent
-across your products will make the difference between success and failure of
-your ecosystem.
+When building a digital ecosystem API usability becomes a business priority. Success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
-This document offers guidance that Graph API developer teams MUST follow to
-ensure that customers have a great experience. A new API design should meet the
+This document offers guidance that Microsoft Graph API producer teams MUST follow to
+ensure that Microsoft Graph has a consistent and easy to use API surface. A new API design should meet the
 following goals:
 
 \- Developer friendly via consistent naming, patterns, and web standards (HTTP,
 REST, JSON)
 
-\- Efficient and cost-effective.
-
 \- Work well with SDKs in many programming languages.
 
-\- Sustainable & versionable via clear API contracts.
+\- Sustainable & evolvable via clear API contracts.
 
 The Microsoft Graph guidelines are an extension of the Microsoft REST API
-guidelines. Readers are assumed also be reading the Microsoft REST API
-guidelines and be familiar with them. Graph guidance is a superset of the
-Microsoft API guidelines and services should follow them except where this
-document outlines specific differences or exceptions to those guidelines.
+guidelines. Readers are assumed also be reading and following the Microsoft REST API
+guidelines except where this document outlines specific differences or exceptions to those guidelines.
 Together these guidelines and a library of API patterns serve as the means by
-which API teams discuss and come to consensus on API review recommendations.
-
-This document borrows heavily from multiple public sources such as:
-
-1.  Microsoft Azure REST API Guidelines
-
-2.  Google Cloud Platform APIs
-
-3.  WSO2 Rest API Design Guidelines and others.
+which API teams discuss and come to consensus on API review requirements.
 
 Technology and software are constantly changing and evolving, and as such, this
-is intended to be a living document. [Open an
+is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will more frequently change to add guidance in areas previously uncovered, or to clarify existing guidance. It will less frequently change the directional guidance it has already provided. [Open an
 issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest
 a change or propose a new idea.
 
@@ -76,76 +58,47 @@ a change or propose a new idea.
 
 This document offers prescriptive guidance labeled as follows:
 
-:heavy_check_mark: **MUST** satisfy this specification. If not following this
-advice, you MUST disclose your reason during the Graph API review.
+:heavy_check_mark: **MUST** satisfy this specification. 
 
-:no_entry: **MUST NOT** use this pattern. If not following this advice, you MUST
-disclose your reason during the Graph API review.
+:no_entry: **MUST NOT** use this pattern. 
 
-:ballot_box_with_check: **SHOULD** fulfill this specification. If not
-following this advice, you MUST disclose your reason during the Graph API
-review.
+:ballot_box_with_check: **SHOULD** fulfill this specification. 
 
-:warning: **SHOULD NOT** adopt this pattern. If not following this advice, you MUST disclose your reason during the Graph API review.
+:warning: **SHOULD NOT** adopt this pattern. 
+
+If not following these advices, you MUST disclose your reasons during the Graph API review.
 
 ## Design Approach
 
-The design of your API is arguably the most important investment you will make
-in it. The design of your API is what creates the first impression for
-developers. Microsoft Graph APIs follow HTTP, REST, and JSON standards and are
-described using ODATA conventions and CSDL for schema definition (see
-[Documentation · OData - the Best Way to
-REST](https://www.odata.org/documentation/)).
-
-We promote API-first design approach where you begin by creating an interface or
-API for your service first. Subsequently you follow with the service
-implementation which relies on the specified interface. API -first approach is
-essential for agility, predictability, and reuse of your APIs as it promotes
-good understanding of your modeling domain, consistent interface contract, and
-understanding of how supporting service will evolve.
+The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote API-first design approach where you begin your product design by focusing on how information will be exchanged and represented and creating an interface contract for your API which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs. Established interface contract allows developers to use your API while internal teams are still working on implementation, API specifications enable designing of user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and understanding of how the service will evolve. Microsoft Graph supports resource and query-based API styles which follow HTTP, REST, and JSON standards, where API contract is described using ODATA conventions and schema definition (see Documentation · OData - the Best Way to REST).
+[Documentation · OData - the Best Way to REST](https://www.odata.org/documentation/)).
 
 In general API design includes the following steps:
 
 -   Define your domain model
 
 -   Derive and name your API resources
+  
+-   Describe relationships between resources
 
 -   Determine required behavior
 
--   Determine user roles and permissions
+-   Determine user roles and application permissions
 
 -   Specify errors
 
-To create a good API you need to start with understanding your **use cases** and
-supporting domain model. We describe domain models in terms of entities or
-resources, their properties, and relationships and further refer to it as entity
-data model. There is no one-to-one correspondence between domain model elements
-and API resources as APIs usually support only customer-facing use cases. A simple resource diagram makes it easier to reason about resource relationships and a shape of your API.
+When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources and it is important to plan ahead how API evolves. For this it is essential to understand and document your user scenarios as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details. We recommend creating a simple resource diagram, like below, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
+![Resource model example](ModelExample.png)
 
-![Domain model example](ResourceModel.png)
+After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior you identify a happy path and various exceptions and deviations which will be expressed as errors and represented using HTTP codes and error messages.
 
-After API resources are identified you need to name them and their properties so
-that the API will be discoverable and intuitive for developers, and consistent
-with other Graph resources.
+At every step of your design you need to consider security, privacy and compliance as intrinsic components of your API implementation.
 
-When resources are defined it’s time to think about the behavior of your API and
-define required operations and actions. There are read-only and write scenarios
-where a resource can be used to represent some kind of data processing
-operation. The terms function and action are used to identify read and write
-operation style resources, respectively.
-
-At every step of your design you need to consider security, privacy and
-compliance as an intrinsic components of your API implementation. And finally
-based on your API resources, their behavior, and anticipated exceptions you need
-to identify potential error scenarios with secure and descriptive messaging.
 
 ### Naming
 
-Consistent naming is foundational for API usability. API resources are typically
-described by nouns. You need to consider that resources and property names
-appear in API URLs and payloads and should be descriptive and easy to
-understand. Microsoft Graph naming conventions follow [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should favor consistency with other Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
+
 Below is a short summary of the most often used conventions.
 
 | Requirements                                                                                                         | Example                                                                                                                                                                                                                                                                                                                 |
@@ -175,7 +128,7 @@ Below is a short summary of the most often used conventions.
 A Uniform Resource Locator (URL) is how developers access the resources of your
 API.
 
-Navigation path to the Microsoft Graph resources generally broken into multiple
+Navigation paths to Microsoft Graph resources are generally broken into multiple
 segments:
 
 **{scheme}://{host}/{version}/{category}/[{pathSegment}][?{query}]** where
@@ -203,31 +156,20 @@ types and navigation properties.
 In Microsoft Graph a top-level API category may represent one of the following
 groupings:
 
-1.  A core *user-centric concept* of the Graph
+1.  A core *user-centric concept* of the Graph, i.e. /users, /groups or /me.
 
-    1.  For example: /users, /groups or /me
+2.  A Microsoft *product or service offerings* covering multiple use cases, i.e. /teamwork, /directory.
 
-2.  A Microsoft *product or service offerings* covering multiple use cases
+3.  A *feature offering* covering a single use case and *shared* across multiple
+    Microsoft products, i.e. /search, /notifications, /subscriptions.
 
-    1.  For example: /teamwork, /directory
-
-3.  A *feature* offering covering a single use case and *shared* across multiple
-    Microsoft products
-
-    1.  For example: /search, /notifications, /subscriptions, /files
-
-4.  *Administrative configuration* functions for specific products. (Note: this
-    is not final and may be adjusted based on the survey results)
-
-    1.  For example: /admin/exchange
+4.  *Administrative configuration* functions for specific products. i.e. /admin/exchange.
 
 5.  Internal Microsoft requirements for publishing Privileged and Hidden APIs,
-    routing, and load testing
-
-    1.  For example: /loadTestEntities
+    routing, and load testing, i.e./loadTestEntities.
 
 Effectively top-level categories define a perimeter for the API surface thus a
-new category creation requires additional rigor and governance.
+new category creation requires additional rigor and governance approval.
 
 ### Query Support
 
@@ -236,9 +178,17 @@ OData specifications and [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 |Requirements|
 |----------------------------------------------------------------------------------------------------|
-| :ballot_box_with_check: **SHOULD** support \$select on resource to enable properties projection |
-|:ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| :heavy_check_mark:
-| :ballot_box_with_check: **SHOULD** support pagination 4top and $count for collections |
+| :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
+| :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
+| :heavy_check_mark: **MUST** support server-side pagination for collections |
+| :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
+
+The query options part of an OData URL can be quite long, potentially exceeding
+the maximum length of URLs supported by components involved in transmitting or
+processing the request. One way to avoid this is to use the POST verb instead of
+GET with $query segment, and pass the query options part of the URL in the request body as described
+in the chapter [OData Query
+Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
 Limitations of \$query requests made to Microsoft Graph:
 
@@ -246,29 +196,42 @@ Limitations of \$query requests made to Microsoft Graph:
     request body or completely in the request url. Graph doesn't support query
     options present in both places.
 
--   The parameters in \$query should not span multiple workloads. Support for
-    \$query right now is limited to properties belonging to the same workload.
+-   The parameters in \$query segment should not span multiple workloads. Support for
+    \$query segment right now is limited to properties belonging to the same workload.
 
-The query options part of an OData URL can be quite long, potentially exceeding
-the maximum length of URLs supported by components involved in transmitting or
-processing the request. One way to avoid this is to use the POST verb instead of
-GET, and pass the query options part of the URL in the request body as described
-in the chapter [OData Query
-Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-| Additional Microsoft Graph rules for modeling resources                                                  |
-|----------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use String type for ID      |
-| :ballot_box_with_check: **SHOULD** use a primary key composed of a single property and not multiple. |
+### Resource Modeling Patterns
+
+You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property has "id" as a prescribed name.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources. Complex types are better suited to represent composite properties of API entities.
+
+```XML
+ <EntityType Name="Author">
+    <Key>
+        <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Edm.String" Nullable="false" />
+    <Property Name="name" Type="Edm.String" />
+    <Property Name="address" Type="microsoft.graph.Address" />
+</EntityType>
+<ComplexType Name="Address">
+    <Property Name="city" Type="Edm.String" />
+    <Property Name="street" Type="Edm.String" />
+    <Property Name="stateOrProvince" Type="Edm.String" />
+    <Property Name="country" Type="Edm.String" />
+</ComplexType>
+```
+|  Microsoft Graph rules for modeling complex resources                                  |       |
+|---------------------------------------|------------------------------------------------------------|
+| :heavy_check_mark: **MUST** use String type for id      |
+| :heavy_check_mark: **MUST** use a primary key composed of a single property  |
 | :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
-| :heavy_check_mark: **MUST** use a value property in the root object to return a collection                |
+| :heavy_check_mark: **MUST** use a root object with  a value property to return a collection                |
 | :heavy_check_mark: **MUST** include @odata.type annotations when the type is ambiguous                    |
 | :warning: **SHOULD NOT** add the property id to a complex type                                              |
 
-### Recommended Modeling Patterns
-
-There are different approaches to design an API resource model in situations
-with multiple variants of common concept. Type Hierarchy, Facets, and Flat bag
+There are different approaches for designing an API resource model in situations
+with multiple variants of a common concept. Type Hierarchy, Facets, and Flat bag
 of properties are three most often used patterns in Microsoft Graph today:
 
 -   Type hierarchy is represented by one abstract base type with a few common
@@ -288,71 +251,64 @@ of properties are three most often used patterns in Microsoft Graph today:
     Pattern](./Modelling%20with%20Flat%20Bag%20Pattern.md)
 
 The following table shows summary of main qualities for each pattern and will
-help to select a pattern preferred for your use case.
+help to select a pattern fit for your use case.
 
-| API qualities Patterns | Properties and behavior described in metadata | Suited for multiple inheritance | Simple query construction | Syntactical backward compatible |
-|------------------------|-----------------------------------------------|-------------------------------------|---------------------------|---------------------------------|
-| Type hierarchy         | yes                                           | no                                 | no                        | yes                             |
-| Facets                 | ok                                            | yes                                  | yes                       | yes                             |
-| Flat bag               | no                                            | no                                  | yes                       | yes                             |
+| API qualities\   <BR> Patterns         | Properties and behavior <BR> described in metadata | Supports combinations <BR> of properties and behaviors | Simple query construction | 
+|---------------------------------------------------|-------------------------------------|-----------------------------------|---------------------------|
+| Type hierarchy            | yes                                        | no                                                  | no                        | 
+| Facets                    | partially                                            | yes                                  | yes                       |
+|Flat bag                   | no                                            | no                                  | yes                       | 
 
-## Behavior Modeling
+
+
+
+### Behavior Modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with
 its request/response bodies, establishes the overall contract that developers
 have with your service. As an API provider, how you manage the overall request /
 response pattern should be one of the first implementation decisions you make.
+APIs SHOULD use resource-based designs with standard HTTP methods rather than operation resources if possible.
+ Operation resources are either functions or actions. According to [ODATA standards]( http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2) a function represents an operation which returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action may have side effects and may return a result represented as a single entity or collection of any type.
 
-#### Microsoft Graph rules for modeling behavior
+|  Microsoft Graph rules for modeling behavior                                                                                          |
+|-----------------------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections | 
+| :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
+| :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
+| :heavy_check_mark: **MUST** use GET for listing and reading resources. | 
+| :warning: **SHOULD NOT** use PUT for updating resources.                                       | 
+| :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
 
-| Requirements                                                                                                    | Severity |
-|-----------------------------------------------------------------------------------------------------------------|----------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets                             | Error    |
-| :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | Error    |
-| :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | Error    |
-| :heavy_check_mark: **MUST** return a Location header with the edit URL or read URL of a created resource          | Error    |
-| :heavy_check_mark: **MUST** use GET …/{collection} and GET …/{collection}/{id} for listing and reading resources. | Error    |
-| :heavy_check_mark: **MUST** use POST …/{collection} for creating resources.                                       | Error    |
-| :heavy_check_mark: **MUST** use PATCH …/{collection}/{id} for updating resources.                                 | Error    |
-| :warning: **SHOULD NOT** use PUT …/{collection}/{id} for updating resources.                                       | Warning  |
-| :no_entry: **MUST NOT** use PATCH to replaces resources or PUT to partially update resources.                     | Error    |
-| :warning: **SHOULD NOT** use patterns that require multiple round trips to complete a single logical action.       | Warning  |
-| :ballot_box_with_check: **MAY** supporting return and omit-nulls preferences.                              | Warning  |
+
+Bound operations must have a binding parameter matching the type of the bound resource. 
+In addition both actions and functions support overloading, meaning an API definition may contain multiple actions or functions with the same name.
+Microsoft Graph supports the use of optional parameters. You can use the optional parameter annotation instead of creating function or action overloads.
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
-REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
+REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
 
 ### Error Handling
 
-Microsoft REST API Guidelines provide guidelines that Microsoft REST APIs should
-follow when returning error condition responses. However, the structure, form
-and content of the error response payloads is currently not enforced leading to
-undiscoverable and inconsistent error messages. You can improve API traceability
-and consistency by using recommended Graph error model:
+Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should
+follow when returning error condition responses. You can improve API traceability
+and consistency by using recommended Graph error model and the Graph Utilities library to provide a standard implementation for your service :
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
 "error": {
     "code": "BadRequest",
-    "message": "Unsupported functionality",
-    "target": "query",
-    "details": [
-                {
-                "code": "301",
-                "target": "\$search",
-                "message": "\$search query option not supported"
-                }
-                ],
+    "message": "Cannot process the request because a required field is missing.",
+    "target": "query",    
     "innererror": {
-                "code": "301",
-                "message": "Cannot process the request because a required field is missing.",
-                "stacktrace": [...],
+                "code": "RequiredFieldMissing",
+                           
                 }
     }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+The top-level error code must be aligned with HTTP response status codes according to [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6). 
 The following examples demonstrate error modeling for common use cases:
 
 -   **Simple error**: A workload wants to report an error with top-level details
@@ -362,197 +318,93 @@ The following examples demonstrate error modeling for common use cases:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
   "error": {
-    "code": "badRequest",
+    "code": "BadRequest",
     "message": "Cannot process the request because it is malformed or incorrect.",
-	"target": "Service X (Optional)"
+	"target": "Resource X (Optional)"
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -   **Detailed error**: An API needs to provide service-specific details of the
-    error via the innererror property of the error object. The code property in
-    innererror is optional but highly recommended. It is intended to allow
+    error via the innererror property of the error object. It is intended to allow
     services to supply a specific error code to help differentiate errors that
     share the same top-level error code but reported for different reasons.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 {
   "error": {
-    "code": "badRequest",
+    "code": "BadRequest",
     "message": "Cannot process the request because it is malformed or incorrect.",
     "innererror": {
       "code": "requiredFieldOrParameterMissing",
-      "message": "Cannot process the request because a required field or parameter is missing.",
-      "stacktrace": "[StackTrace]"
+           
     }
   }
 }
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-| Microsoft Graph enforces the following error rules                                                                    | Severity |
-|-----------------------------------------------------------------------------------------------------------------------|----------|
-| :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | Error    |
-| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present on the auth token.        | Error    |
-| :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | Error    |
-| :ballot_box_with_check: **MAY** returning a 404 Not found error if a 403 would result in information disclosure. | Warning  |
+| Microsoft Graph enforces the following error rules                                                                    | 
+|-----------------------------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | 
+| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present in the auth token.        | 
+| :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | 
+| :ballot_box_with_check: **SHOULD** return a 404 Not found error if a 403 would result in information disclosure. |
 
 For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
-### API contract and non-backward compatible changes
+## API contract and non-backward compatible changes
 
 Microsoft Graph definition of breaking changes is based on the [Microsoft REST
 API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change).
-In general, making changes to the API contract for existing elements is
+In general, making all but additive changes to the API contract for existing elements is
 considered breaking. Adding new elements is allowed and not considered a
 breaking change.
 
 \*\* Non-breaking changes:\*\*
 
--   Addition of an annotation OpenType="true" Addition of properties that are
-    nullable or have a default value
 
--   Addition of a member to an evolvable enumeration 1. Removal, rename, or
-    change to the type of an open extension
-
--   Removal, rename, or change to the type of an annotation \*Introduction of
-    paging to existing collections
-
--   Changes to error codes Changes to the order of properties
-
+-   Addition of properties that are nullable or have a default value
+-   Addition of a member to an evolvable enumeration 
+-   Removal, rename, or change to the type of an annotation   
+-   Changes to the order of properties
 -   Changes to the length or format of opaque strings, such as resource IDs
+-   Addition or removal of an annotation OpenType="true" 
 
 \*\* Breaking changes:\*\*
 
 -   Changes to the URL or fundamental request/response associated with a
     resource
-
--   Changing semantics of resource representation
-
--   Removal, rename, or change to the type of a declared property
-
--   Removal or rename of APIs or API parameters Addition of a required request
-    header
-
--   Addition of a EnumType members for non-extensible enumerations
-
+-   Removal, rename, or change to an incompatible type of a declared property
+-   Removal or rename of APIs or API parameters
+-   Addition of a required request header
+-   Addition of a EnumType members for non-evolvable enumerations
 -   Addition of a Nullable="false" properties to existing types
-
 -   Addition of a Nullable="false" parameters to existing actions and functions
+-    Changes to top-level error codes
+-    Introduction of server-side pagination to existing collections
+-    Changes to the default order of collection elements
+-    Significant changes to the performance of APIs such as increased latency, rate limits or concurrency.
 
--   Adding attributes to existing nodes is considered breaking.
 
-For the full list of rules you can refer to [this section of the OData V4
-spec](https://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/part1-protocol/odata-v4.0-errata02-os-part1-protocol-complete.html#_Toc406398209).
 
-## Versioning and Deprecation
+### Versioning and Deprecation
+As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If that is not possible then you must version elements of your APIs.
+Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process.
 
-When changes are imminent you need to support explicit versioning as it's
-critical that clients can count on services to be stable over time, and it's
-critical that services can add features and make changes. Microsoft Graph API
-follows the guidance described in the Model Versioning section of the [Microsoft
-REST API
-guidelines](https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning).
+You must create a new version of your element for any breaking change and name it uniquely. 
+In some cases, the API will have evolved such that there is a new, natural unique name.   In other cases, the original name may still be the most descriptive for the evolved element.  In the latter case, the suffix _v2 must be added to the original name to make it unique.
+The original element is then marked as deprecated using annotations.
 
-The following versions of the Microsoft Graph API are currently available:
+Microsoft Graph provides two public endpoints to support API lifecycle:
+1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
+2.	API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta or private preview status.
 
-1.  API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in
-    general availability (GA) status.
+Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support deprecated elements for a minimum of 36 months. 
+On the beta endpoint breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is best practice to test new element versions on the beta endpoint at first then promote API changes to the GA endpoint.
+Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
 
-2.  API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta
-    or private preview status.
-
-In general API breaking changes are not allowed in the GA version of Microsoft
-Graph API. For beta API you can expect breaking changes and deprecation of APIs
-from time to time.
-
-As new versions of the Microsoft Graph REST APIs and Microsoft Graph SDKs are
-released, earlier versions will be retired. Microsoft declares a version as
-deprecated at least 24 months in advance of retiring it. Similarly, for
-individual APIs that are generally available (GA), Microsoft declares an API as
-deprecated at least 24 months in advance of removing it from the GA version.
-
-### Deprecation Process
-
-If your API requires an introduction of breaking changes you must follow the
-deprecation process:
-
--   After API review board approvals, add Revisions annotation to the API
-    definition CSDL with the following terms:
-
-    -   Kind of change: Deprecated (vs "added" to track added properties/types)
-
-    -   Human readable description of the change: Used in changelog,
-        documentation etc.
-
-    -   Version: Used to identify group of changes. Of the format
-        "YYYY-MM/Category" where "YYYY-MM" is the month the deprecation is
-        announced, and "Category" is the category under which the change is
-        described in the ChangeLog
-
-    -   Date: Date when the element was marked as deprecated
-
-    -   RemovalDate: Date when the element may be removed
-
-The annotation can be applied to a type, entity set, singleton, property,
-navigation property, function or action. If a type is marked as deprecated, it
-is not necessary to mark members of that type as deprecated, nor is it necessary
-to annotate any usage of that type in entity sets, singletons, properties,
-navigation properties, functions, or actions.
-
-**Example of property annotation:**
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- <EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
-    <Annotation Term="Org.OData.Core.V1.Revisions">
-      <Collection>
-        <Record>
-          <PropertyValue Property = "Date" Date="2020-08-20"/>
-          <PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/>
-          <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
-          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on August 20, 2022. Please use the new To Do API."/>
-          <PropertyValue Property = "RemovalDate" Date="2022-08-20"/>
-        </Record>
-      </Collection>
-    </Annotation>
-    ...
-  </EntityType>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When the request URL contains a reference to a deprecated model element, the
-HTTP response includes a [Deprecation
-header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
-date the element was marked as deprecated) and a Sunset header (with the date 2
-years beyond the Deprecation date). Response also includes a link header
-pointing to the breaking changes page.
-
-**Deprecation header example:**
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Deprecation: Thursday, 30 June 2022 11:59:59 GMT
-Sunset: Wed, 30 Mar 2022 23:59:59 GMT
-Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Deprecation cadence:**
-
--   As an API developer you can mark individual API schema elements as
-    deprecated on a quarterly basis, after going through an API review and
-    approval process. Quarterly deprecation cadence will allow the services to
-    evolve schemas over time, without waiting for a coordinated, monolithic
-    endpoint change.
-
--   Once marked as deprecated, the elements must continue to be supported for a
-    minimum of 3 years before removal (or a minimum of 2 years if, based on
-    telemetry, the element is no longer being used).
-
--   Tools, documentation, SDKs, and other mechanisms are driven by this explicit
-    deprecation to reach out to customers that may be affected by the changes.
-
--   APIs in beta or preview versions can use the same mechanism but are not
-    bound by the quarterly cadence or minimal support period before removal of
-    deprecated elements.
 
 ## Recommended API Patterns
 
@@ -566,20 +418,10 @@ Recommended API Design patterns:
 
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| Key Property            | The ability to uniquely identify an object through the key                                     | [Key Property](./evolvable-enums.md)                                 |
-| Entity Type             |                                                                                                | TBD                                                                  |
-| Complex Type            |                                                                                                | TBD                                                                    |
-| Shared Type             | The ability to reuse a type defined by another service.                                        | TBD   | TBD                                                                    |
 | Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./Modelling%20with%20Subtypes%20Pattern.md) |
-| Dictionary              | The ability to persist a variable number of properties.                                        | TBD                                                                      |
-| Evolvable Enums         | The ability to enable non-breaking changes for Enum type.                                      | TBD                                                                      |
-| Type Namespace          | The ability to reduce the need to prefix types with a qualifier to ensure uniqueness.          | TBD                                                                    |
-| Change Tracking         | The ability to get notified (push) when a change occurs in the data exposed by Microsoft Graph | TBD                                                                      |
-| Long Running Operations | The ability to model asynchronous operations.                                                  | TBD                                                                       |
-| Delta Queries           | The ability to query changes in the data exposed by Microsoft Graph                           | TBD                                                                      |
-| Navigation Properties   |                                                                                                | TBD                                                                      |
-| Viewpoint               |                                                                                               | TBD                                                                      |
-|Property projection $select|  |TBD
+| Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Modeling with Facets](./Modelling%20with%20Subtypes%20Pattern.md) |
+                                                                     |
+
 
 ## References
 
