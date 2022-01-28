@@ -40,7 +40,7 @@ Before using a dictionary type in your API definition make sure your scenario fi
 
 - The data values MUST be related to one another semantically as a collection.
 - The value types MUST be a primitive type or is a **ComplexType**. Mixed primitive types are not allowed.
-- The client MUST define the keys of this type. As opposed to the service defining it in advance.
+- The client MUST define the keys of this type. As opposed to the service defining them in advance.
 
 ### Alternatives to consider
 
