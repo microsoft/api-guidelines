@@ -1,132 +1,138 @@
-# Type Hierarchy 
+# Type Hierarchy
 
 Microsoft Graph API Design Pattern
 
- 
 
-*A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-## Context
-
-Often an API needs to serve business entities which come in slightly different variation. These entities can be represented as a type hierarchy similar to the OOP inheritance concept. The hierarchy will be modeled as a base type and multiple subtypes which represent variations in metadata and behavior. In this model common elements of the base type can be reused, extended, or modified by subtypes. 
-
-For example let’s assume you need to model an API to manage groups in an
-organization, where employees can create groups and become owners of the
-group by default. At the same time to support business processes some
-groups may be created automatically by daemon applications using a
-service principal account. In this case the service principle will
-become the group owner. People and service principles have some common
-and some unique properties such as both have unique identifiers and
-credentials, but users will have additional properties such as email and
-manager for example. Conversely a service principle won’t have a manager
-assigned but may have an associated application identifier and a
-description.
-
+### *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
 
 ## Problem
- How to design an API to work with a collection of heterogeneous elements that have a set of common properties and behaviors, and some unique properties for each variant. Furthermore, it should be straightforward to add new variants to the API as needed in the future. 
 
-
-Or as in previous example how to model group owners to allow a heterogeneous collection of users
-and principles and be able to accommodate new owner types in future?
-
+The API design requires to model a set of entities based on a common concept
+that can be further grouped into **mutually exclusive variants** with specific
+properties and behaviors. The API design should be evolvable and allow addition
+of new variants without breaking changes.
 
 ## Solution
---------
 
-OData allows us to design collections of entities (entity sets, multi
-valued navigation properties) with values of different types using
-**type hierarchy**, where there is one abstract base type with a few
-common properties and one sub-type for each variant of the entity. In
-the current version of Microsoft Graph there are many collections of
-items that represent slightly different things, variants of one concept.
+API designers can use OData **type hierarchy**, where there is one abstract base
+type with a few shared properties representing the common concept and one
+sub-type for each variant of the entity. In hierarchy, the interdependencies of properties, i.e. which properties are relevant for which variants, is fully captured in metadata and client code can potentially leverage that to construct and/or validate requests.
 
 ## Issues and Considerations
--------------------------
 
-When introducing a new subtype, you need to ensure that the new subtype
-doesn't change the semantic of the type hierarchy with it's implicit
-constraints.
+When introducing a new subtype to the hierarchy, developers need to ensure that
+the new subtype doesn't change the semantic of the type hierarchy with its
+implicit constraints.
+To retrieve properties specific for a derived type an API request URL may need to include casting to the derived type. If type hierarchy is very deep then resulting URL may become very long and not easily readable.  
 
-There are a **few potential risks** for client applications when new
-sub-types are introduced:
+There are a few consideration to take into account when new sub-types
+are introduced:
 
-- De-serialization code might break because of missing
-properties in returned collection items. Even though property X was
-mandatory on all subtypes previously returned, the new subtype might not
-have this property and the client code needs to deal with that.
-
-- Client libraries for strongly typed language might ignore some
-of the values in the @odata.type property without further configuration
-and need to be configured to be able to pick the right (client) type to
-deserialize into.
-
-To minimize impact on clients type hierarchy can be refined by
-annotating the collections with OData derived type constraints (see
-validation vocabulary). This annotation restricts the values to certain
-sub-trees of an inheritance hierarchy. It makes it very explicit that
-the collection only contains elements of some of the subtypes and helps
-to not return objects of a type that is semantically not suitable. In
-addition, you can follow some of the mitigation techniques such as:
-
-- Avoid overgeneralized base types
-
-- Think about roll-out sequence
-  - Consider that Microsoft Graph does not return objects from a workload
-that has a type that is not configured in current metadata. To avoid
-inconsistencies, follow a two-step process:
-  - Introduce the entity type to the Graph metadata but don’t
-return objects of the type in any of the heterogeneous collections.
-  - Enable your workload to return objects of the new type as items
-of collection.
+-  TODO add something about SDK dependencies and required actions
+-  TODO Client libraries for strongly typed language might ignore some of the values
+    in the @odata.type property without further configuration and need to be
+    updated to be able to pick the right (client) type to deserialize into.
+-  In the case of public APIs in GA versions clients may develop their applications to support exclusively the current set of subtypes and don’t expect new variations. To mitigate the risk of clients disruption, when introducing a new subtype, allow ample time for communication and rollout.
 
 
-- Allow time for testing
-  - Inform the clients about the change and allow them to test the
-changes in beta. Time is required to implement the code necessary to
-deal with the new entity type, both in terms of de-serialization as well
-as integrating it into the rest of the application.
-
-- Communicate the change in semantics
-
-  - It is necessary for the client developers to incorporate the new
-semantic into their application/service, even if the change is perceived
-to be small. This requires early communication and clear documentation
-of what the new type represents and why/how it is considered a subtype
-of the original abstract type of the collection.
 
 ## When to Use this Pattern
-------------------------
 
-The Type hierarchy pattern is well familiar to OOP developers and well
-suited for strongly typed client programming languages.
+The Type hierarchy pattern is well suited to use case where each variant of a
+common concept has unique properties and behaviors, no combinations of variants
+is anticipated, API queries are managed programmatically with type casting.
 
 There are related patterns to consider such as
-[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph)
-and [Flat bag of
+[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat
+bag of
 properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
 
 ## Example
--------
 
-GET
-[https://graph.microsoft.com/v1.0/groups/02bd9fd6-8f93-4758-87c3-1fb73740a315/owners](https://graph.microsoft.com/v1.0/groups/02bd9fd6-8f93-4758-87c3-1fb73740a315/owners) 
-returns a collection where each element can be a user or a service
-principal, and has an additional property @odata.type to show subtype
-for each variant:
+The directoryObject type is the main abstraction for many directory
+types such as users, organizational contacts, devices, service principals
+and groups stored in Azure Active Directory. Since any a directoryObject object is a unique entity, the directoryObject type itself is derived from the graph.entity base type.
+
+```XML
+<EntityType Name="entity" Abstract="true">
+    <Key>
+        <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Edm.String" Nullable="false" />
+</EntityType>
+<EntityType *Name*="directoryObject" *BaseType*="graph.entity" />
+    <Property *Name*="deletedDateTime" *Type*="Edm.DateTimeOffset" />
+<EntityType/>
 ```
+
+
+Groups and users are derived types and modeled as
+
+```XML
+ <EntityType Name="group" BaseType="graph.directoryObject" />
+        <Property Name="accessType" Type="graph.groupAccessType"
+…
+</EntityType>
+<EntityType Name="user" BaseType="graph.directoryObject">
+        <Property Name="aboutMe" Type="Edm.String" />
+…
+</EntityType>
+```
+
+API request to get members of a group returns a heterogeneous collection of
+users and groups where each element can be a user or a group, and has an
+additional property @odata.type for a variant subtype:
+
+```
+GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members?$select=id,displayName
+
+Response payload shortened for readability:
+
 {
-    "@odata.context":
+     "@odata.context":
 "https://graph.microsoft.com/v1.0/\$metadata\#directoryObjects",
     "value": [
-        {
-            "@**odata.type**": "\#**microsoft.graph.user**",
-            "id": "48d31887-5fad-4d73-a9f5-3c356e68a038",
-            "userPrincipalName": "MeganB@M365x214355.onmicrosoft.com"
-            // ...
-        }
+        {           
+            "@odata.type": "#microsoft.graph.user",
+            "id": "37ca648a-a007-4eef-81d7-1127d9be34e8",
+            "displayName": "John Cob"
+        },
+        {
+            "@odata.type": "#microsoft.graph.group",
+            "id": "45f25951-d04f-4c44-b9b0-2a79e915658d",
+            "displayName": "Department 456"
+        },
+        ...        
     ]
+}
+```
+API request for a subtype specific property requires type casting to the subtype, i.e. to retrieve jobTitle property, enabled for the user type, you need to cast from the directoryObject collection items to the microsoft.graph.group derived type.
+
+```
+GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members/microsoft.graph.user?$select=displayName,jobTitle
+
+Response payload shortened for readability:
+
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users(displayName,jobTitle)",
+    "value": [
+        {
+            "displayName": "John Cob",
+            "jobTitle": "RESEARCHER II"
+        },
+       ...
+    ]
+}
+```
+API request to create a subtype object in a polymorphic collection requires "@odata.type" specified in the request body.
+```
+POST https://graph.microsoft.com/v1.0/directoryObjects
+
+{
+    "@odata.type": "#microsoft.graph.group",
+    "displayName": "Library Assist",
+    "mailEnabled": false,
+    "mailNickname": "library",
+    "securityEnabled": true
 }
 ```
