@@ -418,9 +418,9 @@ Recommended API Design patterns:
 
 | Pattern                 | Description                                                                                    | Reference                                                            |
 |-------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------|
-| Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Modeling with Subtypes](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
-| Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Modeling with Facets](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
-| Dictionary          | The ability for client to provide an unknown quantity of data elements of the same type.       | [Dictionary](./patterns/dictionary.md) |
+| Type Hierarchy          | The ability to model parent-child relationships using subtypes.                                | [Subtypes](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
+| Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Facets](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
+| Dictionary          | The ability for clients to provide an unknown quantity of data elements of the same type.       | [Dictionary](./patterns/dictionary.md) |
 
                                                                      |
 
