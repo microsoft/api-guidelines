@@ -1,5 +1,7 @@
 # Dictionary types
 
+Note: this document is to be moved into a central client guidance document in the future.
+
 The client guidance is a collection of additional information provided to SDK implementers and client applications. This information is meant to help understand how various guidelines and concept translate in their world and clarify a few unknowns. You should always read the corresponding guideline first to get a context understanding.
 
 [Read the guideline](./index.md).
