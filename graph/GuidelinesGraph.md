@@ -75,6 +75,8 @@ The design of your API is arguably the most important investment you will make. 
 
 In general API design includes the following steps:
 
+-   Outline the key current and future scenarios for API consumers
+  
 -   Define your domain model
 
 -   Derive and name your API resources
