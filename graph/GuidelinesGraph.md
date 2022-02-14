@@ -182,7 +182,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :heavy_check_mark: **MUST** support server-side pagination for collections |
+| :heavy_check_mark: **MUST** support [server-side pagination](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ServerDrivenPaging) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL) for collections |
 | :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
 
 The query options part of an OData URL can be quite long, potentially exceeding
