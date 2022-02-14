@@ -182,7 +182,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :heavy_check_mark: **MUST** support server-side pagination for large collections |
+| :heavy_check_mark: **MUST** support server-side pagination for collections |
 | :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
 
 The query options part of an OData URL can be quite long, potentially exceeding
@@ -393,10 +393,9 @@ breaking change.
 
 ### Versioning and Deprecation
 As the market and technology evolves your APIs will require modifications in this case you must avoid breaking changes and add new resources and features incrementally. If that is not possible then you must version elements of your APIs.
-Microsoft Graph allows versioning of elements including entities and properties. The versioning process goes along with deprecation and as soon as you introduce a new element update the previous version needs to follow the deprecation process.
+Microsoft Graph allows versioning of elements including entities and properties. Versioning involves adding a new, uniquely named version of the element and marking the old version as deprecated.
 
-You must create a new version of your element for any breaking change and name it uniquely. 
-In some cases, the API will have evolved such that there is a new, natural unique name.   In other cases, the original name may still be the most descriptive for the evolved element.  In the latter case, the suffix _v2 must be added to the original name to make it unique.
+In some cases, there will be a natural new name for the element. In other cases, where the original name is still the most descriptive, the suffix _v2 can be added to the original name to make it unique.
 The original element is then marked as deprecated using annotations.
 
 Microsoft Graph provides two public endpoints to support API lifecycle:
