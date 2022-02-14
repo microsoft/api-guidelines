@@ -184,7 +184,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
 | :heavy_check_mark: **MUST** support server-side pagination for collections |
 | :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
-
+| :ballot_box_with_check: **SHOULD** sorting with \$orderby both ascending and descending on properties of the entities
 The query options part of an OData URL can be quite long, potentially exceeding
 the maximum length of URLs supported by components involved in transmitting or
 processing the request. One way to avoid this is to use the POST verb instead of
