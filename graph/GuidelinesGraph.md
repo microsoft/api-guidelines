@@ -105,7 +105,7 @@ Below is a short summary of the most often used conventions.
 
 | Requirements                                                                                                         | Example                                                                                                                                                                                                                                                                                                                 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| :no_entry: **MUST NOT** use redundant words in names.   |- **Right:** /places/{id}/**type** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeType* and /phones/{id}/**phoneNumber** |
+| :no_entry: **MUST NOT** use redundant words in names.   |- **Right:** /places/{id}/**displayName** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeName* and /phones/{id}/**phoneNumber** |
 | :warning: **SHOULD NOT** use brand names in type or property names.                                 | - **Right:** chat   <BR> -  **Wrong** teamsChat                                                                                              |
 | :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood.          | - **Right:** url or htmlSignature <BR> - **Wrong** msodsUrl or dlp                                                                        |
 | :heavy_check_mark: **MUST** use singular nouns for type names.                                              | - **Right:** address  <BR> - **Wrong** addresses                                                                                           |
@@ -143,7 +143,7 @@ segments:
 -   **category** segment is a logical grouping of APIs into top-level
     categories;
 
--   **pathSegment** is the last navigation segment which can address an entity,
+-   **pathSegment** is one or many navigation segments which can address an entity,
     collection of entities, property or operation available for an entity
 
 -   **query string** must follow the OData standard for query representations
@@ -151,7 +151,7 @@ segments:
 
 While HTTP defines no constraints on how different resources are related
 together, it does encourage the use of URL path segment hierarchies to convey
-relationships. In Microsoft Graph lifetime relationships between resources are
+relationships. In Microsoft Graph relationships between resources are
 supported by the OData concepts of singletons, entitySets, entities, complex
 types and navigation properties.
 
@@ -182,7 +182,7 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :heavy_check_mark: **MUST** support server-side pagination for collections |
+| :heavy_check_mark: **MUST** support server-side pagination for large collections |
 | :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
 
 The query options part of an OData URL can be quite long, potentially exceeding
@@ -204,8 +204,8 @@ Limitations of \$query requests made to Microsoft Graph:
 
 ### Resource Modeling Patterns
 
-You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property has "id" as a prescribed name.
-Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources. Complex types are better suited to represent composite properties of API entities.
+You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property is called "id" for server-created key values. If there is a natural name for the key property then the workload can use that.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources, such as individually addressable resources within a collection. Complex types are better suited to represent composite properties of API entities.
 
 ```XML
  <EntityType Name="Author">
@@ -383,10 +383,10 @@ breaking change.
 -   Addition of a required request header
 -   Addition of a EnumType members for non-evolvable enumerations
 -   Addition of a Nullable="false" properties to existing types
--   Addition of a Nullable="false" parameters to existing actions and functions
+-   Addition of a parameter not marked as Nullable to existing actions or functions
+-   Addition of a parameter not marked as Optional to an existing function
 -    Changes to top-level error codes
 -    Introduction of server-side pagination to existing collections
--    Changes to the default order of collection elements
 -    Significant changes to the performance of APIs such as increased latency, rate limits or concurrency.
 
 
@@ -403,7 +403,7 @@ Microsoft Graph provides two public endpoints to support API lifecycle:
 1.	API sets on the v1.0 endpoint (https://graph.microsoft.com/v1.0) are in general availability (GA) status.
 2.	API sets on the beta endpoint (https://graph.microsoft.com/beta) are in beta or private preview status.
 
-Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support deprecated elements for a minimum of 36 months. 
+Microsoft Graph APIs in the GA version guarantee API stability and consistency for its clients. If your API requires a breaking change in GA, then you MUST create new element versions and support deprecated elements for a minimum of 36 months or 24 months with demonstrated non-usage. 
 On the beta endpoint breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is best practice to test new element versions on the beta endpoint at first then promote API changes to the GA endpoint.
 Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
 
