@@ -184,7 +184,8 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
 | :heavy_check_mark: **MUST** support [server-side pagination](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ServerDrivenPaging) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL) for collections |
 | :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
-| :ballot_box_with_check: **SHOULD** sorting with \$orderby both ascending and descending on properties of the entities
+| :ballot_box_with_check: **SHOULD** sorting with \$orderby both ascending and descending on properties of the entities |
+
 The query options part of an OData URL can be quite long, potentially exceeding
 the maximum length of URLs supported by components involved in transmitting or
 processing the request. One way to avoid this is to use the POST verb instead of
@@ -205,7 +206,7 @@ Limitations of \$query requests made to Microsoft Graph:
 ### Resource Modeling Patterns
 
 You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property is called "id" for server-created key values. If there is a natural name for the key property then the workload can use that.
-Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources, such as individually addressable resources within a collection. Complex types are better suited to represent composite properties of API entities.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources, such as individually addressable items within a collection. Complex types are better suited to represent composite properties of API entities.
 
 ```XML
  <EntityType Name="Author">
@@ -383,8 +384,8 @@ breaking change.
 -   Addition of a required request header
 -   Addition of a EnumType members for non-evolvable enumerations
 -   Addition of a Nullable="false" properties to existing types
--   Addition of a parameter not marked as Nullable to existing actions or functions
--   Addition of a parameter not marked as Optional to an existing function
+-   Addition of a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions or functions
+-   Addition of a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 -    Changes to top-level error codes
 -    Introduction of server-side pagination to existing collections
 -    Significant changes to the performance of APIs such as increased latency, rate limits or concurrency.

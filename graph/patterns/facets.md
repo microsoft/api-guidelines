@@ -67,7 +67,7 @@ The driveItem resource represents a file, folder,image or other item stored in a
 API request to get all items from a personal OneDrive will return a heterogenous collection with different facets populated. In the example below there is a folder, a file and an image in the collection. The image entity has two facets populated: file and image.
 
 ```
-https://graph.microsoft.com/beta/me/drive/root/children
+https://graph.microsoft.com/v1.0/me/drive/root/children
 
 Response shortened for readability:
  
