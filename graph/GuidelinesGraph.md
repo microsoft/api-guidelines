@@ -268,7 +268,7 @@ APIs SHOULD use resource-based designs with standard HTTP methods rather than op
 
 |  Microsoft Graph rules for modeling behavior                                                                                          |
 |-----------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections | 
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections. This approach requires the server to produce system generated  identities. | 
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources                                                 | 
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
 | :heavy_check_mark: **MUST** use GET for listing and reading resources. | 
