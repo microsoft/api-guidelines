@@ -45,7 +45,6 @@ Before using a dictionary type in your API definition make sure your scenario fi
 ### Alternatives to consider
 
 - [Open extensions](https://docs.microsoft.com/en-us/graph/extensibility-open-users) when you want to provide clients the ability to extend Microsoft Graph.
-- [Open types](https://docs.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/use-open-types-in-odata-v4) when your data is not a collection in nature.
 - [Complex types](https://docs.microsoft.com/en-us/odata/webapi/complextypewithnavigationproperty) when the set of data values are known.
 
 ## Examples
