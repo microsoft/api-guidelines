@@ -273,7 +273,7 @@ APIs SHOULD use resource-based designs with standard HTTP methods rather than op
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources                                              | 
 | :heavy_check_mark: **MUST** use GET for listing and reading resources. | 
 | :warning: **SHOULD NOT** use PUT for updating resources.                                       | 
-| :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical action.       | 
+| :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical operation.       | 
 
 
 Bound operations must have a binding parameter matching the type of the bound resource. 
