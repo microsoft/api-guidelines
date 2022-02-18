@@ -193,15 +193,7 @@ GET with $query segment, and pass the query options part of the URL in the reque
 in the chapter [OData Query
 Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-Limitations of \$query requests made to Microsoft Graph:
-
--   Microsoft Graph only supports having all the query options completely in the
-    request body or completely in the request url. Graph doesn't support query
-    options present in both places.
-
--   The parameters in \$query segment should not span multiple workloads. Support for
-    \$query segment right now is limited to properties belonging to the same workload.
-
+Another way is to use JSON batch as described in the [Microsoft Graph Documentation] (https://docs.microsoft.com/en-us/graph/json-batching#bypassing-url-length-limitations-with-batching).
 
 ### Resource Modeling Patterns
 
