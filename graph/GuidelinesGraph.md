@@ -360,7 +360,7 @@ breaking change.
 
 
 -   Addition of properties that are nullable or have a default value
--   Addition of a member to an evolvable enumeration 
+-   Addition of a member, after the sentinel member, to an evolvable enumeration 
 -   Removal, rename, or change to the type of an annotation   
 -   Changes to the order of properties
 -   Changes to the length or format of opaque strings, such as resource IDs
