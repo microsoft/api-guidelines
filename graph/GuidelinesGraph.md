@@ -205,8 +205,8 @@ Limitations of \$query requests made to Microsoft Graph:
 
 ### Resource Modeling Patterns
 
-You can model complex resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property is called "id" for server-created key values. If there is a natural name for the key property then the workload can use that.
-Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources, such as individually addressable items within a collection. Complex types are better suited to represent composite properties of API entities.
+You can model structured resources for your APIs using OData Entity Type or Complex Type. The main difference between these types is that Entity type declares a key property to uniquely identify its objects and  Complex Type does not. In Microsoft Graph this key property is called "id" for server-created key values. If there is a natural name for the key property then the workload can use that.
+Since objects of complex types on Graph don’t have unique identifiers, they are not directly addressable via URIs and therefore you must not use Complex Type to model addressable resources, such as individually addressable items within a collection, for more information refer to [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```XML
  <EntityType Name="Author">
@@ -384,7 +384,7 @@ breaking change.
 -   Addition of a required request header
 -   Addition of a EnumType members for non-evolvable enumerations
 -   Addition of a Nullable="false" properties to existing types
--   Addition of a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions or functions
+-   Addition of a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions
 -   Addition of a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 -    Changes to top-level error codes
 -    Introduction of server-side pagination to existing collections

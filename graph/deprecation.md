@@ -21,11 +21,11 @@ to annotate any usages of that type.
     <Annotation Term="Org.OData.Core.V1.Revisions">
       <Collection>
         <Record>
-          <PropertyValue Property = "Date" Date="2020-08-20"/>
-          <PropertyValue Property = "Version" String="2020-08/Tasks_And_Plans"/>
+          <PropertyValue Property = "Date" Date="2022-03-30"/>
+          <PropertyValue Property = "Version" String="2022-03/Tasks_And_Plans"/>
           <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
-          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on August 20, 2022. Please use the new To Do API."/>
-          <PropertyValue Property = "RemovalDate" Date="2022-08-20"/>
+          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on June 30, 2024. Please use the new To Do API."/>
+          <PropertyValue Property = "RemovalDate" Date="2024-06-30"/>
         </Record>
       </Collection>
     </Annotation>
@@ -35,13 +35,13 @@ to annotate any usages of that type.
 
 When the request URL contains a reference to a deprecated model element, the gateway will add a [Deprecation
 header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
-date the element was marked as deprecated) and a Sunset header (with the date 2
+date the element was marked as deprecated) and a Sunset header (with the date of 2
 years beyond the Deprecation date) to the response.
 
 **Deprecation header example:**
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Deprecation: Thursday, 30 June 2022 11:59:59 GMT
-Sunset: Wed, 30 Mar 2022 23:59:59 GMT
-Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2020-06-30_state ; rel="deprecation"; type="text/html"; title="state"
+Deprecation: Wed, 30 Mar 2022 11:59:59 GMT
+Sunset:  Thursday, 30 June 2024 23:59:59 GMT
+Link: https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_name ; rel="deprecation"; type="text/html"; title="name",https://docs.microsoft.com/en-us/graph/changelog#2022-03-30_state ; rel="deprecation"; type="text/html"; title="state"
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
