@@ -216,8 +216,8 @@ Since objects of complex types on Graph don’t have unique identifiers, they ar
     <Property Name="country" Type="Edm.String" />
 </ComplexType>
 ```
-|  Microsoft Graph rules for modeling complex resources                                  |       |
-|---------------------------------------|------------------------------------------------------------|
+|  Microsoft Graph rules for modeling complex resources                                  | 
+|----------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** use String type for id      |
 | :heavy_check_mark: **MUST** use a primary key composed of a single property  |
 | :heavy_check_mark: **MUST** use an object as the root of all JSON payloads                               |
@@ -278,7 +278,6 @@ APIs SHOULD use resource-based designs with standard HTTP methods rather than op
 
 Bound operations must have a binding parameter matching the type of the bound resource. 
 In addition both actions and functions support overloading, meaning an API definition may contain multiple actions or functions with the same name.
-Microsoft Graph supports the use of optional parameters. You can use the optional parameter annotation instead of creating function or action overloads.
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
 REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
@@ -306,7 +305,7 @@ and consistency by using recommended Graph error model and the Graph Utilities l
 The top-level error code must be aligned with HTTP response status codes according to [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6). 
 The following examples demonstrate error modeling for common use cases:
 
--   **Simple error**: A workload wants to report an error with top-level details
+-   **Simple error**: An API wants to report an error with top-level details
     only. Then the error object contains the top-level error code, message and
     target (optional).
 
@@ -341,9 +340,9 @@ The following examples demonstrate error modeling for common use cases:
 | Microsoft Graph enforces the following error rules                                                                    | 
 |-----------------------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** return an error property with a child code property in all error responses.                 | 
-| :heavy_check_mark: **MUST** return a 403 Forbidden error when insufficient scopes are present in the auth token.        | 
-| :heavy_check_mark: **MUST** return a 429 Too many requests error when the caller has exceeded throttling limits.        | 
-| :ballot_box_with_check: **SHOULD** return a 404 Not found error if a 403 would result in information disclosure. |
+| :heavy_check_mark: **MUST** return a 403 Forbidden error when the application or signed-in user have insufficient permissions are present in the auth token.        | 
+| :heavy_check_mark: **MUST** return a 429 Too Many Requests error when client exceeded throttling limits and 503 Service Unavailable when service overloaded but client is within throttling limits.|
+| :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 would result in information disclosure. |
 
 For a complete mapping of error codes to HTTP statuses you can refer to the
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
