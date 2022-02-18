@@ -276,7 +276,7 @@ APIs SHOULD use resource-based designs with standard HTTP methods rather than op
 | :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical operation.       | 
 
 
-Bound operations must have a binding parameter matching the type of the bound resource. 
+Operation resources must have a binding parameter matching the type of the bound resource. 
 In addition both actions and functions support overloading, meaning an API definition may contain multiple actions or functions with the same name.
 
 For a complete list of standard HTTP operations you can refer to the [Microsoft
