@@ -14,7 +14,7 @@ The API design requires a resource to include an unknown quantity of data elemen
 
 API designers use a JSON object to represent a dictionary in a `application/json`response payload. When describing the model in CSDL, a new complex type can be created that derives from `Org.OData.Core.V1.Dictionary` and then use the `Org.OData.Validation.V1.OpenPropertyTypeConstraint`to constrain the type that can be used for the values in the dictionary.
 
-Dictionary entries can be added via `POST`, updated via `PATCH`, and they can be removed by setting the entry value to `null`. Multiple dictionaries can be updated at once by using `PATCH` on the dictionary property.
+Dictionary entries can be added via `POST`, updated via `PATCH`, and they can be removed by setting the entry value to `null`. Multiple entries can be updated at once by using `PATCH` on the dictionary property.
 
 ## Issues and Considerations
 -------------------------
@@ -24,7 +24,7 @@ Dictionaries, sometimes called maps, are a collection of name-value pairs. They 
 As dictionary entries are removed via setting the value to null, this means that dictionaries can only support values that are non-nullable.
 
   OpenQuestions:
-  -  Can/should PUT be supported on the dictionary property and/or the entry value 
+  - Can/should PUT be supported on the dictionary property and/or the entry value 
   - What does OData say about being able to POST to a structured property? Will OData Web API allow that?
   - Must an implementer support PATCH at both the dictionary level and the entry level?
 
@@ -40,12 +40,11 @@ Before using a dictionary type in your API definition make sure your scenario fi
 
 - The data values MUST be related to one another semantically as a collection.
 - The value types MUST be a primitive type or is a **ComplexType**. Mixed primitive types are not allowed.
-- The client MUST define the keys of this type. As opposed to the service defining it in advance.
+- The client MUST define the keys of this type. As opposed to the service defining them in advance.
 
-### Alternatives to consider
+### Alternatives
 
 - [Open extensions](https://docs.microsoft.com/en-us/graph/extensibility-open-users) when you want to provide clients the ability to extend Microsoft Graph.
-- [Open types](https://docs.microsoft.com/en-us/aspnet/web-api/overview/odata-support-in-aspnet-web-api/odata-v4/use-open-types-in-odata-v4) when your data is not a collection in nature.
 - [Complex types](https://docs.microsoft.com/en-us/odata/webapi/complextypewithnavigationproperty) when the set of data values are known.
 
 ## Examples
@@ -53,7 +52,7 @@ Before using a dictionary type in your API definition make sure your scenario fi
 
 ### JSON payload example
 
-The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been ommitted for brievety.
+The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been omitted for brevity.
 
 ```json
 {
@@ -79,7 +78,7 @@ In this set of examples we're modeling a **roles** property of dictionary type o
 GET https://graph.microsoft.com/v1.0/users/10/roles/author
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -93,7 +92,7 @@ Reponse:
 GET https://graph.microsoft.com/v1.0/users/10/roles
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -115,7 +114,7 @@ Reponse:
 GET https://graph.microsoft.com/v1.0/users/10
 ```
 
-Reponse:
+Response:
 
 ```json
 {
@@ -165,7 +164,7 @@ PATCH https://graph.microsoft.com/v1.0/users/10/roles
 ```
 
 > Note: setting one of the keys to **null** deletes it from the dictionary.
-> Note: the domain values for the existing author and maintainer entries will get udpated.
+> Note: the domain values for the existing author and maintainer entries will get updated.
 > Note: the reviewer entry will be inserted in the dictionary.
 
 #### Updating an entry in the dictionary
@@ -203,7 +202,7 @@ The following example defines a complex type **roleSettings** as well as a dicti
     </Collection>
   </Annotation>
   <Annotation Term="SupportedHttpMethod">
-    <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary atomtically -->
+    <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary automatically -->
       <String>GET</String>
       <String>PATCH</String>
       <String>DELETE</String>
