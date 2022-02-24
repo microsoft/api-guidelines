@@ -380,7 +380,7 @@ Because PUT is defined as a complete replacement of the content, it is dangerous
 Clients that do not understand (and hence ignore) properties on a resource are not likely to provide them on a PUT when trying to update a resource, hence such properties could be inadvertently removed.
 Services MAY optionally support PUT to update existing resources, but if they do they MUST use replacement semantics (that is, after the PUT, the resource's properties MUST match what was provided in the request, including deleting any server properties that were not provided).
 
-Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create," and a PATCH call to an existing resource is handled as an "update." To ensure that an update request is not treated as a create or vice versa, the client MAY specify precondition HTTP headers in the request.
+Under UPSERT semantics, a PATCH call to a nonexistent resource is handled by the server as a "create", and a PATCH call to an existing resource is handled as an "update". To ensure that an update request is not treated as a create or vice versa, the client MAY specify precondition HTTP headers in the request.
 The service MUST NOT treat a PATCH request as an insert if it contains an If-Match header and MUST NOT treat a PATCH request as an update if it contains an If-None-Match header with a value of "*".
 
 If a service does not support UPSERT, then a PATCH call against a resource that does not exist MUST result in an HTTP "409 Conflict" error.
@@ -501,14 +501,14 @@ However, it is very generic and does not require specific OData constructs.
 APIs SHOULD use this format even if they are not using other OData constructs.
 
 The error response MUST be a single JSON object.
-This object MUST have a name/value pair named "error." The value MUST be a JSON object.
+This object MUST have a name/value pair named "error". The value MUST be a JSON object.
 
-This object MUST contain name/value pairs with the names "code" and "message," and it MAY contain name/value pairs with the names "target," "details" and "innererror."
+This object MUST contain name/value pairs with the names "code" and "message", and it MAY contain name/value pairs with the names "target", "details" and "innererror."
 
 The value for the "code" name/value pair is a language-independent string.
 Its value is a service-defined error code that SHOULD be human-readable.
 This code serves as a more specific indicator of the error than the HTTP error code specified in the response.
-Services SHOULD have a relatively small number (about 20) of possible values for "code," and all clients MUST be capable of handling all of them.
+Services SHOULD have a relatively small number (about 20) of possible values for "code", and all clients MUST be capable of handling all of them.
 Most services will require a much larger number of more specific error codes, which are not interesting to all clients.
 These error codes SHOULD be exposed in the "innererror" name/value pair as described below.
 Introducing a new value for "code" that is visible to existing clients is a breaking change and requires a version increase.
@@ -521,13 +521,13 @@ Services SHOULD NOT localize "message" for the end user, because doing so might 
 
 The value for the "target" name/value pair is the target of the particular error (e.g., the name of the property in error).
 
-The value for the "details" name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for "code" and "message," and MAY contain a name/value pair for "target," as described above.
+The value for the "details" name/value pair MUST be an array of JSON objects that MUST contain name/value pairs for "code" and "message", and MAY contain a name/value pair for "target", as described above.
 The objects in the "details" array usually represent distinct, related errors that occurred during the request.
 See example below.
 
 The value for the "innererror" name/value pair MUST be an object.
 The contents of this object are service-defined.
-Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innererror." Each nested "innererror" object represents a higher level of detail than its parent.
+Services wanting to return more specific errors than the root-level code MUST do so by including a name/value pair for "code" and a nested "innererror". Each nested "innererror" object represents a higher level of detail than its parent.
 When evaluating errors, clients MUST traverse through all of the nested "innererrors" and choose the deepest one that they understand.
 This scheme allows services to introduce new error codes anywhere in the hierarchy without breaking backwards compatibility, so long as old error codes still appear.
 The service MAY return different levels of depth and detail to different callers.
@@ -591,7 +591,7 @@ Example of "innererror":
 }
 ```
 
-In this example, the most basic error code is "BadArgument," but for clients that are interested, there are more specific error codes in "innererror."
+In this example, the most basic error code is "BadArgument", but for clients that are interested, there are more specific error codes in "innererror."
 The "PasswordReuseNotAllowed" code may have been added by the service at a later date, having previously only returned "PasswordDoesNotMeetPolicy."
 Existing clients do not break when the new error code is added, but new clients MAY take advantage of it.
 The "PasswordDoesNotMeetPolicy" error also includes additional name/value pairs that allow the client to determine the server's configuration, validate the user's input programmatically, or present the server's constraints to the user within the client's own localized messaging.
@@ -655,7 +655,7 @@ The spirit behind CORS is to avoid preflight for any simple cross-domain request
 All other requests require preflight.
 
 A request is "simple" and avoids preflight if its method is GET, HEAD or POST, and if it doesn't contain any request headers besides Accept, Accept-Language and Content-Language.
-For POST requests, the Content-Type header is also allowed, but only if its value is "application/x-www-form-urlencoded," "multipart/form-data" or "text/plain."
+For POST requests, the Content-Type header is also allowed, but only if its value is "application/x-www-form-urlencoded", "multipart/form-data" or "text/plain."
 For any other headers or values, a preflight request will happen.
 
 ### 8.2. Service guidance
@@ -680,7 +680,7 @@ Services used by interactive Web clients where performance is critical SHOULD av
 - Avoid requiring cookies. XmlHttpRequest will only send cookies on cross-domain requests if the "withCredentials" attribute is set; this also causes a preflight request.
   - Services that require cookie-based authentication MUST use a "dynamic canary" to secure all APIs that accept cookies.
 
-- For POST calls, prefer simple Content-Types in the set of ("application/x-www-form-urlencoded," "multipart/form-data," "text/plain") where applicable. Any other Content-Type will induce a preflight request.
+- For POST calls, prefer simple Content-Types in the set of ("application/x-www-form-urlencoded", "multipart/form-data", "text/plain") where applicable. Any other Content-Type will induce a preflight request.
   - Services MUST NOT contravene other API recommendations in the name of avoiding CORS preflight requests. In particular, in accordance with recommendations, most POST requests will actually require a preflight request due to the Content-Type.
   - If eliminating preflight is critical, then a service MAY support alternative mechanisms for data transfer, but the RECOMMENDED approach MUST also be supported.
 
@@ -1205,7 +1205,7 @@ O        | RealNumber      | "OLE Date"; integral part is the number of days sin
 T        | SignedInteger   | "Ticks"; number of ticks (100-nanosecond intervals) since midnight January 1, 1601. *See note below.*                                             | [MSDN][ticks-time]
 U        | SignedInteger   | "UNIX"; number of seconds since midnight, January 1, 1970.                                                                                        | [MSDN][unix-time]
 W        | SignedInteger   | "Windows"; number of milliseconds since midnight January 1, 1601. *See note below.*                                                               | [MSDN][windows-time]
-X        | RealNumber      | "Excel"; as for `O` but the year 1900 is incorrectly treated as a leap year, and day 0 is "January 0 (zero)."                                     | [Microsoft Support][excel-time]
+X        | RealNumber      | "Excel"; as for `O` but the year 1900 is incorrectly treated as a leap year, and day 0 is "January 0 (zero)".                                     | [Microsoft Support][excel-time]
 
 **Important note for `C` and `W` kinds:** The native CLR and Windows times are represented by 100-nanosecond "tick" values.
 To interoperate with ECMAScript clients that have limited precision, _these values MUST be converted to and from milliseconds_ when (de)serialized as a `DateLiteral`.
@@ -1252,7 +1252,7 @@ For example, "P3Y6M4DT12H30M5S" represents a duration of "three years, six month
 - Start and end, such as "2007-03-01T13:00:00Z/2008-05-11T15:30:00Z"
 - Start and duration, such as "2007-03-01T13:00:00Z/P1Y2M10DT2H30M"
 - Duration and end, such as "P1Y2M10DT2H30M/2008-05-11T15:30:00Z"
-- Duration only, such as "P1Y2M10DT2H30M," with additional context information
+- Duration only, such as "P1Y2M10DT2H30M", with additional context information
 
 ### 11.6. Repeating intervals
 [Repeating Intervals][wikipedia-iso8601-repeatingintervals], as per [ISO 8601][wikipedia-iso8601-repeatingintervals], are:
@@ -1260,7 +1260,7 @@ For example, "P3Y6M4DT12H30M5S" represents a duration of "three years, six month
 > Formed by adding "R[n]/" to the beginning of an interval expression, where R is used as the letter itself and [n] is replaced by the number of repetitions.
 Leaving out the value for [n] means an unbounded number of repetitions.
 
-For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "2008-03-01T13:00:00Z," use "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M."
+For example, to repeat the interval of "P1Y2M10DT2H30M" five times starting at "2008-03-01T13:00:00Z", use "R5/2008-03-01T13:00:00Z/P1Y2M10DT2H30M."
 
 ## 12. Versioning
 **All APIs compliant with the Microsoft REST API Guidelines MUST support explicit versioning.** It's critical that clients can count on services to be stable over time, and it's critical that services can add features and make changes.
