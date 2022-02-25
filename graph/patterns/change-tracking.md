@@ -43,7 +43,9 @@ Before using the change tracking pattern in your API definition, make sure your 
 
 ```HTTP
 GET https://graph.microsoft.com/v1.0/users/delta
+```
 
+```json
 {
     "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users",
     "@odata.deltaLink": "https://graph.microsoft.com/v1.0/users/delta?$deltatoken=mS5DuRZGjVL-abreviated",
@@ -71,6 +73,8 @@ GET https://graph.microsoft.com/v1.0/users/delta
     ]
 }
 ```
+
+> Note: the response contains an `@odata.nextLink` instance annotation with the watermark only when all the changes are enumerated. If more changes need to be enumerated, the response instead contains an `@odata.skipLink` instance annotation the application can request right away to get the next page.
 
 ### CSDL example
 
