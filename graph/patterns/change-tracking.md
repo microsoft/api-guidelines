@@ -2,17 +2,17 @@
 
 Microsoft Graph API Design Pattern
 
-*The change tracking pattern provides the ability to keep a third party system in sync with changes in Microsoft Graph without having to continuously poll the API.*
+*The change tracking pattern provides the ability to keep API consumers in sync with changes in Microsoft Graph without having to continuously poll the API.*
 
 ## Problem
 ---------
 
-Third party systems require to keep data in sync with Microsoft Graph, and the API design should not allow for continuous polling as it'd be costly and wouldn't guarantee data integrity.
+API consumers require an efficient way to keep data in sync with Microsoft Graph, and the API design should not allow for continuous polling as it'd be costly and wouldn't guarantee data integrity.
 
 ## Solution
 --------
 
-API designers leverage the change tracking (delta) capability on the entity set and declare a delta function for API consumers to use when tracking changes happening in the system.
+API designers can enable the change tracking (delta) capability on entity collections by declaring a delta function for API consumers to use to track changes in that collection.
 
 This new endpoint can be used to sync third party systems. This is achieved through returning a delta link with a watermark. Once the third party system comes back online, it uses the last provided delta link to catch up on new changes since their last request. Delta guarantees integrity of data through the watermark, regardless of service partitions and other obscure aspects for clients.
 
