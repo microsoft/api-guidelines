@@ -14,7 +14,7 @@ Third party systems require to keep data in sync with Microsoft Graph, and the A
 
 API designers leverage the change tracking (delta) capability on the entity set and declare a delta function for API consumers to use when tracking changes happening in the system.
 
-This new endpoint can be uses to sync third party systems. This is achieved through returning a delta link with a watermark. Once the third party system comes back online, it uses the last provided delta link to catch up on new changes since their last request. Delta guarantees integrity of data through the watermark, regardless of service partitions and other obscure aspects for clients.
+This new endpoint can be used to sync third party systems. This is achieved through returning a delta link with a watermark. Once the third party system comes back online, it uses the last provided delta link to catch up on new changes since their last request. Delta guarantees integrity of data through the watermark, regardless of service partitions and other obscure aspects for clients.
 
 ## Issues and Considerations
 -------------------------
