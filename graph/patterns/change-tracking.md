@@ -70,6 +70,12 @@ GET https://graph.microsoft.com/v1.0/users/delta
                 }
             ]
         },
+        {
+            "id": "0bbbbb0f-b0b3-4645-867d-742d8fb669a2",
+            "@removed": {
+                "reason": "changed"
+            }
+        }
     ]
 }
 ```
