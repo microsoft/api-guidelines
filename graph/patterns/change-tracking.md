@@ -23,6 +23,8 @@ This new endpoint can be used to sync API consumers. This is achieved through re
 
 Implementer MUST implement a watermark storage system in case of active watermarks. Passive watermarks are watermarks that can be retrieved from the context (e.g. timestamp), active watermarks represent information required to track the sync state which cannot be retrieved from the context (e.g. cursor from data store, partition affinity marker, partition id, generated unique sync identifier...)
 
+> Note: the delta function also provides support for $filter and $select to allow the API consumer to narrow down the number of entities and properties retrieved as well as the number of changes that are tracked. Additionally the delta function can also support $top to allow the API consumer to sync smaller sets of changes as well as $expand to allow the API consumer to sync related data. Expand across workloads is not supported today however.
+
 ## When to Use this Pattern
 ------------------------
 
