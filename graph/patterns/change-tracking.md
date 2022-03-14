@@ -7,7 +7,7 @@ Microsoft Graph API Design Pattern
 ## Problem
 ---------
 
-API consumers require an efficient way to keep data in sync with Microsoft Graph, and the API design should not allow for continuous polling as it'd be costly and wouldn't guarantee data integrity.
+API consumers require an efficient way to keep data in sync with Microsoft Graph, and the API design should be optimized to avoid polling as it is costly for consumers and producers alike as well as wouldn't guarantee data integrity.
 
 ## Solution
 --------
@@ -16,10 +16,12 @@ API designers can enable the change tracking (delta) capability on entity collec
 
 This new endpoint can be used to sync API consumers. This is achieved through returning a delta link with a watermark. Once the API consumer needs to refresh the data it uses the last provided delta link to catch up on new changes since their last request. Delta guarantees integrity of data through the watermark, regardless of service partitions and other obscure aspects for clients.
 
+> Note: although this capability is similar to the [OData $delta feed](https://docs.oasis-open.org/odata/odata-json-format/v4.0/errata02/os/odata-json-format-v4.0-errata02-os-complete.html#_Toc403940644) capability, it is a different construct. Microsoft Graph APIs MUST provide change tracking through the delta function and MUST NOT implement the OData $delta feed when providing change tracking capabilities to ensure the uniformity of the API experience.
+
 ## Issues and Considerations
 -------------------------
 
-Implementer MUST implement a watermark storage system in case of active watermarks (cursor in data store, partition affinity, sync state in data store...).
+Implementer MUST implement a watermark storage system in case of active watermarks. Passive watermarks are watermarks that can be retrieved from the context (e.g. timestamp), active watermarks represent information required to track the sync state which cannot be retrieved from the context (e.g. cursor from data store, partition affinity marker, partition id, generated unique sync identifier...)
 
 ## When to Use this Pattern
 ------------------------
