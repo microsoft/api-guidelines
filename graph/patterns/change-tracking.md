@@ -31,8 +31,8 @@ When an entity is soft deleted, the delta function MUST return the id of the del
 
 When a link to an entity is deleted, or when the linked entity is deleted, or when a link to an entity is added, implementer MUST return a `property@delta` annotation. e.g. considering the entity Group has a navigation property named members of type Collection(user):
 
-- When a user is added to the group `"members@delta": ["id of the added user"]`
-- When a user is removed from the group, or the target user is deleted `"members@delta": ["id of the added user"]`
+- When a user is added to the group `"members@delta": [{ "@odata.type": "#microsoft.graph.user", "id of the added user"}]`
+- When a user is removed from the group, or the target user is deleted `"members@delta": [{"@removed": {"reason": "deleted"}, "id of the deleted or removed user"}]`
 
 > Note: the delta function also provides support for $filter and $select to allow the API consumer to narrow down the number of entities and properties retrieved as well as the number of changes that are tracked. Additionally the delta function can also support $top to allow the API consumer to sync smaller sets of changes as well as $expand to allow the API consumer to sync related data. Expand across workloads is not supported today however.
 
