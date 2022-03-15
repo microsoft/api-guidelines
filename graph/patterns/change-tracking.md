@@ -23,6 +23,17 @@ This new endpoint can be used to sync API consumers. This is achieved through re
 
 Implementer MUST implement a watermark storage system in case of active watermarks. Passive watermarks are watermarks that can be retrieved from the context (e.g. timestamp), active watermarks represent information required to track the sync state which cannot be retrieved from the context (e.g. cursor from data store, partition affinity marker, partition id, generated unique sync identifier...)
 
+Implementer MUST implement soft deletion for entities in the backend storage system. The soft deletion will provide useful information to the client to appropriately reflect deletions.
+
+When an entity is soft deleted, the delta function MUST return the id of the deleted entity as well as a `@removed` annotation with the `reason` field.
+- The reason MUST be set to `changed` if the entity can be restored. `"@removed": {"reason": "changed"}`. 
+- The reason MUST be set to `deleted` if the entity cannot be restored. `"@removed": {"reason": "deleted"}`.
+
+When a link to an entity is deleted, or when the linked entity is deleted, or when a link to an entity is added, implementer MUST return a `property@delta` annotation. e.g. considering the entity Group has a navigation property named members of type Collection(user):
+
+- When a user is added to the group `"members@delta": ["id of the added user"]`
+- When a user is removed from the group, or the target user is deleted `"members@delta": ["id of the added user"]`
+
 > Note: the delta function also provides support for $filter and $select to allow the API consumer to narrow down the number of entities and properties retrieved as well as the number of changes that are tracked. Additionally the delta function can also support $top to allow the API consumer to sync smaller sets of changes as well as $expand to allow the API consumer to sync related data. Expand across workloads is not supported today however.
 
 ## When to Use this Pattern
@@ -37,7 +48,6 @@ Before using the change tracking pattern in your API definition, make sure your 
 ### Alternatives
 
 - Change notifications pattern (TODO add link when described)
-- Export pattern (TODO)
 - Backup pattern (TODO)
 
 ## Examples
