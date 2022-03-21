@@ -160,7 +160,7 @@ Integer   | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON li
 Float     | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 String    | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
 UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
-Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC 1123, Section 5.2.14](https://datatracker.ietf.org/doc/html/rfc1123#page-55)
+Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
 Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
 Array      | One of a) a comma-separated list of values (preferred), or b) separate `name=value` parameter instances for each value of the array
@@ -196,9 +196,9 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 
 :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
 
-:white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 1123, Section 5.2.14](https://datatracker.ietf.org/doc/html/rfc1123#page-55), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
+:white_check_mark: **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
 
-Note: RFC 1123 defines the date format as a modification of the date format in [RFC 822, Section 5](https://datatracker.ietf.org/doc/html/rfc822#section-5) to support either a 2 or 4 digit year, and further recommends that a 4 digit year always be used.
+Note: The RFC 7321 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
 
 :white_check_mark: **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
 
