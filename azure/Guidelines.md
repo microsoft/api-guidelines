@@ -47,9 +47,9 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
 
-- Uniform Resource Locators (URLs)
-- HTTP Request / Response Pattern
-- HTTP Query Parameters and Header Values
+- [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
+- [HTTP Request / Response Pattern](#http-request--response-pattern)
+- [HTTP Query Parameters and Header Values](#http-query-parameters-and-header-values)
 
 #### Uniform Resource Locators (URLs)
 
