@@ -3,7 +3,8 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Feb-01 | Updated error guidance                                        |
+| 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
+| 2022-Feb-01 | Updated error guidance                                         |
 | 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
 | 2020-Jul-31 | Added service advice for initial versions                      |
@@ -46,12 +47,12 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
-- [Uniform Resource Locators (URLs)](URLS)
-- HTTP Methods
-- Request & Response Headers
-- Bodies
 
-### Uniform Resource Locators (URLs)
+- [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
+- [HTTP Request / Response Pattern](#http-request--response-pattern)
+- [HTTP Query Parameters and Header Values](#http-query-parameters-and-header-values)
+
+#### Uniform Resource Locators (URLs)
 
 A Uniform Resource Locator (URL) is how developers access the resources of your service. Ultimately, URLs are how developers form a cognitive model of your service's resources.
 
@@ -88,8 +89,6 @@ Some customer-provided path segment values may be compared case-insensitivity if
 
 :heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
 
-#### Direct Endpoint URLs
-
 :heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
 ```text
 https://<tenant>-<service-root>.<service>.<cloud>/...
@@ -103,16 +102,16 @@ Examples:
 :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
 :heavy_check_mark: **YOU MAY** use URLs as values
-```http
+```text
 https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
-### HTTP Request / Response Pattern
+#### HTTP Request / Response Pattern
 The HTTP Request / Response pattern dictates how your API behaves. For example: POST methods that create resources must be idempotent, GET method results may be cached, the If-Modified and ETag headers offer optimistic concurrency. The URL of a service, along with its request/response bodies, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you make.
 
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, _all_ service operations (including POST) **must** be idempotent. Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 
-#### Exactly Once Behavior = Client Retries & Service Idempotency
+##### Exactly Once Behavior = Client Retries & Service Idempotency
 
 :white_check_mark: **DO** ensure that _all_ HTTP methods are idempotent.
 
@@ -146,7 +145,7 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
 :white_check_mark: **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
-### HTTP Query Parameters and Header Values
+#### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
 :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
@@ -160,7 +159,7 @@ Integer   | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON li
 Float     | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 String    | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
 UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
-Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC 1123, Section 5.2.14](https://datatracker.ietf.org/doc/html/rfc1123#page-55)
+Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
 Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
 Array      | One of a) a comma-separated list of values (preferred), or b) separate `name=value` parameter instances for each value of the array
@@ -196,9 +195,9 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 
 :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
 
-:white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 1123, Section 5.2.14](https://datatracker.ietf.org/doc/html/rfc1123#page-55), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
+:white_check_mark: **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
 
-Note: RFC 1123 defines the date format as a modification of the date format in [RFC 822, Section 5](https://datatracker.ietf.org/doc/html/rfc822#section-5) to support either a 2 or 4 digit year, and further recommends that a 4 digit year always be used.
+Note: The RFC 7321 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
 
 :white_check_mark: **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
 
@@ -215,7 +214,7 @@ Your service should include the `x-ms-request-id` value in error logs so that us
 
 ### REpresentational State Transfer (REST)
 REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items.
-These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
+These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#uniform-resource-locators-urls) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
 There are patterns, later in these guidelines, that describe how to invoke behavior on your service. See [this article in the Azure Architecture Center](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design) for a more detailed discussion of REST API design patterns.
 
 When designing your service, it is important to optimize for the developer using your API.
@@ -444,23 +443,23 @@ The REST specification is used to model the state of a resource, and is primaril
 
 :ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a resource
 **URL Pattern**
-```http
+```text
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 ```
 
 **Example**
-```http
+```text
 https://.../users/Bob:grant?access=read
 ```
 
 :ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a collection
 **URL Pattern**
-```http
+```text
 https://.../<resource-collection>:<action>?<input parameters>
 ```
 
 **Example**
-```http
+```text
 https://.../users:grant?access=read
 ```
 
@@ -542,7 +541,7 @@ The value of the `filter` option is an expression involving the fields of the re
 
 Example: return all Products whose Price is less than $10.00
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=price lt 10.00
 ```
 
@@ -566,7 +565,7 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
 
 :white_check_mark: **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
@@ -590,31 +589,31 @@ The following examples illustrate the use and semantics of each of the logical o
 
 Example: all products with a name equal to 'Milk'
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
@@ -639,17 +638,17 @@ Each expression in the `orderby` parameter value may include the suffix "asc" fo
 :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#Handling-errors) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
-```http
+```text
 GET https://api.contoso.com/people?orderby=name
 ```
 
 For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
-```http
+```text
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
 Sorting MUST compose with `filter`ing such that:
-```http
+```text
 GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
@@ -691,7 +690,7 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** use an `api-version` query parameter with a `YYYY-MM-DD` date value, with a `-preview` suffix for a preview service.
 
-```http
+```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
 
