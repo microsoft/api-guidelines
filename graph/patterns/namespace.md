@@ -2,20 +2,19 @@
 
 Microsoft Graph API Design Pattern
 
-### *The Namespace provides the ability to group resource definitions together into a logical set.*
+### *The Namespace provides the ability to organize resource definitions together into a logical set.*
 
 ## Problem
 
 When building a complex offering API designers may need to model many different
 resources and their relationships. For better user experience and
-discoverability related API definitions need to be grouped together. Large API
-surface may need to be partitioned to generate light-weight client SDKs and
-libraries.
+discoverability related API elements need to be clustered together.  
+
 
 ## Solution
 
 API designers can use the Namespace attribute of the CSDL schema to declare a
-namespace and logically bundle related API entities in the Graph metadata.
+namespace and logically organize related API entities in the Graph metadata.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ XML
 <Schema Namespace="microsoft.graph.{namespace}">
@@ -23,15 +22,12 @@ namespace and logically bundle related API entities in the Graph metadata.
 </Schema>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All resources declared within the namespace will be grouped together in the
-public Graph metadata and may be used for partitioning.
-
 A public namespace must have "microsoft.graph.” prefix and be presented in camel
 case, i.e microsoft.graph.myNamespace.
 
-When type casting is required in the API query, request or response a fully
+When type casting is required in the API query, request or response, a fully
 qualified type name is represented as concatenation of a namespace and a type
-name. Consequently namespace should be aligned with API category path segment.
+name. Consequently namespaces should be aligned with API category path segment.
 
 ## When to Use this Pattern
 
