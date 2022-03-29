@@ -3,6 +3,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2022-Mar-29 | Add guidelines about using durations                           |
 | 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
 | 2022-Feb-01 | Updated error guidance                                         |
 | 2021-Sep-11 | Add long-running operations guidance                           |
@@ -373,6 +374,10 @@ Services, and the clients that access them, may be written in multiple languages
 :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
 
 :white_check_mark: **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
+
+:white_check_mark: **DO** use a fixed time interval when using durations e.g., `ttlSeconds`. The unit of time should be part of the name, but must at least be documented in the property description.
+
+:heavy_check_mark: **YOU MAY** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) durations only when users must be able to specify a time intervals that may change from month to month or year to year e.g., "P1Y" represents 366 days on a leap year.
 
 :white_check_mark: **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
 
