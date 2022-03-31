@@ -375,7 +375,7 @@ Services, and the clients that access them, may be written in multiple languages
 
 :white_check_mark: **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
 
-:white_check_mark: **DO** use a fixed time interval when using durations and include the time unit in the name e.g., `backupTimeInMinutes` or `ttlSeconds`. The time unit should also be included in the property description to support localization e.g., "How often to back up expressed in minutes," or "The lifetime of the resource expressed in seconds."
+:white_check_mark: **DO** use a fixed time interval to express durations and include the time unit in the property name e.g., `backupTimeInMinutes` or `ttlSeconds`. The time unit should also be included in the property description to support localization e.g., "How often to back up expressed in minutes," or "The lifetime of the resource expressed in seconds."
 
 :heavy_check_mark: **YOU MAY** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) durations only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P1Y" represents 366 days on a leap year.
 
