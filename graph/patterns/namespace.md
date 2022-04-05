@@ -8,7 +8,7 @@ Microsoft Graph API Design Pattern
 
 When building a complex offering API designers may need to model many different
 resources and their relationships. For better user experience and
-discoverability related API elements need to be clustered together.  
+discoverability related API elements need to be grouped together.  
 
 
 ## Solution
@@ -27,13 +27,14 @@ case, i.e microsoft.graph.myNamespace.
 
 When type casting is required in the API query, request or response, a fully
 qualified type name is represented as concatenation of a namespace and a type
-name. Consequently namespaces should be aligned with API category path segment.
+name. For consistent user experience namespaces should be aligned with the corresponding API category path segment.
+
 
 ## When to Use this Pattern
 
 API resource grouping creates a user-friendly experience keeping all resources
-for a specific feature close together. It also allows generating smaller SDKs
-and libraries and limits length of IDE prompts such as Intellisense.
+for a specific feature close together. It also allows generating smallersmaller downloadable client components 
+and limits length of IDE prompts such as Intellisense.
 
 We recommend creating a new namespace when a new top-level API category is
 introduced.
@@ -42,10 +43,10 @@ introduced.
 
 1.  Microsoft Graph consistency requirements discourage using the same type
     names for different concepts even within different namespaces. Microsoft
-    Graph type names must be descriptive and almost always unique within the API
-    surface.
+    Graph type names must be descriptive and unique within the API
+    surface without requiring  full qualification.
 
-2.  Namespace must be consistent with API navigation path.
+2.  Namespace must be consistent with API category in the navigation path according to [Microsoft Graph REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/GuidelinesGraph.md#uniform-resource-locators-urls)
 
 3.  When type name is ambiguous and requires a namespace qualifier, changing
     namespace is a breaking change.
