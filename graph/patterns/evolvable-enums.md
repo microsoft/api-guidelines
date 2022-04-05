@@ -44,6 +44,8 @@ If an API consumer specifies ```unknownFutureValue``` for the value of a propert
 
 If an API consumer specifies ```unknownFutureValue``` for the value of a property in a ```PATCH``` request the API producer must treat the property as if it were absent (i.e. the existing value should not be changed). For the case where the API producer treats ```PATCH``` as an upsert the call **must** be rejected with a ```400 Bad Request``` HTTP status.
 
+If an API consumer specifies an enum member greater than ```unknownFutureValue``` in any request without specifying the ```Preference: include-unknown-enum-members``` header the API producer must reject the request with a ```400 Bad Request``` HTTP status.
+
 For details of how the ```unknownFutureValue``` value is handled as part of a ```$filter``` clause please consult the following examples.
 
 ### CSDL
