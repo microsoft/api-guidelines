@@ -12,7 +12,7 @@ Frequently API producers want to add new members to an enum type after it is ini
 ## Solution
 
 ---
-The solution here is to add a 'sentinel' member named ```unknownFutureValue``` at the end of the currently known enum members. The API producer will then replace any member that is numerically after ```unknownFutureValue``` with ```unknownFutureValue```. If an API consumer can handle unknown enum values the consumer can opt into receiving the unknown enum members by specifying the ```Preference: include-unknown-enum-members``` HTTP Header in their request(s), the API producer will then indicate that this preference has been applied by returning the ```Preference-Applied: include-unknown-enum-member``` HTTP header in the response.
+The solution here is to add a 'sentinel' member named ```unknownFutureValue``` at the end of the currently known enum members. The API producer will then replace any member that is numerically after ```unknownFutureValue``` with ```unknownFutureValue```. If an API consumer can handle unknown enum values the consumer can opt into receiving the unknown enum members by specifying the ```Preference: include-unknown-enum-members``` HTTP Header in their request(s), the API producer will then indicate that this preference has been applied by returning the ```Preference-Applied: include-unknown-enum-members``` HTTP header in the response.
 
 ## When to Use this Pattern
 
@@ -155,6 +155,8 @@ Preference: include-unknown-enum-members
 ```
 
 ```json
+Preference-Applied: include-unknown-enum-members
+
 {
     "value": [
         { 
@@ -207,6 +209,8 @@ Preference: include-unknown-enum-members
 ```
 
 ```json
+Preference-Applied: include-unknown-enum-members
+
 {
     "value": [
         { 
@@ -255,6 +259,8 @@ Preference: include-unknown-enum-members
 ```
 
 ```json
+Preference-Applied: include-unknown-enum-members
+
 {
     "value": [
         { 
@@ -294,6 +300,8 @@ Preference: include-unknown-enum-members
 ```
 
 ```json
+Preference-Applied: include-unknown-enum-members
+
 {
     "id": "1",
     "displayName": "Secret Prototype",
