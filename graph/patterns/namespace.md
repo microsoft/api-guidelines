@@ -67,7 +67,7 @@ introduced.
     2.  If a namespace does not begin with ‘microsoft.graph’ prefix, all types
         in the schema will be coerced into the main ‘microsoft.graph’ namespace.
 
-## Example
+## Examples
 
 ### Namespace and type declarations:
 
