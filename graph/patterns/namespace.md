@@ -46,7 +46,7 @@ introduced.
     Graph type names must be descriptive and unique within the API
     surface without requiring  full qualification.
 
-2.  Namespace must be consistent with API category in the navigation path according to [Microsoft Graph REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/GuidelinesGraph.md#uniform-resource-locators-urls)
+2.  Namespace must be consistent with API category in the navigation path according to [Microsoft Graph REST API Guidelines](GuidelinesGraph.md#uniform-resource-locators-urls)
 
 3.  When type name is ambiguous and requires a namespace qualifier, changing
     namespace is a breaking change.
