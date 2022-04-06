@@ -18,7 +18,7 @@ The solution here is to add a 'sentinel' member named ```unknownFutureValue``` a
 
 ---
 
-- It is a best practice to include a ```unknownFutureValue``` value when the enum is initially introduced to allow flexibility to extend the enum during the lifetime of the API. Even if the API producer believes they have included all possible members in an enum it is still strongly recommended to include a ```unknownFutureValue``` member to allow for unforeseen future circumstances which may required extending the enum.
+- It is a best practice to include a ```unknownFutureValue``` value when the enum is initially introduced to allow flexibility to extend the enum during the lifetime of the API. Even if the API producer believes they have included all possible members in an enum it is still strongly recommended to include a ```unknownFutureValue``` member to allow for unforeseen future circumstances which may require extending the enum.
 
 - This pattern must not be used in scenarios where an API consumer wants to use enum members that are not known to the API producer.
 
