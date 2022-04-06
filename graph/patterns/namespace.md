@@ -58,7 +58,7 @@ introduced.
     fully qualified name (namespace + type name).
 
 6.  Cyclical references between namespaces are not allowed as many
-    object-oriented languages don’t support a cycle in inheritance.
+    object-oriented languages don’t support a cycles between namespaces.
 
 7.  Microsoft Graph has heuristic rules for declared namespaces:
 
