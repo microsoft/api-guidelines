@@ -33,7 +33,7 @@ name. For consistent user experience namespaces MUST be aligned with the corresp
 ## When to Use this Pattern
 
 API resource grouping creates a user-friendly experience keeping all resources
-for a specific feature close together. It also allows generating smallersmaller downloadable client components 
+for a specific feature close together
 and limits the length of IDE prompts such as auto-complete in some programming languages.
 
 We recommend creating a new namespace when a new top-level API category is
