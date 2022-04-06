@@ -27,7 +27,7 @@ case, i.e microsoft.graph.myNamespace.
 
 When type casting is required in the API query, request or response, a fully
 qualified type name is represented as concatenation of a namespace and a type
-name. For consistent user experience namespaces should be aligned with the corresponding API category path segment.
+name. For consistent user experience namespaces MUST be aligned with the corresponding API category path segment.
 
 
 ## When to Use this Pattern
