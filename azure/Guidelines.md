@@ -301,9 +301,9 @@ There are 2 kinds of errors:
 
 :white_check_mark: **DO** carefully craft unique `x-ms-error-code` string values for errors that are recoverable at runtime.  Reuse common error codes for usage errors that are not recoverable.
 
-:white_check_mark: **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
+:heavy_check_mark: **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
 
-:white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
+:white_check_mark: **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
 
 :white_check_mark: **DO** provide a response body with the following structure:
 
@@ -346,7 +346,7 @@ Example:
 }
 ```
 
-:heavy_check_mark: **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
+:white_check_mark: **DO** document the service's top-level error code strings; they are part of the API contract.
 
 :heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are _not_ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
 
