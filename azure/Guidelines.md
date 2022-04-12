@@ -988,11 +988,19 @@ When supporting optimistic concurrency:
 #### Computing ETags
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
 
+:ballot_box_with_check: **YOU SHOULD** use a hash of the representation of a resource rather than a last modified/version number
+
+> While it may be tempting to use a revision/version number for the resource as the ETag, it interferes with client's ability to retry update requests. If a client sends a conditional update request, the service acts on the request, but the client never receives a response, a subsequent identical update will be seen as a conflict even though the retried request is attempting to make the same update.
+
 :ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
+
+:ballot_box_with_check: **YOU SHOULD**, if supporting range requests, use a strong ETag in order to support caching.
 
 :heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
 
 :heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
+
+:white_check_box: **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
 
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the `User-Agent` header, `X-MS-UserAgent` header, and Open Telemetry.
