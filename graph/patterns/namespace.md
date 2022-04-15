@@ -22,7 +22,7 @@ namespace and logically organize related API entities in the Graph metadata.
 </Schema>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A public namespace must have "microsoft.graph.” prefix and be presented in camel
+A public namespace must have "microsoft.graph." prefix and be presented in camel
 case, i.e microsoft.graph.myNamespace.
 
 When type casting is required in the API query, request or response, a fully
@@ -36,8 +36,7 @@ API resource grouping creates a user-friendly experience keeping all resources
 for a specific feature close together
 and limits the length of IDE prompts such as auto-complete in some programming languages.
 
-We recommend creating a new namespace when a new top-level API category is
-introduced.
+We recommend that a new namespace should be aligned with top-level API category.
 
 ## Issues and Considerations
 
@@ -60,12 +59,14 @@ introduced.
 6.  Cyclical references between namespaces are not allowed as many
     object-oriented languages don’t support a cycles between namespaces.
 
-7.  Microsoft Graph has heuristic rules for declared namespaces:
+7.  Microsoft Graph has some predefined constraints for declared namespaces:
 
-    1.  All public namespaces must have a prefix ‘microsoft.graph’
+    1.  All public namespaces must have a prefix "microsoft.graph"
 
-    2.  If a namespace does not begin with ‘microsoft.graph’ prefix, all types
-        in the schema will be coerced into the main ‘microsoft.graph’ namespace.
+    2.  Only one level of nesting deeper then "microsoft.graph" is supported 
+
+    3.  If a namespace does not begin with "microsoft.graph" prefix, all types
+        in the schema will be coerced into the main "microsoft.graph" namespace.
 
 ## Examples
 
@@ -80,27 +81,26 @@ introduced.
 </Schema>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Fully qualified type name: microsoft.graph.search.bookmark
+Fully qualified type name: "microsoft.graph.search.bookmark"
 
 ### Managing multiple schemas:
 
 Workloads must define schemas in their csdl using the Edmx format.
-[Microsoft.IC3.DataPlatform](https://dev.azure.com/msazure/One/_git/AD-AggregatorService-Workloads?path=%2FWorkloads%2FMicrosoft.IC3.DataPlatform%2Foverride%2Fschema-Prod-beta.csdl)
-is an example of a workload that exposes multiple namespaces.
+Here is an example of a workload that exposes multiple namespaces.
 
 **Tip:** As with schemas that exist in the microsoft.graph namespace, defining an
-entity type is optional, AGS will transform your schema to make all entity types
-derive from microsoft.graph.entity.
+entity type is optional, by default your schema derives all entity types
+from microsoft.graph.entity.
 
 **Warning:** Do not deviate from the general structure in the example below.
 Schema validation tool expects the XML structure (including xml namespace
 declarations) to match the example below. 
 ```XML
 <?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns:ags="http://aggregator.microsoft.com/internal" xmlns:odata="http://schemas.microsoft.com/oDataCapabilities">
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns:odata="http://schemas.microsoft.com/oDataCapabilities">
   <edmx:DataServices>
-    <Schema Namespace="microsoft.graph.callRecords" xmlns="http://docs.oasis-open.org/odata/ns/edm" xmlns:ags="http://aggregator.microsoft.com/internal" xmlns:odata="http://schemas.microsoft.com/oDataCapabilities">
-      <EntityType Name="callRecord" ags:IsOwner="true" ags:AddressUrl="https://plat.teams.microsoft.com">
+    <Schema Namespace="microsoft.graph.callRecords" xmlns="http://docs.oasis-open.org/odata/ns/edm" xmlns:odata="http://schemas.microsoft.com/oDataCapabilities">
+      <EntityType Name="callRecord">
         <Key>
           <PropertyRef Name="id" />
         </Key>
