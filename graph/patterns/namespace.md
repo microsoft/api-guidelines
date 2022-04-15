@@ -61,11 +61,11 @@ We recommend that a new namespace should be aligned with top-level API category.
 
 7.  Microsoft Graph has some predefined constraints for declared namespaces:
 
-    1.  All public namespaces must have a prefix "microsoft.graph"
+    -   All public namespaces must have a prefix "microsoft.graph"
 
-    2.  Only one level of nesting deeper then "microsoft.graph" is supported 
+    -   Only one level of nesting deeper then "microsoft.graph" is supported 
 
-    3.  If a namespace does not begin with "microsoft.graph" prefix, all types
+    -   If a namespace does not begin with "microsoft.graph" prefix, all types
         in the schema will be coerced into the main "microsoft.graph" namespace.
 
 ## Examples
