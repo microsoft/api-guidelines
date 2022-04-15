@@ -16,22 +16,21 @@ to annotate any usages of that type.
 
 **Example of property annotation:**
 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- <EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
-    <Annotation Term="Org.OData.Core.V1.Revisions">
-      <Collection>
-        <Record>
-          <PropertyValue Property = "Date" Date="2022-03-30"/>
-          <PropertyValue Property = "Version" String="2022-03/Tasks_And_Plans"/>
-          <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
-          <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on June 30, 2024. Please use the new To Do API."/>
-          <PropertyValue Property = "RemovalDate" Date="2024-06-30"/>
-        </Record>
-      </Collection>
-    </Annotation>
-    ...
-  </EntityType>
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```xml
+<EntityType Name="outlookTask" BaseType="Microsoft.OutlookServices.outlookItem" ags:IsMaster="true" ags:WorkloadName="Task" ags:EnabledForPassthrough="true">
+  <Annotation Term="Org.OData.Core.V1.Revisions">
+    <Collection>
+      <Record>
+        <PropertyValue Property = "Date" Date="2022-03-30"/>
+        <PropertyValue Property = "Version" String="2022-03/Tasks_And_Plans"/>
+        <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
+        <PropertyValue Property = "Description" String="The Outlook tasks API is deprecated and will stop returning data on June 30, 2024. Please use the new To Do API."/>
+        <PropertyValue Property = "RemovalDate" Date="2024-06-30"/>
+      </Record>
+    </Collection>
+  </Annotation>
+</EntityType>
+```
 
 When the request URL contains a reference to a deprecated model element, the gateway will add a [Deprecation
 header](https://tools.ietf.org/html/draft-dalal-deprecation-header-02) (with the
