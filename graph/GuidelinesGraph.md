@@ -414,8 +414,11 @@ Recommended API Design patterns:
 | Type Hierarchy          | The ability to model is-a relationships using subtypes.                                | [Subtypes](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
 | Facets         | The ability to model parent-child relationships using Facet pattern.                                | [Facets](./patterns/Modelling%20with%20Subtypes%20Pattern.md) |
 | Dictionary          | The ability for clients to provide an unknown quantity of data elements of the same type.       | [Dictionary](./patterns/dictionary.md) |
+| Evolvable Enums     | The ability to extend enumerated types without breaking changes.       | [Evolvable Enums](./patterns/evolvable-enums.md) |
+| Change Tracking     | The ability to keep API consumers in sync with changes without polling.       | [Change Tracking](./patterns/change-tracking.md) |
+| Namespace     | The ability to organize resource definitions into a logical set.     | [Namespace](./patterns/namespace.md) |
 
-                                                                     |
+                                                                    |
 
 
 ## References
