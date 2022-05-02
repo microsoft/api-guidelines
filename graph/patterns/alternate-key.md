@@ -2,14 +2,14 @@
 
 Microsoft Graph API Design Pattern
 
-*The Alternate Key Pattern provides the ability to query for a single, specific entity identifiable through an alternative attribute (called key) that is not its unique identifier*
+*The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative attribute (called key) that is not its unique identifier*
 
 ## Problem
 --------
 
-All entities in our system are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness. Often though, that same entity can also be uniquely identified by an alternative, more convenient attribute.
+All entities in our system are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness. Often though, that same resource can also be uniquely identified by an alternative, more convenient attribute.
 
-Take a look at the `user` entity: while the `id` remains a perfectly valid way to get the entity details, the `mail` address is also an unique attribute that could be used to identify it.
+Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique attribute that could be used to identify it.
 
 While it is still possible to use the oData filter, such as
 
@@ -19,7 +19,7 @@ While it is still possible to use the oData filter, such as
 ## Solution
 --------
 
-oData offers entity addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
+oData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
@@ -27,7 +27,7 @@ https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the em
 ## When to Use this Pattern
 ------------------------
 
-This pattern works and makes sense when the alternate key is good enough to identify a single entity and provides an useful alternative to the client; while it does not work if the resultset has more than one element.
+This pattern works and makes sense when the alternate key is good enough to identify a single resource and provides an useful alternative to the client; while it does not work if the resultset has more than one element.
 
 In such case, we **strongly** advice to throw an exception and encourage the user to use `$filter` rather than returning the first result of the query 
 
