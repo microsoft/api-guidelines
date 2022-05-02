@@ -13,7 +13,7 @@ Take a look at the `user` entity: while the UUID remains a perfectly valid way t
 
 While it is still possible to use the oData filter, such as
 
-`serviceRoot/Users?$filter=email eq 'hello@microsoft.com'`, the returned result is wrapped in an array that needs to be unpacked.
+`https://graph.microsoft.com/v1.0/users?filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
 
 
 ## Solution
@@ -22,7 +22,7 @@ While it is still possible to use the oData filter, such as
 oData offers entity addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
-https://graph.microsoft.com/v1.0/users(email='hello@microsoft.com') Retrieves the employee with the email matching `hello@microsoft.com`
+https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
 
 ## When to Use this Pattern
 ------------------------
@@ -40,7 +40,7 @@ https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 
 https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
 
-https://graph.microsoft.com/v1.0/users(email='hello@microsoft.com')
+https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
 
 
 
