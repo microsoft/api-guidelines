@@ -19,7 +19,7 @@ While it is still possible to use the oData filter, such as
 ## Solution
 --------
 
-oData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
+oData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key attribute name to unambiguously determine the alternate key.
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
@@ -34,7 +34,7 @@ In such case, we **strongly** advice to throw an exception and encourage the use
 ## Example
 -------
 
-The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key property name, and the canonical short form without key property name
+The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key attribute name, and the canonical short form without key attribute name
 
 https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 
