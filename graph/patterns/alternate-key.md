@@ -7,7 +7,7 @@ Microsoft Graph API Design Pattern
 ## Problem
 --------
 
-All entities in our system are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness. Often though, that same resource can also be uniquely identified by an alternative, more convenient attribute.
+All entities in our system are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness. Often though, that same resource can also be uniquely identified by an alternative, more convenient attribute that provides a better developer experience.
 
 Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique attribute that could be used to identify it.
 
