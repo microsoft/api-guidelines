@@ -21,8 +21,8 @@ While it is still possible to use the oData filter, such as
 
 oData offers entity addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
 
-http://host/service/Employees(0) - Retrieves the employee with ID = 0
-http://host/service/Employees(email='hello@microsoft.com') Retrieves the employee with the email matching `hello@microsoft.com`
+https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
+https://graph.microsoft.com/v1.0/users(email='hello@microsoft.com') Retrieves the employee with the email matching `hello@microsoft.com`
 
 ## When to Use this Pattern
 ------------------------
@@ -36,11 +36,11 @@ In such case, we **strongly** advice to throw an exception and encourage the use
 
 The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key property name, and the canonical short form without key property name
 
-http://host/service/Employees/1a89ade6-9f59-4fea-a139-23f84e3aef66
+https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 
-http://host/service/Employees(ssn='123-45-6789')
+https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
 
-http://host/service/Employees(email='hello@microsoft.com')
+https://graph.microsoft.com/v1.0/users(email='hello@microsoft.com')
 
 
 
