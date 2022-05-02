@@ -9,7 +9,7 @@ Microsoft Graph API Design Pattern
 
 All entities in our system are identified by an UUID - which guarantees uniqueness. Often though, that same entity can also be uniquely identified by an alternative, more convenient attribute.
 
-Take a look at the `user` entity: while the UUID remains a perfectly valid way to get the entity details, the `mail` address is also an unique attribute that could be used to identify it.
+Take a look at the `user` entity: while the `id` remains a perfectly valid way to get the entity details, the `mail` address is also an unique attribute that could be used to identify it.
 
 While it is still possible to use the oData filter, such as
 
