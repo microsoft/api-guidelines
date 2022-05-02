@@ -27,7 +27,7 @@ https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the em
 ## When to Use this Pattern
 ------------------------
 
-This pattern works when the alternate key is good enough to identify a single entity that is properly namespaced; while it does not work if the resultset has more than one element.
+This pattern works and makes sense when the alternate key is good enough to identify a single entity and provides an useful alternative to the client; while it does not work if the resultset has more than one element.
 
 In such case, we **strongly** advice to throw an exception and encourage the user to use `$filter` rather than returning the first result of the query 
 
