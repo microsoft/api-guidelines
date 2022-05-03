@@ -14,7 +14,7 @@ Take a look at the `user` resource: while the `id` remains a perfectly valid way
 
 While it is still possible to use the oData filter, such as
 
-`https://graph.microsoft.com/v1.0/users?filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
+`https://graph.microsoft.com/v1.0/users?$filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
 
 ## Solution
 
