@@ -31,7 +31,7 @@ https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the em
 
 This pattern works and makes sense when the alternate key is good enough to identify a single resource and provides an useful alternative to the client; while it does not work if the resultset has more than one element.
 
-In such case, we **strongly** advice to throw an exception and encourage the user to use `$filter` rather than returning the first result of the query
+In such case, the system SHOULD throw an exception and encourage the user to use `$filter` rather than returning the first result of the query
 
 ## Example
 
