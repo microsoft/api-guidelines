@@ -44,3 +44,21 @@ https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
 
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
+
+All of the 3 will yield the sare response:
+
+
+```json
+{
+   "givenName": "Bob",
+   "jobTitle": "Retail Manager",
+   "mail": "bob@contoso.com",
+   "mobilePhone": "+1 425 555 0109",
+   "officeLocation": "18/2111",
+   "preferredLanguage": "en-US",
+   "surname": "Vance",
+   "userPrincipalName": "bob@contoso.com",
+   "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
+}
+```
+
