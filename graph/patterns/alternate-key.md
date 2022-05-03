@@ -31,7 +31,10 @@ https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the em
 
 This pattern works and makes sense when the alternate key is good enough to identify a single resource and provides an useful alternative to the client; while it does not work if the resultset has more than one element.
 
-In such case, the system SHOULD throw an exception and encourage the user to use `$filter` rather than returning the first result of the query
+In such case, the workload has two choices:
+
+1. If the workload defines a list of alternate keys for a resource and the requested key is not there, the workload SHOULD return `422`
+2. If the workload does not have a list of alternate keys, it can still query the data source, but if the result yields more than a record, it SHOULD return `422` and encourage the user to use `$filter` rather than returning the first result of the query
 
 ## Example
 
@@ -85,4 +88,12 @@ All of the 3 will yield the sare response:
   "userPrincipalName": "bob@contoso.com",
   "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
 }
+```
+
+3. Requesting a resource through an alternate key which yields more than a result
+
+```http
+GET https://graph.microsoft.com/v1.0/users(name='Bob')
+
+422 Precondition Failed
 ```
