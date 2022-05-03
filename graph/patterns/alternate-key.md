@@ -39,26 +39,50 @@ In such case, the system SHOULD throw an exception and encourage the user to use
 
 The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key property name, and the canonical short form without key property name
 
-https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
+1. Get a specific resource through `$filter`:
 
-https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
-
-https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
-
-All of the 3 will yield the sare response:
-
+```http
+GET https://graph.microsoft.com/v1.0/users/?$filter=(ssn eq '123-45-6789')
+```
 
 ```json
 {
-   "givenName": "Bob",
-   "jobTitle": "Retail Manager",
-   "mail": "bob@contoso.com",
-   "mobilePhone": "+1 425 555 0109",
-   "officeLocation": "18/2111",
-   "preferredLanguage": "en-US",
-   "surname": "Vance",
-   "userPrincipalName": "bob@contoso.com",
-   "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
+  "value": [
+    {
+      "givenName": "Bob",
+      "jobTitle": "Retail Manager",
+      "mail": "bob@contoso.com",
+      "mobilePhone": "+1 425 555 0109",
+      "officeLocation": "18/2111",
+      "preferredLanguage": "en-US",
+      "surname": "Vance",
+      "userPrincipalName": "bob@contoso.com",
+      "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
+    }
+  ]
 }
 ```
 
+2. Get a specific resource through the alternate key:
+
+```http
+GET https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
+GET https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
+GET https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
+```
+
+All of the 3 will yield the sare response:
+
+```json
+{
+  "givenName": "Bob",
+  "jobTitle": "Retail Manager",
+  "mail": "bob@contoso.com",
+  "mobilePhone": "+1 425 555 0109",
+  "officeLocation": "18/2111",
+  "preferredLanguage": "en-US",
+  "surname": "Vance",
+  "userPrincipalName": "bob@contoso.com",
+  "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
+}
+```
