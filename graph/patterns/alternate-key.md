@@ -2,15 +2,15 @@
 
 Microsoft Graph API Design Pattern
 
-_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative attribute (called key) that is not its unique identifier_
+_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative property (called key) that is not its unique identifier_
 
 ## Problem
 
 ---
 
-The resources exposed in Graph are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness inside the same resource type. Often though, that same resource can also be uniquely identified by an alternative, more convenient attribute that provides a better developer experience.
+The resources exposed in Graph are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness inside the same resource type. Often though, that same resource can also be uniquely identified by an alternative, more convenient property that provides a better developer experience.
 
-Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique attribute that could be used to identify it.
+Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique property that could be used to identify it.
 
 While it is still possible to use the oData filter, such as
 
@@ -20,7 +20,7 @@ While it is still possible to use the oData filter, such as
 
 ---
 
-oData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key attribute name to unambiguously determine the alternate key.
+oData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
@@ -37,7 +37,7 @@ In such case, the system SHOULD throw an exception and encourage the user to use
 
 ---
 
-The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key attribute name, and the canonical short form without key attribute name
+The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key property name, and the canonical short form without key property name
 
 https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 
