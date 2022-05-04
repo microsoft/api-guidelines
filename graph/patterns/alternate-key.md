@@ -2,13 +2,13 @@
 
 Microsoft Graph API Design Pattern
 
-_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative property (called key) that is not its unique identifier_
+_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative property (called key) that is not its primary key_
 
 ## Problem
 
 ---
 
-The resources exposed in Graph are identified by an [UUID (Universally Unique Identifier)](https://en.wikipedia.org/wiki/Universally_unique_identifier) - which guarantees uniqueness inside the same resource type. Often though, that same resource can also be uniquely identified by an alternative, more convenient property that provides a better developer experience.
+The resources exposed in Graph are identified through a Primary Key - which guarantees uniqueness inside the same resource type. Often though, that same resource can also be uniquely identified by an alternative, more convenient property (or set of properties) that provides a better developer experience.
 
 Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique property that could be used to identify it.
 
@@ -102,7 +102,7 @@ GET https://graph.microsoft.com/v1.0/users/?$filter=(ssn eq '123-45-6789')
 }
 ```
 
-2. Get a specific resource through the unique identifier, and then through the two alternate keys:
+2. Get a specific resource through its primary key, and then through the two alternate keys:
 
 ```http
 GET https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
