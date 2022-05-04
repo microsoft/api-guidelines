@@ -10,7 +10,7 @@ In some cases, exposed resources can trigger side effects that modify the system
 
 These situation are often modeled as a `POST` request to a specific endpoint in the same URI space of the resource, triggering the side effect directly and not returning any data. While it might be a quick and easy solution, there are some considerations:
 
-- The API should be exposing resources and allow their manipulation, while Actions resemble an object in [OOP][1]
+- The API should be exposing resources and allow their manipulation, while Actions resemble a remote procedure call on an object, typical of [OOP][1]
 - It couples the request with the side effect, making more difficult to test, log, replay and reason about what is happening in the system
 - It forces the consumer to follow the [OOP][1] approach at the API level. We do not want to pursue any specific style and the developers writing the client might be working in other ways
 
