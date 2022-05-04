@@ -95,5 +95,5 @@ All of the 3 will yield the sare response:
 ```http
 GET https://graph.microsoft.com/v1.0/users(name='Bob')
 
-422 Precondition Failed
+400 Bad Request
 ```
