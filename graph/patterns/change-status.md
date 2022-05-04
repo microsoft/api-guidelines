@@ -70,7 +70,7 @@ For instance, let's say the `riskyUser` confirmation process also requires a par
 
 <EntityType Name="riskAssessment" >
     <Property Name="status" Type="riskyStatus" />
-    <Property Name="duration" Type="Edm.Int32" />
+    <Property Name="duration" Type="Edm.Duration" />
 </EntityType>
 ```
 
