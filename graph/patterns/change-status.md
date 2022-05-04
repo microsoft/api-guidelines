@@ -50,7 +50,8 @@ If the response triggers a long running operation, the response should contain a
 
 ```json
 {
-  "taskId": 10239
+  "createdDateTime": "2015-06-19T12-01-03.4Z",
+  "status": "disabling"
 }
 ```
 
