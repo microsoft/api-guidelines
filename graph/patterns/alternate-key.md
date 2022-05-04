@@ -42,6 +42,42 @@ In such case, the workload has two choices:
 
 The same user identified via the alternate key SSN, the canonical (primary) key ID using the non-canonical long form with specified key property name, and the canonical short form without key property name
 
+Declare `mail` and `ssn` as alternate keys on an entity:
+
+```xml
+<EntityType Name="User">
+   <Key>
+     <PropertyRef Name="id" />
+   </Key>
+   <Property Name="id" Type="Edm.Int32" />
+   
+   <Property Name="mail" Type="Edm.String" />
+   <Property Name="ssn" Type="Edm.String" />
+   <Annotation Term="Keys.AlternateKeys">
+      <Collection>
+         <Record>
+            <PropertyValue Property="Key">
+               <Collection>
+                  <Record>
+                     <PropertyValue Property="Name" PropertyPath="mail" />
+                  </Record>
+               </Collection>
+            </PropertyValue>
+         </Record>
+         <Record>
+            <PropertyValue Property="Key">
+               <Collection>
+                  <Record>
+                     <PropertyValue Property="Name" PropertyPath="ssn" />
+                  </Record>
+               </Collection>
+            </PropertyValue>
+         </Record>
+      </Collection>
+   </Annotation>
+</EntityType>
+```
+
 1. Get a specific resource through `$filter`:
 
 ```http
