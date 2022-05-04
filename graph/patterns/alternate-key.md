@@ -50,7 +50,7 @@ Declare `mail` and `ssn` as alternate keys on an entity:
      <PropertyRef Name="id" />
    </Key>
    <Property Name="id" Type="Edm.Int32" />
-   
+
    <Property Name="mail" Type="Edm.String" />
    <Property Name="ssn" Type="Edm.String" />
    <Annotation Term="Keys.AlternateKeys">
@@ -102,7 +102,7 @@ GET https://graph.microsoft.com/v1.0/users/?$filter=(ssn eq '123-45-6789')
 }
 ```
 
-2. Get a specific resource through the alternate key:
+2. Get a specific resource through the unique identifier, and then through the two alternate keys:
 
 ```http
 GET https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
