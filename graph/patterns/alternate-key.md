@@ -20,7 +20,7 @@ While it is still possible to use the OData filter, such as
 
 ---
 
-OData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key.
+OData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key. (Note: this is a hypothetical sample)
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
