@@ -126,7 +126,7 @@ All of the 3 will yield the sare response:
 }
 ```
 
-3. Requesting a resource through an alternate key which yields more than a result
+3. Requesting a resource through an alternate key which yields more than one result
 
 ```http
 GET https://graph.microsoft.com/v1.0/users(name='Bob')
