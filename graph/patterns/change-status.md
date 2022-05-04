@@ -42,17 +42,25 @@ Instead of returning an empty body with `204` status code, depending on the situ
 
 ```json
 {
-  "newStatus": "confirmed"
+  "status": "confirmed"
 }
 ```
 
-If the response triggers a long running operation, the response should contain a reference to query its status, following the [existing guidance][2]. The status on the resource shall stay the same until the long running operation is completed:
+If the response triggers a long running operation, the response should contain a reference to query its status, following the [existing guidance][2]:
 
 ```json
 {
   "createdDateTime": "2015-06-19T12-01-03.4Z",
   "status": "disabling"
 }
+```
+
+The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a `desiredState` property along with the resource to signal that it is working on a request:
+
+curl https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
+
+```json
+{ "status": "potential", "desiredStatus": "confirmed" }
 ```
 
 ---
