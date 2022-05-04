@@ -76,6 +76,10 @@ For instance, let's say the `riskyUser` confirmation process also requires a par
 
 ```bash
 curl --json '{"status": "confirmed", "duration": 3600}' https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729/riskAssessments
+
+HTTP 200/OK
+
+{"status": "confirmed"}
 ```
 
 ## Issues and Considerations
