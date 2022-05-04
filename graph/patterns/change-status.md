@@ -24,7 +24,7 @@ Taking in consideration the example of the `riskyUser` above, it is possible to 
 <EnumType Name="riskyStatus">
     <Member Name="confirmed" Value="0"/>
     <Member Name="dismissed" Value="1"/>
-    <Member Name="unknown" Value="2"/>
+    <Member Name="potential" Value="2"/>
 </EnumType>
 
 <EntityType Name="riskyUser" >
