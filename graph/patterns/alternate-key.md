@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative property (called key) that is not its primary key_
+_The Alternate Key Pattern provides the ability to query for a single, specific resource identifiable through an alternative set of properties that is not its primary key_
 
 ## Problem
 
