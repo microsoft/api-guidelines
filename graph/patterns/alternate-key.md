@@ -12,7 +12,7 @@ The resources exposed in Graph are identified by an [UUID (Universally Unique Id
 
 Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique property that could be used to identify it.
 
-While it is still possible to use the oData filter, such as
+While it is still possible to use the OData filter, such as
 
 `https://graph.microsoft.com/v1.0/users?$filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
 
