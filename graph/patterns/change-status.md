@@ -10,7 +10,7 @@ In some cases, exposed resources can trigger side effects that modify the system
 
 These situation are often modeled as a `POST` request to a specific endpoint in the same URI space of the resource, triggering the side effect directly and not returning any data. While it might be a quick and easy solution, there are some considerations:
 
-- The API should be exposing resources and allow their manipulation, while Actions resemble a remote procedure call on an object, typical of [OOP][1]
+- The API should be exposing resources and allow their manipulation, while Actions resemble a remote procedure call on an object, typical of the[OOP][1]
 - It couples the request with the side effect, making more difficult to test, log, replay and reason about what is happening in the system
 - It forces the consumer to follow the [OOP][1] approach at the API level. We do not want to pursue any specific style and the developers writing the client might be working in other ways
 
@@ -32,7 +32,7 @@ Taking in consideration the example of the `riskyUser` above, it is possible to 
 </EntityType>
 ```
 
-It is now possible to change the status through a PATCH request to the entity:
+To confirm the user as compromised, we can now send a PATCH request on the resource:
 
 ```bash
 curl -X PATCH --json '{"status": "confirmed"}' https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
@@ -55,7 +55,7 @@ If the response triggers a long running operation, the response should contain a
 }
 ```
 
-The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a `desiredState` property along with the resource to signal that it is working on a request:
+The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a `desiredStatus` property along with the other resource's properties to signal that it is working on a request:
 
 curl https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 
