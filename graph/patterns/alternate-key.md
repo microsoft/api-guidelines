@@ -102,7 +102,7 @@ GET https://graph.microsoft.com/v1.0/users/?$filter=ssn eq '123-45-6789'
 ```http
 GET https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 GET https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
-GET https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
+GET https://graph.microsoft.com/v1.0/users(mail='bob@contoso.com')
 ```
 
 **NOTE:** When requesting a resource through its primary key you might want to prefer to use key-as-segment (as shown above). Also, the key-as-segment does not work for alternate keys.
