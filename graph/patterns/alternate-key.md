@@ -12,15 +12,15 @@ The resources exposed in Graph are identified through a Primary Key - which guar
 
 Take a look at the `user` resource: while the `id` remains a perfectly valid way to get the resource details, the `mail` address is also an unique property that could be used to identify it.
 
-While it is still possible to use the OData filter, such as
+While it is still possible to use the `$filter` query parameter, such as
 
-`https://graph.microsoft.com/v1.0/users?$filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
+`GET https://graph.microsoft.com/v1.0/users?$filter=mail eq 'bob@contoso.com'`, the returned result is wrapped in an array that needs to be unpacked.
 
 ## Solution
 
 ---
 
-OData offers resource addressing via an alternate key using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key. (Note: this is a hypothetical sample)
+Resource addressing via an alternative key can be achieved using the same parentheses-style convention as for the canonical key, with one difference: single-part alternate keys MUST specify the key property name to unambiguously determine the alternate key. (Note: this is a hypothetical sample)
 
 https://graph.microsoft.com/v1.0/users(0) - Retrieves the employee with ID = 0
 https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the employee with the email matching `bob@contoso.com`
@@ -29,7 +29,7 @@ https://graph.microsoft.com/v1.0/users(email='bob@contoso.com') Retrieves the em
 
 ---
 
-This pattern works and makes sense when the alternate key is good enough to identify a single resource and provides an useful alternative to the client; while it does not work if the resultset has more than one element. In such case, the workload SHOULD return `400`
+This pattern works and makes sense when the alternate key is good enough to identify a single resource and provides an useful alternative to the client.
 
 ## Example
 
@@ -40,7 +40,7 @@ The same user identified via the alternate key SSN, the canonical (primary) key 
 Declare `mail` and `ssn` as alternate keys on an entity:
 
 ```xml
-<EntityType Name="User">
+<EntityType Name="user">
    <Key>
      <PropertyRef Name="id" />
    </Key>
@@ -76,7 +76,7 @@ Declare `mail` and `ssn` as alternate keys on an entity:
 1. Get a specific resource through `$filter`:
 
 ```http
-GET https://graph.microsoft.com/v1.0/users/?$filter=(ssn eq '123-45-6789')
+GET https://graph.microsoft.com/v1.0/users/?$filter=ssn eq '123-45-6789'
 ```
 
 ```json
@@ -97,13 +97,15 @@ GET https://graph.microsoft.com/v1.0/users/?$filter=(ssn eq '123-45-6789')
 }
 ```
 
-2. Get a specific resource through its primary key, and then through the two alternate keys:
+2. Get a specific resource either through its primary key, or through the two alternate keys:
 
 ```http
 GET https://graph.microsoft.com/v1.0/users/1a89ade6-9f59-4fea-a139-23f84e3aef66
 GET https://graph.microsoft.com/v1.0/users(ssn='123-45-6789')
 GET https://graph.microsoft.com/v1.0/users(email='bob@contoso.com')
 ```
+
+**NOTE:** When requesting a resource through its primary key you might want to prefer to use key-as-segment (as shown above). Also, the key-as-segment does not work for alternate keys.
 
 All of the 3 will yield the sare response:
 
