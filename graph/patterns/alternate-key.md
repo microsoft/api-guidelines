@@ -117,6 +117,7 @@ All of the 3 will yield the sare response:
   "mobilePhone": "+1 425 555 0109",
   "officeLocation": "18/2111",
   "preferredLanguage": "en-US",
+  "ssn": "123-45-6789",
   "surname": "Vance",
   "userPrincipalName": "bob@contoso.com",
   "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66"
