@@ -56,7 +56,7 @@ If the response triggers a long running operation, the response should contain a
 }
 ```
 
-The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a `desiredStatus` property along with the other resource's properties to signal that it is working on a request:
+The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a property representing the desired status along with the current resource status to signal that it is working on a request:
 
 curl https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 
