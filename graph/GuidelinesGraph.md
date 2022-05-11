@@ -418,7 +418,7 @@ Recommended API Design patterns:
 | Evolvable Enums     | The ability to extend enumerated types without breaking changes.       | [Evolvable Enums](./patterns/evolvable-enums.md) |
 | Change Tracking     | The ability to keep API consumers in sync with changes without polling.       | [Change Tracking](./patterns/change-tracking.md) |
 | Namespace     | The ability to organize resource definitions into a logical set.     | [Namespace](./patterns/namespace.md) |
-| Alternate Key     | The ability to uniquely identify and query recources using an alternate key.     | [Alternate Key](./patterns/alternate-key.md) |
+| Alternate Key     | The ability to uniquely identify and query resources using an alternate key.     | [Alternate Key](./patterns/alternate-key.md) |
 
                                                                     |
 
