@@ -182,8 +182,9 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.m
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support \$select on resource to enable properties projection |
 | :ballot_box_with_check: **SHOULD** support \$filter with eq, ne operations on properties of entities for collections| 
-| :heavy_check_mark: **MUST** support [server-side pagination](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ServerDrivenPaging) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL) for collections |
-| :ballot_box_with_check: **SHOULD** support pagination $top, $skip and $count for collections |
+| :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL)  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using $top and $skip (or $skipToken)"|
+| :ballot_box_with_check: **SHOULD** support $count for collections |	
 | :ballot_box_with_check: **SHOULD** sorting with \$orderby both ascending and descending on properties of the entities |
 
 The query options part of an OData URL can be quite long, potentially exceeding
@@ -417,6 +418,7 @@ Recommended API Design patterns:
 | Evolvable Enums     | The ability to extend enumerated types without breaking changes.       | [Evolvable Enums](./patterns/evolvable-enums.md) |
 | Change Tracking     | The ability to keep API consumers in sync with changes without polling.       | [Change Tracking](./patterns/change-tracking.md) |
 | Namespace     | The ability to organize resource definitions into a logical set.     | [Namespace](./patterns/namespace.md) |
+| Alternate Key     | The ability to uniquely identify and query resources using an alternate key.     | [Alternate Key](./patterns/alternate-key.md) |
 
                                                                     |
 
