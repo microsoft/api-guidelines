@@ -36,7 +36,7 @@ Taking in consideration the example of the `riskyUser` above, it is possible to 
 To confirm the user as compromised, we can now send a PATCH request on the resource:
 
 ```bash
-curl -X PATCH --json '{"status": "confirmed"}' https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
+curl -X PATCH --json '{"status": "confirmed"}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 ```
 
 Instead of returning an empty body with `204` status code, depending on the situation, the response should contain the status of the request, if can be satisfied in a reasonable time:
@@ -58,7 +58,7 @@ If the response triggers a long running operation, the response should contain a
 
 The status on the resource shall stay the same until the long running operation is completed, but the workload can optionally return a property representing the desired status along with the current resource status to signal that it is working on a request:
 
-curl https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
+curl https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 
 ```json
 { "status": "potential", "desiredStatus": "confirmed" }
@@ -84,7 +84,7 @@ For instance, let's say the `riskyUser` confirmation process also requires a par
 ```
 
 ```bash
-curl --json '{"status": "confirmed", "duration": 3600}' https://graph.microsoft.com/v1.0/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729/riskAssessments
+curl --json '{"status": "confirmed", "duration": 3600}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729/riskAssessments
 
 HTTP 200/OK
 
