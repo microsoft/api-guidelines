@@ -105,7 +105,7 @@ heuristics:
 A client wants to provision a new database
 
 ```
-POST https://api.contoso.com/v1.0/databases/
+POST https://graph.microsoft.com/v1.0/databases/
 
 {
 "id": "db1",
@@ -118,7 +118,7 @@ Operation-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 201 Created
-Content-Location: https://api.contoso.com/v1.0/databases/db1
+Content-Location: https:////graph.microsoft.com/v1.0/databases/db1
 
 {
 "id": "db1",
@@ -130,7 +130,7 @@ Content-Location: https://api.contoso.com/v1.0/databases/db1
 ### Creating a new resource using Stepwise Operation:
 
 ```
-POST https://api.contoso.com/v1.0/databases/
+POST https://graph.microsoft.com/v1.0/databases/
 
 {
 "id": "db1",
@@ -143,7 +143,7 @@ the Location header with an operation resource for further polling .
 ```
 HTTP/1.1 202 Accepted
 
-Location: https://api.contoso.com/v1.0/operations/123
+Location: https://graph.microsoft.com/v1.0/operations/123
 
 ```
 
@@ -151,7 +151,7 @@ Location: https://api.contoso.com/v1.0/operations/123
 
 ```
 
-GET https://api.contoso.com/v1.0/operations/123
+GET https://graph.microsoft.com/v1.0/operations/123
 ```
 
 Server responds that results are still not ready and optionally provides a
@@ -170,7 +170,7 @@ Client waits the recommended 30 seconds and then invokes another request to get
 the results of the operation.
 
 ```
-GET https://api.contoso.com/v1.0/operations/123
+GET https://graph.microsoft.com/v1.0/operations/123
 ```
 
 
@@ -184,6 +184,6 @@ HTTP/1.1 200 OK
 "createdDateTime": "2015-06-19T12-01-03.45Z",
 "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
 "status": "succeeded",
-"resourceLocation": "https://api.contoso.com/v1.0/databases/db1"
+"resourceLocation": "https://graph.microsoft.com/v1.0/databases/db1"
 }
 ```
