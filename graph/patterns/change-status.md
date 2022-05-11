@@ -6,7 +6,7 @@ _The change status pattern is an effective alternative to model the ability to t
 
 ## Problem
 
-In some cases, exposed resources can trigger side effects that modify the system behavior. For instance, a [`riskyUser`](https://docs.microsoft.com/en-us/graph/api/resources/riskyuser?view=graph-rest-1.0) can be [`confirmed`](https://docs.microsoft.com/en-us/graph/api/riskyuser-confirmcompromised?view=graph-rest-1.0&tabs=http) or [`dismissed`](https://docs.microsoft.com/en-us/graph/api/riskyuser-confirmcompromised?view=graph-rest-1.0&tabs=http).
+In some cases, exposed resources can trigger side effects that modify the system behavior. For instance, a [`riskyUser`](https://docs.microsoft.com/en-us/graph/api/resources/riskyuser?view=graph-rest-1.0) can be [`confirmedCompromised`](https://docs.microsoft.com/en-us/graph/api/riskyuser-confirmcompromised?view=graph-rest-1.0&tabs=http) or [`dismissed`](https://docs.microsoft.com/en-us/graph/api/riskyuser-confirmcompromised?view=graph-rest-1.0&tabs=http).
 
 These situation are often modeled as a `POST` request to a specific endpoint in the same URI space of the resource, triggering the side effect directly and not returning any data. While it might be a quick and easy solution, there are some considerations:
 
@@ -17,33 +17,37 @@ These situation are often modeled as a `POST` request to a specific endpoint in 
 
 ## Solution
 
-API Designers can prefer the usage of a `status` property or a datafyed version of the intended action to represent the **intent** of triggering a side effect rather than starting the execution directly through the HTTP request.
+API Designers can prefer the usage of a `status` property (the name is not mandatory) or a datafyed version of the intended action to represent the **intent** of triggering a side effect rather than starting the execution directly through the HTTP request.
 
-Taking in consideration the example of the `riskyUser` above, it is possible to add a `status` property to the resource:
+Taking in consideration the example of the `riskyUser` above, it is possible to keep the `riskState` property on the resource:
 
 ```xml
-<EnumType Name="riskyStatus">
-    <Member Name="confirmed" Value="0"/>
+<EnumType Name="riskState">
+    <Member Name="confirmedCompromised" Value="0"/>
     <Member Name="dismissed" Value="1"/>
-    <Member Name="potential" Value="2"/>
+    <Member Name="none" Value="2"/>
 </EnumType>
 
 <EntityType Name="riskyUser" >
-    <Property Name="status" Type="riskyStatus" />
+    <Property Name="riskState" Type="riskState" />
 </EntityType>
 ```
 
-To confirm the user as compromised, we can now send a PATCH request on the resource:
+To confirm the user as compromised, we can send a `PATCH` request on the resource:
 
 ```bash
-curl -X PATCH --json '{"status": "confirmed"}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
+curl -X PATCH --json '{"riskState": "confirmedCompromised"}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 ```
 
-Instead of returning an empty body with `204` status code, depending on the situation, the response should contain the status of the request, if can be satisfied in a reasonable time:
+Instead of returning an empty body with `204` status code, depending on the situation, the response should contain the status of the request along with other properties modified because of the request, if it can be satisfied in a reasonable time:
 
 ```json
 {
-  "status": "confirmed"
+  "id": "a57dc75f-24b5-47ce-b5e1-44822f5d4729",
+  "riskState": "confirmedCompromised",
+  "riskDetail": "adminConfirmedUserCompromised",
+  "riskLastUpdatedDateTime": "2015-06-19T12-01-03.4Z",
+  "desiredRiskState": "confirmedCompromised"
 }
 ```
 
@@ -52,7 +56,7 @@ If the response triggers a long running operation, the response should contain a
 ```json
 {
   "createdDateTime": "2015-06-19T12-01-03.4Z",
-  "status": "disabling"
+  "riskState": "confirmingCompromising"
 }
 ```
 
@@ -61,7 +65,7 @@ The status on the resource shall stay the same until the long running operation 
 curl https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 
 ```json
-{ "status": "potential", "desiredStatus": "confirmed" }
+{ "riskState": "none", "desiredRiskState": "confirmedCompromised" }
 ```
 
 ---
@@ -71,24 +75,24 @@ There might be cases where the change of the status might require some additiona
 For instance, let's say the `riskyUser` confirmation process also requires a parameter that defines for how much time the user is going to be disabled. In this case, instead of a `status` property on the exposed resource, we can define a new resource and create a new instance representing the intention:
 
 ```xml
-<EnumType Name="riskyStatus">
-    <Member Name="confirmed" Value="0"/>
+<EnumType Name="riskState">
+    <Member Name="confirmedCompromised" Value="0"/>
     <Member Name="dismissed" Value="1"/>
     <Member Name="unknown" Value="2"/>
 </EnumType>
 
 <EntityType Name="riskAssessment" >
-    <Property Name="status" Type="riskyStatus" />
+    <Property Name="riskState" Type="riskState" />
     <Property Name="duration" Type="Edm.Duration" />
 </EntityType>
 ```
 
 ```bash
-curl --json '{"status": "confirmed", "duration": 3600}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729/riskAssessments
+curl --json '{"riskState": "confirmedCompromised", "duration": 3600}' https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729/riskAssessments
 
 HTTP 200/OK
 
-{"status": "confirmed"}
+{"riskState": "confirmedCompromised"}
 ```
 
 ## Issues and Considerations
