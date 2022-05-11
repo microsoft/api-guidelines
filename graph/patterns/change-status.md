@@ -17,7 +17,7 @@ These situation are often modeled as a `POST` request to a specific endpoint in 
 
 ## Solution
 
-API Designers can prefer the usage of a `status` property (the name is not mandatory) or a datafyed version of the intended action to represent the **intent** of triggering a side effect rather than starting the execution directly through the HTTP request.
+API Designers can prefer the usage of a property indicating the status and request for its modification or a datafyed version of the action that represents the **intent** of triggering a side effect rather than starting the execution directly through the HTTP request.
 
 Taking in consideration the example of the `riskyUser` above, it is possible to keep the `riskState` property on the resource:
 
@@ -43,7 +43,6 @@ Instead of returning an empty body with `204` status code, depending on the situ
 
 ```json
 {
-  "id": "a57dc75f-24b5-47ce-b5e1-44822f5d4729",
   "riskState": "confirmedCompromised",
   "riskDetail": "adminConfirmedUserCompromised",
   "riskLastUpdatedDateTime": "2015-06-19T12-01-03.4Z",
@@ -65,14 +64,14 @@ The status on the resource shall stay the same until the long running operation 
 curl https://graph.microsoft.com/v1.0/identityProtection/riskyUsers/a57dc75f-24b5-47ce-b5e1-44822f5d4729
 
 ```json
-{ "riskState": "none", "desiredRiskState": "confirmedCompromised" }
+{ "riskState": "none", "desiredRiskState": "confirmedCompromised" } // Other properties omitted for brevity
 ```
 
 ---
 
-There might be cases where the change of the status might require some additional parameters, or where we might need to execute an action that is not 100% related to the entity. In such case, a `ChangeStatusRequest` object might be created to accommodate this use case.
+There might be cases where the change of the status might require some additional parameters, or where we might need to execute an action that is not 100% related to the entity. In such case, a `ChangeStatusRequest` resource might be created to accommodate this use case.
 
-For instance, let's say the `riskyUser` confirmation process also requires a parameter that defines for how much time the user is going to be disabled. In this case, instead of a `status` property on the exposed resource, we can define a new resource and create a new instance representing the intention:
+For instance, let's say the `riskyUser` confirmation process also requires a parameter that defines for how much time the user is going to be disabled. In this case, instead of a `riskyState` property on the exposed resource, we can define a new resource and create a new instance representing the intention:
 
 ```xml
 <EnumType Name="riskState">
@@ -92,7 +91,12 @@ curl --json '{"riskState": "confirmedCompromised", "duration": 3600}' https://gr
 
 HTTP 200/OK
 
-{"riskState": "confirmedCompromised"}
+{
+  "riskState": "confirmedCompromised",
+  "riskDetail": "adminConfirmedUserCompromised",
+  "riskLastUpdatedDateTime": "2015-06-19T12-01-03.4Z",
+  "desiredRiskState": "confirmedCompromised"
+}
 ```
 
 ## Issues and Considerations
