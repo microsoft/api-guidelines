@@ -37,7 +37,7 @@ used wherever possible. The pattern avoids complexity and consistent resource
 presentation makes things simpler for our users and tooling chain.
 
 In general Microsoft Graph APIs guidelines for LRO follow [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/GuidelinesGraph.md).
+Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).
 
 A single deviation from the base guidelines is that Microsoft Graph API
 standards require using the following response headers:
@@ -118,7 +118,7 @@ Operation-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 201 Created
-Content-Location: https:////graph.microsoft.com/v1.0/databases/db1
+Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 
 {
 "id": "db1",
