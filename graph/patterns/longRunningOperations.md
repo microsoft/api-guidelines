@@ -1,8 +1,8 @@
-# Pattern Name
+# Long Running Operations
 
 Microsoft Graph API Design Pattern
 
-### *The Long Running Operations (LRO) Pattern provides the ability to model operations where processing a client request takes a long time, but the client isn't blocked and can do some other work until operation completion.*
+### *The Long Running Operations (LRO) pattern provides the ability to model operations where processing a client request takes a long time, but the client isn't blocked and can do some other work until operation completion.*
 
 ## Problem
 
@@ -79,37 +79,37 @@ heuristics:
 
 ## Issues and Considerations
 
-1.  One or more clients MUST be able to monitor and operate on the same resource
+- One or more clients MUST be able to monitor and operate on the same resource
     at the same time.
 
-2.  The state of the system SHOULD be always discoverable and testable. Clients
+-  The state of the system SHOULD be always discoverable and testable. Clients
     SHOULD be able to determine the system state even if the operation tracking
     resource is no longer active. Clients MAY issue a GET on some resource to
     determine the state of a long running operation
 
-3.  Long running operations SHOULD work for clients looking to "Fire and Forget"
+-  Long running operations SHOULD work for clients looking to "Fire and Forget"
     and for clients looking to actively monitor and act upon results.
 
-4.  Long running operations pattern may be supplemented by [Change Notification
+-  Long running operations pattern may be supplemented by [Change Notification
     pattern](change-notification.md)
 
-5.  Cancellation does not explicitly mean rollback. On a per API defined case it
+-  Cancellation does not explicitly mean rollback. On a per API defined case it
     may mean rollback, or compensation, or completion, or partial completion,
     etc. Following a canceled operation the API should return a consistent state which allows
     continued service.
 
-6.  A recommended minimum retention time for a stepwise operation is 24 hours.
+-  A recommended minimum retention time for a stepwise operation is 24 hours.
     Operations SHOULD transition to "tombstone" for an additional period of time
     prior to being purged from the system.
     
-7.  Services that provides a new operation resource MUST support GET semantics on the operation.
+-  Services that provides a new operation resource MUST support GET semantics on the operation.
 
 
 
 ## Examples
 
 
-###  Creating a new resource using RELO
+###  Create a new resource using RELO
 
 A client wants to provision a new database
 
@@ -136,7 +136,7 @@ Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 }
 ```
 
-### Creating a new resource using Stepwise Operation:
+### Create a new resource using Stepwise Operation:
 
 ```
 POST https://graph.microsoft.com/v1.0/databases/
@@ -156,7 +156,7 @@ Location: https://graph.microsoft.com/v1.0/operations/123
 
 ```
 
-### Polling on a Stepwise Operation:
+### Poll on a Stepwise Operation:
 
 ```
 
