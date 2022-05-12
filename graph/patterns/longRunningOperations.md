@@ -1,38 +1,38 @@
-# Long Running Operations
+# Long running operations
 
 Microsoft Graph API Design Pattern
 
-### *The Long Running Operations (LRO) pattern provides the ability to model operations where processing a client request takes a long time, but the client isn't blocked and can do some other work until operation completion.*
+__*The long running operations (LRO) pattern provides the ability to model operations where processing a client request takes a long time, but the client isn't blocked and can do some other work until operation completion.*__
 
 ## Problem
 
-The API design requires modeling operations on resources which takes long time
+The API design requires modeling operations on resources, which takes a long time
 to complete so that API clients don't need to wait and can continue doing other
-work while waiting for the final operation result. The client should be able to
+work while waiting for the final operation results. The client should be able to
 monitor the progress of the operation and have an ability to cancel it if
-needed.The API needs to provide a mechanism to track the work
+needed. The API needs to provide a mechanism to track the work
 being done in the background. The mechanism needs to be expressed in the same
-web style as other interactive APIs and support checking on the status and/or
+web style as other interactive APIs. It also needs to support checking on the status and/or
 being notified asynchronously of the results.
 
 ## Solution
 
-The solution is to model the API as a synchronous service which returns a
-resource representing the eventual completion or failure of a long-running
+The solution is to model the API as a synchronous service that returns a
+resource that represents the eventual completion or failure of a long running
 operation.
 
 There are two flavors of this solution:
 
-1.  The returned resource is the targeted resource and includes the status of
-    the operation. This pattern is often called RELO (Resource based
-    Long-running Operation).
+- The returned resource is the targeted resource and includes the status of
+    the operation. This pattern is often called RELO (resource-based
+    long running operation).
 //image
 <!-- markdownlint-disable MD033 -->
 <p align="center">
   <img src="RELO.gif" alt="The status monitor LRO flow"/>
 </p>
 <!-- markdownlint-enable MD033 -->
-2.  The returned resource is a new API resource called 'Stepwise Operation' and
+- The returned resource is a new API resource called 'Stepwise Operation' and
     is created to track the status. This LRO solution is similar to the concept
     of Promises or Futures in other programming languages.
 //image
@@ -41,61 +41,53 @@ There are two flavors of this solution:
   <img src="LRO.gif" alt="The status monitor LRO flow"/>
 </p>
 <!-- markdownlint-enable MD033 -->
-RELO pattern is the preferred pattern for long running operations and should be
-used wherever possible. The pattern avoids complexity and consistent resource
+The RELO pattern is the preferred pattern for long running operations and should be
+used wherever possible. The pattern avoids complexity, and consistent resource
 presentation makes things simpler for our users and tooling chain.
 
-In general Microsoft Graph APIs guidelines for LRO follow [Microsoft REST API
+In general, Microsoft Graph API guidelines for LRO follow [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).
 
-A single deviation from the base guidelines is that Microsoft Graph API
-standards require using the following response headers:
+A single deviation from the base guidelines is that Microsoft Graph API standards require that you use the following response headers:
 
--   Content-Location header indicates location of a RELO resource.
+- The Content-Location header indicates the location of a RELO resource.
+  - The API response says the targeted resource is being created by returning a 201 status code and the resource URI is provided in the Content-Location header, but the response indicates that the request is not completed by including "Provisioning" status.
 
-    -   API response says the targeted resource is being created by returning 201 status code and the resource URI provided in the Content-Location header , but indicates the request is
-        not completed by including "Provisioning" status.
+- The Location header indicates the location of a new stepwise operation LRO resource.
+  - The API response says the operation resource is being created at the URL provided in the Location header and indicates that the request is not completed by including a 202 status code.
 
--   Location header indicates location of a new stepwise operation LRO resource.
-   
-    -    API response says the operation resource is being created at the URL
-        provided in the Location header and indicates the request is
-        not completed by including a 202 status code.
+## When to use this pattern
 
-## When to Use this Pattern
+Any API call that is expected to take longer than 1 second in the 99th percentile should use the long running operations pattern.
 
-
- Any API call that is expected to take longer than 1 seconds in the 99th percentile, should use Long-running Operations pattern.
-
-How to select which flavor of LRO pattern to use? API designer can follow these
+How do you select which flavor of LRO pattern to use? An API designer can follow these
 heuristics:
 
 1.  If a service can create a resource with a minimal latency and continue
     updating its status according to the well-defined and stable state
-    transition model until completion then RELO model is the best choice.
+    transition model until completion, then the RELO model is the best choice.
 
-2.  Otherwise a service should follow the Stepwise Operation pattern.# 
+2.  Otherwise, a service should follow the Stepwise Operation pattern. 
  
 
-## Issues and Considerations
+## Issues and considerations
 
-- One or more clients MUST be able to monitor and operate on the same resource
-    at the same time.
+- One or more clients MUST be able to monitor and operate on the same resource at the same time.
 
--  The state of the system SHOULD be always discoverable and testable. Clients
+- The state of the system SHOULD always be discoverable and testable. Clients
     SHOULD be able to determine the system state even if the operation tracking
     resource is no longer active. Clients MAY issue a GET on some resource to
-    determine the state of a long running operation
+    determine the state of a long running operation.
 
--  Long running operations SHOULD work for clients looking to "Fire and Forget"
+-  The long running operations pattern SHOULD work for clients looking to "fire and forget"
     and for clients looking to actively monitor and act upon results.
 
--  Long running operations pattern may be supplemented by [Change Notification
-    pattern](change-notification.md)
+-  The long running operations pattern might be supplemented by the [change notification
+    pattern](change-notification.md).
 
--  Cancellation does not explicitly mean rollback. On a per API defined case it
-    may mean rollback, or compensation, or completion, or partial completion,
-    etc. Following a canceled operation the API should return a consistent state which allows
+-  Cancellation of a long running operation does not explicitly mean a rollback. On a per API-defined case, it
+    might mean a rollback, or compensation, or completion, or partial completion,
+    etc. Following a canceled operation, the API should return a consistent state that allows
     continued service.
 
 -  A recommended minimum retention time for a stepwise operation is 24 hours.
@@ -122,7 +114,7 @@ POST https://graph.microsoft.com/v1.0/databases/
 ```
 
 The API responds synchronously that the database has been created and indicates
-that provisioning operation is not fully completed by including the
+that the provisioning operation is not fully completed by including the
 Operation-Location header and status property in the response payload.
 
 ```
@@ -136,7 +128,7 @@ Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 }
 ```
 
-### Create a new resource using Stepwise Operation:
+### Create a new resource using the Stepwise Operation
 
 ```
 POST https://graph.microsoft.com/v1.0/databases/
@@ -147,7 +139,7 @@ POST https://graph.microsoft.com/v1.0/databases/
 ```
 
 The API responds synchronously that the request has been accepted and includes
-the Location header with an operation resource for further polling .
+the Location header with an operation resource for further polling.
 
 ```
 HTTP/1.1 202 Accepted
@@ -156,14 +148,14 @@ Location: https://graph.microsoft.com/v1.0/operations/123
 
 ```
 
-### Poll on a Stepwise Operation:
+### Poll on a Stepwise Operation
 
 ```
 
 GET https://graph.microsoft.com/v1.0/operations/123
 ```
 
-Server responds that results are still not ready and optionally provides a
+The server responds that results are still not ready and optionally provides a
 recommendation to wait 30 seconds.
 
 ```
@@ -175,7 +167,7 @@ Retry-After: 30
 "status": "running"
 }
 ```
-Client waits the recommended 30 seconds and then invokes another request to get
+The client waits the recommended 30 seconds and then invokes another request to get
 the results of the operation.
 
 ```
@@ -183,7 +175,7 @@ GET https://graph.microsoft.com/v1.0/operations/123
 ```
 
 
-Server responds with a "status:succeeded" operation that includes the resource
+The server responds with a "status:succeeded" operation that includes the resource
 location.
 
 ```
