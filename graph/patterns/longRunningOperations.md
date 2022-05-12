@@ -26,21 +26,23 @@ There are two flavors of this solution:
 - The returned resource is the targeted resource and includes the status of
     the operation. This pattern is often called RELO (resource-based
     long running operation).
-//image
+
 <!-- markdownlint-disable MD033 -->
 <p align="center">
   <img src="RELO.gif" alt="The status monitor LRO flow"/>
 </p>
 <!-- markdownlint-enable MD033 -->
+
 - The returned resource is a new API resource called 'Stepwise Operation' and
     is created to track the status. This LRO solution is similar to the concept
     of Promises or Futures in other programming languages.
-//image
+
 <!-- markdownlint-disable MD033 -->
 <p align="center">
   <img src="LRO.gif" alt="The status monitor LRO flow"/>
 </p>
 <!-- markdownlint-enable MD033 -->
+
 The RELO pattern is the preferred pattern for long running operations and should be
 used wherever possible. The pattern avoids complexity, and consistent resource
 presentation makes things simpler for our users and tooling chain.
