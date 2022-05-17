@@ -146,7 +146,7 @@ the Location header with an operation resource for further polling.
 ```
 HTTP/1.1 202 Accepted
 
-Location: https://graph.microsoft.com/v1.0/operations/123
+Location: https://graph.microsoft.com/v1.0/databases/operations/123
 
 ```
 
