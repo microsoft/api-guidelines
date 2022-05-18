@@ -74,7 +74,7 @@ heuristics:
 
 ## Issues and considerations
 
-- One or more clients MUST be able to monitor and operate on the same resource at the same time.
+- One or more API consumers MUST be able to monitor and operate on the same resource at the same time.
 
 - The state of the system SHOULD always be discoverable and testable. Clients
     SHOULD be able to determine the system state even if the operation tracking
