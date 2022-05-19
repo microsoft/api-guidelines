@@ -207,7 +207,7 @@ GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=dis
 ### Sort Behavior with opt-in Header
 
 ```http
-GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture
+GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture&$orderBy=processorArchitecture
 
 Prefer: include-unknown-enum-members
 ```
