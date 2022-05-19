@@ -189,12 +189,12 @@ GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=dis
 {
     "value": [
         { 
-            "displayName": "Surface Pro X", 
-            "processorArchitecture" : "arm64"
-        },
-        { 
             "displayName": "My Laptop", 
             "processorArchitecture": "x64"
+        },
+        { 
+            "displayName": "Surface Pro X", 
+            "processorArchitecture" : "arm64"
         },
         { 
             "displayName": "Prototype",
@@ -218,12 +218,12 @@ Preference-Applied: include-unknown-enum-members
 {
     "value": [
         { 
-            "displayName": "Surface Pro X",
-            "processorArchitecture" : "arm64"
-        },
-        { 
             "displayName": "My Laptop",
             "processorArchitecture": "x64"
+        },
+        { 
+            "displayName": "Surface Pro X",
+            "processorArchitecture" : "arm64"
         },
         { 
             "displayName": "Prototype", 
