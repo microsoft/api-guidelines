@@ -4,7 +4,7 @@
 
 *The client guidance is a collection of additional information provided to SDK implementers and client applications. This information is meant to help understand how various guidelines and concepts translate in their world and clarify a few unknowns. Always read the corresponding guideline first to get a contextual understanding.*
 
-[Read the guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md).
+For more information, see the [Dictionary](./dictionary.md) pattern.
 
 ## OpenAPI example
 
