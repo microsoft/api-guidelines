@@ -1,35 +1,33 @@
-# Facets Pattern
+# Facets
 
 Microsoft Graph API Design Pattern
 
-### *A frequent pattern in Microsoft Graph is to model multiple variants of a common concept as a single entity type with common properties and facets for variants.*
-
+*A frequent pattern in Microsoft Graph is to model multiple variants of a common concept as a single entity type with common properties and facets for variants.*
 
 ## Problem
-API designer needs to model a set of heterogeneous resources that have common properties and behaviors, and may express features of multiple variants at a time because variants are not mutually exclusive.
-For example a movie clip stored on OneDrive is both a file and a video. There are properties associated to each variant.
+
+An API designer needs to model a set of heterogeneous resources that have common properties and behaviors and might express features of multiple variants at a time because variants are not mutually exclusive.
+For example, a movie clip stored on OneDrive is both a file and a video. There are properties associated to each variant.
 
 ## Solution
 
-API designers create multiple complex types to bundle properties for each variant then define an entity type with a property for each complex type to hold the properties of the variant.
-In this solution a child variant is identified by a presence of one or more facets in the parent object.
+API designers create multiple complex types to bundle properties for each variant, and then define an entity type with a property for each complex type to hold the properties of the variant.
 
-## Issues and Considerations
+In this solution, a child variant is identified by the presence of one or more facets in the parent object.
 
-When introducing a new facet, you need to ensure that the new facet doesn't change the semantic of the model with it's implicit constraints. 
+## When to use this pattern
 
+The facet pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes it syntactically easier to query resources by using OData $filter expression because it doesn't require casting.
 
-## When to Use this Pattern
+You can consider related patterns such as [Type hierarchy](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat bag of properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
 
-The facet pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes syntactically easier to query resources using OData $filter expression since it doesn't require casting.
+## Issues and considerations
 
-There are related patterns to consider such as
-[Type Hierarchy](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat
-bag of
-properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
+When introducing a new facet, you need to ensure that the new facet doesn't change the semantic of the model with its implicit constraints.
 
 ## Example
-The driveItem resource represents a file, folder,image or other item stored in a drive and is modeled using entity type with multiple facets. 
+
+The driveItem resource represents a file, folder, image, or other item stored in a drive and is modeled by using entity type with multiple facets.
 
 ```XML
  
@@ -64,7 +62,7 @@ The driveItem resource represents a file, folder,image or other item stored in a
       </EntityType>
 ```
 
-API request to get all items from a personal OneDrive will return a heterogenous collection with different facets populated. In the example below there is a folder, a file and an image in the collection. The image entity has two facets populated: file and image.
+An API request to get all items from a personal OneDrive returns a heterogenous collection with different facets populated. In the following example, there is a folder, a file, and an image in the collection. The image entity has two facets populated: file and image.
 
 ```
 https://graph.microsoft.com/v1.0/me/drive/root/children

@@ -1,57 +1,51 @@
-# Type Hierarchy
+# Type hierarchy
 
 Microsoft Graph API Design Pattern
 
-
-### *A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This allows us to model collections of objects that have slightly different metadata and behavior.*
+*A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This lets us model collections of objects that have slightly different metadata and behavior.*
 
 ## Problem
 
-The API design requires to model a set of entities based on a common concept
-that can be further grouped into **mutually exclusive variants** with specific
-properties and behaviors. The API design should be evolvable and allow addition
+The API design requires that we model a set of entities based on a common concept
+that can be further grouped into *mutually exclusive variants* with specific
+properties and behaviors. The API design should be evolvable and allow the addition
 of new variants without breaking changes.
 
 ## Solution
 
-API designers can use OData **type hierarchy**, where there is one abstract base
+API designers can use OData *type hierarchy*, where there is one abstract base
 type with a few shared properties representing the common concept and one
-sub-type for each variant of the entity. In hierarchy, the interdependencies of properties, i.e. which properties are relevant for which variants, is fully captured in metadata and client code can potentially leverage that to construct and/or validate requests.
+subtype for each variant of the entity. In the hierarchy, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in metadata, and client code can potentially leverage that to construct and/or validate requests.
 
-## Issues and Considerations
+## When to use this pattern
+
+The type hierarchy pattern is well suited to a use case where each variant of a
+common concept has unique properties and behaviors, no combination of variants
+is anticipated, and API queries are managed programmatically with type casting.
+
+You can consider related patterns such as
+[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat bag of properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
+
+## Issues and considerations
 
 When introducing a new subtype to the hierarchy, developers need to ensure that
-the new subtype doesn't change the semantic of the type hierarchy with its
-implicit constraints.
-To retrieve properties specific for a derived type an API request URL may need to include casting to the derived type. If type hierarchy is very deep then resulting URL may become very long and not easily readable.  
+the new subtype doesn't change the semantic of the type hierarchy with its implicit constraints.
 
-There are a few consideration to take into account when new sub-types
-are introduced:
+To retrieve properties specific for a derived type, an API request URL might need to include casting to the derived type. If the type hierarchy is very deep, then the resulting URL might become very long and not easily readable.  
 
--  TODO add something about SDK dependencies and required actions
--  TODO Client libraries for strongly typed language might ignore some of the values
+There are a few considerations to take into account when new subtypes are introduced:
+
+- *TODO add something about SDK dependencies and required actions*
+- *TODO* Client libraries for a strongly typed language might ignore some of the values
     in the @odata.type property without further configuration and need to be
     updated to be able to pick the right (client) type to deserialize into.
--  In the case of public APIs in GA versions clients may develop their applications to support exclusively the current set of subtypes and don’t expect new variations. To mitigate the risk of clients disruption, when introducing a new subtype, allow ample time for communication and rollout.
-
-
-
-## When to Use this Pattern
-
-The Type hierarchy pattern is well suited to use case where each variant of a
-common concept has unique properties and behaviors, no combinations of variants
-is anticipated, API queries are managed programmatically with type casting.
-
-There are related patterns to consider such as
-[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat
-bag of
-properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
+- In the case of public APIs in GA versions, clients might develop their applications to support exclusively the current set of subtypes, and don’t expect new variations. To mitigate the risk of clients' disruption, when introducing a new subtype, allow ample time for communication and rollout.
 
 ## Example
 
 The directoryObject type is the main abstraction for many directory
-types such as users, organizational contacts, devices, service principals
-and groups stored in Azure Active Directory. Since any a directoryObject object is a unique entity, the directoryObject type itself is derived from the graph.entity base type.
+types such as users, organizational contacts, devices, service principals,
+and groups stored in Azure Active Directory. Because any directoryObject object is a unique entity, the directoryObject type itself is derived from the `graph.entity` base type.
 
 ```XML
 <EntityType Name="entity" Abstract="true">
@@ -65,8 +59,7 @@ and groups stored in Azure Active Directory. Since any a directoryObject object 
 <EntityType/>
 ```
 
-
-Groups and users are derived types and modeled as
+Groups and users are derived types and modeled as follows:
 
 ```XML
  <EntityType Name="group" BaseType="graph.directoryObject" />
@@ -79,7 +72,7 @@ Groups and users are derived types and modeled as
 </EntityType>
 ```
 
-API request to get members of a group returns a heterogeneous collection of
+An API request to get members of a group returns a heterogeneous collection of
 users and groups where each element can be a user or a group, and has an
 additional property @odata.type for a variant subtype:
 
@@ -106,7 +99,8 @@ Response payload shortened for readability:
     ]
 }
 ```
-API request for a subtype specific property requires type casting to the subtype, i.e. to retrieve jobTitle property, enabled for the user type, you need to cast from the directoryObject collection items to the microsoft.graph.group derived type.
+
+An API request for a subtype-specific property requires type casting to the subtype; that is, to retrieve the jobTitle property enabled for the user type, you need to cast from the directoryObject collection items to the `microsoft.graph.group` derived type.
 
 ```
 GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members/microsoft.graph.user?$select=displayName,jobTitle
@@ -124,7 +118,9 @@ Response payload shortened for readability:
     ]
 }
 ```
-API request to create a subtype object in a polymorphic collection requires "@odata.type" specified in the request body.
+
+An API request to create a subtype object in a polymorphic collection requires "@odata.type" specified in the request body.
+
 ```
 POST https://graph.microsoft.com/v1.0/directoryObjects
 
