@@ -209,4 +209,4 @@ The following example defines a complex type **roleSettings** as well as a dicti
 
 ## See also
 
-- [SDK implementation guidance](./client-guidance.md)
+- [SDK implementation guidance](./dictionary-client-guidance.md)
