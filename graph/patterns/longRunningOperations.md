@@ -110,7 +110,7 @@ heuristics:
 A client wants to provision a new database
 
 ```
-POST https://graph.microsoft.com/v1.0/databases/
+POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
 "id": "db1",
@@ -123,7 +123,7 @@ Content-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 201 Created
-Content-Location: https://graph.microsoft.com/v1.0/databases/db1
+Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 
 {
 "id": "db1",
@@ -134,7 +134,7 @@ Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 The client waits for a period of time then invokes another request to try to get the database status.
 
 ```
-GET https://graph.microsoft.com/v1.0/databases/db1
+GET https://graph.microsoft.com/v1.0/storage/databases/db1
 
 HTTP/1.1 200 Ok
 {
@@ -150,7 +150,7 @@ HTTP/1.1 200 Ok
 A client wants to cancel provisioning of a new database
 
 ```
-DELETE https://graph.microsoft.com/v1.0/databases/db1
+DELETE https://graph.microsoft.com/v1.0/storage/databases/db1
 
 ```
 
@@ -160,7 +160,7 @@ Content-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 202 Accepted
-Content-Location: https://graph.microsoft.com/v1.0/databases/db1
+Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 
 {
 "id": "db1",
@@ -171,14 +171,14 @@ Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 The client waits for a period of time then invokes another request to try to get the deletion status.
 
 ```
-GET https://graph.microsoft.com/v1.0/databases/db1
+GET https://graph.microsoft.com/v1.0/storage/db1
 
 HTTP/1.1 404 Not Found
 ```
 ### Create a new resource using the Stepwise Operation
 
 ```
-POST https://graph.microsoft.com/v1.0/databases/
+POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
 "id": "db1",
@@ -191,7 +191,7 @@ the Location header with an operation resource for further polling.
 ```
 HTTP/1.1 202 Accepted
 
-Location: https://graph.microsoft.com/v1.0/databases/operations/123
+Location: https://graph.microsoft.com/v1.0/storage/operations/123
 
 ```
 
@@ -199,7 +199,7 @@ Location: https://graph.microsoft.com/v1.0/databases/operations/123
 
 ```
 
-GET https://graph.microsoft.com/v1.0/operations/123
+GET https://graph.microsoft.com/v1.0/storage/operations/123
 ```
 
 The server responds that results are still not ready and optionally provides a
@@ -218,7 +218,7 @@ The client waits the recommended 30 seconds and then invokes another request to 
 the results of the operation.
 
 ```
-GET https://graph.microsoft.com/v1.0/operations/123
+GET https://graph.microsoft.com/v1.0/storage/operations/123
 ```
 
 
@@ -232,6 +232,6 @@ HTTP/1.1 200 OK
 "createdDateTime": "2015-06-19T12-01-03.45Z",
 "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
 "status": "succeeded",
-"resourceLocation": "https://graph.microsoft.com/v1.0/databases/db1"
+"resourceLocation": "https://graph.microsoft.com/v1.0/storage/databases/db1"
 }
 ```
