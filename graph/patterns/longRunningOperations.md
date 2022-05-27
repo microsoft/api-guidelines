@@ -98,6 +98,7 @@ heuristics:
     prior to being purged from the system.
     
 -  Services that provides a new operation resource MUST support GET semantics on the operation.
+-  Services that returns a new operation MUST always return an LRO (even if the LRO is created in the completed state) that way API consumers don't have to deal with two different shapes of response.
 
 
 
@@ -118,7 +119,7 @@ POST https://graph.microsoft.com/v1.0/databases/
 
 The API responds synchronously that the database has been created and indicates
 that the provisioning operation is not fully completed by including the
-Operation-Location header and status property in the response payload.
+Content-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 201 Created
@@ -126,11 +127,54 @@ Content-Location: https://graph.microsoft.com/v1.0/databases/db1
 
 {
 "id": "db1",
-"Status": "Provisioning",
+"status": "provisioning",
+[ … other fields for "database" …]
+}
+```
+The client waits for a period of time then invokes another request to try to get the database status.
+
+```
+GET https://graph.microsoft.com/v1.0/databases/db1
+
+HTTP/1.1 200 Ok
+{
+"id": "db1",
+"status": "succeeded",
 [ … other fields for "database" …]
 }
 ```
 
+
+###  Cancel RELO operation
+
+A client wants to cancel provisioning of a new database
+
+```
+DELETE https://graph.microsoft.com/v1.0/databases/db1
+
+```
+
+The API responds synchronously that the database is being deleted and indicates
+that the operation is accepted and is not fully completed by including the
+Content-Location header and status property in the response payload.
+
+```
+HTTP/1.1 202 Accepted
+Content-Location: https://graph.microsoft.com/v1.0/databases/db1
+
+{
+"id": "db1",
+"status": "deleting",
+[ … other fields for "database" …]
+}
+```
+The client waits for a period of time then invokes another request to try to get the deletion status.
+
+```
+GET https://graph.microsoft.com/v1.0/databases/db1
+
+HTTP/1.1 404 Not Found
+```
 ### Create a new resource using the Stepwise Operation
 
 ```
