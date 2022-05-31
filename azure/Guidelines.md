@@ -786,11 +786,11 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 
 :white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an outstanding operation unless the request is identical to the prior request (a retry scenario).
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an outstanding operation unless the request is identical to the prior request (a retry scenario).
 
 :white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "create (PUT) with additional processing" type LRO).
+:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
 :warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
@@ -800,9 +800,9 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 
 :white_check_mark: **DO** return a status monitor in the response body as described in [Status and results of long-running operations](#status-and-results-of-long-running-operations).
 
-#### Create (PUT) operation with additional long-running processing
+#### PUT operation with additional long-running processing
 
-For a create (PUT) with additional long-running processing:
+For a PUT (create or replace) with additional long-running processing:
 
 :white_check_mark: **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
@@ -812,7 +812,7 @@ For a create (PUT) with additional long-running processing:
 
 :white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:white_check_mark: **DO** return a `201-Created` status code from the initial request with a representation of the resource if the resource was created successfully.
+:white_check_mark: **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
 
 :white_check_mark: **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
 

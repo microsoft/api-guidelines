@@ -170,9 +170,9 @@ sequenceDiagram
     Client->>API Endpoint: POST/DELETE
     API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>Retry-After: 5<br/>{ "id": "22", "status": "NotStarted" }
     Client->>Status Monitor: GET
-    Status Monitor->>Client: HTTP/1.1 200 Ok<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
     Client->>Status Monitor: GET
-    Status Monitor->>Client: HTTP/1.1 200 Ok<br/>{ "id": "22", "status": "Succeeded" }
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>{ "id": "22", "status": "Succeeded" }
 ```
 
 1. The client sends the request to initiate the long-running operation.
@@ -217,7 +217,7 @@ with the [Long Running Operations](#long-running-operations) pattern.
 The operation is initiated with a POST operation and the operation path ends in `:action`.
 
 ```text
-POST /<service-or-resource-url>:action 
+POST /<service-or-resource-url>:action?api-version=2022-05-01
 Operation-Id: 22 
  
 { 
@@ -248,7 +248,7 @@ GET https://<status-monitor-endpoint>/22?api-version=2022-05-01
 When the operation completes successfully, the result (if there is one) will be included in the `result` field of the status monitor.
 
 ```text
-HTTP/1.1 200 Ok
+HTTP/1.1 200 OK
  
 {
    "id": "22",
@@ -257,9 +257,9 @@ HTTP/1.1 200 Ok
 }
 ```
 
-### Create (PUT) with additional long-running processing
+### PUT with additional long-running processing
 
-A special case of long-running operation that occurs often is a PUT operation to create a resource
+A special case of long-running operation that occurs often is a PUT operation to create or replace a resource
 that involves some additional long-running processing.
 One example is a resource requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
 In this case, the request may contain an `operation-id` header that the service will use as
@@ -275,7 +275,8 @@ Operation-Id: 22
 }
 ```
 
-In this case the response to the initial request is a `201 Created` to indicate that the resource has been created.
+In this case the response to the initial request is a `201 Created` to indicate that the resource has been created
+or `200 OK` when the resource was replaced.
 The response body contains a representation of the created resource, which is the standard pattern for a create operation.
 A status monitor is created to track the additional processing and the ID of the status monitor
 is returned in the `Operation-Id` header of the response.
@@ -305,7 +306,7 @@ GET https://items/operations/22?api-version=2022-05-01
 When the additional processing completes, the status monitor will indicate if it succeeded or failed.
 
 ```text
-HTTP/1.1 200 Ok
+HTTP/1.1 200 OK
  
 {
    "id": "22",
@@ -330,10 +331,10 @@ It might be necessary to support some control action on a long-running operation
 This is implemented as a POST on the status monitor endpoint with `:action` added.
 
 ```text
-POST /<status-monitor-url>:cancel
+POST /<status-monitor-url>:cancel?api-version=2022-05-01
 ```
 
-A successful response to a control operation should be a `200 Ok` with a representation of the status monitor.
+A successful response to a control operation should be a `200 OK` with a representation of the status monitor.
 
 ```text
 HTTP/1.1 200 OK 
