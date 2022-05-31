@@ -6,7 +6,7 @@ Microsoft Graph API Design Pattern
 
 ## Problem
 
-A common pattern is to apply a policy or state to a collection of objects. With this, there also comes the question of how to model cases where we want to apply to 'all' or 'none' without having to special case these values within the collection set or introduce cross-property dependencies. Likewise, we'd like to model it in a way where it is easy to understand and interpret usage from just looking at the schema.
+A common pattern is to apply a policy or state to a collection of resources. With this, there also comes the question of how to model cases where we want to apply to 'all' or 'none' without having to special case these values within the collection set or introduce cross-property dependencies. Likewise, we'd like to model it in a way where it is easy to understand and interpret usage from just looking at the schema.
 
 An example is where you have a policy that you need to be able to apply to users in an organization. You might want to support the default **None**, enablement for **All**, or enablement for **Select** users where you only grant it to a few users.
 
