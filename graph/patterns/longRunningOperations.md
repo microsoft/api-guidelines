@@ -182,10 +182,11 @@ HTTP/1.1 404 Not Found
 ### Create a new resource using the Stepwise Operation
 
 ```
-POST https://graph.microsoft.com/v1.0/storage/databases/
+POST https://graph.microsoft.com/v1.0/storage/archives/
 
 {
-"displayName": "Retail DB",
+"displayName": "Image Archive",
+...
 }
 ```
 
@@ -237,6 +238,6 @@ HTTP/1.1 200 OK
 "createdDateTime": "2015-06-19T12-01-03.45Z",
 "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
 "status": "succeeded",
-"resourceLocation": "https://graph.microsoft.com/v1.0/storage/databases/db1"
+"resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
 }
 ```
