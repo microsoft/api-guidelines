@@ -52,8 +52,8 @@ Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md
 
 There are some deviations from the base guidelines where Microsoft Graph API standards require that you do one of the following:
 
-- For RELO pattern you should return the Content-Location header that indicates the location of the resource.
-  - The API response says the targeted resource is being created by returning a 201 status code and the resource URI is provided in the Content-Location header, but the response indicates that the request is not completed by including "Provisioning" status.
+- For RELO pattern you should return the Location header that indicates the location of the resource.
+  - The API response says the targeted resource is being created by returning a 201 status code and the resource URI is provided in the Location header, but the response indicates that the request is not completed by including "Provisioning" status.
 
 - For LRO pattern you should return the Location header that indicates the location of a new stepwise operation resource.
   - The API response says the operation resource is being created at the URL provided in the Location header and indicates that the request is not completed by including a 202 status code.
@@ -113,7 +113,7 @@ A client wants to provision a new database
 POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
-"id": "db1",
+"displayName": "Retail DB",
 }
 ```
 
@@ -123,10 +123,11 @@ Content-Location header and status property in the response payload.
 
 ```
 HTTP/1.1 201 Created
-Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
+Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 
 {
 "id": "db1",
+"displayName": "Retail DB",
 "status": "provisioning",
 [ … other fields for "database" …]
 }
@@ -139,6 +140,7 @@ GET https://graph.microsoft.com/v1.0/storage/databases/db1
 HTTP/1.1 200 Ok
 {
 "id": "db1",
+"displayName": "Retail DB",
 "status": "succeeded",
 [ … other fields for "database" …]
 }
@@ -156,14 +158,16 @@ DELETE https://graph.microsoft.com/v1.0/storage/databases/db1
 
 The API responds synchronously that the database is being deleted and indicates
 that the operation is accepted and is not fully completed by including the
-Content-Location header and status property in the response payload.
+status property in the response payload. The API might provide a
+recommendation to wait for 30 seconds.
 
 ```
 HTTP/1.1 202 Accepted
-Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
+Retry-After: 30
 
 {
 "id": "db1",
+"displayName": "Retail DB",
 "status": "deleting",
 [ … other fields for "database" …]
 }
@@ -171,7 +175,7 @@ Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 The client waits for a period of time then invokes another request to try to get the deletion status.
 
 ```
-GET https://graph.microsoft.com/v1.0/storage/db1
+GET https://graph.microsoft.com/v1.0/storage/databases/db1
 
 HTTP/1.1 404 Not Found
 ```
@@ -181,7 +185,7 @@ HTTP/1.1 404 Not Found
 POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
-"id": "db1",
+"displayName": "Retail DB",
 }
 ```
 
@@ -211,6 +215,7 @@ Retry-After: 30
 
 {
 "createdDateTime": "2015-06-19T12-01-03.4Z",
+"lastActionDateTime": "2015-06-19T12-01-03.45Z",
 "status": "running"
 }
 ```
