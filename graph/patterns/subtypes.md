@@ -2,29 +2,30 @@
 
 Microsoft Graph API Design Pattern
 
-*A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This lets us model collections of objects that have slightly different metadata and behavior.*
+*A frequent pattern in Microsoft Graph is to have a small type hierarchy, a base type with a few subtypes. This lets us model collections of resources that have slightly different metadata and behavior.*
 
 ## Problem
 
-The API design requires that we model a set of entities based on a common concept
+The API design requires that we model a set of resources based on a common concept
 that can be further grouped into *mutually exclusive variants* with specific
 properties and behaviors. The API design should be evolvable and allow the addition
 of new variants without breaking changes.
 
 ## Solution
 
-API designers can use OData *type hierarchy*, where there is one abstract base
-type with a few shared properties representing the common concept and one
-subtype for each variant of the entity. In the hierarchy, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in metadata, and client code can potentially leverage that to construct and/or validate requests.
+API designers might use a *type hierarchy*, where there is one base
+type (which might be abstract) with a few shared properties representing the common concept and one
+subtype for each variant of the resource. In the hierarchy, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in the type system.
 
 ## When to use this pattern
 
-The type hierarchy pattern is well suited to a use case where each variant of a
-common concept has unique properties and behaviors, no combination of variants
-is anticipated, and API queries are managed programmatically with type casting.
+Use this pattern where each variant of a common concept has its own unique properties and behaviors,
+no combination of variants is anticipated,
+and it is acceptable that callers who need to query resources by variant are adequately served by filtering or partitioning using type casting.
 
-You can consider related patterns such as
-[Facets](https://github.com/microsoft/api-guidelines/tree/graph/graph) and [Flat bag of properties](https://github.com/microsoft/api-guidelines/tree/graph/graph).
+Related patterns are
+[Facets](facets.md) and
+[Flat bag of properties](flatbag.md).
 
 ## Issues and considerations
 
