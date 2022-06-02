@@ -10,11 +10,11 @@ A common pattern is to apply a policy or state to a collection of resources. Wit
 
 An example is where you have a policy that you need to be able to apply to users in an organization. You might want to support the default **None**, enablement for **All**, or enablement for **Select** users where you only grant it to a few users.
 
-Existing patterns for this either have special-cased `strings` or have tightly coupled dependencies between two independent properties. Neither is intuitive, both require reading documentation, and neither can be inferred from the schema or within client libraries.
+Existing patterns for this either have special-cased strings or have tightly coupled dependencies between two independent properties. Neither is intuitive, both require reading documentation, and neither can be inferred from the schema or within client libraries.
 
 ## Solution
 
-Have an abstract base class where all `variants` of the subset are derived types from the base subset. For more information, see the [general subtyping guidance](./subtypes.md).
+Have an abstract base class where all variants of the subset are derived types from the base subset. For more information, see the [general subtyping guidance](./subtypes.md).
 
 The abstract base class should also hold an enum for all possible variants. The purpose of including this is to allow for easier ways to do query and filter operations on variants like `all` and `none` without relying on `isof` functions.
 
