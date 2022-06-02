@@ -49,22 +49,28 @@ The abstract base class should also hold an enum for all possible variants. The 
     </ComplexType>
 ```
 
-Be aware that the name values and types in the preceding examples are just examples and can be replaced with your scenario equivalent values. For example, types don't really need to be memberships. The collection doesn't have to be a collection at all; it can be singular and doesn't have to be a string.
+Be aware that the name values and types in the preceding examples are just examples and can be replaced with your scenario equivalent values. For example, type names don't really need to be `memberships`.The collection doesn't have to be a collection at all; it can be singular and doesn't have to be a string.
+
+These pattern type names should satisfy the following naming conventions: 
+
+- The base type name should have the suffix "Base" and the enumeration type name should have the suffix "Kind". 
+- Derived child types should have names with enumeration values as the prefixes; for example, if the enumeration member value is `value1`, then the derived type name is `value1<type>`. 
+
 
 ```xml
-    <ComplexType Name="<base-type>" IsAbstract="true">
-      <Property Name="<enum-name-for-type>" Type="graph.<enum-type>"/>
+    <ComplexType Name="<type>Base" IsAbstract="true">
+      <Property Name="<type>Kind" Type="graph.<type>Kind"/>
     </ComplexType>
 
-    <Enum Name="<enum-type>">
-      <Member Name="<value>"/>
+    <Enum Name="<type>Kind">
+      <Member Name="<value1>"/>
       <Member Name="<value2>"/>
       <Member Name="unknownFutureValue"/>
     </Enum>
 
-    <ComplexType Name="<type-1>" BaseType="graph.<base-type>"/>
+    <ComplexType Name="value1<type>" BaseType="graph.<type>Base"/>
 
-    <ComplexType Name="<type-2>" BaseType="graph.<base-time>">
+    <ComplexType Name="value2<type>" BaseType="graph.<type>Base">
       <Property Name="<property-name>" Type="<property-type>"/>
     </ComplexType>
 ```
