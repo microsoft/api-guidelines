@@ -13,8 +13,8 @@ of new variants without breaking changes.
 
 ## Solution
 
-API designers may use a *type hierarchy*, where there is one base
-type (which may be abstract) with a few shared properties representing the common concept and one
+API designers might use a *type hierarchy*, where there is one base
+type (which might be abstract) with a few shared properties representing the common concept and one
 subtype for each variant of the resource. In the hierarchy, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in the type system.
 
 ## When to use this pattern
