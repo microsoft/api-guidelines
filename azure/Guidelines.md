@@ -60,18 +60,20 @@ A Uniform Resource Locator (URL) is how developers access the resources of your 
 
 :white_check_mark: **DO** use this URL pattern:
 ```text
-https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resource-id>/
+https://<tenant>.<region>.<service>.<cloud>/<service-root>/<resource-collection>/<resource-id>
 ```
 
 Where:
  | Field | Description
  | - | - |
+ | tenant | Regionally-unique ID representing tenant. Used for isolation, billing, quota enforcement, lifetime of resources, etc.
+ | region | A code (see the table below) identifying the tenant's selected region.
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
  | cloud | Cloud domain name, e.g. `azure.net` (see Azure CLI's "az cloud list")
- | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containers (ex: subscription UUID)
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
- | resource&#x2011;id | Value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+ | resource&#x2011;id | Id of resource within the resource-collection. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+ 
 
 :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
