@@ -6,7 +6,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-May-20 | Update guidance on long-running operations                     |
+| 2022-Jun-08 | Update guidance on long-running operations                     |
 | 2022-Feb-01 | Updated error guidance                                        |
 | 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
@@ -168,7 +168,7 @@ sequenceDiagram
     participant API Endpoint
     participant Status Monitor
     Client->>API Endpoint: POST/DELETE
-    API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>Retry-After: 5<br/>{ "id": "22", "status": "NotStarted" }
+    API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>{ "id": "22", "status": "NotStarted" }
     Client->>Status Monitor: GET
     Status Monitor->>Client: HTTP/1.1 200 OK<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
     Client->>Status Monitor: GET
@@ -177,7 +177,7 @@ sequenceDiagram
 
 1. The client sends the request to initiate the long-running operation.
 The initial request could be a POST or DELETE method.
-The request may contain an `operation-id` header that the service uses as the ID of the status monitor created for the operation.
+The request may contain an `Operation-Id` header that the service uses as the ID of the status monitor created for the operation.
 
 2. The service validates the request and initiates the operation processing.
 If there are any problems with the request, the service responds with a `4xx` status code and error response body.
@@ -199,14 +199,15 @@ If the operation is still being processed, the status field will contain a "non-
 
 5. After the operation processing completes, a GET request to the status monitor returns the status monitor with a status field set to a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
 If the status is `Failed`, the status monitor resource contains an `error` field with a `code` and `message` that describes the failure.
-If the status is `Succeeded` and the LRO is an Action operation, the operation results will be returned in the `results` field of the status monitor.
+If the status is `Succeeded` and the LRO is an Action operation, the operation results will be returned in the `result` field of the status monitor.
 If the status is `Succeeded` and the LRO is an operation on a resource, the client can perform a GET on the resource
 to observe the result of the operation if desired.
 
 6. There may be some cases where a long-running operation can be completed before the response to the initial request.
 In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
 
-7. The service will auto-purge the status monitor resource after completion (at least 24 hours).
+7. The service is responsible for purging the status-monitor resource.
+It should auto-purge the status monitor resource after completion (at least 24 hours).
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
 ### Long-running Action Operations
@@ -214,10 +215,10 @@ The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 An action operation that is also long-running combines the [Action Operations](#action-operations) pattern
 with the [Long Running Operations](#long-running-operations) pattern.
 
-The operation is initiated with a POST operation and the operation path ends in `:action`.
+The operation is initiated with a POST operation and the operation path ends in `:<action>`.
 
 ```text
-POST /<service-or-resource-url>:action?api-version=2022-05-01
+POST /<service-or-resource-url>:<action>?api-version=2022-05-01
 Operation-Id: 22 
  
 { 
@@ -231,7 +232,6 @@ The response is a `202 Accepted` as described above.
 ```text
 HTTP/1.1 202 Accepted
 Operation-Location: https://<status-monitor-endpoint>/22
-Retry-After: 5 
  
 {
    "id": "22",
@@ -262,7 +262,7 @@ HTTP/1.1 200 OK
 A special case of long-running operation that occurs often is a PUT operation to create or replace a resource
 that involves some additional long-running processing.
 One example is a resource requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
-In this case, the request may contain an `operation-id` header that the service will use as
+In this case, the request may contain an `Operation-Id` header that the service will use as
 the ID of the status monitor created for the operation.
 
 ```text
@@ -314,7 +314,8 @@ HTTP/1.1 200 OK
 }
 ```
 
-If the additional processing failed, the service may delete the original resource if it is not usable in this state.
+If the additional processing failed, the service may delete the original resource if it is not usable in this state,
+but would have to clearly document this behavior.
 
 ### Long-running delete operation
 
@@ -328,7 +329,7 @@ When the delete operation completes successfully, a client must be able to creat
 ### Controlling a long-running operation
 
 It might be necessary to support some control action on a long-running operation, such as cancel.
-This is implemented as a POST on the status monitor endpoint with `:action` added.
+This is implemented as a POST on the status monitor endpoint with `:<action>` added.
 
 ```text
 POST /<status-monitor-url>:cancel?api-version=2022-05-01

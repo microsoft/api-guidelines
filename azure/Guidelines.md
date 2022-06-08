@@ -6,7 +6,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-May-20 | Update guidance on long-running operations                     |
+| 2022-Jun-08 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
 | 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
@@ -765,7 +765,7 @@ Considerations for Service Design for an introduction to the design of long-runn
 
 :white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
 
-:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it should be implemented with POST.
+:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
 
 In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
 it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
@@ -773,6 +773,7 @@ it may be better to expose this as a first class resource of the API rather than
 There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
 operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
 The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
+For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
 These are described in the following two sections.
 
 #### POST or DELETE LRO pattern
@@ -793,8 +794,6 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 :white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
 :warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
-
-:white_check_mark: **DO** include a `Retry-After` header in the response to the initiating request if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the first request to the status monitor.
 
 :ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation, but do not include an api-version query parameter.
 
@@ -818,8 +817,6 @@ For a PUT (create or replace) with additional long-running processing:
 
 :white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
 
-:white_check_mark: **DO** include a `Retry-After` header in the response to the initiating request if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the first request to the status monitor.
-
 :ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation, but do not include an api-version query parameter.
 
 #### Obtaining status and results of long-running operations
@@ -835,10 +832,12 @@ For all long-running operations, the client will issue a GET on a status monitor
 Property | Type        | Required | Description
 -------- | ----------- | :------: | -----------
 `id`     | string      | true     | The unique id of the operation
-other    |             | true     | Other values needed for a GET request to the status monitor (e.g. location)
 `status` | string      | true     | enum that includes terminal values "Succeeded", "Failed", "Canceled"
 `error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
 `result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
+additional<br/>properties | |     | Additional named or dynamic properties of the operation
+
+:white_check_mark: **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
 
 :white_check_mark: **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
 
@@ -846,7 +845,7 @@ other    |             | true     | Other values needed for a GET request to the
 
 :no_entry: **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
 
-:white_check_mark: **DO** retain the status monitor resource for some documented period of time (at least 24 hours) after the operation completes.
+:white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
 ### Bring your own Storage
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
