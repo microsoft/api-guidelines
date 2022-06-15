@@ -16,7 +16,7 @@ Table of contents
     - [Error handling](#error-handling)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
-  - [Recommended API patterns](#recommended-api-patterns)
+  - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
 
 ## 
@@ -69,7 +69,7 @@ The design of your API is arguably the most important investment you will make. 
 
 An established interface contract allows developers to use your API while internal teams are still working on implementation; API specifications enable designing user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and an understanding of how the service will evolve.
 
-Microsoft Graph supports resource and query-based API styles that follow HTTP, REST, and JSON standards, where the API contract is described by using OData conventions and schema definition. For more information, see [Documentation · OData Version 4.01](https://www.odata.org/documentation/).
+Microsoft Graph supports resource and query-based API styles that follow HTTP, REST, and JSON standards, where the API contract is described by using OData conventions and schema definitions. For more information, see [Documentation · OData Version 4.01](https://www.odata.org/documentation/).
 
 In general, API design includes the following steps:
 
@@ -99,7 +99,7 @@ At every step of your design, you need to consider security, privacy, and compli
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines)](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#17-naming-guidelines).
 
 Following is a short summary of the most often used conventions.
 
@@ -132,15 +132,15 @@ A Uniform Resource Locator (URL) is how developers access the resources of your 
 Navigation paths to Microsoft Graph resources are generally broken into multiple segments,
 `{scheme}://{host}/{version}/{category}/[{pathSegment}][?{query}]` where:
 
-- **scheme and host segments** are always [`https://graph.microsoft.com`](https://graph.microsoft.com/v1.0/users).
+- `scheme` and `host` segments are always [`https://graph.microsoft.com`](https://graph.microsoft.com/v1.0/users).
 
-- **version** can be v1.0 or beta.
+- `version` can be v1.0 or beta.
 
-- **category** segment is a logical grouping of APIs into top-level categories.
+- `category` is a logical grouping of APIs into top-level categories.
 
-- **pathSegment** is one or many navigation segments that can address an entity, collection of entities, property, or operation available for an entity.
+- `pathSegment` is one or many navigation segments that can address an entity, collection of entities, property, or operation available for an entity.
 
-- **query string** must follow the OData standard for query representations and is covered in the Query section of OData specifications.
+- `query` string must follow the OData standard for query representations and is covered in the Query section of OData specifications.
 
 While HTTP defines no constraints on how different resources are related, it does encourage the use of URL path segment hierarchies to convey relationships. In Microsoft Graph, relationships between resources are supported by the OData concepts of singletons, entitySets, entities, complex types, and navigation properties.
 
@@ -160,7 +160,7 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 ### Query support
 
-Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
+Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
@@ -174,13 +174,13 @@ Microsoft Graph APIs should support basic query options in conformance with ODat
 The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
 [OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
-Another way to avoid this is to use JSON batch as described in the [Microsoft Graph documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
+Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
 
 ### Resource modeling patterns
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must not use complex type to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must not use complex type to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="Author">
@@ -242,11 +242,11 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 
 Operation resources must have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
 
-For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/master/Guidelines.md#7102-error-condition-responses).
+For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
 
 ### Error handling
 
-Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph Utilities library to provide a standard implementation for your service:
+Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
 
 ```http
 {
@@ -266,37 +266,37 @@ The top-level error code must be aligned with HTTP response status codes accordi
 
 - **Simple error**: An API wants to report an error with top-level details only. The error object contains the top-level error code, message and target (optional).
 
-```http
-{
-  "error": {
-    "code": "BadRequest",
-    "message": "Cannot process the request because it is malformed or incorrect.",
-	"target": "Resource X (Optional)"
-  }
-}
-```
+   ```http
+    {
+      "error": {
+        "code": "BadRequest",
+        "message": "Cannot process the request because it is malformed or incorrect.",
+    	"target": "Resource X (Optional)"
+      }
+    }
+   ```
 
 - **Detailed error**: An API needs to provide service-specific details of the error via the innererror property of the error object. It is intended to allow services to supply a specific error code to help differentiate errors that share the same top-level error code but are reported for different reasons.
-
-```http
-{
-  "error": {
-    "code": "BadRequest",
-    "message": "Cannot process the request because it is malformed or incorrect.",
-    "innererror": {
-      "code": "requiredFieldOrParameterMissing",
-           
+    
+   ```http
+    {
+      "error": {
+        "code": "BadRequest",
+        "message": "Cannot process the request because it is malformed or incorrect.",
+        "innererror": {
+          "code": "requiredFieldOrParameterMissing",
+               
+        }
+      }
     }
-  }
-}
-```
+   ```
 
 | Microsoft Graph enforces the following error rules                                                                | 
 |-------------------------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** return an error property with a child code property in all error responses. |
 | :heavy_check_mark: **MUST** return a 403 Forbidden error when the application or signed-in user has insufficient permissions present in the auth token. |
 | :heavy_check_mark: **MUST** return a 429 Too Many Requests error when the client exceeded throttling limits, and a 503 Service Unavailable error when the service overloaded but the client is within throttling limits.|
-| :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 would result in information disclosure. |
+| :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 error would result in information disclosure. |
 
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
@@ -304,7 +304,7 @@ For a complete mapping of error codes to HTTP statuses, see
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/graph/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and not considered a breaking change.
+[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and not considered a breaking change.
 
 **Non-breaking changes:**
 
@@ -345,11 +345,9 @@ On the beta endpoint, breaking changes and deprecation of APIs are allowed with 
 
 Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
 
-## Recommended API patterns
+## Recommended API design patterns
 
 The guidelines in previous sections are intentionally brief and provide a jump start for Microsoft Graph API developers. More detailed design guidance about REST APIs is published at the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/). Microsoft Graph-specific patterns are outlined in the following table.
-
-Recommended API Design patterns:
 
 | Pattern                                          | Description                                                                |
 |--------------------------------------------------|----------------------------------------------------------------------------|
