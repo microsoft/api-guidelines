@@ -31,100 +31,99 @@ Table of contents
 
 ## Introduction
 
-When building a digital ecosystem API usability becomes a business priority. Success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
+When building a digital ecosystem API, usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API producer teams MUST follow to
-ensure that Microsoft Graph has a consistent and easy to use API surface. A new API design should meet the
-following goals:
+ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design should meet the following goals:
 
-\- Developer friendly via consistent naming, patterns, and web standards (HTTP,
-REST, JSON)
+- Be developer friendly by using consistent naming, patterns, and web standards (HTTP, REST, JSON).
 
-\- Work well with SDKs in many programming languages.
+- Work well with SDKs in many programming languages.
 
-\- Sustainable & evolvable via clear API contracts.
+- Be sustainable and evolvable by using clear API contracts.
 
-The Microsoft Graph guidelines are an extension of the Microsoft REST API
-guidelines. Readers are assumed also be reading and following the Microsoft REST API
-guidelines except where this document outlines specific differences or exceptions to those guidelines.
-Together these guidelines and a library of API patterns serve as the means by
-which API teams discuss and come to consensus on API review requirements.
+The Microsoft Graph REST API Guidelines are an extension of the
+[Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/). It is assumed that readers are following the Microsoft REST API Guidelines except where this document outlines specific differences or exceptions to those guidelines. Together, these guidelines and a library of API patterns serve as the means by which API teams discuss and come to consensus on API review requirements.
 
 Technology and software are constantly changing and evolving, and as such, this
-is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will more frequently change to add guidance in areas previously uncovered, or to clarify existing guidance. It will less frequently change the directional guidance it has already provided.
-To suggest a change or propose a new idea, [open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose).
+is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will frequently change to add guidance in areas previously uncovered or to clarify existing guidance. It will less frequently change the directional guidance it has already provided. To suggest a change or propose a new idea,
+[open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose).
 
 ### Legend
 
 This document offers prescriptive guidance labeled as follows:
 
-:heavy_check_mark: **MUST** satisfy this specification. 
+:heavy_check_mark: **MUST** satisfy this specification.
 
-:no_entry: **MUST NOT** use this pattern. 
+:no_entry: **MUST NOT** use this pattern.
 
-:ballot_box_with_check: **SHOULD** fulfill this specification. 
+:ballot_box_with_check: **SHOULD** fulfill this specification.
 
-:warning: **SHOULD NOT** adopt this pattern. 
+:warning: **SHOULD NOT** adopt this pattern.
 
-If not following this advice, you MUST disclose your reasons during the Microsoft Graph API review.
+If you do not follow this advice, you MUST disclose your reasons during the Microsoft Graph API review.
 
 ## Design approach
 
-The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote API-first design approach where you begin your product design by focusing on how information will be exchanged and represented and creating an interface contract for your API which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs. Established interface contract allows developers to use your API while internal teams are still working on implementation; API specifications enable designing of user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and understanding of how the service will evolve. 
+The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote an API-first design approach where you begin your product design by focusing on how information is exchanged and represented and by creating an interface contract for your API, which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs.
 
-Microsoft Graph supports resource and query-based API styles that follow HTTP, REST, and JSON standards, where API contract is described using OData conventions and schema definition. For more information, see [Documentation · OData Version 4.01](https://www.odata.org/documentation/).
+An established interface contract allows developers to use your API while internal teams are still working on implementation; API specifications enable designing user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and an understanding of how the service will evolve.
 
-In general API design includes the following steps:
+Microsoft Graph supports resource and query-based API styles that follow HTTP, REST, and JSON standards, where the API contract is described by using OData conventions and schema definition. For more information, see [Documentation · OData Version 4.01](https://www.odata.org/documentation/).
 
-- Outline the key current and future scenarios for API consumers
+In general, API design includes the following steps:
+
+1. Outline the key current and future scenarios for API consumers.
   
-- Define your domain model
+1. Define your domain model.
 
-- Derive and name your API resources
+1. Derive and name your API resources.
   
-- Describe relationships between resources
+1. Describe relationships between resources.
 
-- Determine required behavior
+1. Determine required behavior.
 
-- Determine user roles and application permissions
+1. Determine user roles and application permissions.
 
-- Specify errors
+1. Specify errors.
 
-When creating your API contract you will define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources and it is important to plan ahead how API evolves. For this it is essential to understand and document your user scenarios as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details. We recommend creating a simple resource diagram, like the following, to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
+When creating your API contract, you define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources. It is important to plan ahead how the API evolves; to do this, it is essential to understand and document your user scenarios as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details.
+
+We recommend creating a simple resource diagram like the following to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
+
 ![Resource model example](ModelExample.png)
 
-After resources are defined it’s time to think about the behavior of your API which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior you identify a happy path and various exceptions and deviations which will be expressed as errors and represented using HTTP codes and error messages.
+After you define your resources, it’s time to think about the behavior of your API, which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior, you identify a happy path and various exceptions and deviations that will be expressed as errors and represented by using HTTP codes and error messages.
 
-At every step of your design you need to consider security, privacy and compliance as intrinsic components of your API implementation.
-
+At every step of your design, you need to consider security, privacy, and compliance as intrinsic components of your API implementation.
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand for developers. Ease of understanding comes from familiarity and recognition  therefore when thinking about naming you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/).
 
 Following is a short summary of the most often used conventions.
 
 | Requirements                                                            | Example                       |
 | ------------------------------------------------------------------------|-------------------------------|
-| :no_entry: **MUST NOT** use redundant words in names.                   | - **Right:** /places/{id}/**displayName** and /phones/{id}/**number** <BR> -  **Wrong** /places/{id}/*placeName* and /phones/{id}/**phoneNumber** |
-| :warning: **SHOULD NOT** use brand names in type or property names.     | - **Right:** chat   <BR> -  **Wrong** teamsChat  |
-| :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong** msodsUrl or dlp |
-| :heavy_check_mark: **MUST** use singular nouns for type names.          | - **Right:** address  <BR> - **Wrong** addresses  |
-| :heavy_check_mark: **MUST** use plural nouns for collections (for listing a type or collection properties). | - **Right:** addresses <BR> - **Wrong** address |
-| :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a "postpositive").| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong** notaryPublics or motherInLaws |
-| **casing** | |
-| :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces   | - **Right:** automaticRepliesStatus. <BR> - **Wrong** kebab-case or snake_case. |
-| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong** iOLimit or totalIoAmount |
-| :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong** webHTML |
-| :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geocoordinate or crosswalk <BR> - **Wrong** metaData, semiCircle or airPlane |
-| :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw or postOffice <BR> - **Wrong** paperclip or fullmoon |
-| **prefixes and suffixes** | |
-| :heavy_check_mark: **MUST** suffix date and time properties with        | - **Right:** dueDate — an Edm.Date <BR> - **Right:** createdDateTime — an Edm.DateTimeOffset <BR> - **Right:** recurringMeetingTime — an Edm.TimeOfDay <BR>- **Wrong** dueOn or startTime - <BR> - **Right:** instead both above are an Edm.DateTimeOffset |
-| :ballot_box_with_check: **SHOULD** use the Duration type for durations, but if using an int, append the units. | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (NOTE use of Edm.Duration type is preferable) <BR>- **Wrong** passwordValidityPeriod — an Edm.Int32 |
-| :no_entry: **MUST NOT** use suffix property names with primitive type names unless the type is temporal. | - **Right:** isEnabled or amount <BR> - **Wrong** enabledBool |
-| :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem, or userId on auditActor <BR> - **Wrong** webUrl on contact when its the companyWebUrl |
-| :ballot_box_with_check: **SHOULD** prefix Boolean properties with is, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom — subjectively more natural than the following examples <BR> - **Wrong** isNewTimeProposalsAllowed or isInvitesFromAllowed — subjectively more awkward that the preceding examples |
-| :no_entry: **MUST NOT** use 'collection', 'response', 'request ' suffixes .  |- **Right:** addresses <BR> - **Wrong** addressCollection |
+| :no_entry: **MUST NOT** use redundant words in names.                   | - **Right:** /places/{id}/**displayName** or /phones/{id}/**number** <BR> -  **Wrong:** /places/{id}/**placeName** or /phones/{id}/**phoneNumber** |
+| :warning: **SHOULD NOT** use brand names in type or property names.     | - **Right:** chat   <BR> -  **Wrong:** teamsChat  |
+| :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong:** msodsUrl or dlp |
+| :heavy_check_mark: **MUST** use singular nouns for type names.          | - **Right:** address  <BR> - **Wrong:** addresses  |
+| :heavy_check_mark: **MUST** use plural nouns for collections (for listing type or collection properties). | - **Right:** addresses <BR> - **Wrong:** address |
+| :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
+| **CASING** | |
+| :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
+| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount |
+| :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
+| :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geocoordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
+| :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
+| **PREFIXES AND SUFFIXES** | |
+| :heavy_check_mark: **MUST** suffix date and time properties with Date, Time, or DateTime  | - **Right:** dueDate — an Edm.Date <BR> - **Right:** recurringMeetingTime — an Edm.TimeOfDay <BR> - **Right:** createdDateTime — an Edm.DateTimeOffset <BR>- **Wrong:** dueOn or startTime <BR> - **Right:** Instead, both of the preceding are an Edm.DateTimeOffset |
+| :ballot_box_with_check: **SHOULD** use the Duration type for durations, but if using an `int`, append the units. | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (use of Edm.Duration type is preferable) <BR>- **Wrong:** passwordValidityPeriod — an Edm.Int32 |
+| :no_entry: **MUST NOT** use suffix property names with primitive type names unless the type is temporal. | - **Right:** isEnabled or amount <BR> - **Wrong:** enabledBool |
+| :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem or userId on auditActor <BR> - **Wrong:** webUrl on contact when it's the companyWebUrl |
+| :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
+| :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
 
 ### Uniform Resource Locators (URLs)
 
