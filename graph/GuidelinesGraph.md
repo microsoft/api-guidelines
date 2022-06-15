@@ -99,7 +99,7 @@ At every step of your design, you need to consider security, privacy, and compli
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines)](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#17-naming-guidelines).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#17-naming-guidelines).
 
 Following is a short summary of the most often used conventions.
 
@@ -142,7 +142,7 @@ Navigation paths to Microsoft Graph resources are generally broken into multiple
 
 - `query` string must follow the OData standard for query representations and is covered in the Query section of OData specifications.
 
-While HTTP defines no constraints on how different resources are related, it does encourage the use of URL path segment hierarchies to convey relationships. In Microsoft Graph, relationships between resources are supported by the OData concepts of singletons, entitySets, entities, complex types, and navigation properties.
+While HTTP defines no constraints on how different resources are related, it does encourage the use of URL path segment hierarchies to convey relationships. In Microsoft Graph, relationships between resources are supported by the OData concepts of singletons, entity sets, entities, complex types, and navigation properties.
 
 In Microsoft Graph, a top-level API category might represent one of the following groupings:
 
