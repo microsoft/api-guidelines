@@ -24,8 +24,8 @@ Before using a dictionary type in your API definition, make sure that your scena
 
 ### Alternatives
 
-- [Open extensions](https://docs.microsoft.com/en-us/graph/extensibility-open-users) when you want to provide clients the ability to extend Microsoft Graph.
-- [Complex types](https://docs.microsoft.com/en-us/odata/webapi/complextypewithnavigationproperty) when the set of data values are known.
+- [Open extensions](https://docs.microsoft.com/graph/extensibility-open-users) when you want to provide clients the ability to extend Microsoft Graph.
+- [Complex types](https://docs.microsoft.com/odata/webapi/complextypewithnavigationproperty) when the set of data values are known.
 
 ## Issues and considerations
 
