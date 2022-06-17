@@ -38,7 +38,7 @@ We recommend that a new namespace be aligned with a top-level API category.
 
 - Microsoft Graph consistency requirements discourage using the same type names for different concepts even within different namespaces. Microsoft Graph type names must be descriptive and unique within the API surface without requiring  full qualification.
 
-- A namespace must be consistent with an API category in the navigation path according to [Microsoft Graph REST API Guidelines](GuidelinesGraph.md#uniform-resource-locators-urls).
+- A namespace must be consistent with an API category in the navigation path according to [Microsoft Graph REST API Guidelines](../GuidelinesGraph.md#uniform-resource-locators-urls).
 
 - When type name is ambiguous and requires a namespace qualifier, changing a namespace is a breaking change.
 
