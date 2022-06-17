@@ -66,8 +66,8 @@ https://<tenant>.<region>.<service>.<cloud>/<service-root>/<resource-collection>
 Where:
  | Field | Description
  | - | - |
- | tenant | Regionally-unique ID representing tenant. Used for isolation, billing, quota enforcement, lifetime of resources, etc.
- | region | A code (see the table below) identifying the tenant's selected region.
+ | tenant | Regionally-unique ID representing a tenant (used for isolation, billing, quota enforcement, lifetime of resources, etc.)
+ | region | Identifies the tenant's selected region. This region string MUST match one of the strings in the "Name" column returned from running this Azure CLI's "az account list-locations -o table"
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
  | cloud | Cloud domain name, e.g. `azure.net` (see Azure CLI's "az cloud list")
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
