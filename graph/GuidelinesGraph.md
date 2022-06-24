@@ -211,11 +211,11 @@ Because objects of complex types in Microsoft Graph don’t have unique identifi
 There are different approaches for designing an API resource model in situations with multiple variants of a common concept.
 The three most often used patterns in Microsoft Graph today are type hierarchy, facets, and flat bag of properties:
 
-- [Type hierarchy](./patterns/subtypes.md) is represented by one abstract base type with a few common properties and one subtype for each variant.
+- **[Type hierarchy](./patterns/subtypes.md)** is represented by one abstract base type with a few common properties and one subtype for each variant.
 
-- [Facets](./patterns/facets.md) are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
+- **[Facets](./patterns/facets.md)** are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
 
-- Flat bag of properties is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+- **Flat bag of properties** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
@@ -223,7 +223,32 @@ The following table shows a summary of the main qualities for each pattern and c
 |-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|
 | Type hierarchy          | yes                                           | no                                                | no                        |
 | Facets                  | partially                                     | yes                                               | yes                       |
-| Flat bag of properties  | no                                            | no                                                | yes                       |
+| Flat                    | no                                            | no                                                | yes                       |
+
+#### Pros and cons
+
+Following are a few pros and cons to decide which pattern to use:
+
+- In **[hierarchy](./patterns/subtypes.md)**, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in metadata, and client code can potentially leverage that to construct and/or validate requests.
+
+- Introducing new cases in **hierarchy** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically).
+
+- Introducing new cases/variants in **[facets](./patterns/facets.md)** is straightforward. You need to be careful because it can introduce situations where previously only one of the facets was non-null and now all the old ones are null. This is not unlike adding new subtypes in the **hierarchy** pattern or adding a new type value in the **flat** pattern.
+
+- **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat** is more familiar to developers of less strongly typed languages.
+
+- **facets** has the potential to model what is typically associated with multiple inheritance. 
+
+- **facets** and **flat** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the less well known cast segments in the filter query.
+
+- **flat** might resemble a structure that developers are familiar with from on-premises products and their API (for example, recurrence in Microsoft Graph is modeled after Exchange Server's model). Even though the Microsoft Graph API can and should abstract from the implementation details, this can have benefits in documentation and adoption.
+
+- **hierarchy** can become hard to maintain if the base type is quite abstract and the **hierarchy** is relatively wide. Let's assume a situation where collections are modeled using the base type with many subtypes, but the actual elements of the collection are only ever one or two of the subtypes. When a new subtype gets introduced and the collection(s) quickly contain elements of this new subtype, client code has to react to these changes. It is important to check if this changes the semantics of the property (actual or assumed).
+
+- Even though not frequently used in Microsoft Graph, **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
+
+> **Note**
+> As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility.
 
 ### Behavior modeling
 
