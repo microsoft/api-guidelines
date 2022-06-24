@@ -331,7 +331,7 @@ For a complete mapping of error codes to HTTP statuses, see
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and not considered a breaking change.
+[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
 
 **Non-breaking changes:**
 
