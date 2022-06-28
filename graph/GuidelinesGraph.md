@@ -211,11 +211,11 @@ Because objects of complex types in Microsoft Graph don’t have unique identifi
 There are different approaches for designing an API resource model in situations with multiple variants of a common concept.
 The three most often used patterns in Microsoft Graph today are type hierarchy, facets, and flat bag of properties:
 
-- [Type hierarchy](./patterns/subtypes.md) is represented by one abstract base type with a few common properties and one subtype for each variant.
+- **[Type hierarchy](./patterns/subtypes.md)** is represented by one abstract base type with a few common properties and one subtype for each variant.
 
-- [Facets](./patterns/facets.md) are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
+- **[Facets](./patterns/facets.md)** are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
 
-- Flat bag of properties is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+- **Flat bag of properties** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
@@ -223,7 +223,28 @@ The following table shows a summary of the main qualities for each pattern and c
 |-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|
 | Type hierarchy          | yes                                           | no                                                | no                        |
 | Facets                  | partially                                     | yes                                               | yes                       |
-| Flat bag of properties  | no                                            | no                                                | yes                       |
+| Flat                    | no                                            | no                                                | yes                       |
+
+#### Pros and cons
+
+Following are a few pros and cons to decide which pattern to use:
+
+- In **[hierarchy](./patterns/subtypes.md)**, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in metadata, and client code can potentially leverage that to construct and/or validate requests.
+
+- Introducing new cases in **hierarchy** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically).
+
+- Introducing new cases/variants in **[facets](./patterns/facets.md)** is straightforward. You need to be careful because it can introduce situations where previously only one of the facets was non-null and now all the old ones are null. This is not unlike adding new subtypes in the **hierarchy** pattern or adding a new type value in the **flat** pattern.
+
+- **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat** is more familiar to developers of less strongly typed languages.
+
+- **facets** has the potential to model what is typically associated with multiple inheritance. 
+
+- **facets** and **flat** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
+
+- **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
+
+> **Note:**
+> As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
 
 ### Behavior modeling
 
@@ -301,10 +322,12 @@ The top-level error code must be aligned with HTTP response status codes accordi
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
+<a name="api-contract-and-non-backward-compatible-changes"></a>
+
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and not considered a breaking change.
+[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
 
 **Non-breaking changes:**
 
