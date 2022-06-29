@@ -241,3 +241,70 @@ HTTP/1.1 200 OK
 "resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
 }
 ```
+### Trigger a long running action using the Stepwise Operation
+
+```
+POST https://graph.microsoft.com/v1.0/storage/copyArchive
+
+{
+"displayName": "Image Archive",
+"destination": "Second-tier storage"
+...
+}
+```
+
+The API responds synchronously that the request has been accepted and includes
+the Location header with an operation resource for further polling.
+
+```
+HTTP/1.1 202 Accepted
+
+Location: https://graph.microsoft.com/v1.0/storage/operations/123
+
+```
+###  Trigger a long running action using the Stepwise Operation in hybrid model
+
+The server responds synchronously to POST requests to collections that create a resource even if the resources aren't fully created when the response is generated. The response includes a representation of the incomplete resource that will eventually exist at the URL in the Content-Location header and the Location header with an operation resource for further polling.
+
+```
+POST https://graph.microsoft.com/v1.0/storage/databases/
+
+{
+"displayName": "Retail DB",
+}
+```
+
+The API responds synchronously that the database has been created and indicates
+that the provisioning operation is not fully completed by including the
+Content-Location header and status property in the response payload.
+
+```
+HTTP/1.1 202 Accepted
+Content-Location: https://graph.microsoft.com/v1.0/storage/databases/db1
+Location: https://graph.microsoft.com/v1.0/storage/operations/123
+{
+"id": "db1",
+"displayName": "Retail DB",
+"status": "provisioning",
+[ … other fields for "database" …]
+}
+```
+The client waits for a period of time then invokes another request to try to get the database status.
+
+```
+
+GET https://graph.microsoft.com/v1.0/storage/operations/123
+```
+If resource creation is successful then the server responds with a "status:succeeded" and the resource
+location.
+
+```
+HTTP/1.1 200 OK
+
+{
+"createdDateTime": "2015-06-19T12-01-03.45Z",
+"lastActionDateTime": "2015-06-19T12-06-03.0024Z",
+"status": "succeeded",
+"resourceLocation": "https://graph.microsoft.com/v1.0/storage/databases/db1"
+}
+```
