@@ -106,7 +106,7 @@ Response payload shortened for readability:
     ]
 }
 ```
-API request for a subtype specific property requires type casting to the subtype, i.e. to retrieve jobTitle property, enabled for the user type, you need to cast from the directoryObject collection items to the microsoft.graph.group derived type.
+API request for a subtype specific property requires type casting to the subtype, i.e. to retrieve jobTitle property, enabled for the user type, you need to cast from the directoryObject collection items to the microsoft.graph.user derived type.
 
 ```
 GET https://graph.microsoft.com/v1.0/groups/a94a666e-0367-412e-b96e-54d28b73b2db/members/microsoft.graph.user?$select=displayName,jobTitle
