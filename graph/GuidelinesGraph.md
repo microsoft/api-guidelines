@@ -12,6 +12,7 @@ Table of contents
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
     - [Query support](#query-support)
     - [Resource modeling patterns](#resource-modeling-patterns)
+      - [Pros and cons](#pros-and-cons)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
@@ -215,7 +216,7 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 
 - **[Facets](./patterns/facets.md)** are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
 
-- **Flat bag of properties** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+- **[Flat bag of properties](./patterns/flat-bag.md)** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
@@ -223,7 +224,7 @@ The following table shows a summary of the main qualities for each pattern and c
 |-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|
 | Type hierarchy          | yes                                           | no                                                | no                        |
 | Facets                  | partially                                     | yes                                               | yes                       |
-| Flat                    | no                                            | no                                                | yes                       |
+| Flat bag                | no                                            | no                                                | yes                       |
 
 #### Pros and cons
 
@@ -233,13 +234,13 @@ Following are a few pros and cons to decide which pattern to use:
 
 - Introducing new cases in **hierarchy** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically).
 
-- Introducing new cases/variants in **[facets](./patterns/facets.md)** is straightforward. You need to be careful because it can introduce situations where previously only one of the facets was non-null and now all the old ones are null. This is not unlike adding new subtypes in the **hierarchy** pattern or adding a new type value in the **flat** pattern.
+- Introducing new cases/variants in **[facets](./patterns/facets.md)** is straightforward. You need to be careful because it can introduce situations where previously only one of the facets was non-null and now all the old ones are null. This is not unlike adding new subtypes in the **hierarchy** pattern or adding a new type value in the **[flat bag](./patterns/flat-bag.md)** pattern.
 
-- **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat** is more familiar to developers of less strongly typed languages.
+- **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat bag** is more familiar to developers of less strongly typed languages.
 
 - **facets** has the potential to model what is typically associated with multiple inheritance. 
 
-- **facets** and **flat** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
+- **facets** and **flat bag** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
 
 - **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
 
@@ -379,6 +380,8 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 | [Dictionary](./patterns/dictionary.md)           | Clients can provide an unknown quantity of data elements of the same type. |
 | [Evolvable enums](./patterns/evolvable-enums.md) | Extend enumerated types without breaking changes.                          |
 | [Facets](./patterns/facets.md)                   | Model parent-child relationships.                                          |
+| [Flat bag](./patterns/flat-bag.md)               | Model variants of the same type.                                           |
+| [Long running operations](./patterns/longRunningOperations.md)| Model operations where processing a client request takes a long time. |
 | [Modeling subsets](./patterns/subsets.md)        | Model collection subsets for All, None, Included, or Excluded criteria.    |
 | [Namespace](./patterns/namespace.md)             | Organize resource definitions into a logical set.                          |
 | [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.                                 |
