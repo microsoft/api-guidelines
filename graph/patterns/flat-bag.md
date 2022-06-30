@@ -1,4 +1,4 @@
-# Flat Bag Pattern
+# Flat Bag of properties Pattern
 
 Microsoft Graph API Design Pattern
 
@@ -15,19 +15,19 @@ The API designer creates one entity type with all the potential properties plus 
 
 ## When to use this pattern
 
-The flat-bag pattern is useful when there is a small number of variants with similar behavior and variants are queried for  mostly read-only operations. 
+The Flat bag pattern is useful when there is a small number of variants with similar behavior and variants are queried for  mostly read-only operations. 
 The pattern also makes it syntactically easier to query resources by using OData $filter expression because it doesn't require casting.
 
 ## Issues and considerations
 
-In general the flat-bag pattern is the least recommended modeling choice because it is weakly typed and it is difficult to semantically verify targeted resource modifications. But there are circumstances when query simplicity and limited number of properties may overweight considerations of more strongly typed approach.
+In general the Flat bag pattern is the least recommended modeling choice because it is weakly typed and it is difficult to semantically verify targeted resource modifications. But there are circumstances when query simplicity and limited number of properties may overweight considerations of more strongly typed approach.
 The pattern is not recommended for large number of variants and properties because the payload becomes sparsely populated.
 
 You can consider related patterns such as Type hierarchy and Flat bag of properties.
 
 ## Example
 
-A good example for flat-bag implementation is the recurrencePattern and recurrenceRange types on [patternedRecurrence](https://docs.microsoft.com/graph/api/resources/patternedrecurrence).
+A good example for Flat bag implementation is the recurrencePattern type on [recurrencePattern](https://docs.microsoft.com/en-us/graph/api/resources/recurrencepattern?view=graph-rest-1.0).
 
 The recurrencePattern has six variants expressed as six different values of the `type` property (for example: daily, weekly, ...). The key here is that for each of these values, some properties are meaningful and others are ignored (for example: `daysOfWeek` is relevant when `type` is `weekly` but not when it is `daily`).
 
