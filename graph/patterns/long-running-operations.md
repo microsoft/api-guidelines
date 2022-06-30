@@ -7,7 +7,7 @@ Microsoft Graph API Design Pattern
 ## Problem
 
 The API design requires modeling operations on resources, which takes a long time
-to complete so that API clients don't need to wait and can continue doing other
+to complete, so that API clients don't need to wait and can continue doing other
 work while waiting for the final operation results. The client should be able to
 monitor the progress of the operation and have an ability to cancel it if
 needed.
@@ -48,7 +48,6 @@ presentation makes things simpler for our users and tooling chain.
 
 In general, Microsoft Graph API guidelines for long running operations follow [Microsoft REST API
 Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).
-
 There are some deviations from the base guidelines where Microsoft Graph API standards require that you do one of the following:
 
 - For the RELO pattern, you should return the Location header that indicates the location of the resource.
@@ -214,7 +213,7 @@ Retry-After: 30
 ```
 
 The client waits the recommended 30 seconds and then invokes another request to get
-the results of the operation.
+the results of the operation:
 
 ```
 GET https://graph.microsoft.com/v1.0/storage/operations/123
@@ -222,7 +221,7 @@ GET https://graph.microsoft.com/v1.0/storage/operations/123
 
 
 The server responds with a "status:succeeded" operation that includes the resource
-location.
+location:
 
 ```
 HTTP/1.1 200 OK

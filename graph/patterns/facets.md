@@ -17,7 +17,7 @@ In this solution, a child variant is identified by the presence of one or more f
 
 ## When to use this pattern
 
-The facet pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes it syntactically easier to query resources by using OData $filter expression because it doesn't require casting.
+The facets pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes it syntactically easier to query resources by using the OData `$filter` expression because it doesn't require casting.
 
 You can consider related patterns such as [type hierarchy](./subtypes.md) and [flat bag of properties](./flat-bag.md).
 
@@ -27,7 +27,7 @@ When introducing a new facet, you need to ensure that the new facet doesn't chan
 
 ## Example
 
-The driveItem resource represents a file, folder, image, or other item stored in a drive and is modeled by using entity type with multiple facets.
+The driveItem resource represents a file, folder, image, or other item stored in a drive and is modeled by using an entity type with multiple facets.
 
 ```XML
  
