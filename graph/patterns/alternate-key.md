@@ -153,7 +153,7 @@ Declare `mail` and `ssn` as alternate keys on an entity:
     }
     ```
 
-4. Request a resource where the alternate key property does not exist on any resource in the colleciton:
+4. Request a resource where the alternate key property does not exist on any resource in the collection:
 
     ```http
     GET https://graph.microsoft.com/v1.0/users(email='unknown@contoso.com')

@@ -19,7 +19,7 @@ In this solution, a child variant is identified by the presence of one or more f
 
 The facet pattern is useful when there is a number of variants and they are not mutually exclusive. It also makes it syntactically easier to query resources by using OData $filter expression because it doesn't require casting.
 
-You can consider related patterns such as [Type hierarchy](./subtypes.md) and Flat bag of properties.
+You can consider related patterns such as [type hierarchy](./subtypes.md) and [flat bag of properties](./flat-bag.md).
 
 ## Issues and considerations
 

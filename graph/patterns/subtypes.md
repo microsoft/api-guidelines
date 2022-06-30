@@ -22,7 +22,7 @@ subtype for each variant of the resource. In the hierarchy, the interdependencie
 Use this pattern where each variant of a common concept has its own unique properties and behaviors,
 no combination of variants is anticipated, and it is acceptable that callers who need to query resources by variant are adequately served by filtering or partitioning using type casting.
 
-Related patterns are [Facets](./facets.md) and Flat bag of properties.
+You can consider related patterns such as [facets](./facets.md) and [flat bag of properties](./flat-bag.md).
 
 ## Issues and considerations
 
