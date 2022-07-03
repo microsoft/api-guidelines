@@ -512,6 +512,8 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 :white_check_mark: **DO** return a `nextLink` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
 
+:white_check_mark: **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
+
 :ballot_box_with_check: **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
 
 :no_entry: **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
