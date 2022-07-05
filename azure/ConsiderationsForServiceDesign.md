@@ -376,7 +376,7 @@ Finally, write sample code for your service's workflow and add the code you'd wa
 
 ## Pagination
 
-Operations that return a collection of resources may need should support pagination.
+Operations that return a collection of resources must consider pagination.
 There are hard limits to the payload size of HTTP responses, and when the size of a collection or the resources themselves
 can grow arbitrarily large there is the risk of exceeding this limit if the operation does not support pagination.
 Further, adding support for pagination is a breaking change so it should be supported in the initial GA of the service
@@ -385,6 +385,7 @@ if there is any possibility that it will eventually be needed.
 There are two forms of pagination that MAY be supported by RESTful APIs.
 Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads.
 Client-driven paging enables clients to request only the number of resources that it can use at a given time.
+Services should almost always support server-driven paging and may optionally support client-driven paging.
 
 ### Server-driven paging
 
