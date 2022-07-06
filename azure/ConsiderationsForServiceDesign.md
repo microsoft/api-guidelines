@@ -394,6 +394,8 @@ exist in the collection.
 The value of the `nextLink` property should be an opaque absolute URL that will return the next page of results.
 The absence of a `nextLink` property means that no additional pages are available.
 Since `nextLink` is an opaque URL it should include any query parameters required by the service, including `api-version`.
+The service should honor a request to a URL derived from `nextLink` by replacing the value for the `apl-version` query parameter
+with a different but valid api version. The service may reject the request if any other element of `nextLink` was modified.
 
 The service determines how many items to include in the response and may choose a different number for different collections and even for different pages of the same collection.
 An operation may allow the client to specify a maximum number of items in a response with an optional `maxpagesize` parameter.
