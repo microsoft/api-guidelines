@@ -787,7 +787,7 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 
 :white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an outstanding operation unless the request is identical to the prior request (a retry scenario).
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
 :white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
@@ -795,9 +795,13 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 
 :warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
-:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation, but do not include an api-version query parameter.
+:white_check_mark: **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
 
-:white_check_mark: **DO** return a status monitor in the response body as described in [Status and results of long-running operations](#status-and-results-of-long-running-operations).
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
 #### PUT operation with additional long-running processing
 
@@ -807,7 +811,7 @@ For a PUT (create or replace) with additional long-running processing:
 
 :white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an outstanding operation unless the request is identical to the prior request (a retry scenario).
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
 :white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
@@ -817,7 +821,11 @@ For a PUT (create or replace) with additional long-running processing:
 
 :white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
 
-:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation, but do not include an api-version query parameter.
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
 #### Obtaining status and results of long-running operations
 
