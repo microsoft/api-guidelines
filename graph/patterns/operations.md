@@ -45,8 +45,8 @@ You can consider related patterns such as [long running operations](./long-runni
         <Parameter Name="AttachmentItem" Type="graph.attachmentItem" Nullable="false" />
         <ReturnType Type="graph.uploadSession" />
       </Action>
-```
- <Action Name="deprovision" IsBound="true" ags:OwnerService="Microsoft.Intune.Devices">
+
+<Action Name="deprovision" IsBound="true" ags:OwnerService="Microsoft.Intune.Devices">
         <Parameter Name="bindingParameter" Type="graph.managedDevice" />
         <Parameter Name="deprovisionReason" Type="Edm.String" Nullable="false" Unicode="false" />
 </Action>
@@ -62,3 +62,4 @@ You can consider related patterns such as [long running operations](./long-runni
         <ReturnType Type="Collection(graph.deviceManagementSettingComparison)" />
  </Function>
 
+```
