@@ -1,12 +1,12 @@
 # Microsoft Azure REST API Guidelines
 
-<!-- cspell:ignore autorest, etag, idempotency, maxpagesize, innererror -->
+<!-- cspell:ignore autorest, BYOS, etag, idempotency, maxpagesize, innererror -->
 
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Jun-08 | Update guidance on long-running operations                     |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
 | 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
@@ -698,7 +698,11 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an `api-version` query parameter with a `YYYY-MM-DD` date value, with a `-preview` suffix for a preview service.
+Clients specify the version of the API to be used in every request to the service, even requests to an `Operation-Location` or `nextLink` URL returned by the service.
+
+:white_check_mark: **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
+
+:white_check_mark: **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
 
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04

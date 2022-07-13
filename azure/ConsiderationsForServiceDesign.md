@@ -6,7 +6,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Jun-08 | Update guidance on long-running operations                     |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-Feb-01 | Updated error guidance                                        |
 | 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
