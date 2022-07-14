@@ -1,9 +1,12 @@
 # Considerations for Service Design
 
+<!-- cspell:ignore autorest, etag, idempotency -->
+
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-Feb-01 | Updated error guidance                                        |
 | 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
@@ -26,7 +29,7 @@ It is critically important to design your service to avoid disrupting users as t
 :white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
 
 ## Azure Management Plane vs Data Plane
-*Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review.*
+_Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review._
 
 A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used to provision and control the operational state of resources.
 A **data plane** API is used by developers to implement applications. Occasionally, some operations are useful for provisioning/control and applications. In this case, the operation can appear in both APIs.
@@ -37,7 +40,7 @@ Although, best practices and patterns described in this document apply to all HT
 A great API starts with a well thought out and designed service. Your service should define simple/understandable abstractions with each given a clear name that you use consistently throughout your API and documentation. There must also be an unambiguous relationship between these abstractions.
 
 Follow these practices to create clear names for your abstractions:
-- Don't invent fancy terms or use fancy words. Try explaining the abstraction to someone that is not a domain expert and then name the abstraction using similar verbage.
+- Don't invent fancy terms or use fancy words. Try explaining the abstraction to someone that is not a domain expert and then name the abstraction using similar verbiage.
 - Don't include "throwaway" words in names, like "response", "object", "payload", etc.
 - Avoid generic names. Names should be specific to the abstraction and highlight how it is different from other abstractions in your service or related services.
 - Pick one word/term out of a set of synonyms and stick to it.
@@ -55,7 +58,7 @@ The whole purpose of a preview to address feedback by improving abstractions, na
 ## Focus on Hero Scenarios
 It is important to realize that writing an API is, in many cases, the easiest part of providing a delightful developer experience. There are a large number of downstream activities for each API, e.g. testing, documentation, client libraries, examples, blog posts, videos, and supporting customers in perpetuity. In fact, implementing an API is of miniscule cost compared to all the other downstream activities.
 
-*For this reason, it is **much better** to ship with fewer features and only add new features over time as required by customers.*
+_For this reason, it is **much better** to ship with fewer features and only add new features over time as required by customers._
 
 Focusing on hero scenarios reduces development, support, and maintenance costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A telltale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another.
 
@@ -83,7 +86,7 @@ Before releasing your API plan to invest significant design effort, get customer
 
 :ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
 
-:ballot_box_with_check: **YOU SHOULD**  consider doing a *code with* exercise in which you actively develop with the customer, observing and learning from their API usage.
+:ballot_box_with_check: **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
 
 :ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
@@ -141,94 +144,207 @@ cannot collide with a resource path that contains user-specified resource ids.
 Long-running operations are an API design pattern that should be used when the processing of
 an operation may take a significant amount of time -- longer than a client will want to block
 waiting for the result.
-Azure allows for two forms of this design pattern: resource-based long-running operations (RELO),
-which is the preferred pattern, and long-running operations with a status monitor.
 
-In both patterns, the processing of the operation is initiated by one API call and the client
-obtains the results of the operation from a subsequent API call.
-Here we illustrate the sequence of API calls involved in each of these patterns.
+The request that initiates a long-running operation returns a response that points to or embeds
+a _status monitor_, which is an ephemeral resource that will track the status and final result of the operation.
+The status monitor resource is distinct from the target resource (if any) and specific to the individual
+operation request.
 
-### Resource-based long-running operations
+A POST or DELETE operation returns a `202 Accepted` response with the status monitor in the response body.
+A long-running POST should not be used for resource create -- use PUT as described below.
+PATCH must never be used for long-running operations -- it should be reserved for simple resource updates.
+If a long-running update is required it should be implemented with POST.
 
-In the RELO pattern, the resource that is the target of the operation contains a `status` field
-that holds the status of an outstanding or last completed operation.
-This means that the client can use a standard "get" operation on the resource to determine the
-status of an operation it initiated. The flow looks like this:
+There is a special form of long-running operation initiated with PUT that is described
+in [Create (PUT) with additional long-running processing](#create-put-with-additional-long-running-processing).
+The remainder of this section describes the pattern for long-running POST and DELETE operations.
 
-<!-- markdownlint-disable MD033 -->
-<p align="center">
-  <img src="./relo.jpg" alt="The RELO flow"/>
-</p>
-<!-- markdownlint-enable MD033 -->
+This diagram illustrates how a long-running operation with a status monitor is initiated and then how the client
+determines it has completed and obtains its results:
 
-1. The client sends the initial request to the resource to initiate the long-running operation.
-This initial request could be a PUT, PATCH, POST, or DELETE method.
-
-2. The resource validates the request and initiates the operation processing.
-It sends a response to client with a `200-OK` HTTP status code (or `201-Created` if the operation
-is a create operation) and a representation of the resource where the `status` field is set
-to a value indicating that the operation processing has been started.
-
-3. The client then issues a GET request to the resource to determine if the operation processing
-has completed.
-
-4. The resource responds with a representation of the resource. While the operation is still being
-processed, the status field will contain a "non-terminal" value, like `Processing`.
-
-5. After the operation processing has completed, a GET request from the client will receive a response
-where the status field contains a "terminal" value -- `Succeeded`, `Failed`, or `Canceled` --
-that indicates the result of the operation.
-
-A resource may support multiple outstanding RELO operations, where the status field of the resource
-indicates the combined status of the outstanding operations.
-If a new operation request is received when there is already a long-running operation in progress for a resource,
-the service should reject the operation if it is inconsistent with one already in progress.
-However, if the new operation is redundant or not inconsistent with the one in progress,
-for example a "reboot" operation on a VM that is in the process of rebooting, then the service should
-accept the request. The status field of the resource should then report the completion status of _both_
-operations.
-
-Note: The RELO pattern should not be used in cases where the completion status of individual operations
-may be important to users, as opposed to simply learning that an operation of the type they requested
-(e.g. create a resource with a specific name) has successfully completed.
-
-### Long-running operations with status monitor
-
-In the LRO with status monitor pattern, the status and results of the operation are encapsulated into
-a status monitor resource that is distinct from the target resource and specific to the individual
-operation request.  Here's what the status monitor LRO pattern looks like:
-
-<!-- markdownlint-disable MD033 -->
-<p align="center">
-  <img src="./statmon.jpg" alt="The status monitor LRO flow"/>
-</p>
-<!-- markdownlint-enable MD033 -->
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API Endpoint
+    participant Status Monitor
+    Client->>API Endpoint: POST/DELETE
+    API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>{ "id": "22", "status": "NotStarted" }
+    Client->>Status Monitor: GET
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
+    Client->>Status Monitor: GET
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>{ "id": "22", "status": "Succeeded" }
+```
 
 1. The client sends the request to initiate the long-running operation.
-As in the RELO pattern, the initial request could be a PUT, PATCH, POST, or DELETE method.
+The initial request could be a POST or DELETE method.
+The request may contain an `Operation-Id` header that the service uses as the ID of the status monitor created for the operation.
 
-2. The resource validates the request and initiates the operation processing.
-It sends a response to the client with a `202-Accepted` HTTP status code.
-Included in this response is an `Operation-location` response header with the absolute URL of
-status monitor for this specific operation.
-The response also includes a `Retry-after` header telling the client a minimum time to wait (in seconds)
-before sending a request to the status monitor URL.
+2. The service validates the request and initiates the operation processing.
+If there are any problems with the request, the service responds with a `4xx` status code and error response body.
+Otherwise the service responds with a `202-Accepted` HTTP status code.
+The response body is the status monitor for the operation including the ID, either from the request header or generated by the service.
+When returning a status monitor whose status is not in a terminal state, the response must also include a `retry-after` header indicating the minimum number of seconds the client should wait
+before polling (GETing) the status monitor URL again for an update.
+For backward compatibility, the response may also include an `Operation-Location` header containing the absolute URL
+of the status monitor resource (without an api-version query parameter).
 
 3. After waiting at least the amount of time specified by the previous response's `Retry-after` header,
-the client issues a GET request to the status monitor URL.
+the client issues a GET request to the status monitor using the ID in the body of the initial response.
+The GET operation for the status monitor is documented in the REST API definition and the ID
+is the last URL path segment.
 
-4. The status monitor URL responds with information about the operation including its current status,
+4. The status monitor responds with information about the operation including its current status,
 which should be represented as one of a fixed set of string values in a field named `status`.
-If the operation is still being processed, the status field will contain a "non-terminal" value, like `Processing`.
+If the operation is still being processed, the status field will contain a "non-terminal" value, like `NotStarted` or `Running`.
 
-5. After the operation processing completes, a GET request to status monitor URL returns a response with a status field containing a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
-If the status is `Failed`, the status monitor resource must contain an `error` field with a `code` and `message` that describes the failure.
-If the status is `Succeeded`, the response may contain additional fields as appropriate, such as results
-of the operation processing.
+5. After the operation processing completes, a GET request to the status monitor returns the status monitor with a status field set to a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
+If the status is `Failed`, the status monitor resource contains an `error` field with a `code` and `message` that describes the failure.
+If the status is `Succeeded` and the LRO is an Action operation, the operation results will be returned in the `result` field of the status monitor.
+If the status is `Succeeded` and the LRO is an operation on a resource, the client can perform a GET on the resource
+to observe the result of the operation if desired.
 
-An important distinction between RELO and status monitor LROs is that there is a unique status monitor for each
-status monitor LRO, whereas the status of all RELO operations is combined into the status of the resource.
-So status monitor LROs are "one-to-one" with their operation status, whereas RELO-style LROs are "many-to-one".
+6. There may be some cases where a long-running operation can be completed before the response to the initial request.
+In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
+
+7. The service is responsible for purging the status-monitor resource.
+It should auto-purge the status monitor resource after completion (at least 24 hours).
+The service may offer DELETE of the status monitor resource due to GDPR/privacy.
+
+### Long-running Action Operations
+
+An action operation that is also long-running combines the [Action Operations](#action-operations) pattern
+with the [Long Running Operations](#long-running-operations) pattern.
+
+The operation is initiated with a POST operation and the operation path ends in `:<action>`.
+
+```text
+POST /<service-or-resource-url>:<action>?api-version=2022-05-01
+Operation-Id: 22 
+ 
+{ 
+   "arg1": 123 
+   "arg2": "abc" 
+} 
+```
+
+The response is a `202 Accepted` as described above.
+
+```text
+HTTP/1.1 202 Accepted
+Operation-Location: https://<status-monitor-endpoint>/22
+ 
+{
+   "id": "22",
+   "status": "NotStarted"
+}
+```
+
+The client will issue a GET to the status monitor to obtain the status and result of the operation.
+
+```text
+GET https://<status-monitor-endpoint>/22?api-version=2022-05-01
+```
+
+When the operation completes successfully, the result (if there is one) will be included in the `result` field of the status monitor.
+
+```text
+HTTP/1.1 200 OK
+ 
+{
+   "id": "22",
+   "status": "Succeeded",
+   "result": { ... }
+}
+```
+
+### PUT with additional long-running processing
+
+A special case of long-running operation that occurs often is a PUT operation to create or replace a resource
+that involves some additional long-running processing.
+One example is a resource requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
+In this case, the request may contain an `Operation-Id` header that the service will use as
+the ID of the status monitor created for the operation.
+
+```text
+PUT /items/FooBar&api-version=2022-05-01
+Operation-Id: 22
+
+{
+   "prop1": 555, 
+   "prop2": "something"
+}
+```
+
+In this case the response to the initial request is a `201 Created` to indicate that the resource has been created
+or `200 OK` when the resource was replaced.
+The response body contains a representation of the created resource, which is the standard pattern for a create operation.
+A status monitor is created to track the additional processing and the ID of the status monitor
+is returned in the `Operation-Id` header of the response.
+The response may also include an `Operation-Location` header for backward compatibility.
+If the resource supports ETags, the response may contain an `etag` header and possibly an `etag` property in the resource.
+
+```text
+HTTP/1.1 201 Created 
+Operation-Id: 22
+Operation-Location: https://items/operations/22
+etag: "123abc"
+
+{
+  "id": "FooBar", 
+  "etag": "123abc",
+  "prop1": 555,
+  "prop2": "something"
+}
+```
+
+The client will issue a GET to the status monitor to obtain the status of the operation performing the additional processing.
+
+```text
+GET https://items/operations/22?api-version=2022-05-01
+```
+
+When the additional processing completes, the status monitor will indicate if it succeeded or failed.
+
+```text
+HTTP/1.1 200 OK
+ 
+{
+   "id": "22",
+   "status": "Succeeded"
+}
+```
+
+If the additional processing failed, the service may delete the original resource if it is not usable in this state,
+but would have to clearly document this behavior.
+
+### Long-running delete operation
+
+A long-running delete operation follows the general pattern of a long-running operation --
+it returns a `202 Accepted` with a status monitor which the client uses to determine the outcome of the delete.
+
+The resource being deleted should remain visible (returned from a GET) until the delete operation completes successfully.
+
+When the delete operation completes successfully, a client must be able to create new resource with same name without conflicts.
+
+### Controlling a long-running operation
+
+It might be necessary to support some control action on a long-running operation, such as cancel.
+This is implemented as a POST on the status monitor endpoint with `:<action>` added.
+
+```text
+POST /<status-monitor-url>:cancel?api-version=2022-05-01
+```
+
+A successful response to a control operation should be a `200 OK` with a representation of the status monitor.
+
+```text
+HTTP/1.1 200 OK 
+ 
+{
+   "id": "22",
+   "status": "Canceled"
+}
+```
 
 ## Errors
 One of the most important parts of service design is also one of the most overlooked.  The errors returned by your service are a critical part of your developer experience and are part of your API contract.  Your service and your customer's application together form a distributed system.  Errors are inevitable, but well-designed errors can help you avoid costly customer support incidents by empowering customers to self-diagnose problems.

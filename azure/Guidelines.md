@@ -1,8 +1,12 @@
 # Microsoft Azure REST API Guidelines
+
+<!-- cspell:ignore autorest, BYOS, etag, idempotency, maxpagesize, innererror -->
+
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
 | 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
@@ -135,7 +139,7 @@ GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
-:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, PATCH, POST, or DELETE method completes asynchronously.
+:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously.
 
 :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 
@@ -694,7 +698,11 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an `api-version` query parameter with a `YYYY-MM-DD` date value, with a `-preview` suffix for a preview service.
+Clients specify the version of the API to be used in every request to the service, even requests to an `Operation-Location` or `nextLink` URL returned by the service.
+
+:white_check_mark: **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
+
+:white_check_mark: **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
 
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
@@ -757,68 +765,99 @@ implemented as a _long-running operation (LRO)_. This allows clients to continue
 operation is being processed. The client obtains the outcome of the operation at some later time
 through another API call.
 See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
-Considerations for Service Design for an introduction to the design of long running operations.
+Considerations for Service Design for an introduction to the design of long-running operations.
 
 :white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
+
+:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
 
 In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
 it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
 
-There are two basic patterns that can be used for long-running operations:
-1. Resource-based long-running operations (RELO)
-2. Long-running operations with status monitor
+There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
+operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
+The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
+For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
+These are described in the following two sections.
 
-:white_check_mark: **DO** use the RELO pattern when the operation is on a resource that contains a "status" property that can be used to obtain the outcome of the operation.
+#### POST or DELETE LRO pattern
 
-:ballot_box_with_check: **YOU SHOULD** only use the status monitor LRO pattern when the RELO pattern is not applicable.
+A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
+a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
 
-#### Resource-based long-running operations
+:no_entry: **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
 
-Some common situations where the RELO pattern should be used:
-1. A "create" operation (PUT, PATCH, or POST) for a resource where the basic structure of the resource is created immediately and includes a status field that indicates when the create has completed, e.g. "provisioning" -> "active".
-2. An action operation for a resource where both the initiation of the action and the completion of the action cause a change to the "status" property of the resource.
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
-:white_check_mark: **DO** return a `200-OK` response, `201-Created` for create operations, from the request that initiates the operation.  The response body should contain a representation of the resource that clearly indicates that the operation has been accepted or started.
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** support a get method on the resource that returns a representation of the resource including the status field that indicates when the operation has completed.
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-:white_check_mark: **DO** define the "status" field of the resource as an enum with all the values it may contain including the "terminal" values "Succeeded", "Failed", and "Canceled". See [Enums & SDKs](#enums--sdks-client-libraries).
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:ballot_box_with_check: **YOU SHOULD** use the name `status` for the "status" field of the resource.
+:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
-#### Long-running operations with status monitor
+:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
-In a long-running operation with status monitor, the client makes a request to initiate the operation processing and receives a URL in the response where it can obtain the operation results. The [HTTP specification](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) calls the target of this URL a "status monitor".
+:white_check_mark: **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
 
-:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO with status monitor if the processing of the operation was successfully initiated.
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-:white_check_mark: **DO** perform as much validation of the initial request as practical and return an error response immediately when appropriate (without starting the operation).
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
-:white_check_mark: **DO** return the status monitor URL in the `Operation-Location` response header.
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
-:white_check_mark: **DO** support the `get` method on the status monitor endpoint that returns a `200-OK` response with a response body that contains the completion status of the operation with sufficient information to diagnose any potential failures.
+#### PUT operation with additional long-running processing
 
-:white_check_mark: **DO** include a field in the status monitor resource named `status` indicating the operation's status. This field should be a string with well-defined values. Indicate the terminal state using "Succeeded", "Failed", or "Canceled".
+For a PUT (create or replace) with additional long-running processing:
 
-:white_check_mark: **DO** include a field in the status monitor named `error` to contain error information -- minimally `code` and `message` fields -- when an operation fails.
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
-:white_check_mark: **DO** retain the status monitor resource for some documented period of time (at least 24 hours) after the operation completes.
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** include a `Retry-After` header in the response to the initiating request and requests to the operation-location URL. The value of this header should be an integer number of seconds to wait before making the next request to the operation-location URL.
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-:heavy_check_mark: **YOU MAY** support a `get` method on the status monitor collection URL that returns a list of status monitors for all recently initiated operations.
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of a status-monitor LRO -- return `202-Accepted` and a status monitor URL even if processing was completed before the initiating request returns.
+:white_check_mark: **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
 
-:no_entry: **DO NOT** return any data in the response body of a `202-Accepted` response.
+:white_check_mark: **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
 
-Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the status monitor URL.
+:white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
 
-:white_check_mark: **DO** return **both** `Azure-AsyncOperation` and `Operation-Location` headers if your service previously returned `Azure-AsyncOperation`, even though they are redundant, so that existing clients will continue to operate.
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-:white_check_mark: **DO** return the same value for **both** headers.
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
-:white_check_mark: **DO** look for **both** headers in client code, preferring the `Operation-Location` header.
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
+
+#### Obtaining status and results of long-running operations
+
+For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
+
+:white_check_mark: **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+
+:white_check_mark: **DO** return a status monitor in the response body that conforms with the following structure:
+
+**OperationStatus** : Object
+
+Property | Type        | Required | Description
+-------- | ----------- | :------: | -----------
+`id`     | string      | true     | The unique id of the operation
+`status` | string      | true     | enum that includes terminal values "Succeeded", "Failed", "Canceled"
+`error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
+`result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
+additional<br/>properties | |     | Additional named or dynamic properties of the operation
+
+:white_check_mark: **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
+
+:white_check_mark: **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
+
+:white_check_mark: **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+
+:no_entry: **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+
+:white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
 ### Bring your own Storage
 When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
@@ -847,7 +886,7 @@ It is not uncommon to rely on other services, e.g. storage, when implementing yo
 Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
 
 ##### Single file access
-Desiging an API for accessing a single file, depending on your scenario, is relatively straight forward.
+Designing an API for accessing a single file, depending on your scenario, is relatively straight forward.
 
 :heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
 
