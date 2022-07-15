@@ -62,33 +62,84 @@ One other use case is when child resources appear in a non-contained collection 
 
 ```http
 GET /users/{id}/manager
+
+200 OK
+Content-Type: application/json
+
+{
+  "@odata.type": "#microsoft.graph.user",
+  "id": "6b3ee805-c449-46a8-aac8-8ff9cff5d213",
+  "displayName": "Bob Boyce"
+}
 ```
 
 ### Retrieving a reference to a related entity
 
 ```http
 GET /users/{id}/manager/$ref
+
+200 OK
+Content-Type: application/json
+
+{
+  "@odata.id": "https://graph.microsoft.com/v1.0/directoryObjects/6b3ee805-c449-46a8-aac8-8ff9cff5d213/Microsoft.DirectoryServices.User"
+}
 ```
+Note: Currently the base URL returned in $ref results are incorrect.  In order to process these URLs the client will need to convert the URL to a Graph URL.
 
 ### Retrieving an entity with a related entity included
 
 ```http
-GET /users/{id}?expand=manager
+GET /users/{id}?select=id,displayName&expand=manager(select=id,displayName)
+
+200 OK
+Content-Type: application/json
+
+{
+  "id": "3f057904-f936-4bf0-9fcc-c1e6f84289d8",
+  "displayName": "Jim James",
+  "manager": {
+    "@odata.type": "#microsoft.graph.user",
+    "id": "6b3ee805-c449-46a8-aac8-8ff9cff5d213",
+    "displayName": "Bob Boyce"
+  }
+}
 ```
 
 ### Creating an entity with a reference to a related entity
 
+Create a new user that references an existing manager
 ```http
 POST /users/{id}
 Content-Type: application/json
 
 {
     "displayName": "Bob",
-    "manager@bind": "https://graph.microsoft.com/v1.0/users/{someGuid}"
+    "manager@bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
+
+201 Created
+```
+
+Create a new user and the users manager and create a relationship between the two.
+
+```http
+POST /users/{id}
+Content-Type: application/json
+
+{
+    "displayName": "Jim James",
+    "manager": {
+        "displayName": "Bob Boyce"
+    }
+}
+
+201 Created
 ```
 
 ### Updating a related entity reference
+
+Update the user entity to contain a relationship to an existing manager.
  
 ```http
 PATCH /users/{id}
@@ -96,22 +147,39 @@ Content-Type: application/json
 
 {
     "displayName": "Bob",
-    "manager@bind": "https://graph.microsoft.com/v1.0/users/{someGuid}"
+    "manager@bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
+
+204 No Content
 ```
 
- 
+Create a relationship between the user and the existing manager.
+
 ```http
 PUT /users/{id}/manager/$ref
 Content-Type: application/json
 
 {
-    "@OData.Id": "https://graph.microsoft.com/v1.0/users/{someGuid}"
+    "@OData.Id": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
+
+204 No Content
 ```
  
 ### Clear a related entity reference
+
+Remove the relationship between the user and the manager.
  
 ```http
 DELETE /users/{id}/manager/$ref
+
+204 No Content
+```
+
+Delete the related entity.
+
+```http
+DELETE /users/{id}/manager
+
+204 No Content
 ```
