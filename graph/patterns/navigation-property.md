@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-*A navigation property is used to identify a relationship between two resources.*
+*A navigation property is used to identify a relationship between resources.*
 
 ## Problem
 --------
