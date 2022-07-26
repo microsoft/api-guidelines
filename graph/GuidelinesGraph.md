@@ -247,6 +247,80 @@ Following are a few pros and cons to decide which pattern to use:
 > **Note:**
 > As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
 
+#### Complex Type Lifting
+
+Properties get added to data structures over time, and there might be situations where related properties get incrementally added, up to the point where they have a meaning on their own and grouping them makes sense.
+
+Suppose to have the following `Author` type:
+
+```xml
+ <EntityType Name="Author">
+    <Key>
+        <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Edm.String" Nullable="false" />
+    <Property Name="name" Type="Edm.String" />
+    <Property Name="publisherName" Type="Edm.String" />
+</EntityType>
+```
+
+As the workload evolves, the `publisherAddress` property gets added:
+
+```diff
+<Property Name="publisherName" Type="Edm.String" />
++ <Property Name="publisherAddress" Type="Edm.String" />
+```
+
+In a second iteration, the `publisherEmail` gets added as well:
+
+```diff
+<Property Name="publisherName" Type="Edm.String" />
+<Property Name="publisherAddress" Type="Edm.String" />
++ <Property Name="publisherEmail" Type="Edm.String" />
+```
+
+It appears clear that a `publisher` type is emerging and it makes sense to have complex type instead of keep using the prefix to artificially group related properties. 
+
+Following the _"Once Is Chance, Twice is Coincidence, Third Time's A Pattern"_, when the number of related properties reached `3`, we suggest to [deprecate](deprecation.md) the current properties and then create a new complex type where the information is stored and where the evolution of the structure can continue.
+
+Going back to the example:
+
+```xml
+<ComplexType Name="Publisher">
+  <Property Name="name" Type="Edm.String" />
+  <Property Name="address" Type="Edm.String" />
+  <Property Name="email" Type="Edm.String" />
+</ComplexType>
+```
+
+Then we can add the new complex type to the `Author` Entity, and deprecate the current properties (only the first one showed for clarity):
+
+```diff
+ <EntityType Name="Author">
+    <Key>
+        <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Edm.String" Nullable="false" />
+    <Property Name="name" Type="Edm.String" />
+-    <Property Name="publisherName" Type="Edm.String" />
++    <Property Name="publisherName" Type="Edm.String">
++      <Annotation Term="Org.OData.Core.V1.Revisions">
++        <Collection>
++          <Record>
++            <PropertyValue Property = "Date" Date="2022-03-30"/>
++            <PropertyValue Property = "Version" String="2022-03/Tasks_And_Plans"/>
++            <PropertyValue Property = "Kind" EnumMember="Org.OData.Core.V1.RevisionKind/Deprecated"/>
++            <PropertyValue Property = "Description" String="Please use the publisher property"/>
++            <PropertyValue Property = "RemovalDate" Date="2024-06-30"/>
++          </Record>
++        </Collection>
++      </Annotation>
++     </Property>
++    <Property Name="publisher" Type="microsoft.graph.Publisher" />
+</EntityType>
+```
+
+
 ### Behavior modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
