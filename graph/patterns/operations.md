@@ -2,16 +2,16 @@
 
 Microsoft Graph API Design Pattern
 
-*The operations pattern provides the ability to model a change that impacts multiple resources and can't be effectively modeled by using HTTP methods.*
+*The operations pattern provides the ability to model a change that might impact multiple resources and can't be effectively modeled by using HTTP methods.*
 
 ## Problem
 
-Sometimes when modeling a complex business domain, API designers need to model a business operation that effects multiple resources and needs to be performed as a single unit. Modeling the operation via HTTP methods on each individual resource might be either ineffective or not reflect how it's processed by the backend service. In addition, the operation might produce observable side effects.
+Sometimes when modeling a complex business domain, API designers need to model a business operation that effects one or multiple resources and has additional semantic meaning that cannot be expressed by HTTP methods. Modeling the operation via HTTP methods on each individual resource might be either ineffective or expose internal implementation details. In addition, the operation might produce observable side effects.
 
 ## Solution
 
-To address these use cases, API designers might use operational resources such as functions or actions.
-If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer SHOULD use the OData function; otherwise, the designer can model the operation as an action.
+To address these use cases, API designers can use operational resources such as functions or actions.
+If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer SHOULD use OData functions; otherwise, the designer can model the operation as an action.
 
 ## When to use this pattern
 
