@@ -21,7 +21,8 @@ You can consider related patterns such as [long running operations](./long-runni
 
 ## Issues and considerations
 
-- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions are invoked on resources matching the type of the binding parameter. The binding parameter can be of any type, and it MAY be Nullable. For Microsoft Graph, actions and functions must have the `isBound="true"` attribute. The first parameter is the binding parameter.
+- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions are invoked on resources matching the type of the binding parameter. The binding parameter can be of any type, and parameter value MAY be Nullable. 
+For Microsoft Graph, actions and functions must have the `isBound="true"` attribute. The first parameter is the binding parameter.
 
 - Both actions and functions support overloading, meaning a schema might contain multiple actions or functions with the same name. The overload rules as per the OData [standard](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_FunctionOverloads) apply when adding parameters to actions and functions.
   
@@ -33,33 +34,34 @@ You can consider related patterns such as [long running operations](./long-runni
 
 - Microsoft Graph supports the use of optional parameters. The optional parameter annotation can be used instead of creating function or action overloads when unnecessary.
 
-- API designer **MUST** use POST to call operations on resources.
+- API designer **MUST** use POST to call actions on resources.
+- API designer **MUST** use GET to call functions on resources.
 
 - The addition of a new mandatory not-nullable parameter to an existing action or function is a breaking change and is not allowed without proper versioning.
 
 ## Example
 
 ```
- <Action Name="createUploadSession" IsBound="true" ags:EnabledForPassthrough="true" ags:OwnerService="Microsoft.Exchange">
+<Action Name="createUploadSession" IsBound="true" ags:EnabledForPassthrough="true" ags:OwnerService="Microsoft.Exchange">
         <Parameter Name="bindingParameter" Type="Collection(graph.attachment)" />
         <Parameter Name="AttachmentItem" Type="graph.attachmentItem" Nullable="false" />
         <ReturnType Type="graph.uploadSession" />
-      </Action>
+</Action>
 
 <Action Name="deprovision" IsBound="true" ags:OwnerService="Microsoft.Intune.Devices">
         <Parameter Name="bindingParameter" Type="graph.managedDevice" />
         <Parameter Name="deprovisionReason" Type="Edm.String" Nullable="false" Unicode="false" />
 </Action>
 
- <Function Name="additionalAccess" IsBound="true" ags:OwnerService="Microsoft.IGAELM">
+<Function Name="additionalAccess" IsBound="true" ags:OwnerService="Microsoft.IGAELM">
         <Parameter Name="bindingParameter" Type="Collection(graph.accessPackageAssignment)" />
         <ReturnType Type="Collection(graph.accessPackageAssignment)" />
- </Function>
+</Function>
 
-  <Function Name="compare" IsBound="true" ags:OwnerService="Microsoft.Intune.DeviceIntent">
+<Function Name="compare" IsBound="true" ags:OwnerService="Microsoft.Intune.DeviceIntent">
         <Parameter Name="bindingParameter" Type="graph.deviceManagementIntent" />
         <Parameter Name="templateId" Type="Edm.String" Unicode="false" />
         <ReturnType Type="Collection(graph.deviceManagementSettingComparison)" />
- </Function>
+</Function>
 
 ```
