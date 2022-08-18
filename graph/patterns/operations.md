@@ -37,7 +37,7 @@ For Microsoft Graph, actions and functions must have the `isBound="true"` attrib
 - API designer **MUST** use POST to call actions on resources.
 - API designer **MUST** use GET to call functions on resources.
 
-- The addition of a new mandatory not-nullable parameter to an existing action or function is a breaking change and is not allowed without proper versioning.
+- The addition of a new mandatory not-nullable parameter to an existing action or function is a breaking change and is not allowed without proper versioning that is in accordance with our [deprecation guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/deprecation.md).
 
 ## Example
 
