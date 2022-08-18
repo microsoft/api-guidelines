@@ -11,7 +11,7 @@ Sometimes when modeling a complex business domain, API designers need to model a
 ## Solution
 
 To address these use cases, API designers can use operational resources such as functions or actions.
-If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer SHOULD use OData functions; otherwise, the designer can model the operation as an action.
+If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer MUST use OData functions; otherwise, the designer can model the operation as an action.
 
 ## When to use this pattern
 
