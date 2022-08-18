@@ -6,7 +6,7 @@ Microsoft Graph API Design Pattern
 
 ## Problem
 
-Sometimes when modeling a complex business domain, API designers need to model a business operation that effects one or multiple resources and has additional semantic meaning that cannot be expressed by HTTP methods. Modeling the operation via HTTP methods on each individual resource might be either ineffective or expose internal implementation details. In addition, the operation might produce observable side effects.
+Sometimes when modeling a complex business domain, API designers need to model a business operation that effects one or multiple resources and has additional semantic meaning that cannot be expressed by HTTP methods. Modeling the operation via HTTP methods on each individual resource might be either inefficient or expose internal implementation details. In addition, the operation might produce observable side effects.
 
 ## Solution
 
