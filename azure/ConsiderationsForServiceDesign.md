@@ -77,6 +77,13 @@ Understanding how your service is used and defining its model and interaction pa
 
 :white_check_mark: **DO** create an [OpenAPI Definition](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
 
+## Design for Change Resiliency
+As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
+
+:ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
+
+:ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
+
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
@@ -89,6 +96,13 @@ Before releasing your API plan to invest significant design effort, get customer
 :ballot_box_with_check: **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
 
 :ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
+
+## Communicate Deprecations
+As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additioanl requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
+Azure has a well established breaking changes policy that describes how to approach these kinds of changes. As part of this policy, the service team is required to clearly communicate to customers when their API is changing, e.g. deprecating operations. Often, this is done via an email to the address that is attached to the Azure subscription.
+
+However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specied in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
+This header is targeted at developers or operation professionals, and it is intended to give them enough information and lead time to properly adapt to this change. Your documentation should reference this header and encourage logging and alerting practices based on its presence.
 
 ## Avoid Surprises
 A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers.
@@ -115,13 +129,6 @@ Sorting collection results can be extremely expensive for a service to implement
 Another important design pattern for avoiding surprises is idempotency. An operation is idempotent if it can be performed multiple times and have the same result as a single execution.
 HTTP requires certain operations like GET, PUT, and DELETE to be idempotent, but for cloud services it is important to make _all_ operations idempotent so that clients can use retry in failure scenarios without risk of unintended consequences.
 See the [HTTP Request / Response Pattern section of the Guidelines](./Guidelines.md#http-request--response-pattern) for detailed guidance on making operations idempotent.
-
-## Design for Change Resiliency
-As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
-
-:ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
-
-:ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
 ## Action Operations
 
@@ -362,17 +369,23 @@ You should use appropriate [HTTP status codes](https://developer.mozilla.org/doc
 - A `404` status code tells them the blob doesn't exist and the customer can report the error to their users
 - A `BlobNotFound` or `ContainerNotFound` error code will tell them why the blob doesn't exist so they can take steps to recreate it
 
-The [common error schema in the Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#handling-errors) allows nested details and inner errors that have their own error codes, but the top-level error code is the most important.  The HTTP status code and the top-level error code are the only part of your error that we consider part of your API contract that follows the same compatibility requirements as the rest of your API.  Importantly, this means you **changing the HTTP status code or top-level error code for an API is a breaking change**.  You can only return new status codes and error codes in future API versions if customers make use of new features that trigger new classes of errors.  Battle tested error handling is some of the hardest code to get right and we can't break that for customers when they upgrade to the latest version.  The rest of the properties in your error like `message`, `details`, etc., are not considered part of your API contract and can change to improve the diagnosability of your service.
+The [common error schema in the Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#handling-errors) allows nested details and inner errors that have their own error codes, but the top-level error code is the most important.  The HTTP status code and the top-level error code are the only part of your error that we consider part of your API contract that follows the same compatibility requirements as the rest of your API.
+Importantly, this means you **changing the HTTP status code or top-level error code for an API is a breaking change**.
+You can only return new status codes and error codes in future API versions if customers make use of new features that trigger new classes of errors.  Battle tested error handling is some of the hardest code to get right and we can't break that for customers when they upgrade to the latest version.  The rest of the properties in your error like `message`, `details`, etc., are not considered part of your API contract and can change to improve the diagnosability of your service.
 
-You should also return the top-level error code as the `x-ms-error-code` response header so client libraries have the ability to automatically retry requests when possible without having to parse a JSON payload.  We recommend unique error codes like `ContainerBeingDeleted` for every distinct recoverable error that can occur, but suggest reusing common error codes like `InvalidHeaderValue` for usage errors where a descriptive error message is more important for resolving the problem.  The Storage [Common](https://docs.microsoft.com/rest/api/storageservices/common-rest-api-error-codes) and [Blob](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes) error codes are a good starting point if you're looking for examples.  You can [define an enum in your spec](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json#L10419) with `"modelAsString": true` that lists all of the top-level error codes to make it [easier for your customers to handle specific error codes](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storage/Azure.Storage.Blobs#troubleshooting).
+You should also return the top-level error code as the `x-ms-error-code` response header so client libraries have the ability to automatically retry requests when possible without having to parse a JSON payload.  We recommend unique error codes like `ContainerBeingDeleted` for every distinct recoverable error that can occur, but suggest reusing common error codes like `InvalidHeaderValue` for usage errors where a descriptive error message is more important for resolving the problem.
+The Storage [Common](https://docs.microsoft.com/rest/api/storageservices/common-rest-api-error-codes) and [Blob](https://docs.microsoft.com/rest/api/storageservices/blob-service-error-codes) error codes are a good starting point if you're looking for examples.
+You can [define an enum in your spec](https://github.com/Azure/azure-rest-api-specs/blob/main/specification/storage/data-plane/Microsoft.BlobStorage/preview/2021-04-10/blob.json#L10419) with `"modelAsString": true` that lists all of the top-level error codes to make it [easier for your customers to handle specific error codes](https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/storage/Azure.Storage.Blobs#troubleshooting).
 
 You should not document specific error status codes in your OpenAPI/Swagger spec.  The `"default"` response is the only thing AutoRest considers an error response unless you provide other annotations.  Every unique status code turns into a separate code path in your client libraries so we do not encourage this practice.  The only reason to document specific error status codes is if they return a different error response than the default, but that is also heavily discouraged.
 
-Be as precise as possible when writing error messages.  A message with just `Invalid Argument` is almost useless to a customer who sent 100KB of JSON to your endpoint.  ``Query parameter `top` must be less than or equal to 1000`` tells a customer exactly what went wrong so they can quickly fix the problem.  Don't go overboard while writing great, understandable error messages and include any sensitive customer information or secrets though.  Many developers will blindly write any error to logs that don't have the same level of access control as Azure resources.
+Be as precise as possible when writing error messages.  A message with just `Invalid Argument` is almost useless to a customer who sent 100KB of JSON to your endpoint.  ``Query parameter `top` must be less than or equal to 1000`` tells a customer exactly what went wrong so they can quickly fix the problem.
+Don't go overboard while writing great, understandable error messages and include any sensitive customer information or secrets though.  Many developers will blindly write any error to logs that don't have the same level of access control as Azure resources.
 
 All responses should include the `x-ms-request-id` header with a unique id for the request, but this is particularly important for error responses.  Service logs for the request should contain the `x-ms-request-id` so that support staff can use this value to diagnose specific customer reported errors.
 
-Finally, write sample code for your service's workflow and add the code you'd want customers using to gracefully recover from errors.  Is it actually graceful?  Is it something you'd be comfortable asking most customers to write?  We also highly encourage reaching out to customers during private preview and asking them for code they've written against your service.  Their error handling might match your expectations, you might find a strong need for better documentation, or you might find important opportunities to improve the errors you're returning.
+Finally, write sample code for your service's workflow and add the code you'd want customers using to gracefully recover from errors.  Is it actually graceful?  Is it something you'd be comfortable asking most customers to write?
+We also highly encourage reaching out to customers during private preview and asking them for code they've written against your service.  Their error handling might match your expectations, you might find a strong need for better documentation, or you might find important opportunities to improve the errors you're returning.
 
 ## Pagination
 
