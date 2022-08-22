@@ -757,10 +757,22 @@ When the [API Versioning](#API-Versioning) guidance above cannot be followed and
 
 :white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. NOTE: We do not want to scare customers with this header.
 
-:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information. For example: 
+:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
 
+Deprecations should use the following pattern:
 ```text
-azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+<description> will retire on <date> (`url`)
+```
+
+Where the following placeholders should be provided:
+- `description`: a human-readable description of what is being deprecated
+- `date`: the target date that this will be deprecated. This should be expressed following the format in [ISO 8601](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "2022-10-31".
+- `url`: a fully qualified url that the user can follow to learn more about what is being deprecated, preferably to Azure Updates.
+
+For example: 
+```text
+azure-deprecating: API version 2009-27-07 will retire on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will retire on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+```
 ```
 
 :no_entry: **DO NOT** introduce this header without this pattern without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
