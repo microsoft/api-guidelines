@@ -763,6 +763,7 @@ When the [API Versioning](#API-Versioning) guidance above cannot be followed and
 azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
 ```
 
+:no_entry: **DO NOT** introduce this header without this pattern without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
 ### Repeatability of requests
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
