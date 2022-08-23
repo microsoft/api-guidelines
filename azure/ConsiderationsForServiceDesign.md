@@ -98,7 +98,7 @@ Before releasing your API plan to invest significant design effort, get customer
 :ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
 ## Communicate Deprecations
-As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additioanl requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
+As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
 Azure has a well established breaking changes policy that describes how to approach these kinds of changes. As part of this policy, the service team is required to clearly communicate to customers when their API is changing, e.g. deprecating operations. Often, this is done via an email to the address that is attached to the Azure subscription.
 
 However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specied in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
