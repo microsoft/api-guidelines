@@ -17,6 +17,13 @@ If the operation doesn't have any side effects and MUST return a single instance
 
 The operations pattern is well suited to use cases that cannot be modeled as a single HTTP method on a resource and require either multiple round trips to complete a single logical operation or produce one or multiple side effects.
 
+The operation pattern might be justified when a modeling operation represents one or combination of the following:
+
+- a change of a resource (i.e., increment the value of a property) rather than a state (i.e., the final value of the property)
+- complex processing logic that shouldn't be exposed to the client
+- operation parameters might convey a restricted set of option (i.e., a report that can has to specify a date range)
+- the operation leverage some service-side data not exposed to (or easily retrieved in context by) the user.
+
 You can consider related patterns such as [long running operations](./long-running-operations.md) and [change tracking](./change-tracking.md).
 
 ## Issues and considerations
