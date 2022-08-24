@@ -753,7 +753,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 
 When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a [breaking change](#123-definition-of-a-breaking-change) to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
 
-The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being.
+The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
 :white_check_mark: **DO** add the 'azure-deprecating' header with a string value to all service operations in your service's contract file (cadl/swagger).
 
