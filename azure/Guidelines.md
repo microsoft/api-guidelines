@@ -763,7 +763,7 @@ The purpose is to inform customers (when debugging/logging responses) that they 
 
 Deprecations should use the following pattern:
 ```text
-<description> will retire on <date> (`url`)
+<description> will retire on <date> (`url`);
 ```
 
 Where the following placeholders should be provided:
