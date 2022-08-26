@@ -28,9 +28,9 @@ Additionally, using the OData Expand query parameter, related entities can be tr
 
 In the current Microsoft Graph implementation, there are some limitations on the use of navigation properties that cross between backend services. These limitations are being eliminated over time, but it will be necessary to ensure support for any particular scenario.  
  
-Navigation properties defined within an entity are not returned when retreiving the representation of an entity unless explicity desired by a service.  
+Navigation properties defined within an entity are not returned by default when retreiving the representation of an entity unless explicity desired by a service.  
 
-Implementing support for accessing the "$ref" of a navigation property allows a caller to return just the URL of related resource. e.g. `/user/23/manager/$ref`. This is useful when a client wishes to identity the related resource but doesn't need all of its properties.
+Implementing support for accessing the "$ref" of a navigation property allows a caller to return just the URL of related resource. e.g. `/user/23/manager/$ref`. This is useful when a client wishes to identify the related resource but doesn't need all of its properties.
 
 ## When to Use this Pattern
 ------------------------
@@ -152,7 +152,7 @@ Content-Type: application/json
 
 {
     "displayName": "Bob",
-    "manager@bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
+    "manager@odata.bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
 
 204 No Content
