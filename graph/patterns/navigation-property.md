@@ -9,13 +9,9 @@ Microsoft Graph API Design Pattern
 
 It is often valuable to represent a relationship between resources in an API. This may be a many-to-one or a one-to-many relationship. 
 
-Relationships between resources are often implicitly represented by a property contained in one of the resources that identifies the other related resource. Usually that information returned in a representation as an id value and the property is named using a convention that identifies the target type of related resource. e.g. userId 
+Relationships between resources are often implicitly represented by a property contained in one of the resources that provides a key to a related resource. Usually that information is returned in a representation as an id value and the property is named using a convention that identifies the target type of related resource. e.g. userId 
 
-In many-to-one relationships, for a client to access the related resource it must request the primary resource, read the id value of the related resource and then construct a URL to the related resource using the Id value and knowledge of how the property name maps to the related resource. This requires at least two round trips and requires the client know how to construct the URL to the related resource.
-
-For both many-to-one and one-to-many relationships in order to retrieve information from both resources on both sides of the relationship requires at minimum two requests.
-
-Requiring two round trips to access this information is inefficient for some applications and the lack of a formally described relationship limits the ability for tooling to take advantage of the relationship to improve developer experience.
+The use of foreign key properties to describe related resources is a weakly typed mechanism and requires additional information for a developer to traverse the relationship. Discovery of related resources is not trivial.
 
 ## Solution
 --------
@@ -32,7 +28,7 @@ Additionally, using the OData Expand query parameter, related entities can be tr
 
 In the current Microsoft Graph implementation, support for navigation properties is limited to entities within the same backend service or the user entity.  
  
-Navigation properties defined within an entity are not returned when retreiving the representation of an entity.  
+Navigation properties defined within an entity are not returned when retreiving the representation of an entity unless explicity desired by a service.  
 
 Implementing support for accessing the "$ref" of a navigation property allows a caller to return just the URL of related resource. e.g. `/user/23/manager/$ref`. This is useful when a client wishes to identity the related resource but doesn't need all of its properties.
 
@@ -50,6 +46,8 @@ Navigation properties are also useful when clients sometimes want to retrieve bo
 Resources that contain a parent Id property in a child resource can utilize a navigation property in the parent resource that is declared as a collection of child resources. If desirable, a parent navigation property can also be created in the child resource to the parent resource. This is usually not necessary as the parent URL is a subset of child resource URL. The main use of this would be when retrieving child resources and choosing to expand properties of the parent resource so that both can be retrieved in a single request.  
 
 `/invoice/{invoiceId}/items/{itemId}?expand=parentInvoice(select=invoiceDate,Customer)`
+
+### "child-parent" relationships
 
 One other use case is when child resources appear in a non-contained collection and there is a desire to access the canonical parent:
 
@@ -71,6 +69,13 @@ Content-Type: application/json
   "id": "6b3ee805-c449-46a8-aac8-8ff9cff5d213",
   "displayName": "Bob Boyce"
 }
+```
+
+This navigation property could be described with the following CSDL: 
+```xml
+<EntityType Name="user">
+  <NavigationProperty Name="manager" Type="user" ContainsTarget="false" >
+</EntityType>
 ```
 
 ### Retrieving a reference to a related entity
