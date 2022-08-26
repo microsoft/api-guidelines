@@ -165,7 +165,7 @@ PUT /users/{id}/manager/$ref
 Content-Type: application/json
 
 {
-    "@OData.Id": "https://graph.microsoft.com/v1.0/users/{managerId}"
+    "@odata.id": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
 
 204 No Content
