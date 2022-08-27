@@ -84,6 +84,65 @@ As you build out your service and API, there are a number of decisions that can 
 
 :ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
+## Use Good Names
+
+Good names for resources, properties, operations, and parameters are essential to a good developer experience.
+
+Resources are typically described by nouns. Resource and property names must be descriptive and easy to understand for end-users. Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product user interface, and industry standards.
+
+Names should aid developers in discovering functionality without having to constantly refer to documentation.
+Use common patterns and standard conventions to aid developers in correctly guessing common property names and meanings.
+Use verbose naming patterns and avoid abbreviations other than
+well-known acronyms in your service domain.
+
+### Recommended Naming Conventions
+
+The following are recommended naming conventions for Azure services:
+
+:heavy_check_mark: **DO** use singular nouns for resource (schema) names.
+
+:heavy_check_mark: **DO** use plural nouns for collections (for listing type or collection properties).
+
+:ballot_box_with_check: **YOU SHOULD** case all acronyms the same as a normal word.
+
+For example, `nextUrl` and not `nextURL`.
+
+:ballot_box_with_check: **YOU SHOULD** use "at" suffix in names of `date-time` values.
+
+:ballot_box_with_check: **YOU SHOULD** use "is" prefix in names of `boolean` values.
+
+:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "km" rather than "kilometers") when appropriate.
+
+:ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
+
+For example, `expirationDays` as `int` and not `expiration` as `date-time`.
+
+:ballot_box_with_check: **YOU SHOULD** prefix property names for properties concerning a different resource, particular for resource identifiers.
+
+:warning: **YOU SHOULD NOT** use brand names in resource or property names.
+
+:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood.
+
+:no_entry: **DO NOT** use redundant words in names.
+
+For example, `/phones/number` and not `phone/phoneNumber`.
+
+:no_entry: **DO NOT** use a "request", "response", or "collection" suffix on resource names.
+
+### Common names
+
+The following are recommended names for properties that match the associated description:
+
+| Name | Description |
+|------------- | --- |
+| createdAt | The date-time that the resource was created |
+| updatedAt | The date-time that the resource was last updated/modified |
+| kind   | The discriminator value for a polymorphic resource |
+
+### `name` vs `id`
+
+The identifier of a resource should be named `id`. This holds even in the case where the identifier is assigned by the user with a PUT method.
+
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
@@ -111,7 +170,7 @@ One common area of friction for developers is _polymorphism_ -- where a value ma
 Polymorphism can be beneficial in certain cases, e.g. as a way to express inheritance, but also creates friction
 because it requires the value to be introspected before being processed and cannot be represented in a natural/useful way in many type-safe languages.
 
-:ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint **SHOULD** work with a single type to avoid problems during SDK creation.
+:ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint **YOU SHOULD** work with a single type to avoid problems during SDK creation.
 
 :ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so. If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
 
