@@ -297,7 +297,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
-PATCH/PUT | Any JSON field name/value not known/valid | `400-Bad Request`
+PATCH/PUT | Any JSON field name/value not known/known to version/valid | `400-Bad Request`
 PATCH/PUT | Any Read field passed (client can't set Read fields) | `400-Bad Request`
 | **If&nbsp;the&nbsp;resource&nbsp;does&nbsp;not&nbsp;exist** |
 PATCH/PUT | Any mandatory Create/Update field missing | `400-Bad Request`
