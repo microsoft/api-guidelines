@@ -88,46 +88,53 @@ As you build out your service and API, there are a number of decisions that can 
 
 Good names for resources, properties, operations, and parameters are essential to a good developer experience.
 
-Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand. Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product's portal/user interface, and industry standards.
+Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand.
+Avoid names that refer to service implementation details, e.g. "TreeLeafNode", or simply describe the structure of value without
+describing its purpose, e.g. "KeyValuePair".
+Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product's portal/user interface, and industry standards.
 
 Names should aid developers in discovering functionality without having to constantly refer to documentation.
 Use common patterns and standard conventions to aid developers in correctly guessing common property names and meanings.
 Use verbose naming patterns and avoid abbreviations other than
 well-known acronyms in your service domain.
 
+:heavy_check_mark: **DO** use the same name for the same concept and different names for different concepts wherever possible.
+
 ### Recommended Naming Conventions
 
 The following are recommended naming conventions for Azure services:
 
-:heavy_check_mark: **DO** use singular nouns for resource (schema) names.
+:heavy_check_mark: **DO** name collections as plural nouns or plural noun phrases using correct English.
 
-:heavy_check_mark: **DO** use plural nouns for collections (for listing type or collection properties).
+:heavy_check_mark: **DO** name values that are not collections as singular nouns or singular noun phrases.
 
-:ballot_box_with_check: **YOU SHOULD** case all acronyms the same as a normal word.
+:ballot_box_with_check: **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
 
-For example, `nextUrl` and not `nextURL`.
+For example, `collectedItems` not `itemsCollected`
 
-☑️ **YOU SHOULD** use "At" suffix in names of `date-time` values.
+:ballot_box_with_check: **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
 
-:ballot_box_with_check: **YOU SHOULD** use "is" prefix in names of `boolean` values.
+For example, `nextUrl` not `nextURL`.
 
-☑️ **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
+:ballot_box_with_check: **YOU SHOULD** use "DateTime" suffix in names of `date-time` values.
+
+:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
 :ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
 
 For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
-:ballot_box_with_check: **YOU SHOULD** prefix property names for properties concerning a different resource, particular for resource identifiers.
-
 :warning: **YOU SHOULD NOT** use brand names in resource or property names.
 
-⚠️ **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
+:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
+
+:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages.
+
+:no_entry: **DO NOT** use "is" prefix in names of `boolean` values.
 
 :no_entry: **DO NOT** use redundant words in names.
 
 For example, `/phones/number` and not `phone/phoneNumber`.
-
-:no_entry: **DO NOT** use a "request", "response", or "collection" suffix on resource names.
 
 ### Common names
 
@@ -135,13 +142,15 @@ The following are recommended names for properties that match the associated des
 
 | Name | Description |
 |------------- | --- |
-| createdAt | The date-time that the resource was created |
-| updatedAt | The date-time that the resource was last updated/modified |
+| createdDateTime | The date-time that the resource was created |
+| updatedDateTime | The date-time that the resource was last updated/modified |
 | kind   | The discriminator value for a polymorphic resource |
 
 ### `name` vs `id`
 
-The identifier of a resource should be suffixed with `Id`. This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
+:heavy_check_mark: **DO** use "Id" suffix for the name of rhe identifier of a resource.
+
+This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
 
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
