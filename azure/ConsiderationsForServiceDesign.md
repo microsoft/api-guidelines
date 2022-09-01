@@ -88,7 +88,7 @@ As you build out your service and API, there are a number of decisions that can 
 
 Good names for resources, properties, operations, and parameters are essential to a good developer experience.
 
-Resources are typically described by nouns. Resource and property names must be descriptive and easy to understand for end-users. Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product user interface, and industry standards.
+Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand. Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product's portal/user interface, and industry standards.
 
 Names should aid developers in discovering functionality without having to constantly refer to documentation.
 Use common patterns and standard conventions to aid developers in correctly guessing common property names and meanings.
@@ -107,11 +107,11 @@ The following are recommended naming conventions for Azure services:
 
 For example, `nextUrl` and not `nextURL`.
 
-:ballot_box_with_check: **YOU SHOULD** use "at" suffix in names of `date-time` values.
+☑️ **YOU SHOULD** use "At" suffix in names of `date-time` values.
 
 :ballot_box_with_check: **YOU SHOULD** use "is" prefix in names of `boolean` values.
 
-:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "km" rather than "kilometers") when appropriate.
+☑️ **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
 :ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
 
@@ -121,7 +121,7 @@ For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
 :warning: **YOU SHOULD NOT** use brand names in resource or property names.
 
-:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood.
+⚠️ **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
 
 :no_entry: **DO NOT** use redundant words in names.
 
@@ -141,7 +141,7 @@ The following are recommended names for properties that match the associated des
 
 ### `name` vs `id`
 
-The identifier of a resource should be named `id`. This holds even in the case where the identifier is assigned by the user with a PUT method.
+The identifier of a resource should be suffixed with `Id`. This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
 
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
