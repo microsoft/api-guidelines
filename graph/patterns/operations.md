@@ -73,7 +73,7 @@ HTTP/1.1 202 Accepted
 
 `forward` operation is modeled as an asynchronous action bound to the Graph `event` entity type because the operation represents a complex business logic processed on the server side. 
 ```
- <Action Name="forward" IsBound="true" >
+<Action Name="forward" IsBound="true" >
         <Parameter Name="bindingParameter" Type="graph.event" />
         <Parameter Name="ToRecipients" Type="Collection(graph.recipient)" />
         <Parameter Name="Comment" Type="Edm.String" Unicode="false" />
@@ -99,7 +99,7 @@ HTTP/1.1 200 OK
 `recent` function will query the most recent historyItems and then pull related activities therefore the operation represents a complex business logic processed on the server side. This operation  doesn't change any server data and is a good fit for a function. The function is bound to the collection of `userActivity` entity type.
 
 ```
- <Function Name="recent" EntitySetPath="activities" IsBound="true">
+<Function Name="recent" EntitySetPath="activities" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.userActivity)" />
         <ReturnType Type="Collection(graph.userActivity)" />
 </Function>
