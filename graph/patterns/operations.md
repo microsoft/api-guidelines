@@ -6,12 +6,11 @@ Microsoft Graph API Design Pattern
 
 ## Problem
 
-Sometimes when modeling a complex business domain, API designers need to model a business operation that effects one or multiple resources and has additional semantic meaning that cannot be expressed by HTTP methods. Modeling the operation via HTTP methods on each individual resource might be either inefficient or expose internal implementation details. In addition, the operation might produce observable side effects.
+Sometimes when modeling a complex business domain, API designers need to model a business operation that effects one or multiple resources and has additional semantic meaning that cannot be expressed by HTTP methods. Modeling the operation via HTTP methods on each individual resource might be either inefficient or expose internal implementation details.
 
 ## Solution
 
-To address these use cases, API designers can use operational resources such as functions or actions.
-If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer MUST use OData functions; otherwise, the designer can model the operation as an action.
+To address these use cases, API designers can use operational resources such as functions or actions. If the operation doesn't have any side effects and MUST return a single instance of a type or a collection of instances, then the designer SHOULD use OData functions; otherwise, the designer can model the operation as an action.
 
 ## When to use this pattern
 
@@ -21,15 +20,14 @@ The operation pattern might be justified when a modeling operation represents on
 
 - a change of a resource (i.e., increment the value of a property) rather than a state (i.e., the final value of the property)
 - complex processing logic that shouldn't be exposed to the client
-- operation parameters might convey a restricted set of option (i.e., a report that can has to specify a date range)
+- operation parameters might convey a restricted set of option (i.e., a report that has to specify a date range)
 - the operation leverage some service-side data not exposed to (or easily retrieved in context by) the user.
 
 You can consider related patterns such as [long running operations](./long-running-operations.md) and [change tracking](./change-tracking.md).
 
 ## Issues and considerations
 
-- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions are invoked on resources matching the type of the binding parameter. The binding parameter can be of any type, and parameter value MAY be Nullable. 
-For Microsoft Graph, actions and functions must have the `isBound="true"` attribute. The first parameter is the binding parameter.
+- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions are invoked on resources matching the type of the binding parameter. The binding parameter can be of any type, and parameter value MAY be Nullable. For Microsoft Graph, actions and functions must have the `isBound="true"` attribute. The first parameter is the binding parameter.
 
 - Both actions and functions support overloading, meaning a schema might contain multiple actions or functions with the same name. The overload rules as per the OData [standard](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_FunctionOverloads) apply when adding parameters to actions and functions.
   
@@ -46,29 +44,65 @@ For Microsoft Graph, actions and functions must have the `isBound="true"` attrib
 
 - The addition of a new mandatory not-nullable parameter to an existing action or function is a breaking change and is not allowed without proper versioning that is in accordance with our [deprecation guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/deprecation.md).
 
-## Example
+## Examples
+
+### A user wants to forward email
 
 ```
-<Action Name="createUploadSession" IsBound="true" ags:EnabledForPassthrough="true" ags:OwnerService="Microsoft.Exchange">
-        <Parameter Name="bindingParameter" Type="Collection(graph.attachment)" />
-        <Parameter Name="AttachmentItem" Type="graph.attachmentItem" Nullable="false" />
-        <ReturnType Type="graph.uploadSession" />
+POST https://graph.microsoft.com/v1.0/me/messages/AQMkADNkMmMxYzIwLWJkOTItNDczZC1hNmYyLWUwZjk2ZTljMDQyNQBGAAAD1dY5iRo4x0_pEqop6hOrQAcAeGCrbYV1-kiG-z9Rv6yHMgAAAgEJAAAAeGCrbYV1-kiG-z9Rv6yHMgABRxeUKgAAAA==/forward
+
+{
+    "comment": "FYI",
+    "toRecipients": [
+        {
+            "emailAddress": {
+                "address": "alex.darrow@microsoft.com",
+                "name": "Alex Darrow"
+            }
+        }
+    ]
+}
+```
+Response:
+```
+HTTP/1.1 202 Accepted
+
+    "cache-control": "private",
+    "client-request-id": "ca2d0416-a2c1-05af-df60-0921547a86e9",
+    "content-length": "0",
+    "request-id": "8b53016f-cc2b-4d9f-9818-bd6f0a5e3cd0"
+```
+
+`forward` operation is modeled as an asynchronous action bound to the Graph `event` entity type because the operation represents a complex business logic processed on the server side. 
+```
+ <Action Name="forward" IsBound="true" >
+        <Parameter Name="bindingParameter" Type="graph.event" />
+        <Parameter Name="ToRecipients" Type="Collection(graph.recipient)" />
+        <Parameter Name="Comment" Type="Edm.String" Unicode="false" />
 </Action>
+```
 
-<Action Name="deprovision" IsBound="true" ags:OwnerService="Microsoft.Intune.Devices">
-        <Parameter Name="bindingParameter" Type="graph.managedDevice" />
-        <Parameter Name="deprovisionReason" Type="Edm.String" Nullable="false" Unicode="false" />
-</Action>
+### A user wants to see recent application activities
 
-<Function Name="additionalAccess" IsBound="true" ags:OwnerService="Microsoft.IGAELM">
-        <Parameter Name="bindingParameter" Type="Collection(graph.accessPackageAssignment)" />
-        <ReturnType Type="Collection(graph.accessPackageAssignment)" />
+```
+GET https://graph.microsoft.com/v1.0/me/activities/recent
+```
+
+Response:
+
+```
+HTTP/1.1 200 OK
+
+{
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#Collection(userActivity)",
+    "value": []
+}
+```
+`recent` function will query the most recent historyItems and then pull related activities therefore the operation represents a complex business logic processed on the server side. This operation  doesn't change any server data and is a good fit for a function. The function is bound to the collection of `userActivity` entity type.
+
+```
+ <Function Name="recent" EntitySetPath="activities" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(graph.userActivity)" />
+        <ReturnType Type="Collection(graph.userActivity)" />
 </Function>
-
-<Function Name="compare" IsBound="true" ags:OwnerService="Microsoft.Intune.DeviceIntent">
-        <Parameter Name="bindingParameter" Type="graph.deviceManagementIntent" />
-        <Parameter Name="templateId" Type="Edm.String" Unicode="false" />
-        <ReturnType Type="Collection(graph.deviceManagementSettingComparison)" />
-</Function>
-
 ```
