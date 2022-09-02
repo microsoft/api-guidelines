@@ -140,7 +140,7 @@ Content-Length: 205
 `getBrowserUserCounts` operation  doesn't change any server data and is a good fit for a function.`period` operation parameter convey a restricted set of options representing the number of days over which the report is aggregated. The report supports only 7,30,90, or 180 days. In addition the function doesn't return a Graph resource but streams response data in JSON or CSV formats.
 
 ```
-<Function Name="getBrowserUserCounts" IsBound="true" ags:OwnerService="Microsoft.O365Reporting">
+<Function Name="getBrowserUserCounts" IsBound="true">
         <Parameter Name="reportRoot" Type="graph.reportRoot" />
         <Parameter Name="period" Type="Edm.String" Nullable="false" Unicode="false" />
         <ReturnType Type="Edm.Stream" Nullable="false" />
