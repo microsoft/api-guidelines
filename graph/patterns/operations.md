@@ -14,8 +14,6 @@ To address these use cases, API designers can use operational resources such as 
 
 ## When to use this pattern
 
-The operations pattern is well suited to use cases that cannot be modeled as a single HTTP method on a resource and require either multiple round trips to complete a single logical operation or produce one or multiple side effects.
-
 The operation pattern might be justified when a modeling operation represents one or combination of the following:
 
 - a change of a resource (i.e., increment the value of a property) rather than a state (i.e., the final value of the property)
@@ -27,7 +25,7 @@ You can consider related patterns such as [long running operations](./long-runni
 
 ## Issues and considerations
 
-- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions are invoked on resources matching the type of the binding parameter. The binding parameter can be of any type, and parameter value MAY be Nullable. For Microsoft Graph, actions and functions must have the `isBound="true"` attribute. The first parameter is the binding parameter.
+- Microsoft Graph does NOT support unbound actions or functions. Bound actions and functions MUST must have the `isBound="true"` attribute and a binding parameter. Bound operations are invoked on resources matching the type of the binding parameter.The first parameter of a bound operation is always the binding parameter.The binding parameter can be of any type, and parameter value MAY be Nullable.
 
 - Both actions and functions support overloading, meaning a schema might contain multiple actions or functions with the same name. The overload rules as per the OData [standard](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_FunctionOverloads) apply when adding parameters to actions and functions.
   
@@ -104,5 +102,47 @@ HTTP/1.1 200 OK
  <Function Name="recent" EntitySetPath="activities" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.userActivity)" />
         <ReturnType Type="Collection(graph.userActivity)" />
+</Function>
+```
+### Get a report that provides the number of active users using Microsoft Edge
+
+```
+https://graph.microsoft.com/beta/reports/getBrowserUserCounts(period='D7')
+```
+
+Response:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 205
+
+{
+   "value":[
+      {
+         "reportRefreshDate":"2021-04-17",
+         "reportPeriod":7,
+         "userCounts":[
+            {
+               "reportDate":"2021-04-17",
+               "edge":413
+            },
+            {
+               "reportDate":"2021-04-16",
+               "edge":883
+            }
+         ]
+      }
+   ]
+}
+```
+
+`getBrowserUserCounts` operation  doesn't change any server data and is a good fit for a function.`period` operation parameter convey a restricted set of options representing the number of days over which the report is aggregated. The report supports only 7,30,90, or 180 days. In addition the function doesn't return a Graph resource but streams response data in JSON or CSV formats.
+
+```
+<Function Name="getBrowserUserCounts" IsBound="true" ags:OwnerService="Microsoft.O365Reporting">
+        <Parameter Name="reportRoot" Type="graph.reportRoot" />
+        <Parameter Name="period" Type="Edm.String" Nullable="false" Unicode="false" />
+        <ReturnType Type="Edm.Stream" Nullable="false" />
 </Function>
 ```
