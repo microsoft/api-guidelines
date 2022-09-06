@@ -26,7 +26,7 @@ Additionally, using the OData Expand query parameter, related entities can be tr
 ## Issues and Considerations
 -------------------------
 
-In the current Microsoft Graph implementation, there are some limitations on the use of navigation properties that cross between backend services. These limitations are being eliminated over time, but it will be necessary to ensure support for any particular scenario.  
+In the current Microsoft Graph implementation, there are some limitations on the use of navigation properties that cross between backend services. These limitations are being eliminated over time, but it will be necessary to ensure support for any particular scenario.  [Limitations of the current implementation](https://dev.azure.com/msazure/One/_wiki/wikis/Microsoft%20Graph%20Partners/354352/Cross-workload-navigations?anchor=supported-scenarios) are documented internally.
  
 Navigation properties defined within an entity are not returned by default when retreiving the representation of an entity unless explicity desired by a service.  
 
@@ -115,28 +115,12 @@ Content-Type: application/json
 
 Create a new user that references an existing manager
 ```http
-POST /users/{id}
+POST /users
 Content-Type: application/json
 
 {
     "displayName": "Bob",
-    "manager@bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
-}
-
-201 Created
-```
-
-Create a new user and the users manager and create a relationship between the two.
-
-```http
-POST /users/{id}
-Content-Type: application/json
-
-{
-    "displayName": "Jim James",
-    "manager": {
-        "displayName": "Bob Boyce"
-    }
+    "manager@odata.bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
 
 201 Created
