@@ -1,8 +1,18 @@
 # Microsoft Azure REST API Guidelines
+
+<!-- cspell:ignore autorest, BYOS, etag, idempotency, maxpagesize, innererror -->
+
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2022-Aug-20 | Add "azure-deprecating" response header                        |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
+| 2022-May-11 | Drop guidance on version discovery                             |
+| 2022-Mar-29 | Add guidelines about using durations                           |
+| 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
+| 2022-Feb-01 | Updated error guidance                                         |
+| 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
 | 2020-Jul-31 | Added service advice for initial versions                      |
 | 2020-Mar-31 | 1st public release of the Azure REST API Guidelines            |
@@ -44,12 +54,12 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
-- [Uniform Resource Locators (URLs)](URLS)
-- HTTP Methods
-- Request & Response Headers
-- Bodies
 
-### Uniform Resource Locators (URLs)
+- [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
+- [HTTP Request / Response Pattern](#http-request--response-pattern)
+- [HTTP Query Parameters and Header Values](#http-query-parameters-and-header-values)
+
+#### Uniform Resource Locators (URLs)
 
 A Uniform Resource Locator (URL) is how developers access the resources of your service. Ultimately, URLs are how developers form a cognitive model of your service's resources.
 
@@ -63,7 +73,7 @@ Where:
  | - | - |
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
  | cloud | Cloud domain name, e.g. `azure.net` (see Azure CLI's "az cloud list")
- | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containees (ex: subscription UUID)
+ | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containers (ex: subscription UUID)
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
  | resource&#x2011;id | Value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
@@ -80,13 +90,11 @@ Some customer-provided path segment values may be compared case-insensitivity if
 
 :white_check_mark: **DO** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
 
-:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segements (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
+:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segments (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
 
 :ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
 :heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
-
-#### Direct Endpoint URLs
 
 :heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
 ```text
@@ -101,16 +109,16 @@ Examples:
 :white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
 :heavy_check_mark: **YOU MAY** use URLs as values
-```http
+```text
 https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
 
-### HTTP Request / Response Pattern
+#### HTTP Request / Response Pattern
 The HTTP Request / Response pattern dictates how your API behaves. For example: POST methods that create resources must be idempotent, GET method results may be cached, the If-Modified and ETag headers offer optimistic concurrency. The URL of a service, along with its request/response bodies, establishes the overall contract that developers have with your service. As a service provider, how you manage the overall request / response pattern should be one of the first implementation decisions you make.
 
 Cloud applications embrace failure. Therefore, to enable customers to write fault-tolerant applications, _all_ service operations (including POST) **must** be idempotent. Implementing services in an idempotent manner, with an "exactly once" semantic, enables developers to retry requests without the risk of unintended consequences.
 
-#### Exactly Once Behavior = Client Retries & Service Idempotency
+##### Exactly Once Behavior = Client Retries & Service Idempotency
 
 :white_check_mark: **DO** ensure that _all_ HTTP methods are idempotent.
 
@@ -127,11 +135,12 @@ Method | Description | Response Status Code
 PATCH  | Create/Modify the resource with JSON Merge Patch | `200-OK`, `201-Created`
 PUT    | Create/Replace the _whole_ resource | `200-OK`, `201-Created`
 POST   | Create new resource (ID set by service) | `201-Created` with URL of created resource
+POST   | Action | `200-OK`, `204-No Content` (only when nothing returned in response body)
 GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
-:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously
+:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously.
 
 :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 
@@ -143,7 +152,7 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
 :white_check_mark: **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
-### HTTP Query Parameters and Header Values
+#### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
 :white_check_mark: **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#Handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
@@ -157,7 +166,7 @@ Integer   | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON li
 Float     | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 String    | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
 UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
-Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
+Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
 Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
 Array      | One of a) a comma-separated list of values (preferred), or b) separate `name=value` parameter instances for each value of the array
@@ -168,9 +177,9 @@ The table below lists the headers most used by Azure services:
 Header Key          | Applies to | Example
 ------------------- | ---------- | -------------
 _authorization_     | Request    | Bearer eyJ0...Xd6j (Support Azure Active Directory)
-_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
-traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
-tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing-&-Telemetry))
+_x-ms-useragent_    | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+traceparent         | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
+tracecontext        | Request    | (see [Distributed Tracing & Telemetry](#Distributed-Tracing--Telemetry))
 accept              | Request    | application/json
 If-Match            | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
 If-None-Match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#Conditional-Requests))
@@ -179,10 +188,11 @@ If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Condition
 date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
 _content-type_      | Both       | application/merge-patch+json
 _content-length_    | Both       | 1024
-_x-ms-request-id_   | Response   | [see Customer Support](http://TODO:link-goes-here)
+_x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
 ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 _x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
+_azure-deprecating_ | Response   | (see [Deprecating Behavior](#Deprecating-Behavior))
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in _italics_
@@ -193,20 +203,26 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 
 :white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
 
-:white_check_mark: **DO** accept and return date values in headers using the HTTP Date format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT"
+:white_check_mark: **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
+
+Note: The RFC 7321 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
+
+:white_check_mark: **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
+
+Your service should include the `x-ms-request-id` value in error logs so that users can submit support requests for specific failures using this value.
 
 :no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
 
 :no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
-#### Additional References
+**Additional References**
 - [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
 - [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
 - [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
 ### REpresentational State Transfer (REST)
 REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items.
-These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#URLS) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
+These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#uniform-resource-locators-urls) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
 There are patterns, later in these guidelines, that describe how to invoke behavior on your service. See [this article in the Azure Architecture Center](https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design) for a more detailed discussion of REST API design patterns.
 
 When designing your service, it is important to optimize for the developer using your API.
@@ -238,7 +254,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 :white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
 
-:white_check_mark: **DO** use camel case for all JSON field names.
+:white_check_mark: **DO** use camel case for all JSON field names. Do not upper-case acronyms; use camel case.
 
 :white_check_mark: **DO** treat JSON field names with case-sensitivity.
 
@@ -282,17 +298,47 @@ There are 2 kinds of errors:
 - An error where you expect customer code to gracefully recover at runtime
 - An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
 
-:white_check_mark: **DO** return error an `x-ms-error-code` response header with a string value indicating what went wrong.
+:white_check_mark: **DO** return an `x-ms-error-code` response header with a string error code indicating what went wrong.
 
-*NOTE: Error code values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
+*NOTE: `x-ms-error-code` values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
-:white_check_mark: **DO** carefully craft `x-ms-error-code` string values for errors that are recoverable at runtime.
+:heavy_check_mark: **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
 
-:white_check_mark: **DO** ensure that the top-level `code` field's value is identical to the `x-ms-error-code` header's value (see example body below).
+:warning: **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
 
-:white_check_mark: **DO** document the service's error code strings; they are part of the API contract.
+:white_check_mark: **DO** carefully craft unique `x-ms-error-code` string values for errors that are recoverable at runtime.  Reuse common error codes for usage errors that are not recoverable.
 
-:white_check_mark: **DO** provide a response body as follows (example):
+:heavy_check_mark: **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
+
+:white_check_mark: **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
+
+:white_check_mark: **DO** provide a response body with the following structure:
+
+**ErrorResponse** : Object
+
+Property | Type | Required | Description
+-------- | ---- | :------: | -----------
+`error` | ErrorDetail | ✔ | The top-level error object whose `code` matches the `x-ms-error-code` response header
+
+**ErrorDetail** : Object
+
+Property | Type | Required | Description
+-------- | ---- | :------: | -----------
+`code` | String | ✔ | One of a server-defined set of error codes.
+`message` | String | ✔ | A human-readable representation of the error.
+`target` | String |  | The target of the error.
+`details` | ErrorDetail[] |  | An array of details about specific errors that led to this reported error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+_additional properties_ |   | | Additional properties that can be useful when debugging.
+
+**InnerError** : Object
+
+Property | Type | Required | Description
+-------- | ---- | :------: | -----------
+`code` | String |  | A more specific error code than was provided by the containing error.
+`innererror` | InnerError |  | An object containing more specific information than the current object about the error.
+
+Example:
 ```json
 {
   "error": {
@@ -307,10 +353,15 @@ There are 2 kinds of errors:
 }
 ```
 
-:heavy_check_mark: **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
+:white_check_mark: **DO** document the service's top-level error code strings; they are part of the API contract.
 
 :heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are _not_ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
 
+:heavy_check_mark: **YOU MAY** add additional properties for any data values in your error message so customers don't resort to parsing your error message.  For example, an error with `"message": "A maximum of 16 keys are allowed per account."` might also add a `"maximumKeys": 16` property.  This is not part of your API contract and should only be used for diagnosing problems.
+
+*Note: Do not use this mechanism to provide information developers need to rely on in code (ex: the error message can give details about why you've been throttled, but the `Retry-After` should be what developers rely on to back off).*
+
+:warning: **YOU SHOULD NOT** document specific error status codes in your OpenAPI/Swagger spec unless the "default" response cannot properly describe the specific error response (e.g. body schema is different).
 
 ### JSON
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
@@ -330,6 +381,10 @@ Services, and the clients that access them, may be written in multiple languages
 :white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
 
 :white_check_mark: **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
+
+:white_check_mark: **DO** use a fixed time interval to express durations e.g., milliseconds, seconds, minutes, days, etc., and include the time unit in the property name e.g., `backupTimeInMinutes` or `ttlSeconds`.
+
+:heavy_check_mark: **YOU MAY** use [RFC3339 time intervals](https://wikipedia.org/wiki/ISO_8601#Durations) only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P3M" represents 3 months no matter how many days between the start and end dates, or "P1Y" represents 366 days on a leap year. The value must be round-trippable.
 
 :white_check_mark: **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
 
@@ -396,30 +451,27 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 ## Common API Patterns
 
 ### Performing an Action
-The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image, sending an SMS message.  It is also sometimes useful to perform an action on a collection.
+The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image or rebooting a VM.  It is also sometimes useful to perform an action on a collection.
 
-:white_check_mark: **DO** pattern your URL like this to perform an action on a resource
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a resource
 **URL Pattern**
-```http
+```text
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 ```
 
 **Example**
-```http
-https://.../users/Bob:send-sms?text="Hello"
+```text
+https://.../users/Bob:grant?access=read
 ```
 
-**Equivalent to (in C#)**
-```users["Bob"].SendSms("Hello")```
-
-:white_check_mark: **DO** pattern your URL like this to perform an action on a collection
+:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a collection
 **URL Pattern**
-```http
+```text
 https://.../<resource-collection>:<action>?<input parameters>
 ```
 
 **Example**
-```http
+```text
 https://.../users:grant?access=read
 ```
 
@@ -431,8 +483,9 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 :white_check_mark: **DO** return a `200-OK` when the action completes synchronously and successfully.
 
-:ballot_box_with_check: **YOU SHOULD** use a verb to name your action.
+:ballot_box_with_check: **YOU SHOULD** use a verb as the `<action>` component of the path.
 
+:no_entry: **DO NOT** use an action operation when the operation behavior could reasonably be defined as one of the standard REST Create, Read, Update, Delete, or List operations.
 
 ### Collections
 :white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
@@ -460,6 +513,10 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 :white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
 :white_check_mark: **DO** return a `nextLink` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
+
+Note: The service is responsible for performing any URL-encoding required on the `nextLink` URL.
+
+:white_check_mark: **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
 
 :ballot_box_with_check: **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
 
@@ -500,7 +557,7 @@ The value of the `filter` option is an expression involving the fields of the re
 
 Example: return all Products whose Price is less than $10.00
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=price lt 10.00
 ```
 
@@ -524,7 +581,7 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
 
 :white_check_mark: **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
@@ -548,31 +605,31 @@ The following examples illustrate the use and semantics of each of the logical o
 
 Example: all products with a name equal to 'Milk'
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
-```http
+```text
 GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
@@ -597,17 +654,17 @@ Each expression in the `orderby` parameter value may include the suffix "asc" fo
 :white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#Handling-errors) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
-```http
+```text
 GET https://api.contoso.com/people?orderby=name
 ```
 
 For example, to return all people sorted by name in descending order and a secondary sort order of hireDate in ascending order.
-```http
+```text
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
 Sorting MUST compose with `filter`ing such that:
-```http
+```text
 GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
@@ -647,9 +704,13 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an `api-version` query parameter with a date value
+Clients specify the version of the API to be used in every request to the service, even requests to an `Operation-Location` or `nextLink` URL returned by the service.
 
-```http
+:white_check_mark: **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
+
+:white_check_mark: **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
+
+```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
 
@@ -690,49 +751,19 @@ While removing a value from an enum is a breaking change, adding value to an enu
 
 > :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
-#### Version Discovery
+### Deprecating Behavior Notification
 
-Simpler clients may be hardcoded to a single version of a service. Since Azure services offer each version for a well-known period of time, a client that’s regularly maintained can be always operational without further complexity as long as during regular maintenance the client is moved forward to new versions in advance of older ones being retired.
+When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a breaking change to the operation/service, the operation/service that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information. The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being.
 
-API version discovery is needed when either a given hosted service may expose a different API version to different clients (e.g. latest API version only available in certain regions or to certain tenants) or the service itself may exist in different instances (e.g. a service that may be run on Azure or hosted on-premises).
-In both of those cases clients may get ahead of services in the API version they use. In might also be possible for a client version to ship ahead of its corresponding service update, leading to the same situation. Lastly, version discovery is useful for clients that want to warn operators that an API they depend on may expire soon.
+:white_check_mark: **DO** add the 'azure-deprercating' header with a string value to all service operations in your service's contract file (cadl/swagger).
 
-:white_check_mark: **DO**  support API version discovery, including
+:white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. NOTE: We do not want to scare customers with this header.
 
-1. Support HTTP `OPTIONS` requests against all resources, including the root URL for a given tenant or the global root if no tenant identity is tracked or not a multi-tenant service
-
-2. Include the `api-supported-versions` header, containing a comma-separated list of versions conforming to the Azure versioning scheme. This list must include all group versions as well as all major-minor versions supported by the target resource. For cases where no specific version applies (e.g. sometimes the root resource), the list still must contain the group versions supported by the service.
-
-3. If a given service supports versions of the API that are known to be planned for deprecation in a year or less, it must include those versions (group and major.minor) in the `api-deprecated-versions` header.
-
-4. For services that do rolling updates where there is a point in time where some front-ends are ahead of others version-wise, all front-ends **MUST** report the previous version as the latest version until the rolling update covers all instances and only then switch over to reporting the new latest version. This ensures that clients will not detect a version and then get load-balanced into a front-end that does not support it yet.
-
-:ballot_box_with_check: **YOU SHOULD** support the following for version discovery:
-
-1. In addition to the functionality described here, services should support HTTP `OPTIONS` requests for other purposes such as further discovery, CORS, etc.
-
-2. Services should allow unauthenticated HTTP `OPTIONS` requests. When doing so, authors need to consider whether HTTP `OPTIONS` requests against non-existing resources result in 404s and whether that is leaking sensitive information. Certain scenarios, such as support for CORS pre-flight requests, require allowing unauthenticated HTTP `OPTIONS` requests.
-
-3. If using OData and addressing an expanded resource, the HTTP `OPTIONS` request should return the group versions that are supported across the expanded set.
-
-Example request to discover API versions (blob storage container list API):
+:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information. For example: 
 
 ```text
-OPTIONS /?comp=list HTTP/1.1
-host: accountname.blob.core.azure.net
+azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
 ```
-
-Example response:
-
-```text
-200 OK
-api-supported-versions: 2011-08,2012-02,1.1,2.0
-api-deprecated-versions: 2009-04,1.0
-Content-Length: 0
-```
-
-Clients that use version discovery are expected to cache version information. Since there’s a year of lead time after an API version shows in the `api-deprecated-versions` before it’s removed, checking once a week should provide sufficient lead time to client authors or operators.
-In the rare case where a server rolls back a version that clients are already using, the service will reject requests because they are ahead of the latest version supported. Whenever a client sees a `version-too-new` error, it should re-execute its version discovery procedure.
 
 ### Repeatability of requests
 
@@ -747,18 +778,106 @@ The ability to retry failed requests for which a client never received a respons
 <!-- Open API Spec -->
 [OpenAPI Specification]: https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md
 
-### Long Running Operations & Jobs
+### Long-Running Operations & Jobs
 
-Azure generally follows the [Microsoft REST API guidelines for Long running operations](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).  Follow the Microsoft guidelines with the modifications / extensions given here when designing / implementing long running operations.
+When the processing for an operation may take a significant amount of time to complete, it should be
+implemented as a _long-running operation (LRO)_. This allows clients to continue running while the
+operation is being processed. The client obtains the outcome of the operation at some later time
+through another API call.
+See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
+Considerations for Service Design for an introduction to the design of long-running operations.
 
-Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the operation URL,
-while the Microsoft guidelines use the name "Operation-Location".
+:white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
 
-:white_check_mark: **DO** support both `Azure-AsyncOperation` and `Operation-Location` HEADERS, even though they are redundant so that existing SDKs and clients will continue to operate.
+:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
 
-:white_check_mark: **DO** return the same value for **both** headers.
+In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
+it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
 
-:white_check_mark: **DO** look for **both** HEADERS in client code, preferring the `Operation-Location` version.
+There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
+operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
+The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
+For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
+These are described in the following two sections.
+
+#### POST or DELETE LRO pattern
+
+A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
+a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
+
+:no_entry: **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
+
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
+
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+
+:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
+
+:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
+
+:white_check_mark: **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
+
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
+
+#### PUT operation with additional long-running processing
+
+For a PUT (create or replace) with additional long-running processing:
+
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
+
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
+
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+
+:white_check_mark: **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
+
+:white_check_mark: **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
+
+:white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
+
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
+
+#### Obtaining status and results of long-running operations
+
+For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
+
+:white_check_mark: **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+
+:white_check_mark: **DO** return a status monitor in the response body that conforms with the following structure:
+
+**OperationStatus** : Object
+
+Property | Type        | Required | Description
+-------- | ----------- | :------: | -----------
+`id`     | string      | true     | The unique id of the operation
+`status` | string      | true     | enum that includes terminal values "Succeeded", "Failed", "Canceled"
+`error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
+`result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
+additional<br/>properties | |     | Additional named or dynamic properties of the operation
+
+:white_check_mark: **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
+
+:white_check_mark: **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
+
+:white_check_mark: **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+
+:no_entry: **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+
+:white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
 ### Bring your own Storage (BYOS)
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own 
@@ -779,7 +898,19 @@ While Azure Managed Storage may be easier to get started with, as your service e
 
 :white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
 
-:heavy_check_mark: **YOU MAY** use Shared Access Signatures [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to Storage objects.
+
+##### Handling 'downstream' errors
+It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
+
+:white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body.
+
+#### Working with files
+Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
+
+##### Single file access
+Designing an API for accessing a single file, depending on your scenario, is relatively straight forward.
+
+:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
 
 :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
 
@@ -869,8 +1000,8 @@ When supporting optimistic concurrency:
 | PATCH / PUT | `If-None-Match` | *     | check for _any_ version of the resource, if one is found, fail the operation |  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
 | PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` equals the latest ETag value on the server, confirming that the version of the resource is the most current | `200-OK` or </br> `201-Created` </br> | Response header MUST include the new `ETag` value. Response body SHOULD include the serialized value of the resource (typically JSON).  |
 | PATCH / PUT | `If-Match` | value of ETag     | value of `If-Match` header DOES NOT equal the latest ETag value on the server, indicating a change has ocurred since after the client fetched the resource|  `412-Precondition Failed` | Response body SHOULD return the serialized value of the resource (typically JSON) that was passed along with the request.|
-| DELETE      | `If-None-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
-| DELETE      | `If-None-Match` | value of ETag     | value matches the latest value on the server | `204-No Content` | Response body SHOULD be empty.  |
+| DELETE      | `If-Match` | value of ETag     | value matches the latest value on the server | `204-No Content` | Response body SHOULD be empty.  |
+| DELETE      | `If-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
 
 #### Computing ETags
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
@@ -888,7 +1019,8 @@ Client libraries are required to send telemetry and distributed tracing informat
 :white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
 :no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
-#### Additional References
+
+**Additional References**
 - [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
 - [Azure SDK User-Agent header policy](https://azure.github.io/azure-sdk/general_azurecore.html#azurecore-http-telemetry-x-ms-useragent)
 - [Azure SDK Distributed tracing policy](https://azure.github.io/azure-sdk/general_azurecore.html#distributed-tracing-policy)
@@ -899,4 +1031,4 @@ These guidelines describe the upfront design considerations, technology building
 
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers.
 Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process.
-These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](.\ConsiderationsForServiceDesign.md).
+These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design. For more information on how to part with the Stewardship board, please refer to [Considerations for Service Design](./ConsiderationsForServiceDesign.md).

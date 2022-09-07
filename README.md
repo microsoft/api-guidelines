@@ -6,6 +6,12 @@ They may additionally create documents specific to their team, adding further gu
 We publish these guidelines here with the aim of fostering dialogue and learning in the API community at large.
 We further hope that these guidelines may encourage other organizations to create guidelines that are appropriate for them and in turn, if they are able, to publish theirs.
 
+### Additional guidance for Azure service teams
+Azure service teams should reference the companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information please refer to the [README](./azure/README.md) in the Azure folder. 
+
+### Additional guidance for Microsoft Graph service teams
+Graph service teams should reference the companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) when building or modifying their services. This document and the associated pattern catalog provides a refined set of guidance targeted specifically for Microsoft Graph services.
+
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
 ## Code of Conduct
