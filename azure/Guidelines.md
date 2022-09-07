@@ -6,6 +6,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2022-Aug-20 | Add "azure-deprecating" response header                        |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
@@ -191,6 +192,7 @@ _x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
 ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 _x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
+_azure-deprecating_ | Response   | (see [Deprecating Behavior](#Deprecating-Behavior))
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in _italics_
@@ -748,6 +750,20 @@ While removing a value from an enum is a breaking change, adding value to an enu
 ```
 
 > :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
+
+### Deprecating Behavior Notification
+
+When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a breaking change to the operation/service, the operation/service that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information. The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being.
+
+:white_check_mark: **DO** add the 'azure-deprercating' header with a string value to all service operations in your service's contract file (cadl/swagger).
+
+:white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. NOTE: We do not want to scare customers with this header.
+
+:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information. For example: 
+
+```text
+azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+```
 
 ### Repeatability of requests
 
