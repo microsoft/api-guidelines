@@ -21,7 +21,7 @@ Navigation properties are an [OData convention](https://docs.microsoft.com/en-us
      -  /user/{userId}/manager  represents many-to-one relationship
      -  /user/{userId}/messages represents one-to-many relationship
 
-Additionally, using the OData Expand query parameter, related entities can be transcluded into the primary entity so both can be retrieved in a single round trip.
+Additionally, using the OData Expand query parameter, related entities can be nested into the primary entity so both can be retrieved in a single round trip.
 
 ## Issues and Considerations
 -------------------------
