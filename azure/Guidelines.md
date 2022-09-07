@@ -755,8 +755,6 @@ When the [API Versioning](#API-Versioning) guidance above cannot be followed and
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-:white_check_mark: **DO** add the 'azure-deprecating' header with a string value to all service operations in your service's contract file (cadl/swagger).
-
 :white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
 > NOTE: We do not want to scare customers with this header.
 
