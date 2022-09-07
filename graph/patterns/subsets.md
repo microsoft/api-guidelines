@@ -25,12 +25,12 @@ The abstract base class should also hold an enum for all possible variants. The 
       <Property Name="membershipKind" Type="graph.membershipKind"/>
     </ComplexType>
 
-    <Enum Name="membershipKind">
+    <EnumType Name="membershipKind">
       <Member Name="all"/>
       <Member Name="enumerated"/>
       <Member Name="none"/>
       <Member Name="unknownFutureValue"/>
-    </Enum>
+    </EnumType>
 ```
 
 **Derived types**
@@ -61,11 +61,11 @@ These pattern type names should satisfy the following naming conventions:
       <Property Name="<type>Kind" Type="graph.<type>Kind"/>
     </ComplexType>
 
-    <Enum Name="<type>Kind">
+    <EnumType Name="<type>Kind">
       <Member Name="<value1>"/>
       <Member Name="<value2>"/>
       <Member Name="unknownFutureValue"/>
-    </Enum>
+    </EnumType>
 
     <ComplexType Name="value1<type>" BaseType="graph.<type>Base"/>
 

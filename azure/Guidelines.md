@@ -1,9 +1,13 @@
 # Microsoft Azure REST API Guidelines
+
+<!-- cspell:ignore autorest, BYOS, etag, idempotency, maxpagesize, innererror -->
+
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
+| 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |                 |
+| 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
 | 2022-Mar-25 | Update guideline for date values in headers to follow RFC 7231 |
@@ -138,7 +142,7 @@ GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
-:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, PATCH, POST, or DELETE method completes asynchronously.
+:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously.
 
 :white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
 
@@ -190,6 +194,7 @@ _x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
 ETag                | Response   | "67ab43" (see [Conditional Requests](#Conditional-Requests))
 last-modified       | Response   | Sun, 06 Nov 1994 08:49:37 GMT
 _x-ms-error-code_   | Response   | (see [Handling Errors](#Handling-Errors))
+_azure-deprecating_ | Response   | (see [Deprecating Behavior](#Deprecating-Behavior))
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
 :white_check_mark: **DO** support all headers shown in _italics_
@@ -511,6 +516,10 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 
 :white_check_mark: **DO** return a `nextLink` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
 
+Note: The service is responsible for performing any URL-encoding required on the `nextLink` URL.
+
+:white_check_mark: **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
+
 :ballot_box_with_check: **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
 
 :no_entry: **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
@@ -697,7 +706,11 @@ Azure services need to change over time. However, when changing a service, there
 
 :white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
 
-:white_check_mark: **DO** use an `api-version` query parameter with a `YYYY-MM-DD` date value, with a `-preview` suffix for a preview service.
+Clients specify the version of the API to be used in every request to the service, even requests to an `Operation-Location` or `nextLink` URL returned by the service.
+
+:white_check_mark: **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
+
+:white_check_mark: **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
 
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
@@ -740,6 +753,20 @@ While removing a value from an enum is a breaking change, adding value to an enu
 
 > :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
+### Deprecating Behavior Notification
+
+When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a breaking change to the operation/service, the operation/service that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information. The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being.
+
+:white_check_mark: **DO** add the 'azure-deprercating' header with a string value to all service operations in your service's contract file (cadl/swagger).
+
+:white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. NOTE: We do not want to scare customers with this header.
+
+:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information. For example: 
+
+```text
+azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+```
+
 ### Repeatability of requests
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
@@ -760,86 +787,119 @@ implemented as a _long-running operation (LRO)_. This allows clients to continue
 operation is being processed. The client obtains the outcome of the operation at some later time
 through another API call.
 See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
-Considerations for Service Design for an introduction to the design of long running operations.
+Considerations for Service Design for an introduction to the design of long-running operations.
 
 :white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
+
+:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
 
 In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
 it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
 
-There are two basic patterns that can be used for long-running operations:
-1. Resource-based long-running operations (RELO)
-2. Long-running operations with status monitor
+There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
+operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
+The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
+For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
+These are described in the following two sections.
 
-:white_check_mark: **DO** use the RELO pattern when the operation is on a resource that contains a "status" property that can be used to obtain the outcome of the operation.
+#### POST or DELETE LRO pattern
 
-:ballot_box_with_check: **YOU SHOULD** only use the status monitor LRO pattern when the RELO pattern is not applicable.
+A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
+a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
 
-#### Resource-based long-running operations
+:no_entry: **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
 
-Some common situations where the RELO pattern should be used:
-1. A "create" operation (PUT, PATCH, or POST) for a resource where the basic structure of the resource is created immediately and includes a status field that indicates when the create has completed, e.g. "provisioning" -> "active".
-2. An action operation for a resource where both the initiation of the action and the completion of the action cause a change to the "status" property of the resource.
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
-:white_check_mark: **DO** return a `200-OK` response, `201-Created` for create operations, from the request that initiates the operation.  The response body should contain a representation of the resource that clearly indicates that the operation has been accepted or started.
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** support a get method on the resource that returns a representation of the resource including the status field that indicates when the operation has completed.
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-:white_check_mark: **DO** define the "status" field of the resource as an enum with all the values it may contain including the "terminal" values "Succeeded", "Failed", and "Canceled". See [Enums & SDKs](#enums--sdks-client-libraries).
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:ballot_box_with_check: **YOU SHOULD** use the name `status` for the "status" field of the resource.
+:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
-#### Long-running operations with status monitor
+:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
-In a long-running operation with status monitor, the client makes a request to initiate the operation processing and receives a URL in the response where it can obtain the operation results. The [HTTP specification](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) calls the target of this URL a "status monitor".
+:white_check_mark: **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
 
-:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO with status monitor if the processing of the operation was successfully initiated.
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-:white_check_mark: **DO** perform as much validation of the initial request as practical and return an error response immediately when appropriate (without starting the operation).
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
-:white_check_mark: **DO** return the status monitor URL in the `Operation-Location` response header.
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
-:white_check_mark: **DO** support the `get` method on the status monitor endpoint that returns a `200-OK` response with a response body that contains the completion status of the operation with sufficient information to diagnose any potential failures.
+#### PUT operation with additional long-running processing
 
-:white_check_mark: **DO** include a field in the status monitor resource named `status` indicating the operation's status. This field should be a string with well-defined values. Indicate the terminal state using "Succeeded", "Failed", or "Canceled".
+For a PUT (create or replace) with additional long-running processing:
 
-:white_check_mark: **DO** include a field in the status monitor named `error` to contain error information -- minimally `code` and `message` fields -- when an operation fails.
+:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
-:white_check_mark: **DO** retain the status monitor resource for some documented period of time (at least 24 hours) after the operation completes.
+:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-:white_check_mark: **DO** include a `Retry-After` header in the response to the initiating request and requests to the operation-location URL. The value of this header should be an integer number of seconds to wait before making the next request to the operation-location URL.
+:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-:heavy_check_mark: **YOU MAY** support a `get` method on the status monitor collection URL that returns a list of status monitors for all recently initiated operations.
+:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of a status-monitor LRO -- return `202-Accepted` and a status monitor URL even if processing was completed before the initiating request returns.
+:white_check_mark: **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
 
-:no_entry: **DO NOT** return any data in the response body of a `202-Accepted` response.
+:white_check_mark: **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
 
-Previous Azure guidelines specified "Azure-AsyncOperation" as the name of the response header containing the status monitor URL.
+:white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
 
-:white_check_mark: **DO** return **both** `Azure-AsyncOperation` and `Operation-Location` headers if your service previously returned `Azure-AsyncOperation`, even though they are redundant, so that existing clients will continue to operate.
+:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-:white_check_mark: **DO** return the same value for **both** headers.
+:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
-:white_check_mark: **DO** look for **both** headers in client code, preferring the `Operation-Location` header.
+:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
-### Bring your own Storage
-When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
-While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions.
+#### Obtaining status and results of long-running operations
 
-:white_check_mark: **DO** use Azure Bring Your Own Storage.
+For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
 
-:white_check_mark: **DO** use a blob prefix
+:white_check_mark: **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+
+:white_check_mark: **DO** return a status monitor in the response body that conforms with the following structure:
+
+**OperationStatus** : Object
+
+Property | Type        | Required | Description
+-------- | ----------- | :------: | -----------
+`id`     | string      | true     | The unique id of the operation
+`status` | string      | true     | enum that includes terminal values "Succeeded", "Failed", "Canceled"
+`error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
+`result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
+additional<br/>properties | |     | Additional named or dynamic properties of the operation
+
+:white_check_mark: **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
+
+:white_check_mark: **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
+
+:white_check_mark: **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+
+:no_entry: **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+
+:white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
+
+### Bring your own Storage (BYOS)
+Many services need to store and retrieve data files. For this scenario, the service should not implement its own 
+storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer 
+"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service. 
+
+While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
+
+:white_check_mark: **DO** use the Bring Your Own Storage pattern
+
+:white_check_mark: **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
 
 :no_entry: **DO NOT** require a fresh container per operation
 
-#### Authentication
-How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach.
-It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources.
+:white_check_mark: **DO** use managed identity and Role Based Access Control ([RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview)) as the mechanism allowing customers to grant permission to their Storage account to your service.
 
 :white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
 
 :white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
+
 
 ##### Handling 'downstream' errors
 It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
@@ -850,52 +910,52 @@ It is not uncommon to rely on other services, e.g. storage, when implementing yo
 Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
 
 ##### Single file access
-Desiging an API for accessing a single file, depending on your scenario, is relatively straight forward.
+Designing an API for accessing a single file, depending on your scenario, is relatively straight forward.
 
 :heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
 
 :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
 
-:ballot_box_with_check: **YOU SHOULD** support managed identity using Azure Storage by default (if using Azure services).
+:white_check_mark: **DO** return an HTTP status code representing the result of your service operation's behavior. 
 
-###### File Versioning
-Depending on your requirements, there are scenarios where users of your service will require a specific version of a file. For example, you may need to keep track of configuration changes over time to be able to rollback to a previous state. In these scenarios, you will need to provide a mechanism for accessing a specific version.
+:white_check_mark: **DO** include the Storage error information in the 'inner-error' section of an error response if the error was the result of an internal Storage operation failure. This helps the client determine the underlying cause of the error, e.g.: a missing storage object or insufficient permissions. 
 
-:white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file.
-##### File Collections
-When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
+:white_check_mark: **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
 
-:white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well.
+:heavy_check_mark: **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use. When reading a file, your service passes this timestamp to Azure Storage using the [if-unmodified-since](https://datatracker.ietf.org/doc/html/rfc7232#section-3.4) request header. If the Storage operation fails with 412, the Storage object was modified and your service operation should return an appropriate 4xx status code and return the Storage error in your operation's 'inner-error' (see guideline above).
 
-:white_check_mark: **DO** When using managed identity, ensure the customer has given the proper permissions to access the file container to the service.
+:white_check_mark: **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/en-us/rest/api/storageservices/list-blobs)
 
-A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process, e.g. "input" and a location(s) to place the any files that result from processing, e.g. "output." (Note: the terms "input" and "output" are just examples and terms more relevant to the service domain are more appropriate.)
+:heavy_check_mark: **YOU MAY** offer an ```extensions``` field representing an array of strings indicating file extensions of desired blobs within the logical folder. 
 
-For example, in a request payload may look similar to the following:
+A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process ("input") and a location(s) to place any files that result from processing ("output"). Note: the terms "input" and "output" are just examples; use terms more appropriate to your service's domain.
+
+For example, a service's request body to configure BYOS may look like this:
 
 ```json
 {
-"input":{
+  "input":{
     "location": "https://mycompany.blob.core.windows.net/documents/english/?<sas token>",
+    "delimiter": "/",
+    "extensions" : [ ".bmp", ".jpg", ".tif", ".png" ],
+    "lastModified": "Wed, 21 Oct 2015 07:28:00 GMT"
+  },
+  "output":{
+    "location": "https://mycompany.blob.core.windows.net/documents/spanish/?<sas token>",
     "delimiter":"/"
-    },
-"output":{
-    "location": "https://mycompany.blob.core.windows.net/documents/spanglish/?<sas token>",
-    "delimiter":"/"
-    }
+  }
 }
 ```
-Note: How the service gets the request body is outside the purview of these guidelines.
 
-Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. However, for each of the "input" sections the following apply:
+Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. 
 
-:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter."
+:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter". For "location", the customer must pass a URL to a blob prefix which represents a directory. For "delimiter", the customer must specify the delimiter character they desire to use in the location URL; typically "/" or "\". 
 
-:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of `listing` and `read` permissions.
+:heavy_check_mark: **YOU MAY** support the "lastModified" field for input directories (see guideline above).
 
-For each of the "output" sections the following apply:
+:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `listing` and `read` permissions for input directories.
 
-:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of `write` permissions
+:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `write` permissions for output directories.
 
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
