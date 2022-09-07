@@ -6,7 +6,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Aug-20 | Add "azure-deprecating" response header                        |
+| 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |                 |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
@@ -65,18 +65,20 @@ A Uniform Resource Locator (URL) is how developers access the resources of your 
 
 :white_check_mark: **DO** use this URL pattern:
 ```text
-https://<service>.<cloud>/<tenant>/<service-root>/<resource-collection>/<resource-id>/
+https://<tenant>.<region>.<service>.<cloud>/<service-root>/<resource-collection>/<resource-id>
 ```
 
 Where:
  | Field | Description
  | - | - |
+ | tenant | Regionally-unique ID representing a tenant (used for isolation, billing, quota enforcement, lifetime of resources, etc.)
+ | region | Identifies the tenant's selected region. This region string MUST match one of the strings in the "Name" column returned from running this Azure CLI's "az account list-locations -o table"
  | service | Name of the service (ex: blobstore, servicebus, directory, or management)
  | cloud | Cloud domain name, e.g. `azure.net` (see Azure CLI's "az cloud list")
- | tenant | Globally-unique ID of container representing tenant isolation, billing, enforced quotas, lifetime of containers (ex: subscription UUID)
  | service&#x2011;root | Service-specific path (ex: blobcontainer, myqueue)
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
- | resource&#x2011;id | Value of the unique id property. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+ | resource&#x2011;id | Id of resource within the resource-collection. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
+ 
 
 :white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
