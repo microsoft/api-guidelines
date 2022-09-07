@@ -879,23 +879,25 @@ additional<br/>properties | |     | Additional named or dynamic properties of th
 
 :white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
-### Bring your own Storage
-When implementing your service, it is very common to store and retrieve data and files. When you encounter this scenario, avoid implementing your own storage strategy and instead use Azure Bring Your Own Storage (BYOS). BYOS provides significant benefits to service implementors, e.g. security, an aggressively optimized frontend, uptime, etc.
-While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS will provide the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders, nor do they have extensions.
+### Bring your own Storage (BYOS)
+Many services need to store and retrieve data files. For this scenario, the service should not implement its own 
+storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer 
+"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service. 
 
-:white_check_mark: **DO** use Azure Bring Your Own Storage.
+While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
 
-:white_check_mark: **DO** use a blob prefix
+:white_check_mark: **DO** use the Bring Your Own Storage pattern
+
+:white_check_mark: **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
 
 :no_entry: **DO NOT** require a fresh container per operation
 
-#### Authentication
-How you secure and protect the data and files that your service uses will not only affect how consumable your API is, but also, how quickly you can evolve and adapt it. Implementing Role Based Access Control [RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview) is the recommended approach.
-It is important to recognize that any roles defined in RBAC essentially become part of your API contract. For example, changing a role's permissions, e.g. restricting access, could effectively cause existing clients to break, as they may no longer have access to necessary resources.
+:white_check_mark: **DO** use managed identity and Role Based Access Control ([RBAC](https://docs.microsoft.com/en-us/azure/role-based-access-control/overview)) as the mechanism allowing customers to grant permission to their Storage account to your service.
 
 :white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
 
 :white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
+
 
 ##### Handling 'downstream' errors
 It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
@@ -912,46 +914,46 @@ Designing an API for accessing a single file, depending on your scenario, is rel
 
 :ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
 
-:ballot_box_with_check: **YOU SHOULD** support managed identity using Azure Storage by default (if using Azure services).
+:white_check_mark: **DO** return an HTTP status code representing the result of your service operation's behavior. 
 
-###### File Versioning
-Depending on your requirements, there are scenarios where users of your service will require a specific version of a file. For example, you may need to keep track of configuration changes over time to be able to rollback to a previous state. In these scenarios, you will need to provide a mechanism for accessing a specific version.
+:white_check_mark: **DO** include the Storage error information in the 'inner-error' section of an error response if the error was the result of an internal Storage operation failure. This helps the client determine the underlying cause of the error, e.g.: a missing storage object or insufficient permissions. 
 
-:white_check_mark: **DO** Enable the customer to provide an ETag to specify a specific version of a file.
-##### File Collections
-When your users need to work with multiple files, for example a document translation service, it will be important to provide them access to the collection, and its contents, in a consistent manner. Because there is no industry standard for working with containers, these guidelines will recommend that you leverage Azure Storage. Following the guidelines above, you also want to ensure that you don't expose file system constructs, e.g. folders, and instead use storage constructs, e.g. blob prefixes.
+:white_check_mark: **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
 
-:white_check_mark: **DO** When using a Shared Access Signature (SAS), ensure this is assigned to the container and that the permissions apply to the content as well.
+:heavy_check_mark: **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use. When reading a file, your service passes this timestamp to Azure Storage using the [if-unmodified-since](https://datatracker.ietf.org/doc/html/rfc7232#section-3.4) request header. If the Storage operation fails with 412, the Storage object was modified and your service operation should return an appropriate 4xx status code and return the Storage error in your operation's 'inner-error' (see guideline above).
 
-:white_check_mark: **DO** When using managed identity, ensure the customer has given the proper permissions to access the file container to the service.
+:white_check_mark: **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/en-us/rest/api/storageservices/list-blobs)
 
-A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process, e.g. "input" and a location(s) to place the any files that result from processing, e.g. "output." (Note: the terms "input" and "output" are just examples and terms more relevant to the service domain are more appropriate.)
+:heavy_check_mark: **YOU MAY** offer an ```extensions``` field representing an array of strings indicating file extensions of desired blobs within the logical folder. 
 
-For example, in a request payload may look similar to the following:
+A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process ("input") and a location(s) to place any files that result from processing ("output"). Note: the terms "input" and "output" are just examples; use terms more appropriate to your service's domain.
+
+For example, a service's request body to configure BYOS may look like this:
 
 ```json
 {
-"input":{
+  "input":{
     "location": "https://mycompany.blob.core.windows.net/documents/english/?<sas token>",
+    "delimiter": "/",
+    "extensions" : [ ".bmp", ".jpg", ".tif", ".png" ],
+    "lastModified": "Wed, 21 Oct 2015 07:28:00 GMT"
+  },
+  "output":{
+    "location": "https://mycompany.blob.core.windows.net/documents/spanish/?<sas token>",
     "delimiter":"/"
-    },
-"output":{
-    "location": "https://mycompany.blob.core.windows.net/documents/spanglish/?<sas token>",
-    "delimiter":"/"
-    }
+  }
 }
 ```
-Note: How the service gets the request body is outside the purview of these guidelines.
 
-Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. However, for each of the "input" sections the following apply:
+Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none. 
 
-:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter."
+:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter". For "location", the customer must pass a URL to a blob prefix which represents a directory. For "delimiter", the customer must specify the delimiter character they desire to use in the location URL; typically "/" or "\". 
 
-:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of `listing` and `read` permissions.
+:heavy_check_mark: **YOU MAY** support the "lastModified" field for input directories (see guideline above).
 
-For each of the "output" sections the following apply:
+:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `listing` and `read` permissions for input directories.
 
-:white_check_mark: **DO** use a URL to a blob prefix with a container scoped SAS on the end with a minimum of `write` permissions
+:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `write` permissions for output directories.
 
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
