@@ -71,11 +71,12 @@ HTTP/1.1 202 Accepted
     "request-id": "8b53016f-cc2b-4d9f-9818-bd6f0a5e3cd0"
 ```
 
-`forward` operation is modeled as an asynchronous action bound to the Graph `event` entity type because the operation represents a complex business logic processed on the server side. 
+`forward` operation is modeled as an asynchronous action bound to the Graph `message` entity type because the operation represents a complex business logic processed on the server side. 
 ```
-<Action Name="forward" IsBound="true" >
-        <Parameter Name="bindingParameter" Type="graph.event" />
+<Action Name="forward" IsBound="true">
+        <Parameter Name="bindingParameter" Type="graph.message" />
         <Parameter Name="ToRecipients" Type="Collection(graph.recipient)" />
+        <Parameter Name="Message" Type="graph.message" />
         <Parameter Name="Comment" Type="Edm.String" Unicode="false" />
 </Action>
 ```
