@@ -755,18 +755,31 @@ While removing a value from an enum is a breaking change, adding value to an enu
 
 ### Deprecating Behavior Notification
 
-When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a breaking change to the operation/service, the operation/service that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information. The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being.
+When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a [breaking change](#123-definition-of-a-breaking-change) to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
 
-:white_check_mark: **DO** add the 'azure-deprercating' header with a string value to all service operations in your service's contract file (cadl/swagger).
+The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-:white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. NOTE: We do not want to scare customers with this header.
+:white_check_mark: **DO** include this header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
+> NOTE: We do not want to scare customers with this header.
 
-:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information. For example: 
+:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
 
+Deprecations should use the following pattern:
 ```text
-azure-deprecating: api-version=2009-27-07 will stop working on 2022-12-01 (https://azure.microsoft.com/en-us/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will stop working on 2020-10-30 (https://azure.microsoft.com/en-us/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+<description> will retire on <date> (`url`);
 ```
 
+Where the following placeholders should be provided:
+- `description`: a human-readable description of what is being deprecated
+- `date`: the target date that this will be deprecated. This should be expressed following the format in [ISO 8601](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "2022-10-31".
+- `url`: a fully qualified url that the user can follow to learn more about what is being deprecated, preferably to Azure Updates.
+
+For example: 
+```text
+azure-deprecating: API version 2009-27-07 will retire on 2022-12-01 (https://azure.microsoft.com/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will retire on 2020-10-30 (https://azure.microsoft.com/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
+```
+
+:no_entry: **DO NOT** introduce this header without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
 ### Repeatability of requests
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
