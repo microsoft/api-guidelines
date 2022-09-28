@@ -524,7 +524,9 @@ Note: The service is responsible for performing any URL-encoding required on the
 
 :no_entry: **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
 
-:no_entry: **DO NOT** ever return a `nextLink` field with a value of null.
+:no_entry: **DO NOT** return the `nextLink` field with a value of null.
+
+:warning: **YOU SHOULD NOT** return a `count` of all objects in the collection as this may be expensive to compute.
 
 #### Query options
 :heavy_check_mark: **YOU MAY** support the following query parameters allowing customers to control the list operation:
