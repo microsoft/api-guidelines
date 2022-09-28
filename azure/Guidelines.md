@@ -59,6 +59,7 @@ This document offers prescriptive guidance labeled as follows:
 ## Building Blocks: HTTP, REST, & JSON
 The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet; namely HTTP, REST, and JSON. This section provides you with a general understanding of how these technologies should be applied when creating your service.
 
+<a name="http"></a>
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
 
@@ -260,6 +261,7 @@ Your service should include the `x-ms-request-id` value in error logs so that us
 - [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
 - [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
+<a name="rest"></a>
 ### REpresentational State Transfer (REST)
 REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items.
 These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#uniform-resource-locators-urls) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
@@ -273,7 +275,7 @@ When designing your service, it is important to optimize for the developer using
 <a name="rest-paths-make-sense"></a>
 :white_check_mark: **DO** ensure your resource paths make sense
 
-<a name="rest-simpify-operations"></a>
+<a name="rest-simplify-operations"></a>
 :white_check_mark: **DO** simplify operations with few required query parameters & JSON fields
 
 <a name="rest-specify-string-value-constraints"></a>
@@ -425,6 +427,7 @@ Example:
 <a name="rest-error-use-default-response"></a>
 :warning: **YOU SHOULD NOT** document specific error status codes in your OpenAPI/Swagger spec unless the "default" response cannot properly describe the specific error response (e.g. body schema is different).
 
+<a name="json"></a>
 ### JSON
 
 <a name="json-field-name-casing"></a>
@@ -539,6 +542,7 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 
 ## Common API Patterns
 
+<a name="actions"></a>
 ### Performing an Action
 The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image or rebooting a VM.  It is also sometimes useful to perform an action on a collection.
 
@@ -583,6 +587,7 @@ Note: To avoid potential collision of actions and resource ids, you should disal
 <a name="actions-no-actions-for-crud"></a>
 :no_entry: **DO NOT** use an action operation when the operation behavior could reasonably be defined as one of the standard REST Create, Read, Update, Delete, or List operations.
 
+<a name="collections"></a>
 ### Collections
 <a name="collections-response-is-object"></a>
 :white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
@@ -831,6 +836,7 @@ If supporting `top`:
 <a name="collections-maxpagesize-might-return-fewer"></a>
 :white_check_mark: **DO** make clear in documentation of the `maxpagesize` parameter that the operation may choose to return fewer resources than the value specified.
 
+<a name="versioning"></a>
 ### API Versioning
 
 Azure services need to change over time. However, when changing a service, there are 2 requirements:
@@ -895,6 +901,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 <a name="versioning-use-extensible-enums"></a>
 :ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
+<a name="deprecation"></a>
 ### Deprecating Behavior Notification
 
 When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a [breaking change](#123-definition-of-a-breaking-change) to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
@@ -926,6 +933,7 @@ azure-deprecating: API version 2009-27-07 will retire on 2022-12-01 (https://azu
 <a name="deprecation-header-review"></a>
 :no_entry: **DO NOT** introduce this header without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
 
+<a name="repeatability"></a>
 ### Repeatability of requests
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
@@ -937,6 +945,7 @@ The ability to retry failed requests for which a client never received a respons
 - A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
 - When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
 
+<a name="lro"></a>
 ### Long-Running Operations & Jobs
 
 When the processing for an operation may take a significant amount of time to complete, it should be
@@ -1065,6 +1074,7 @@ additional<br/>properties | |     | Additional named or dynamic properties of th
 <a name="lro-status-monitor-retention"></a>
 :white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
+<a name="byos"></a>
 ### Bring your own Storage (BYOS)
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own
 storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer
@@ -1161,6 +1171,7 @@ Depending on the requirements of the service, there can be any number of "input"
 <a name="byos-sas-for-output-location"></a>
 :white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `write` permissions for output directories.
 
+<a name="condreq"></a>
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
 Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an `ETag` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with.
@@ -1240,6 +1251,7 @@ While it may be tempting to use a revision/version number for the resource as th
 <a name="condreq-etag-depends-on-encoding"></a>
 :white_check_box: **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
 
+<a name="telemetry"></a>
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the `User-Agent` header, `X-MS-UserAgent` header, and Open Telemetry.
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
