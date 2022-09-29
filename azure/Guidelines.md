@@ -564,7 +564,7 @@ The value of the `filter` option is an expression involving the fields of the re
 Example: return all Products whose Price is less than $10.00
 
 ```text
-GET https://api.contoso.com/products?`filter`=price lt 10.00
+GET https://api.contoso.com/products?filter=price lt 10.00
 ```
 
 ##### `filter` operators
@@ -612,31 +612,31 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk'
+GET https://api.contoso.com/products?filter=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name ne 'Milk'
+GET https://api.contoso.com/products?filter=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
