@@ -74,7 +74,7 @@ Content-Type: application/json
 This navigation property could be described with the following CSDL: 
 ```xml
 <EntityType Name="user">
-  <NavigationProperty Name="manager" Type="user" ContainsTarget="false" >
+  <NavigationProperty Name="manager" Type="graph.user" ContainsTarget="false" >
 </EntityType>
 ```
 `ContainsTarget` is set to false for clarity, this is the default value when the attribute is omitted.
