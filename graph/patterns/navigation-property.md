@@ -77,7 +77,7 @@ This navigation property could be described with the following CSDL:
   <NavigationProperty Name="manager" Type="user" ContainsTarget="false" >
 </EntityType>
 ```
-
+`ContainsTarget` is set to false for clarity, this is the default value when the attribute is omitted.
 ### Retrieving a reference to a related entity
 
 ```http
