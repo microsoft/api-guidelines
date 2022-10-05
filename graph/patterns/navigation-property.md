@@ -65,7 +65,6 @@ GET /users/{id}/manager
 Content-Type: application/json
 
 {
-  "@odata.type": "#microsoft.graph.user",
   "id": "6b3ee805-c449-46a8-aac8-8ff9cff5d213",
   "displayName": "Bob Boyce"
 }
