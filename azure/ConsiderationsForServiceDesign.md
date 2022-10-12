@@ -86,7 +86,7 @@ As you build out your service and API, there are a number of decisions that can 
 
 ## Use Good Names
 
-Good names for resources, properties, operations, and parameters are essential to a good developer experience.
+Good names for resources, properties, operations, and parameters are essential to a great developer experience.
 
 Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand.
 Avoid names that refer to service implementation details, e.g. "TreeLeafNode", or simply describe the structure of value without
@@ -128,7 +128,7 @@ For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
 :warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
 
-:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages.
+:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
 
 :no_entry: **DO NOT** use "is" prefix in names of `boolean` values.
 
@@ -148,7 +148,7 @@ The following are recommended names for properties that match the associated des
 
 ### `name` vs `id`
 
-:heavy_check_mark: **DO** use "Id" suffix for the name of rhe identifier of a resource.
+:heavy_check_mark: **DO** use "Id" suffix for the name of the identifier of a resource.
 
 This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
 
