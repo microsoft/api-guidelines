@@ -16,12 +16,12 @@ The use of foreign key properties to describe related resources is a weakly type
 ## Solution
 --------
 
-Navigation properties are an [OData convention](https://docs.microsoft.com/en-us/odata/webapi/model-builder-untyped#navigation-property) defined in the [CSDL Specification](https://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530365) that allows an API designer to describe a special kind of property in a model that references an related entity. In the HTTP API this property name translates to a path segment that can be appended to the URL of the primary resource in order to access a representation of the related resource. This prevents the client from needing to know any additional information on how to construct the URL to the related resource and the client does not need to retrieve the primary resource if it is only interested in the related resource.  It is the responsibility of the API implementation to determine the Id of the related resource and return the representation of the related entity.
+Navigation properties are an [OData convention](https://docs.microsoft.com/en-us/odata/webapi/model-builder-untyped#navigation-property) defined in the [CSDL Specification](https://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530365) that allows an API designer to describe a special kind of property in a model that references an related entity. In the HTTP API this property name translates to a path segment that can be appended to the URL of the primary resource in order to access a representation of the related resource. This prevents the client from needing to know any additional information on how to construct the URL to the related resource and the client does not need to retrieve the primary resource if it is only interested in the related resource.  It is the responsibility of the API implementation to determine the Id of the related resource and return the representation of the related entity. For example:
 
-e.g. /user/{userId}/manager  # many-to-one relationship
-     /user/{userId}/messages # one-to-many relationship
+     -  /user/{userId}/manager  represents many-to-one relationship
+     -  /user/{userId}/messages represents one-to-many relationship
 
-Additionally, using the OData Expand query parameter, related entities can be transcluded into the primary entity so both can be retrieved in a single round trip.
+Additionally, using the OData Expand query parameter, related entities can be nested into the primary entity so both can be retrieved in a single round trip.
 
 These relationships can be described in CSDL as follows:
 
@@ -100,7 +100,6 @@ GET /users/{id}/manager
 Content-Type: application/json
 
 {
-  "@odata.type": "#microsoft.graph.user",
   "id": "6b3ee805-c449-46a8-aac8-8ff9cff5d213",
   "displayName": "Bob Boyce"
 }
@@ -109,10 +108,10 @@ Content-Type: application/json
 This navigation property could be described with the following CSDL: 
 ```xml
 <EntityType Name="user">
-  <NavigationProperty Name="manager" Type="user" ContainsTarget="false" >
+  <NavigationProperty Name="manager" Type="graph.user" ContainsTarget="false" >
 </EntityType>
 ```
-
+`ContainsTarget` is set to false for clarity, this is the default value when the attribute is omitted.
 ### Retrieving a reference to a related entity
 
 ```http
