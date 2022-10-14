@@ -94,7 +94,7 @@ One-to-many relationships may be contained or non-contained relations.
 ### Retrieving a related entity
 
 ```http
-GET /users/{id}/manager
+GET /users/{id}/manager?$select=id,displayName
 
 200 OK
 Content-Type: application/json
@@ -171,19 +171,6 @@ Content-Type: application/json
 {
     "displayName": "Bob",
     "manager@odata.bind": "https://graph.microsoft.com/v1.0/users/{managerId}"
-}
-
-204 No Content
-```
-
-Create a relationship between the user and the existing manager.
-
-```http
-PUT /users/{id}/manager/$ref
-Content-Type: application/json
-
-{
-    "@odata.id": "https://graph.microsoft.com/v1.0/users/{managerId}"
 }
 
 204 No Content
