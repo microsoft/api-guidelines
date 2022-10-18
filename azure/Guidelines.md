@@ -1054,7 +1054,7 @@ For all long-running operations, the client will issue a GET on a status monitor
 Property | Type        | Required | Description
 -------- | ----------- | :------: | -----------
 `id`     | string      | true     | The unique id of the operation
-`status` | string      | true     | enum that includes terminal values "Succeeded", "Failed", "Canceled"
+`status` | string      | true     | enum that includes values "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
 `error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
 `result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
 additional<br/>properties | |     | Additional named or dynamic properties of the operation
