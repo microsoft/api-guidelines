@@ -89,8 +89,8 @@ As you build out your service and API, there are a number of decisions that can 
 Good names for resources, properties, operations, and parameters are essential to a great developer experience.
 
 Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand.
-Avoid names that refer to service implementation details, e.g. "TreeLeafNode", or simply describe the structure of value without
-describing its purpose, e.g. "KeyValuePair".
+Use names that correspond to user scenarios rather than service implementation details, e.g. "Diagnosis" and not "TreeLeafNode".
+Names should convey the value's purpose and not simply describe its structure, e.g. "ConfigurationSetting" and not "KeyValuePair".
 Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product's portal/user interface, and industry standards.
 
 Names should aid developers in discovering functionality without having to constantly refer to documentation.
@@ -128,7 +128,7 @@ For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
 :warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
 
-:no_entry: **DO NOT** use "is" prefix in names of `boolean` values.
+:no_entry: **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
 
 :no_entry: **DO NOT** use redundant words in names.
 
@@ -167,7 +167,7 @@ Before releasing your API plan to invest significant design effort, get customer
 As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
 Azure has a well established breaking changes policy that describes how to approach these kinds of changes. As part of this policy, the service team is required to clearly communicate to customers when their API is changing, e.g. deprecating operations. Often, this is done via an email to the address that is attached to the Azure subscription.
 
-However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specied in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
+However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specifed in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
 This header is targeted at developers or operation professionals, and it is intended to give them enough information and lead time to properly adapt to this change. Your documentation should reference this header and encourage logging and alerting practices based on its presence.
 
 ## Avoid Surprises
