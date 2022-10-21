@@ -84,6 +84,72 @@ As you build out your service and API, there are a number of decisions that can 
 
 :ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
+## Use Good Names
+
+Good names for resources, properties, operations, and parameters are essential to a great developer experience.
+
+Resources are described by nouns. Resource and property names must be descriptive and easy for customers to understand.
+Use names that correspond to user scenarios rather than service implementation details, e.g. "Diagnosis" and not "TreeLeafNode".
+Names should convey the value's purpose and not simply describe its structure, e.g. "ConfigurationSetting" and not "KeyValuePair".
+Ease of understanding comes from familiarity and recognition; you should favor consistency with other Azure services, names in the product's portal/user interface, and industry standards.
+
+Names should aid developers in discovering functionality without having to constantly refer to documentation.
+Use common patterns and standard conventions to aid developers in correctly guessing common property names and meanings.
+Use verbose naming patterns and avoid abbreviations other than
+well-known acronyms in your service domain.
+
+:heavy_check_mark: **DO** use the same name for the same concept and different names for different concepts wherever possible.
+
+### Recommended Naming Conventions
+
+The following are recommended naming conventions for Azure services:
+
+:heavy_check_mark: **DO** name collections as plural nouns or plural noun phrases using correct English.
+
+:heavy_check_mark: **DO** name values that are not collections as singular nouns or singular noun phrases.
+
+:ballot_box_with_check: **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
+
+For example, `collectedItems` not `itemsCollected`
+
+:ballot_box_with_check: **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
+
+For example, `nextUrl` not `nextURL`.
+
+:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
+
+:ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
+
+For example, `expirationDays` as `int` and not `expiration` as `date-time`.
+
+:warning: **YOU SHOULD NOT** use brand names in resource or property names.
+
+:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
+
+:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
+
+:no_entry: **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
+
+:no_entry: **DO NOT** use redundant words in names.
+
+For example, `/phones/number` and not `phone/phoneNumber`.
+
+### Common names
+
+The following are recommended names for properties that match the associated description:
+
+| Name | Description |
+|------------- | --- |
+| createdDateTime | The date-time that the resource was created |
+| updatedDateTime | The date-time that the resource was last updated/modified |
+| kind   | The discriminator value for a polymorphic resource |
+
+### `name` vs `id`
+
+:heavy_check_mark: **DO** use "Id" suffix for the name of the identifier of a resource.
+
+This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
+
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
@@ -101,7 +167,7 @@ Before releasing your API plan to invest significant design effort, get customer
 As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
 Azure has a well established breaking changes policy that describes how to approach these kinds of changes. As part of this policy, the service team is required to clearly communicate to customers when their API is changing, e.g. deprecating operations. Often, this is done via an email to the address that is attached to the Azure subscription.
 
-However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specied in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
+However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specifed in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
 This header is targeted at developers or operation professionals, and it is intended to give them enough information and lead time to properly adapt to this change. Your documentation should reference this header and encourage logging and alerting practices based on its presence.
 
 ## Avoid Surprises
@@ -111,7 +177,7 @@ One common area of friction for developers is _polymorphism_ -- where a value ma
 Polymorphism can be beneficial in certain cases, e.g. as a way to express inheritance, but also creates friction
 because it requires the value to be introspected before being processed and cannot be represented in a natural/useful way in many type-safe languages.
 
-:ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint **SHOULD** work with a single type to avoid problems during SDK creation.
+:ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint **YOU SHOULD** work with a single type to avoid problems during SDK creation.
 
 :ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so. If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
 
