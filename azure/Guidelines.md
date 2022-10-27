@@ -636,7 +636,7 @@ Note: The service is responsible for performing any URL-encoding required on the
 <a name="collections-nextlink-value-never-null"></a>
 :no_entry: **DO NOT** return the `nextLink` field with a value of null.
 
-<a name="collections-avoid-count-property></a>
+<a name="collections-avoid-count-property"></a>
 :warning: **YOU SHOULD NOT** return a `count` of all objects in the collection as this may be expensive to compute.
 
 #### Query options
