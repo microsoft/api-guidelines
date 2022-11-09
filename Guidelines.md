@@ -493,7 +493,7 @@ For organizations to have a successful platform, they must serve data in formats
 
 Web-based communication, especially when a mobile or other low-bandwidth client is involved, has moved quickly in the direction of JSON for a variety of reasons, including its tendency to be lighter weight and its ease of consumption with JavaScript-based clients.
 
-JSON property names SHOULD be camelCased.
+JSON property names SHOULD be lowerCamelCased.
 
 Services SHOULD provide JSON as the default encoding.
 
