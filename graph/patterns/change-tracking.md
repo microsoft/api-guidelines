@@ -1,4 +1,4 @@
-# Change notification
+# Change tracking
 
 Microsoft Graph API Design Pattern
 
@@ -47,7 +47,7 @@ When API consumers need guaranteed data integrity over the set of changes to Gra
 
     or to some logical parent resource, where the change records are implied to be relative to all collections contained within the parent, for example
     `/me/planner/all/delta` – this returns changes to any resource within planner that a user is subscribed to as a heterogenous collection.
-- Delta payload requirements [OData spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_DeltaPayloadResponse)
+- Delta payload requirements
   - The payload is a collection of change records using the standard Graph collection format.
   - The change records are full or partial representations of the resources that changed using the standard Graph types for the resources.
   - When a change representing a resource update is included in the payload the API producer MAY return either the changed properties or the full entity. The id of the resource MUST be included in every change record. - The nextLink provides a mechanism to do server-driven paging through the change data that is currently available.  When there are no further pages of changes immediately available, a deltaLink is returned instead.
