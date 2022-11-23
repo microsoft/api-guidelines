@@ -1054,6 +1054,7 @@ Property | Type        | Required | Description
 `status` | string      | true     | enum that includes values "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
 `error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
 `result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
+`resourceLocation` | string |     | Location of created resource (for POST create long running operations) or other (usually unstructured) data (e.g. binary data) created by the resource. 
 additional<br/>properties | |     | Additional named or dynamic properties of the operation
 
 <a name="lro-status-monitor-includes-all-fields"></a>
