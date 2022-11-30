@@ -17,9 +17,9 @@ This function returns a delta payload. A delta payload consists of a collection 
 
 Annotations allow the delta payload to indicate resources or links which have been deleted. API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
 
-The pattern requires a sequence of requests.
+The pattern requires a sequence of requests on the delta function:
 
-  1. GET request on the delta function, which returns the first page of the current state of the resources that delta applies to.  
+  1. GET request which returns the first page of the current state of the resources that delta applies to.  
   2. [Optionally] Further GET requests to retrieve more pages of the current state via the `@odata.nextLink` URL.
   3. After some time, a GET request to see if there are new changes via the `@odata.deltaLink`URL.
   4. [Optionally] GET requests to retrieve more pages of changes via the `@odata.nextLink` URL.
@@ -55,7 +55,7 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
  - API service MAY be able to respond to standard OData query parameters with the initial call to the delta function:
 
     - `$select` to enforce the set of properties on which change is reported.
-    - `$filter` to influence the range of changes returned.
+    - `$filter` to influence the scope of changes returned.
     - `$expand` to include linked resources with the set of changes.
     - `$top` parameter to influence the size of the set of change records.
   
