@@ -11,7 +11,7 @@ API consumers require an efficient way to acquire changes to data in the Microso
 
 ## Solution
 
-API designers can enable the change tracking (delta) capability on a resource in the Microsoft Graph (typically on an entity collection or a parent resource) by declaring a delta function on that resource.
+API designers can enable the change tracking (delta) capability on a resource in the Microsoft Graph (typically on an entity collection or a parent resource) by declaring a delta function on that resource and applying `Org.OData.Capabilities.V1.ChangeTracking` annotation.
 
 This function returns a delta payload. A delta payload consists of a collection of annotated full or partial Microsoft Graph entities plus either a `nextLink` to further pages of original or change data that are immediately available OR a `deltaLink` to poll to get the next set of changes as they occur.
 
@@ -39,8 +39,8 @@ Delta payload requirements
   - When an entity is deleted. the reason MUST be set to “deleted” if the entity cannot be restored.
   - There is no mechanism to indicate that a resource has entered or exited the dataset based on a change that causes it to match or no longer match any `$filter` query parameter.
   - When a link to an entity is deleted, when the linked entity is deleted, or when a link to an entity is added, the implementer MUST return a `property@delta` annotation. 
-    - When a link to an entity is deleted, but the entity still exists, the reason MUST be set to `changed`.
-    - When a link to an entity is deleted along with the entity, the reason MUST be set to `deleted`.
+  - When a link to an entity is deleted, but the entity still exists, the reason MUST be set to `changed`.
+  - When a link to an entity is deleted along with the entity, the reason MUST be set to `deleted`.
   
 API producers MAY choose to collate multiple changes to the same resource into a single change record. 
 
@@ -84,10 +84,10 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 ### Change tracking on entity set
 
 ```
-<Function Name="delta" IsBound="true"> 
-     <Parameter Name="bindingParameter" Type="Collection(Microsoft.DirectoryServices.user)" /> 
-     <ReturnType Type="Collection(Microsoft.DirectoryServices.user)" /> 
-</Function> 
+<Function Name="delta" IsBound="true" ags:OwnerService="Microsoft.DirectoryServices">
+        <Parameter Name="bindingParameter" Type="Collection(graph.user)" />
+        <ReturnType Type="Collection(graph.user)" />
+</Function>
 <EntitySet Name="users" EntityType="Microsoft.DirectoryServices.user"> 
     <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking"> 
       <Record> 
@@ -100,27 +100,32 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 ### Change tracking on navigation property
 
 ```
-<Function Name="delta" IsBound="true">
-        <Parameter Name="bindingParameter" Type="Collection(microsoft.education.rostering.api.educationClass)" />
-        <ReturnType Type="Collection(microsoft.education.rostering.api.educationClass)" />
-      </Function>
-<EntityType Name="educationRoot">
-        <NavigationProperty Name="classes" Type="Collection(microsoft.education.rostering.api.educationClass)" ContainsTarget="true">
-          <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
-            <Record>
-              <PropertyValue Property="Supported" Bool="true" />
-            </Record>
-          </Annotation>
-        </NavigationProperty>
+<EntityType Name="educationRoot" ags:OwnerService="Microsoft.EducationRosteringAPIs" ags:WorkloadIds="Microsoft.EducationAssignment,Microsoft.EducationDataSync">
+    <NavigationProperty Name="classes" Type="Collection(graph.educationClass)" ContainsTarget="true" />
+    <NavigationProperty Name="me" Type="graph.educationUser" ContainsTarget="true" />
+    <NavigationProperty Name="schools" Type="Collection(graph.educationSchool)" ContainsTarget="true" />
+    <NavigationProperty Name="synchronizationProfiles" Type="Collection(graph.educationSynchronizationProfile)" ContainsTarget="true" ags:OwnerService="Microsoft.EducationDataSync" />
+    <NavigationProperty Name="users" Type="Collection(graph.educationUser)" ContainsTarget="true" />
 </EntityType>
+<Function Name="delta" IsBound="true" ags:OwnerService="Microsoft.EducationRosteringAPIs">
+    <Parameter Name="bindingParameter" Type="Collection(graph.educationClass)" />
+    <ReturnType Type="Collection(graph.educationClass)" />
+</Function>
+ <Annotations Target="microsoft.graph.educationRoot/classes">
+    <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking" ags:OwnerService="Microsoft.EducationRosteringAPIs">
+      <Record>
+        <PropertyValue Property="Supported" Bool="true" />
+      </Record>
+    </Annotation>
+</Annotations>
 ```
 
 ### Delta payload
 
- Here, a user resource is updated, and there is one user added to and one removed from that user’s directReports collection. Additionally, a second user is deleted. In this case, there are no further pages of change records currently available.
+ Here, a user resource is updated, and there is one user added to and one removed from that user’s directReports collection. Additionally, a second user is deleted. In this case, there are no further pages of change records currently available. For detailed sequence of requests see [public documentation](https://learn.microsoft.com/en-us/graph/delta-query-users?tabs=http).
 
 ```
-GET https://graph.microsoft.com/v1.0/users/delta
+GET https://graph.microsoft.com/v1.0/users/delta?$skiptoken=pqwSUjGYvb3jQpbwVAwEL7yuI3dU1LecfkkfLPtnIjvB7XnF_yllFsCrZJ
 
 {
     "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#users",
