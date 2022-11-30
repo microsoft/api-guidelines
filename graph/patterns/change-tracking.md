@@ -17,7 +17,7 @@ This function returns a delta payload. A delta payload consists of a collection 
 
 Annotations allow the delta payload to indicate resources or links which have been deleted. API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
 
-The pattern requires a sequence of requests on the delta function:
+The pattern requires a sequence of requests on the delta function, for additional details see [Change Tracking](https://learn.microsoft.com/en-us/graph/delta-query-overview?tabs=http#use-delta-query-to-track-changes-in-a-resource-collection):
 
   1. GET request which returns the first page of the current state of the resources that delta applies to.  
   2. [Optionally] Further GET requests to retrieve more pages of the current state via the `@odata.nextLink` URL.
