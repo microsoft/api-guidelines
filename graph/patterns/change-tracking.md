@@ -122,7 +122,7 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 
 ### Delta payload
 
- Here, a user resource is updated, and there is one user added to and one removed from that user’s directReports collection. Additionally, a second user is deleted. In this case, there are no further pages of change records currently available. For detailed sequence of requests see [public documentation](https://learn.microsoft.com/en-us/graph/delta-query-users?tabs=http).
+ Here after the initial delta call, a user resource is updated, and there is one user added to and one removed from that user’s directReports collection. Additionally, a second user is deleted. In this case, there are no further pages of change records currently available. For detailed sequence of requests see [Change Tracking](https://learn.microsoft.com/en-us/graph/delta-query-overview?tabs=http#use-delta-query-to-track-changes-in-a-resource-collection).
 
 ```
 GET https://graph.microsoft.com/v1.0/users/delta?$skiptoken=pqwSUjGYvb3jQpbwVAwEL7yuI3dU1LecfkkfLPtnIjvB7XnF_yllFsCrZJ
