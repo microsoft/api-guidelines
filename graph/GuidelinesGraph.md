@@ -166,7 +166,7 @@ Microsoft Graph APIs should support basic query options in conformance with ODat
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
-| :ballot_box_with_check: **SHOULD** support `$expand=navProp1` option for navigation properties of entities. |
+| :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
 | :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
 | :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
 | :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
