@@ -21,7 +21,7 @@ The pattern requires a sequence of requests on the delta function, for additiona
 
   1. GET request which returns the first page of the current state of the resources that delta applies to.  
   2. [Optionally] Further GET requests to retrieve more pages of the current state via the `@odata.nextLink` URL.
-  3. After some time, a GET request to see if there are new changes via the `@odata.deltaLink`URL.
+  3. After some time, a GET request to see if there are new changes via the `@odata.deltaLink` URL.
   4. [Optionally] GET requests to retrieve more pages of changes via the `@odata.nextLink` URL.
 
 The `nextLink` provides a mechanism to do server-driven paging through the change data that is currently available.  When there are no further pages of changes immediately available, a `deltaLink` is returned instead.
@@ -30,7 +30,7 @@ The `deltaLink` provides a mechanism for the API consumer to catch up on changes
 
 Both `nextLink` and `deltaLink` MUST be considered opaque URLs. The best practice is to make them opaque via encoding.
 
-Delta payload requirements
+Delta payload requirements:
   - The payload is a collection of change records using the collection format.
   - The change records are full or partial representations of the resources according to their resource types.
   - When a change representing a resource update is included in the payload the API producer MAY return either the changed properties or the full entity. The ID of the resource MUST be included in every change record.
@@ -50,7 +50,7 @@ API consumers want a pull mechanism to request and process change to Microsoft G
 
 API consumers need guaranteed data integrity over the set of changes to Microsoft Graph data.
 
-## Issues and considerations
+## Considerations
 
  - API service MAY be able to respond to standard OData query parameters with the initial call to the delta function:
 
@@ -60,18 +60,15 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
     - `$top` parameter to influence the size of the set of change records.
   
     These query parameters MUST be encoded into subsequent `@odata.nextLink` or `@odata.deltaLink`, such that the same options are preserved through the call sequence without callers respecifying them, which MUST NOT be allowed. OData query parameters must be honored in full, or a 400-error returned.
-
 - Making a sequence of calls to a delta function followed by the opaque URLs in the `nextLink` and `deltaLink` MUST guarantee that the data at the start time of the call sequence and all changes to the data thereafter will be returned at least once. It is not necessary to avoid duplicates in the sequence. When the delta function is returning changes, they MUST be sequenced chronologically refer to [public documentation](https://learn.microsoft.com/en-us/graph/delta-query-overview?view=graph-rest-1.0) for more details.
-
 - The delta function can be bound to a collection, as with
-`/users/delta` that returns the changes to the users' collection.
-
+`/users/delta` that returns the changes to the users' collection
   or to some logical parent resource, where the change records are implied to be relative to all collections contained within the parent, for example
   `/me/planner/all/delta` – this returns changes to any resource within planner that a user is subscribed to as a heterogenous collection.
-
-- Although this capability is similar to the OData `$delta` feed capability, it is a different construct. Microsoft Graph APIs MUST provide change tracking through the delta function and MUST NOT implement the OData `$delta` feed when providing change tracking capabilities to ensure the uniformity of the API experience.
 - API producers might use `$skipToken` and `$deltaToken` within their implementations of `nextLink` and `deltaLink`, however the URLs are defined as being opaque and the existence of the tokens MUST NOT be documented.   It is not a breaking change to modify the structure of `nextLinks` or `deltaLinks`.- 
 - `nextLink` and `deltaLink` URLs are valid for a specific period before the client application needs to run a full synchronization again.For `nextLink`, a minimal validity time should be 1 hour. For `deltaLink`, a minimal validity time should be seven days. When a link is no longer valid it must return a standard error with a 410 GONE response code.
+- Although this capability is similar to the OData `$delta` feed capability, it is a different construct. Microsoft Graph APIs MUST provide change tracking through the delta function and MUST NOT implement the OData `$delta` feed when providing change tracking capabilities to ensure the uniformity of the API experience.
+- The Graph delta payload format has some deviations from the OData 4.01 change tracking format to simplify parsing, for example the context annotation is removed.
   
 
 ## Alternatives
