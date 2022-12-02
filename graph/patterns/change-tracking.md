@@ -41,7 +41,7 @@ Delta payload requirements:
 
 API producers MAY choose to collate multiple changes to the same resource into a single change record. 
 
-API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
+API consumers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
 
 
 ## When to use this pattern
@@ -61,14 +61,15 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
   
     These query parameters MUST be encoded into subsequent `@odata.nextLink` or `@odata.deltaLink`, such that the same options are preserved through the call sequence without callers respecifying them, which MUST NOT be allowed. OData query parameters must be honored in full, or a 400-error returned.
 - Making a sequence of calls to a delta function followed by the opaque URLs in the `nextLink` and `deltaLink` MUST guarantee that the data at the start time of the call sequence and all changes to the data thereafter will be returned at least once. It is not necessary to avoid duplicates in the sequence. When the delta function is returning changes, they MUST be sequenced chronologically refer to [public documentation](https://learn.microsoft.com/en-us/graph/delta-query-overview?view=graph-rest-1.0) for more details.
-- The delta function can be bound to a collection, as with
-`/users/delta` that returns the changes to the users' collection
-  or to some logical parent resource, where the change records are implied to be relative to all collections contained within the parent, for example
-  `/me/planner/all/delta` – this returns changes to any resource within planner that a user is subscribed to as a heterogenous collection.
-- API producers should use `$skipToken` and `$deltaToken` within their implementations of `nextLink` and `deltaLink`, however the URLs are defined as being opaque and the existence of the tokens MUST NOT be documented.   It is not a breaking change to modify the structure of `nextLinks` or `deltaLinks`.- 
+- The delta function can be bound to
+  - an entity collection, as with `/users/delta` that returns the changes to the users' collection, or
+  - some logical parent resource that returns an entity collection, where the change records are implied to be relative to all collections contained within the parent.For example  `/me/planner/all/delta` returns changes to any resource within a planner, which are referenced by 'all' navigation property, and `/communications/onlineMeetings/getAllRecordings/delta` returns changes to any meeting recordings returned by `getAllRecordings` function.
+
+- API service should use `$skipToken` and `$deltaToken` within their implementations of `nextLink` and `deltaLink`, however the URLs are defined as being opaque and the existence of the tokens MUST NOT be documented.   It is not a breaking change to modify the structure of `nextLinks` or `deltaLinks`.- 
 - `nextLink` and `deltaLink` URLs are valid for a specific period before the client application needs to run a full synchronization again.For `nextLink`, a minimal validity time should be 1 hour. For `deltaLink`, a minimal validity time should be seven days. When a link is no longer valid it must return a standard error with a 410 GONE response code.
 - Although this capability is similar to the OData `$delta` feed capability, it is a different construct. Microsoft Graph APIs MUST provide change tracking through the delta function and MUST NOT implement the OData `$delta` feed when providing change tracking capabilities to ensure the uniformity of the API experience.
 - The Graph delta payload format has some deviations from the OData 4.01 change tracking format to simplify parsing, for example the context annotation is removed.
+- Additional implementation details are documented [internally](https://dev.azure.com/msazure/One/_wiki/wikis/Microsoft%20Graph%20Partners/211718/Deltas).
   
 
 ## Alternatives
@@ -115,6 +116,41 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
       </Record>
     </Annotation>
 </Annotations>
+```
+### Change tracking on function that return an entity collection
+
+Firstly, an API designer needs to define the function as composable (so that a delta function can be added to it), by adding the `IsComposable` annotation:
+
+```xml
+<Function Name="getAllRecordings" IsBound="true" EntitySetPath="bindingParameter/recordings" IsComposable="true">
+  <Parameter Name="bindingParameter" Type="Collection(self.onlineMeeting)" />
+  <ReturnType Type="Collection(self.meetingRecording)" />
+</Function>
+```
+
+Next, define the `delta` function. The binding parameter and the return type of the delta function MUST be the same as the return type of the target `getAllRecordings` function:
+
+```xml
+<Function Name="delta" IsBound="true" EntitySetPath="bindingParameter">
+  <Parameter Name="bindingParameter" Type="Collection(self.meetingRecording)" />
+  <ReturnType Type="Collection(self.meetingRecording)" />
+</Function>
+```
+Finally, for the function, the designer needs to add an annotation (either as a child of the entity or by targeting the entity type as below) stating that it supports change tracking (delta query):
+
+```xml
+<Annotations Target="self.getAllRecordings(Collection(self.onlineMeeting))">
+  <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
+    <Record>
+      <PropertyValue Property="Supported" Bool="true" />
+    </Record>
+  </Annotation>
+</Annotations>
+```
+Here is the HTTP request to start the change tracking process on `getAllRecordings`
+
+```http
+GET https://graph.microsoft.com/v1.0/communications/onlineMeetings/getAllRecordings/delta
 ```
 
 ### Delta payload
