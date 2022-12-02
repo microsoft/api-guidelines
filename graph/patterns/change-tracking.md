@@ -15,7 +15,10 @@ API designers can enable the change tracking (delta) capability on a resource in
 
 This function returns a delta payload. A delta payload consists of a collection of annotated full or partial Microsoft Graph entities plus either a `nextLink` to further pages of original or change data that are immediately available OR a `deltaLink` to get the next set of changes at some later date.
 
-Annotations allow the delta payload to indicate resources or links which have been deleted. API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
+The `nextLink` provides a mechanism to do server-driven paging through the change data that is currently available.  When there are no further pages of changes immediately available, a `deltaLink` is returned instead.
+The `deltaLink` provides a mechanism for the API consumer to catch up on changes since their last request to the delta function. If no changes have happened since the last request, then the deltaLink MUST return an empty collection.
+
+Both `nextLink` and `deltaLink` MUST be considered opaque URLs. The best practice is to make them opaque via encoding.
 
 The pattern requires a sequence of requests on the delta function, for additional details see [Change Tracking](https://learn.microsoft.com/en-us/graph/delta-query-overview?tabs=http#use-delta-query-to-track-changes-in-a-resource-collection):
 
@@ -23,12 +26,6 @@ The pattern requires a sequence of requests on the delta function, for additiona
   2. [Optionally] Further GET requests to retrieve more pages of the current state via the `@odata.nextLink` URL.
   3. After some time, a GET request to see if there are new changes via the `@odata.deltaLink` URL.
   4. [Optionally] GET requests to retrieve more pages of changes via the `@odata.nextLink` URL.
-
-The `nextLink` provides a mechanism to do server-driven paging through the change data that is currently available.  When there are no further pages of changes immediately available, a `deltaLink` is returned instead.
-
-The `deltaLink` provides a mechanism for the API consumer to catch up on changes since their last request to the delta function. If no changes have happened since the last request, then the deltaLink MUST return an empty collection.
-
-Both `nextLink` and `deltaLink` MUST be considered opaque URLs. The best practice is to make them opaque via encoding.
 
 Delta payload requirements:
   - The payload is a collection of change records using the collection format.
@@ -41,8 +38,11 @@ Delta payload requirements:
   - When a link to an entity is deleted, when the linked entity is deleted, or when a link to an entity is added, the implementer MUST return a `property@delta` annotation. 
   - When a link to an entity is deleted, but the entity still exists, the reason MUST be set to `changed`.
   - When a link to an entity is deleted along with the entity, the reason MUST be set to `deleted`.
-  
+
 API producers MAY choose to collate multiple changes to the same resource into a single change record. 
+
+API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
+
 
 ## When to use this pattern
 
@@ -65,7 +65,7 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 `/users/delta` that returns the changes to the users' collection
   or to some logical parent resource, where the change records are implied to be relative to all collections contained within the parent, for example
   `/me/planner/all/delta` – this returns changes to any resource within planner that a user is subscribed to as a heterogenous collection.
-- API producers might use `$skipToken` and `$deltaToken` within their implementations of `nextLink` and `deltaLink`, however the URLs are defined as being opaque and the existence of the tokens MUST NOT be documented.   It is not a breaking change to modify the structure of `nextLinks` or `deltaLinks`.- 
+- API producers should use `$skipToken` and `$deltaToken` within their implementations of `nextLink` and `deltaLink`, however the URLs are defined as being opaque and the existence of the tokens MUST NOT be documented.   It is not a breaking change to modify the structure of `nextLinks` or `deltaLinks`.- 
 - `nextLink` and `deltaLink` URLs are valid for a specific period before the client application needs to run a full synchronization again.For `nextLink`, a minimal validity time should be 1 hour. For `deltaLink`, a minimal validity time should be seven days. When a link is no longer valid it must return a standard error with a 410 GONE response code.
 - Although this capability is similar to the OData `$delta` feed capability, it is a different construct. Microsoft Graph APIs MUST provide change tracking through the delta function and MUST NOT implement the OData `$delta` feed when providing change tracking capabilities to ensure the uniformity of the API experience.
 - The Graph delta payload format has some deviations from the OData 4.01 change tracking format to simplify parsing, for example the context annotation is removed.
@@ -81,11 +81,11 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 ### Change tracking on entity set
 
 ```
-<Function Name="delta" IsBound="true" ags:OwnerService="Microsoft.DirectoryServices">
+<Function Name="delta" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.user)" />
         <ReturnType Type="Collection(graph.user)" />
 </Function>
-<EntitySet Name="users" EntityType="Microsoft.DirectoryServices.user"> 
+<EntitySet Name="users" EntityType="graph.user"> 
     <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking"> 
       <Record> 
         <PropertyValue Property="Supported" Bool="true" /> 
@@ -97,19 +97,19 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 ### Change tracking on navigation property
 
 ```
-<EntityType Name="educationRoot" ags:OwnerService="Microsoft.EducationRosteringAPIs" ags:WorkloadIds="Microsoft.EducationAssignment,Microsoft.EducationDataSync">
+<EntityType Name="educationRoot">
     <NavigationProperty Name="classes" Type="Collection(graph.educationClass)" ContainsTarget="true" />
     <NavigationProperty Name="me" Type="graph.educationUser" ContainsTarget="true" />
     <NavigationProperty Name="schools" Type="Collection(graph.educationSchool)" ContainsTarget="true" />
-    <NavigationProperty Name="synchronizationProfiles" Type="Collection(graph.educationSynchronizationProfile)" ContainsTarget="true" ags:OwnerService="Microsoft.EducationDataSync" />
+    <NavigationProperty Name="synchronizationProfiles" Type="Collection(graph.educationSynchronizationProfile)" ContainsTarget="true"/>
     <NavigationProperty Name="users" Type="Collection(graph.educationUser)" ContainsTarget="true" />
 </EntityType>
-<Function Name="delta" IsBound="true" ags:OwnerService="Microsoft.EducationRosteringAPIs">
+<Function Name="delta" IsBound="true">
     <Parameter Name="bindingParameter" Type="Collection(graph.educationClass)" />
     <ReturnType Type="Collection(graph.educationClass)" />
 </Function>
  <Annotations Target="microsoft.graph.educationRoot/classes">
-    <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking" ags:OwnerService="Microsoft.EducationRosteringAPIs">
+    <Annotation Term="Org.OData.Capabilities.V1.ChangeTracking">
       <Record>
         <PropertyValue Property="Supported" Bool="true" />
       </Record>
