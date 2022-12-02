@@ -13,7 +13,7 @@ API consumers require an efficient way to acquire changes to data in the Microso
 
 API designers can enable the change tracking (delta) capability on a resource in the Microsoft Graph (typically on an entity collection or a parent resource) by declaring a delta function on that resource and applying `Org.OData.Capabilities.V1.ChangeTracking` annotation.
 
-This function returns a delta payload. A delta payload consists of a collection of annotated full or partial Microsoft Graph entities plus either a `nextLink` to further pages of original or change data that are immediately available OR a `deltaLink` to poll to get the next set of changes as they occur.
+This function returns a delta payload. A delta payload consists of a collection of annotated full or partial Microsoft Graph entities plus either a `nextLink` to further pages of original or change data that are immediately available OR a `deltaLink` to get the next set of changes at some later date.
 
 Annotations allow the delta payload to indicate resources or links which have been deleted. API callers are expected to differentiate resource adds from updates by interpreting the id property of the change records against the existence of resources in whatever external system is doing the processing.
 
