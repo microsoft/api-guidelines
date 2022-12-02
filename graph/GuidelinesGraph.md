@@ -166,7 +166,8 @@ Microsoft Graph APIs should support basic query options in conformance with ODat
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
 | :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
-| :ballot_box_with_check: **SHOULD** support `\$filter with eq`, `ne` operations on properties of entities for collections. |
+| :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
+| :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
 | :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
 | :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
 | :ballot_box_with_check: **SHOULD** support `$count` for collections. |
@@ -181,10 +182,10 @@ Another way to avoid this is to use JSON batch as described in the [Microsoft Gr
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must not use complex type to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
- <EntityType Name="Author">
+ <EntityType Name="author">
     <Key>
         <PropertyRef Name="id" />
     </Key>
@@ -192,7 +193,7 @@ Because objects of complex types in Microsoft Graph don’t have unique identifi
     <Property Name="name" Type="Edm.String" />
     <Property Name="address" Type="microsoft.graph.Address" />
 </EntityType>
-<ComplexType Name="Address">
+<ComplexType Name="address">
     <Property Name="city" Type="Edm.String" />
     <Property Name="street" Type="Edm.String" />
     <Property Name="stateOrProvince" Type="Edm.String" />
@@ -273,11 +274,11 @@ Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs shoul
 ```http
 {
 "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "Cannot process the request because a required field is missing.",
     "target": "query",    
     "innererror": {
-                "code": "RequiredFieldMissing",
+                "code": "requiredFieldMissing",
                            
                 }
     }
@@ -291,9 +292,9 @@ The top-level error code must be aligned with HTTP response status codes accordi
    ```http
     {
       "error": {
-        "code": "BadRequest",
+        "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
-    	"target": "Resource X (Optional)"
+    	"target": "resource X (Optional)"
       }
     }
    ```
@@ -303,7 +304,7 @@ The top-level error code must be aligned with HTTP response status codes accordi
    ```http
     {
       "error": {
-        "code": "BadRequest",
+        "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
         "innererror": {
           "code": "requiredFieldOrParameterMissing",
