@@ -26,7 +26,7 @@ The pattern requires a sequence of requests on the delta function, for additiona
 
 The `nextLink` provides a mechanism to do server-driven paging through the change data that is currently available.  When there are no further pages of changes immediately available, a `deltaLink` is returned instead.
 
-The `deltaLink` provides a mechanism for the API consumer to catch up on changes since their last request to the delta function, `deltaLink` or last page’s `nextLink`. If no changes have happened since the last request, then the deltaLink MUST return an empty collection.
+The `deltaLink` provides a mechanism for the API consumer to catch up on changes since their last request to the delta function. If no changes have happened since the last request, then the deltaLink MUST return an empty collection.
 
 Both `nextLink` and `deltaLink` MUST be considered opaque URLs. The best practice is to make them opaque via encoding.
 
