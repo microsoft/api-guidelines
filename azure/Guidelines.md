@@ -1043,6 +1043,8 @@ For all long-running operations, the client will issue a GET on a status monitor
 <a name="lro-status-monitor-accepts-any-api-version"></a>
 :ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
+Note: Clients may replace the value of `api-version` in the `Operation-Location` URI with a value appropriate for their application.
+
 <a name="lro-status-monitor-structure"></a>
 :white_check_mark: **DO** return a status monitor in the response body that conforms with the following structure:
 
