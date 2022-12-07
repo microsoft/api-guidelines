@@ -378,6 +378,7 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 |--------------------------------------------------|----------------------------------------------------------------------------|
 | [Alternate key](./patterns/alternate-key.md)     | Uniquely identify and query resources using an alternate key.              |
 | [Change tracking](./patterns/change-tracking.md) | Keep API consumers in sync with changes without polling.                   |
+| [Collection subsets](./patterns/subsets.md) | Model collection subsets   |
 | [Dictionary](./patterns/dictionary.md)           | Clients can provide an unknown quantity of data elements of the same type. |
 | [Evolvable enums](./patterns/evolvable-enums.md) | Extend enumerated types without breaking changes.                          |
 | [Facets](./patterns/facets.md)                   | Model parent-child relationships.                                          |
@@ -385,6 +386,8 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 | [Long running operations](./patterns/longRunningOperations.md)| Model operations where processing a client request takes a long time. |
 | [Modeling subsets](./patterns/subsets.md)        | Model collection subsets for All, None, Included, or Excluded criteria.    |
 | [Namespace](./patterns/namespace.md)             | Organize resource definitions into a logical set.                          |
+| [Navigation properties](./patterns/navigation-property.md) | Model resource relationships                         |
+| [Operations](./patterns/operations.md) | Model complex business operations                          |
 | [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.                                 |
 
 ## References
