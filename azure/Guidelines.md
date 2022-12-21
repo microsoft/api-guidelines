@@ -157,7 +157,7 @@ Method | Description | Response Status Code
 PATCH  | Create/Modify the resource with JSON Merge Patch | `200-OK`, `201-Created`
 PUT    | Create/Replace the _whole_ resource | `200-OK`, `201-Created`
 POST   | Create new resource (ID set by service) | `201-Created` with URL of created resource
-POST   | Action | `200-OK`, `204-No Content` (only when nothing returned in response body)
+POST   | Action | `200-OK`
 GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
@@ -173,6 +173,9 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
 <a name="http-delete-returns-204"></a>
 :white_check_mark: **DO** return a `204-No Content` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return `404-Not Found`)
+
+<a name="http-post-action-returns-200"></a>
+:white_check_mark: **DO** return a `200-OK` from a POST Action. Include a body in the response, even if it has not properties, to allow properties to be added in the future if needed.
 
 <a name="http-return-403-vs-404"></a>
 :white_check_mark: **DO** return a `403-Forbidden` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be `404-Not Found`. [Rationale: a `403-Forbidden` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
