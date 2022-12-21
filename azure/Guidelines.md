@@ -914,8 +914,10 @@ The purpose is to inform customers (when debugging/logging responses) that they 
 
 Deprecations should use the following pattern:
 ```text
-<description> will retire on <date> (`url`);
+<description> will retire on <date> (<url>)
 ```
+
+Multiple deprecations are allowed, semicolon delimited.
 
 Where the following placeholders should be provided:
 - `description`: a human-readable description of what is being deprecated
@@ -923,9 +925,9 @@ Where the following placeholders should be provided:
 - `url`: a fully qualified url that the user can follow to learn more about what is being deprecated, preferably to Azure Updates.
 
 For example:
-```text
-azure-deprecating: API version 2009-27-07 will retire on 2022-12-01 (https://azure.microsoft.com/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will retire on 2020-10-30 (https://azure.microsoft.com/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)
-```
+- `azure-deprecating: API version 2009-27-07 will retire on 2022-12-01 (https://azure.microsoft.com/updates/video-analyzer-retirement);TLS 1.0 & 1.1 will retire on 2020-10-30 (https://azure.microsoft.com/updates/azure-active-directory-registration-service-is-ending-support-for-tls-10-and-11/)`
+- `azure-deprecating: Model version 2021-01-15 used in Sentiment analysis will retire on 2022-12-01 (https://aka.ms/ta-modelversions?sentimentAnalysis)`
+- `azure-deprecating: TLS 1.0 & 1.1 support will retire on 2022-10-01 (https://devblogs.microsoft.com/devops/deprecating-weak-cryptographic-standards-tls-1-0-and-1-1-in-azure-devops-services/)`
 
 <a name="deprecation-header-review"></a>
 :no_entry: **DO NOT** introduce this header without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
