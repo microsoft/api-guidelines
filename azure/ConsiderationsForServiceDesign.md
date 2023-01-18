@@ -118,6 +118,16 @@ For example, `nextUrl` not `nextURL`.
 
 :ballot_box_with_check: **YOU SHOULD** use "DateTime" suffix in names of `date-time` values.
 
+For example, `createdDateTime` not `createdAt` or `createdTime`. Common date-time properties and their recommended names are:
+
+| Property Name | Description |
+| --- | --- |
+| createdDateTime | The date and time the resource was created. |
+| lastModifiedDateTime | The date and time the resource was last modified. |
+| deletedDateTime | The date and time the resource was deleted. |
+| startDateTime | The starting date and time of an interval. |
+| endDateTime | The ending date and time of an interval. |
+
 :ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
 :ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
