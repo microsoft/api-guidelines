@@ -492,6 +492,12 @@ This indicates to client libraries and customers that values of the enumeration 
 <a name="json-document-extensible-enums"></a>
 :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
 
+<a name="json-return-extensible-enum-value"></a>
+:heavy_check_mark: **YOU MAY** return a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+
+<a name="json-accept-extensible-enum-value"></a>
+:warning: **YOU SHOULD NOT** accept a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+
 <a name="json-removing-enum-value-is-breaking"></a>
 :no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
 
@@ -539,6 +545,18 @@ Below is an example of JSON for a Rectangle and Circle:
 }
 ```
 Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, and `subscription`. A Rectangle also has `x`, `y`, `width`, and `length` while a Circle has `x`, `y`, and `radius`. The `subscription` is a nested polymorphic type. A `free` subscription has no additional fields and a `paid` subscription has `expiration` and `invoice` fields.
+
+<a name="json-polymorphism-kind-extensible"></a>
+:ballot_box_with_check: **YOU SHOULD** define the kind field of a polymorphic type to be an extensible enum.
+
+<a name="json-polymorphism-kind-immutable"></a>
+:warning: **YOU SHOULD NOT** allow an update (patch) to change the kind field of a polymorphic type.
+
+<a name="json-polymorphism-versioning"></a>
+:warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
+
+<a name="json-polymorphism-arrays"></a>
+:warning: **YOU SHOULD NOT** specify a polymorphic type as the type of an array property.
 
 ## Common API Patterns
 
