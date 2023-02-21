@@ -116,17 +116,9 @@ For example, `collectedItems` not `itemsCollected`
 
 For example, `nextUrl` not `nextURL`.
 
-:ballot_box_with_check: **YOU SHOULD** use "DateTime" suffix in names of `date-time` values.
+:ballot_box_with_check: **YOU SHOULD** use an "At" suffix in names of `date-time` values.
 
-For example, `createdDateTime` not `createdAt` or `createdTime`. Common date-time properties and their recommended names are:
-
-| Property Name | Description |
-| --- | --- |
-| createdDateTime | The date and time the resource was created. |
-| lastModifiedDateTime | The date and time the resource was last modified. |
-| deletedDateTime | The date and time the resource was deleted. |
-| startDateTime | The starting date and time of an interval. |
-| endDateTime | The ending date and time of an interval. |
+For example, `createdAt` not `created` or `createdDateTime`.
 
 :ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
@@ -152,8 +144,9 @@ The following are recommended names for properties that match the associated des
 
 | Name | Description |
 |------------- | --- |
-| createdDateTime | The date-time that the resource was created |
-| updatedDateTime | The date-time that the resource was last updated/modified |
+| createdAt | The date and time the resource was created. |
+| lastModifiedAt | The date and time the resource was last modified. |
+| deletedAt | The date and time the resource was deleted. |
 | kind   | The discriminator value for a polymorphic resource |
 
 ### `name` vs `id`
