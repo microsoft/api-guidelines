@@ -66,6 +66,7 @@ Graph service teams should reference the companion document, [Graph REST API Gui
     - [7.5. Standard request headers](#75-standard-request-headers)
     - [7.6. Standard response headers](#76-standard-response-headers)
     - [7.7. Custom headers](#77-custom-headers)
+        - [7.7.1 Proxy server and custom headers](#771-proxy-server-and-custom-headers)
     - [7.8. Specifying headers as query parameters](#78-specifying-headers-as-query-parameters)
     - [7.9. PII parameters](#79-pii-parameters)
     - [7.10. Response formats](#710-response-formats)
@@ -461,6 +462,19 @@ Headers that are not standard HTTP headers MUST have one of two formats:
 2. A scoped format for headers that are too usage-specific for registration
 
 These two formats are described below.
+
+#### 7.7.1 Proxy server and custom headers
+
+One of the reasons why custom headers are not advised to be used are certain company restrictions. 
+Even if the implementation is clear to developers and all customers are using the provided custom headers correctly,
+once it is installed in production it might cause unexpected issues. 
+
+Companies are often filtering the incoming or outgoing requests via proxy server which can be configured 
+in such a way that requests get changed or even manipulated.
+Custom headers are a common case to get filtered even though they are not meant to be. 
+
+Avoiding custom headers for basic operations is an easy way to prevent getting into this situation in the first place.
+This should always be considered in the designing process.
 
 ### 7.8. Specifying headers as query parameters
 Some headers pose challenges for some scenarios such as AJAX clients, especially when making cross-domain calls where adding headers MAY not be supported.
