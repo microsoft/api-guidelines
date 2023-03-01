@@ -116,6 +116,10 @@ For example, `collectedItems` not `itemsCollected`
 
 For example, `nextUrl` not `nextURL`.
 
+:ballot_box_with_check: **YOU SHOULD** use an "At" suffix in names of `date-time` values.
+
+For example, `createdAt` not `created` or `createdDateTime`.
+
 :ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
 :ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
@@ -140,8 +144,9 @@ The following are recommended names for properties that match the associated des
 
 | Name | Description |
 |------------- | --- |
-| createdDateTime | The date-time that the resource was created |
-| updatedDateTime | The date-time that the resource was last updated/modified |
+| createdAt | The date and time the resource was created. |
+| lastModifiedAt | The date and time the resource was last modified. |
+| deletedAt | The date and time the resource was deleted. |
 | kind   | The discriminator value for a polymorphic resource |
 
 ### `name` vs `id`
