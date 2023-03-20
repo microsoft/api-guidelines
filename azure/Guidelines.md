@@ -556,7 +556,9 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 :warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
 
 <a name="json-polymorphism-arrays"></a>
-:warning: **YOU SHOULD NOT** have a property whose value is an array of polymorphic objects.
+:warning: **YOU SHOULD NOT** have a property of an updatable resource whose value is an array of polymorphic objects.
+
+Updating an array property with JSON merge-patch is not version-resilient if the array contains polymorphic types.
 
 ## Common API Patterns
 
