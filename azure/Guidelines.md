@@ -509,9 +509,9 @@ This indicates to client libraries and customers that values of the enumeration 
 If you can't avoid them, then follow the guideline below.
 
 <a name="json-use-discriminator-for-polymorphism"></a>
-:white_check_mark: **DO** define a `kind` field indicating the kind of the resource and include any kind-specific fields in the body.
+:white_check_mark: **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
-Below is an example of JSON for a Rectangle and Circle:
+Below is an example of JSON for a Rectangle and Circle with a discriminator field named `kind`:
 **Rectangle**
 ```json
 {
@@ -546,11 +546,13 @@ Below is an example of JSON for a Rectangle and Circle:
 ```
 Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, and `subscription`. A Rectangle also has `x`, `y`, `width`, and `length` while a Circle has `x`, `y`, and `radius`. The `subscription` is a nested polymorphic type. A `free` subscription has no additional fields and a `paid` subscription has `expiration` and `invoice` fields.
 
+The [Azure Naming Guidelines](./ConsiderationsForServiceDesign.md#common-names) recommend that the discriminator field be named `kind`.
+
 <a name="json-polymorphism-kind-extensible"></a>
-:ballot_box_with_check: **YOU SHOULD** define the kind field of a polymorphic type to be an extensible enum.
+:ballot_box_with_check: **YOU SHOULD** define the discriminator field of a polymorphic type to be an extensible enum.
 
 <a name="json-polymorphism-kind-immutable"></a>
-:warning: **YOU SHOULD NOT** allow an update (patch) to change the kind field of a polymorphic type.
+:warning: **YOU SHOULD NOT** allow an update (patch) to change the discriminator field of a polymorphic type.
 
 <a name="json-polymorphism-versioning"></a>
 :warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
