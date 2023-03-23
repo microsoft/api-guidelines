@@ -1279,6 +1279,31 @@ In addition to distributed tracing, Azure also uses a set of common correlation 
 |x-ms-client-request-id       |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** include this in their log entries to facilitate correlation of log entries for a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
 |x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoration such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this value is globally unique. Services should log this value with their traces to facilitate correlation of log entries for a single request.
 
+<a name="serversentevents"></a>
+### Server Sent Events (SSE)
+For services that generate partial results over time, it is often beneficial to return the data as soon as it is available to reduce latency. A specific example of this is the generate method for Open AI. One option for this is [Server Sent Events (SSE)](https://html.spec.whatwg.org/multipage/server-sent-events.html#server-sent-events). SSE may be used under the following conditions:
+
+<a name="serversentevents-partial-results"></a>
+:heavy_check_mark: **YOU MAY** use SSE to incrementally return partial results.
+
+<a name="serversentevents-derived-from-request"></a>
+:white_check_mark: **DO** Ensure that the response stream is only derived/computed from information in the initial request.
+
+<a name="serversentevents-no-reconnect"></a>
+:no_entry: **DO NOT** require clients to reconnect/re-establish the stream.
+
+<a name="serversentevents-short-lived-streams"></a>
+:white_check_mark: **DO** only use SSE when streams complete (end the stream) within five (5) minutes P99 processing time.
+
+<a name="serversentevents-structured-data-only"></a>
+:white_check_mark: **DO** only use SSE for sequences of structured data/events. For binary/unstructured data, using chunked encoding is a better alternative.
+
+<a name="serversentevents-structured-single-line"></a>
+:white_check_mark: **DO** send each event as a single JSON line.
+
+<a name="serversentevents-end-of-stream-message"></a>
+:white_check_mark: **DO** provide a clear, documented way for clients to know that a given message is the last message in the stream.
+
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
 
