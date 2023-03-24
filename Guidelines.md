@@ -1,3 +1,13 @@
+> # NOTICE TO READERS
+> 
+> ## **Guidance for Azure service teams**
+> Azure service teams should use the companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information please refer to the [README](./azure/README.md) in the Azure folder.
+> 
+> ## **Guidance for Microsoft Graph service teams**
+> Graph service teams should reference the companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) when building or modifying their services. This document and the associated pattern catalog provides a refined set of guidance targeted specifically for Microsoft Graph services.
+
+---
+
 # Microsoft REST API Guidelines
 
 ## Microsoft REST API Guidelines Working Group
@@ -20,13 +30,6 @@ To provide the smoothest possible experience for developers on platforms followi
 
 This document establishes the guidelines Microsoft REST APIs SHOULD follow so RESTful interfaces are developed consistently.
 
-### **Guidance for Azure service teams**
-Azure service teams should use the companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information please refer to the [README](./azure/README.md) in the Azure folder.
-
-### **Guidance for Microsoft Graph service teams**
-Graph service teams should reference the companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) when building or modifying their services. This document and the associated pattern catalog provides a refined set of guidance targeted specifically for Microsoft Graph services.
-
-
 ## 2. Table of contents
 <!-- TOC depthFrom:2 depthTo:4 orderedList:false updateOnSave:false withLinks:true -->
 
@@ -34,8 +37,6 @@ Graph service teams should reference the companion document, [Graph REST API Gui
   - [Microsoft REST API Guidelines Working Group](#microsoft-rest-api-guidelines-working-group)
 - [Microsoft REST API Guidelines](#microsoft-rest-api-guidelines-1)
   - [1. Abstract](#1-abstract)
-    - [**Guidance for Azure service teams**](#guidance-for-azure-service-teams)
-    - [**Guidance for Microsoft Graph service teams**](#guidance-for-microsoft-graph-service-teams)
   - [2. Table of contents](#2-table-of-contents)
   - [3. Introduction](#3-introduction)
     - [3.1. Recommended reading](#31-recommended-reading)
