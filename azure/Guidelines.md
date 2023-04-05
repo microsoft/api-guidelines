@@ -551,15 +551,8 @@ The [Azure Naming Guidelines](./ConsiderationsForServiceDesign.md#common-names) 
 <a name="json-polymorphism-kind-extensible"></a>
 :ballot_box_with_check: **YOU SHOULD** define the discriminator field of a polymorphic type to be an extensible enum.
 
-**WE SHOULD CHOOSE ONE OF THE FOLLOWING TWO OPTIONS**
-
 <a name="json-polymorphism-kind-immutable"></a>
 :warning: **YOU SHOULD NOT** allow an update (patch) to change the discriminator field of a polymorphic type.
-
-**OR**
-
-<a name="json-polymorphism-mutable-kind"></a>
-:ballot_box_with_check: **YOU SHOULD** remove all properties specific to the old discriminator value from the resource when an update (patch) changes the discriminator field.
 
 <a name="json-polymorphism-versioning"></a>
 :warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
