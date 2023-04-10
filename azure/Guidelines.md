@@ -11,9 +11,13 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 ## History
 
+<details>
+  <summary>Expand change history</summary>
+  
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |                 |
+| 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
+| 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
 | 2022-May-11 | Drop guidance on version discovery                             |
 | 2022-Mar-29 | Add guidelines about using durations                           |
@@ -23,6 +27,8 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
 | 2020-Jul-31 | Added service advice for initial versions                      |
 | 2020-Mar-31 | 1st public release of the Azure REST API Guidelines            |
+
+</details>
 
 ## Introduction
 
@@ -492,6 +498,12 @@ This indicates to client libraries and customers that values of the enumeration 
 <a name="json-document-extensible-enums"></a>
 :white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
 
+<a name="json-return-extensible-enum-value"></a>
+:heavy_check_mark: **YOU MAY** return a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+
+<a name="json-accept-extensible-enum-value"></a>
+:warning: **YOU SHOULD NOT** accept a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+
 <a name="json-removing-enum-value-is-breaking"></a>
 :no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
 
@@ -503,9 +515,9 @@ This indicates to client libraries and customers that values of the enumeration 
 If you can't avoid them, then follow the guideline below.
 
 <a name="json-use-discriminator-for-polymorphism"></a>
-:white_check_mark: **DO** define a `kind` field indicating the kind of the resource and include any kind-specific fields in the body.
+:white_check_mark: **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
-Below is an example of JSON for a Rectangle and Circle:
+Below is an example of JSON for a Rectangle and Circle with a discriminator field named `kind`:
 **Rectangle**
 ```json
 {
@@ -539,6 +551,22 @@ Below is an example of JSON for a Rectangle and Circle:
 }
 ```
 Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, and `subscription`. A Rectangle also has `x`, `y`, `width`, and `length` while a Circle has `x`, `y`, and `radius`. The `subscription` is a nested polymorphic type. A `free` subscription has no additional fields and a `paid` subscription has `expiration` and `invoice` fields.
+
+The [Azure Naming Guidelines](./ConsiderationsForServiceDesign.md#common-names) recommend that the discriminator field be named `kind`.
+
+<a name="json-polymorphism-kind-extensible"></a>
+:ballot_box_with_check: **YOU SHOULD** define the discriminator field of a polymorphic type to be an extensible enum.
+
+<a name="json-polymorphism-kind-immutable"></a>
+:warning: **YOU SHOULD NOT** allow an update (patch) to change the discriminator field of a polymorphic type.
+
+<a name="json-polymorphism-versioning"></a>
+:warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
+
+<a name="json-polymorphism-arrays"></a>
+:warning: **YOU SHOULD NOT** have a property of an updatable resource whose value is an array of polymorphic objects.
+
+Updating an array property with JSON merge-patch is not version-resilient if the array contains polymorphic types.
 
 ## Common API Patterns
 
