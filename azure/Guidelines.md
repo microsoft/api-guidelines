@@ -966,14 +966,13 @@ For example:
 <a name="repeatability"></a>
 ### Repeatability of requests
 
-The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
+Fault tolerant applications require that clients retry requests for which they never got a response and the service must handle these retried requests idmepotently. In Azure, all HTTP operations are naturally idempotent except for POST used to create a resource and [POST when used to invoke some RPC-like actions](https://github.com/microsoft/api-guidelines/blob/d81151d990b437b34dcf7d05d9504b754eb4f456/azure/Guidelines.md#performing-an-action).
 
 <a name="repeatability-headers"></a>
 :ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
-
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
-- A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
-- When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
+- Document the `POST` operation's support for the `Repeatability-First-Sent` and `Repeatability-Request-ID` header in the API contract and documentation.
+- All non-POST operations should ignore the headers if specified by the client.
 
 <a name="lro"></a>
 ### Long-Running Operations & Jobs
