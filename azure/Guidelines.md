@@ -62,7 +62,7 @@ This document offers prescriptive guidance labeled as follows:
 ## Building Blocks: HTTP, REST, & JSON
 The Microsoft Azure Cloud platform exposes its APIs through the core building blocks of the Internet; namely HTTP, REST, and JSON. This section provides you with a general understanding of how these technologies should be applied when creating your service.
 
-<a name="http"></a>
+<a href="#http" name="http"></a>
 ### HTTP
 Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
 
@@ -74,8 +74,7 @@ Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ie
 
 A Uniform Resource Locator (URL) is how developers access the resources of your service. Ultimately, URLs are how developers form a cognitive model of your service's resources.
 
-<a name="http-url-pattern"></a>
-:white_check_mark: **DO** use this URL pattern:
+<a href="#http-url-pattern" name="http-url-pattern">:white_check_mark:</a> **DO** use this URL pattern:
 ```text
 https://<tenant>.<region>.<service>.<cloud>/<service-root>/<resource-collection>/<resource-id>
 ```
@@ -91,34 +90,25 @@ Where:
  | resource&#x2011;collection | Name of the collection, unabbreviated, pluralized
  | resource&#x2011;id | Id of resource within the resource-collection. This MUST be the raw string/number/guid value with no quoting but properly escaped to fit in a URL segment.
 
-<a name="http-url-casing"></a>
-:white_check_mark: **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
+<a href="#http-url-casing" name="http-url-casing">:white_check_mark:</a> **DO** use kebab-casing (preferred) or camel-casing for URL path segments. If the segment refers to a JSON field, use camel casing.
 
-<a name="http-url-length"></a>
-:white_check_mark: **DO** return `414-URI Too Long` if a URL exceeds 2083 characters
+<a href="#http-url-length" name="http-url-length">:white_check_mark:</a> **DO** return `414-URI Too Long` if a URL exceeds 2083 characters
 
-<a name="http-url-case-sensitivity"></a>
-:white_check_mark: **DO** treat service-defined URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request **MUST** fail with a `404-Not found` HTTP return code.
+<a href="#http-url-case-sensitivity" name="http-url-case-sensitivity">:white_check_mark:</a> **DO** treat service-defined URL path segments as case-sensitive. If the passed-in case doesn't match what the service expects, the request **MUST** fail with a `404-Not found` HTTP return code.
 
 Some customer-provided path segment values may be compared case-insensitivity if the abstraction they represent is normally compared with case-insensitivity. For example, a UUID path segment of 'c55f6b35-05f6-42da-8321-2af5099bd2a2' should be treated identical to 'C55F6B35-05F6-42DA-8321-2AF5099BD2A2'
 
-<a name="http-url-return-casing"></a>
-:white_check_mark: **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
+<a href="#http-url-return-casing" name="http-url-return-casing">:white_check_mark:</a> **DO** ensure proper casing when returning a URL in an HTTP response header value or inside a JSON response body
 
-<a name="http-url-allowed-characters"></a>
-:white_check_mark: **DO** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
+<a href="#http-url-allowed-characters" name="http-url-allowed-characters">:white_check_mark:</a> **DO** restrict the characters in service-defined path segments to `0-9  A-Z  a-z  -  .  _  ~`, with `:` allowed only as described below to designate an action operation.
 
-<a name="http-url-allowed-characters-2"></a>
-:ballot_box_with_check: **YOU SHOULD** restrict the characters allowed in user-specified path segments (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
+<a href="#http-url-allowed-characters-2" name="http-url-allowed-characters-2">:ballot_box_with_check:</a> **YOU SHOULD** restrict the characters allowed in user-specified path segments (i.e. path parameters values) to `0-9  A-Z  a-z  -  .  _  ~` (do not allow `:`).
 
-<a name="http-url-should-be-readable"></a>
-:ballot_box_with_check: **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
+<a href="#http-url-should-be-readable" name="http-url-should-be-readable">:ballot_box_with_check:</a> **YOU SHOULD** keep URLs readable; if possible, avoid UUIDs & %-encoding (ex: Cádiz is %-encoded as C%C3%A1diz)
 
-<a name="http-url-allowed-characters-3"></a>
-:heavy_check_mark: **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
+<a href="#http-url-allowed-characters-3" name="http-url-allowed-characters-3">:heavy_check_mark:</a> **YOU MAY** use these other characters in the URL path but they will likely require %-encoding [[RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986#section-2.1)]: `/  ?  #  [  ]  @  !  $  &  '  (  )  *  +  ,  ;  =`
 
-<a name="http-direct-endpoints"></a>
-:heavy_check_mark: **YOU MAY** support a direct endpoint URL for performance/routing:
+<a href="#http-direct-endpoints" name="http-direct-endpoints">:heavy_check_mark:</a> **YOU MAY** support a direct endpoint URL for performance/routing:
 ```text
 https://<tenant>-<service-root>.<service>.<cloud>/...
 ```
@@ -128,11 +118,9 @@ Examples:
 - Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
 - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
-<a name="http-url-return-consistent-form"></a>
-:white_check_mark: **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
+<a href="#http-url-return-consistent-form" name="http-url-return-consistent-form">:white_check_mark:</a> **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
 
-<a name="http-url-parameter-values"></a>
-:heavy_check_mark: **YOU MAY** use URLs as values
+<a href="#http-url-parameter-values" name="http-url-parameter-values">:heavy_check_mark:</a> **YOU MAY** use URLs as values
 ```text
 https://api.contoso.com/items?url=https://resources.contoso.com/shoes/fancy
 ```
@@ -144,19 +132,15 @@ Cloud applications embrace failure. Therefore, to enable customers to write faul
 
 ##### Exactly Once Behavior = Client Retries & Service Idempotency
 
-<a name="http-all-methods-idempotent"></a>
-:white_check_mark: **DO** ensure that _all_ HTTP methods are idempotent.
+<a href="#http-all-methods-idempotent" name="http-all-methods-idempotent">:white_check_mark:</a> **DO** ensure that _all_ HTTP methods are idempotent.
 
-<a name="http-use-put-or-patch"></a>
-:ballot_box_with_check: **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
+<a href="#http-use-put-or-patch" name="http-use-put-or-patch">:ballot_box_with_check:</a> **YOU SHOULD** use PUT or PATCH to create a resource as these HTTP methods are easy to implement, allow the customer to name their own resource, and are idempotent.
 
-<a name="http-post-must-be-idempotent"></a>
-:heavy_check_mark: **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response **MUST** return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#repeatability-of-requests)).
+<a href="#http-post-must-be-idempotent" name="http-post-must-be-idempotent">:heavy_check_mark:</a> **YOU MAY** use POST to create a resource but you must make it idempotent and, of course, the response **MUST** return the URL of the created resource with a 201-Created. One way to make POST idempotent is to use the Repeatability-Request-ID & Repeatability-First-Sent headers (See [Repeatability of requests](#repeatability-of-requests)).
 
 ##### HTTP Return Codes
 
-<a name="http-success-status-codes"></a>
-:white_check_mark: **DO** adhere to the return codes in the following table when the method completes synchronously and is successful:
+<a href="#http-success-status-codes" name="http-success-status-codes">:white_check_mark:</a> **DO** adhere to the return codes in the following table when the method completes synchronously and is successful:
 
 Method | Description | Response Status Code
 -------|-------------|---------------------
@@ -168,35 +152,26 @@ GET    | Read (i.e. list) a resource collection | `200-OK`
 GET    | Read the resource | `200-OK`
 DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
-<a name="http-lro-status-code"></a>
-:white_check_mark: **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously.
+<a href="#http-lro-status-code" name="http-lro-status-code">:white_check_mark:</a> **DO** return status code `202-Accepted` and follow the guidance in [Long-Running Operations & Jobs](#long-running-operations--jobs) when a PUT, POST, or DELETE method completes asynchronously.
 
-<a name="http-method-casing"></a>
-:white_check_mark: **DO** treat method names as case sensitive and should always be in uppercase
+<a href="#http-method-casing" name="http-method-casing">:white_check_mark:</a> **DO** treat method names as case sensitive and should always be in uppercase
 
-<a name="http-return-resource"></a>
-:white_check_mark: **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a `200-OK` or `201-Created`.
+<a href="#http-return-resource" name="http-return-resource">:white_check_mark:</a> **DO** return the state of the resource after a PUT, PATCH, POST, or GET operation with a `200-OK` or `201-Created`.
 
-<a name="http-delete-returns-204"></a>
-:white_check_mark: **DO** return a `204-No Content` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return `404-Not Found`)
+<a href="#http-delete-returns-204" name="http-delete-returns-204">:white_check_mark:</a> **DO** return a `204-No Content` without a resource/body for a DELETE operation (even if the URL identifies a resource that does not exist; do not return `404-Not Found`)
 
-<a name="http-post-action-returns-200"></a>
-:white_check_mark: **DO** return a `200-OK` from a POST Action. Include a body in the response, even if it has not properties, to allow properties to be added in the future if needed.
+<a href="#http-post-action-returns-200" name="http-post-action-returns-200">:white_check_mark:</a> **DO** return a `200-OK` from a POST Action. Include a body in the response, even if it has not properties, to allow properties to be added in the future if needed.
 
-<a name="http-return-403-vs-404"></a>
-:white_check_mark: **DO** return a `403-Forbidden` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be `404-Not Found`. [Rationale: a `403-Forbidden` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
+<a href="#http-return-403-vs-404" name="http-return-403-vs-404">:white_check_mark:</a> **DO** return a `403-Forbidden` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be `404-Not Found`. [Rationale: a `403-Forbidden` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
 
-<a name="http-support-optimistic-concurrency"></a>
-:white_check_mark: **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
+<a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 #### HTTP Query Parameters and Header Values
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
-<a name="http-parameter-validation"></a>
-:white_check_mark: **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
+<a href="#http-parameter-validation" name="http-parameter-validation">:white_check_mark:</a> **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
 
-<a name="http-parameter-serialization"></a>
-:white_check_mark: **DO** use the following table when translating strings:
+<a href="#http-parameter-serialization" name="http-parameter-serialization">:white_check_mark:</a> **DO** use the following table when translating strings:
 
 Data type | Document that string must be
 --------- | -------
@@ -234,40 +209,32 @@ _x-ms-error-code_   | Response   | (see [Handling Errors](#handling-errors))
 _azure-deprecating_ | Response   | (see [Deprecating Behavior Notification](#deprecating-behavior-notification))
 retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.3))
 
-<a name="http-header-support-standard-headers"></a>
-:white_check_mark: **DO** support all headers shown in _italics_
+<a href="#http-header-support-standard-headers" name="http-header-support-standard-headers">:white_check_mark:</a> **DO** support all headers shown in _italics_
 
-<a name="http-header-names-casing"></a>
-:white_check_mark: **DO** specify headers using kebab-casing
+<a href="#http-header-names-casing" name="http-header-names-casing">:white_check_mark:</a> **DO** specify headers using kebab-casing
 
-<a name="http-header-names-case-sensitivity"></a>
-:white_check_mark: **DO** compare request header names using case-insensitivity
+<a href="#http-header-names-case-sensitivity" name="http-header-names-case-sensitivity">:white_check_mark:</a> **DO** compare request header names using case-insensitivity
 
-<a name="http-header-values-case-sensitivity"></a>
-:white_check_mark: **DO** compare request header values using case-sensitivity if the header name requires it
+<a href="#http-header-values-case-sensitivity" name="http-header-values-case-sensitivity">:white_check_mark:</a> **DO** compare request header values using case-sensitivity if the header name requires it
 
-<a name="http-header-date-values"></a>
-:white_check_mark: **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
+<a href="#http-header-date-values" name="http-header-date-values">:white_check_mark:</a> **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
 
 Note: The RFC 7321 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
 
-<a name="http-header-request-id"></a>
-:white_check_mark: **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
+<a href="#http-header-request-id" name="http-header-request-id">:white_check_mark:</a> **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
 
 Your service should include the `x-ms-request-id` value in error logs so that users can submit support requests for specific failures using this value.
 
-<a name="http-allow-unrecognized-headers"></a>
-:no_entry: **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
+<a href="#http-allow-unrecognized-headers" name="http-allow-unrecognized-headers">:no_entry:</a> **DO NOT** fail a request that contains an unrecognized header. Headers may be added by API gateways or middleware and this must be tolerated
 
-<a name="http-no-x-custom-headers"></a>
-:no_entry: **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
+<a href="#http-no-x-custom-headers" name="http-no-x-custom-headers">:no_entry:</a> **DO NOT** use "x-" prefix for custom headers, unless the header already exists in production [[RFC 6648](https://datatracker.ietf.org/doc/html/rfc6648)].
 
 **Additional References**
 - [StackOverflow - Difference between http parameters and http headers](https://stackoverflow.com/questions/40492782)
 - [Standard HTTP Headers](https://httpwg.org/specs/rfc7231.html#header.field.registration)
 - [Why isn't HTTP PUT allowed to do partial updates in a REST API?](https://stackoverflow.com/questions/19732423/why-isnt-http-put-allowed-to-do-partial-updates-in-a-rest-api)
 
-<a name="rest"></a>
+<a href="#rest" name="rest"></a>
 ### REpresentational State Transfer (REST)
 REST is an architectural style with broad reach that emphasizes scalability, generality, independent deployment, reduced latency via caching, and security. When applying REST to your API, you define your service’s resources as a collections of items.
 These are typically the nouns you use in the vocabulary of your service. Your service's [URLs](#uniform-resource-locators-urls) determine the hierarchical path developers use to perform CRUD (create, read, update, and delete) operations on resources. Note, it's important to model resource state, not behavior.
@@ -275,28 +242,21 @@ There are patterns, later in these guidelines, that describe how to invoke behav
 
 When designing your service, it is important to optimize for the developer using your API.
 
-<a name="rest-clear-naming"></a>
-:white_check_mark: **DO** focus heavily on clear & consistent naming
+<a href="#rest-clear-naming" name="rest-clear-naming">:white_check_mark:</a> **DO** focus heavily on clear & consistent naming
 
-<a name="rest-paths-make-sense"></a>
-:white_check_mark: **DO** ensure your resource paths make sense
+<a href="#rest-paths-make-sense" name="rest-paths-make-sense">:white_check_mark:</a> **DO** ensure your resource paths make sense
 
-<a name="rest-simplify-operations"></a>
-:white_check_mark: **DO** simplify operations with few required query parameters & JSON fields
+<a href="#rest-simplify-operations" name="rest-simplify-operations">:white_check_mark:</a> **DO** simplify operations with few required query parameters & JSON fields
 
-<a name="rest-specify-string-value-constraints"></a>
-:white_check_mark: **DO** establish clear contracts for string values
+<a href="#rest-specify-string-value-constraints" name="rest-specify-string-value-constraints">:white_check_mark:</a> **DO** establish clear contracts for string values
 
-<a name="rest-use-standard-status-codes"></a>
-:white_check_mark: **DO** use proper response codes/bodies so customer can diagnose their own problems and fix them without contacting Azure support or the service team
+<a href="#rest-use-standard-status-codes" name="rest-use-standard-status-codes">:white_check_mark:</a> **DO** use proper response codes/bodies so customer can diagnose their own problems and fix them without contacting Azure support or the service team
 
 #### Resource Schema & Field Mutability
 
-<a name="rest-response-body-is-resource-schema"></a>
-:white_check_mark: **DO** use the same JSON schema for PUT request/response, PATCH response, GET response, and POST request/response on a given URL path. The PATCH request schema should contain all the same fields with no required fields. This allows one SDK type for input/output operations and enables the response to be passed back in a request.
+<a href="#rest-response-body-is-resource-schema" name="rest-response-body-is-resource-schema">:white_check_mark:</a> **DO** use the same JSON schema for PUT request/response, PATCH response, GET response, and POST request/response on a given URL path. The PATCH request schema should contain all the same fields with no required fields. This allows one SDK type for input/output operations and enables the response to be passed back in a request.
 
-<a name="rest-field-mutability"></a>
-:white_check_mark: **DO** think about your resource's fields and how they are used:
+<a href="#rest-field-mutability" name="rest-field-mutability">:white_check_mark:</a> **DO** think about your resource's fields and how they are used:
 
 Field Mutability | Service Request's behavior for this field
 -----------------| -----------------------------------------
@@ -307,37 +267,27 @@ Field Mutability | Service Request's behavior for this field
 In addition to the above, a field may be "required" or "optional". A required field is guaranteed to always exist and will typically _not_ become a nullable field in a SDK's data structure. This allows customers to write code without performing a null-check.
 Because of this, required fields can only be introduced in the 1st version of a service; it is a breaking change to introduce required fields in a later version. In addition, it is a breaking change to remove a required field or make an optional field required or vice versa.
 
-<a name="rest-flat-is-better-than-nested"></a>
-:white_check_mark: **DO** make fields simple and maintain a shallow hierarchy.
+<a href="#rest-flat-is-better-than-nested" name="rest-flat-is-better-than-nested">:white_check_mark:</a> **DO** make fields simple and maintain a shallow hierarchy.
 
-<a name="rest-get-returns-json-body"></a>
-:white_check_mark: **DO** use GET for resource retrieval and return JSON in the response body
+<a href="#rest-get-returns-json-body" name="rest-get-returns-json-body">:white_check_mark:</a> **DO** use GET for resource retrieval and return JSON in the response body
 
-<a name="rest-patch-use-merge-patch"></a>
-:white_check_mark: **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
+<a href="#rest-patch-use-merge-patch" name="rest-patch-use-merge-patch">:white_check_mark:</a> **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
 
-<a name="rest-put-for-create-or-replace"></a>
-:white_check_mark: **DO** use PUT with JSON for wholesale create/replace operations. **NOTE:** If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).
+<a href="#rest-put-for-create-or-replace" name="rest-put-for-create-or-replace">:white_check_mark:</a> **DO** use PUT with JSON for wholesale create/replace operations. **NOTE:** If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).
 
-<a name="rest-delete-resource"></a>
-:white_check_mark: **DO** use DELETE to remove a resource.
+<a href="#rest-delete-resource" name="rest-delete-resource">:white_check_mark:</a> **DO** use DELETE to remove a resource.
 
-<a name="rest-fail-for-unknown-fields"></a>
-:white_check_mark: **DO** fail an operation with `400-Bad Request` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response as described in [Handling errors](#handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
+<a href="#rest-fail-for-unknown-fields" name="rest-fail-for-unknown-fields">:white_check_mark:</a> **DO** fail an operation with `400-Bad Request` if the request is improperly-formed or if any JSON field name or value is not fully understood by the specific version of the service. Return an error response as described in [Handling errors](#handling-errors) indicating what is wrong so customer can diagnose the issue and fix it themselves.
 
-<a name="rest-secrets-allowed-in-post-response"></a>
-:heavy_check_mark: **YOU MAY** return secret fields via POST **if absolutely necessary**.
+<a href="#rest-secrets-allowed-in-post-response" name="rest-secrets-allowed-in-post-response">:heavy_check_mark:</a> **YOU MAY** return secret fields via POST **if absolutely necessary**.
 
-<a name="rest-no-secrets-in-get-response"></a>
-:no_entry: **DO NOT** return secret fields via GET. For example, do not return `administratorPassword` in JSON.
+<a href="#rest-no-secrets-in-get-response" name="rest-no-secrets-in-get-response">:no_entry:</a> **DO NOT** return secret fields via GET. For example, do not return `administratorPassword` in JSON.
 
-<a name="rest-no-computable-fields"></a>
-:no_entry: **DO NOT** add fields to the JSON if the value is easily computable from other fields to avoid bloating the body.
+<a href="#rest-no-computable-fields" name="rest-no-computable-fields">:no_entry:</a> **DO NOT** add fields to the JSON if the value is easily computable from other fields to avoid bloating the body.
 
 ##### Create / Update / Replace Processing Rules
 
-<a name="rest-put-patch-status-codes"></a>
-:white_check_mark: **DO** follow the processing below to create/update/replace a resource:
+<a href="#rest-put-patch-status-codes" name="rest-put-patch-status-codes">:white_check_mark:</a> **DO** follow the processing below to create/update/replace a resource:
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
@@ -357,28 +307,21 @@ There are 2 kinds of errors:
 - An error where you expect customer code to gracefully recover at runtime
 - An error indicating a bug in customer code that is unlikely to be recoverable at runtime; the customer must just fix their code
 
-<a name="rest-error-code-header"></a>
-:white_check_mark: **DO** return an `x-ms-error-code` response header with a string error code indicating what went wrong.
+<a href="#rest-error-code-header" name="rest-error-code-header">:white_check_mark:</a> **DO** return an `x-ms-error-code` response header with a string error code indicating what went wrong.
 
 *NOTE: `x-ms-error-code` values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
-<a name="rest-error-code-enum"></a>
-:heavy_check_mark: **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
+<a href="#rest-error-code-enum" name="rest-error-code-enum">:heavy_check_mark:</a> **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
 
-<a name="rest-add-codes-in-new-api-version"></a>
-:warning: **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
+<a href="#rest-add-codes-in-new-api-version" name="rest-add-codes-in-new-api-version">:warning:</a> **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
 
-<a name="rest-descriptive-error-code-values"></a>
-:white_check_mark: **DO** carefully craft unique `x-ms-error-code` string values for errors that are recoverable at runtime.  Reuse common error codes for usage errors that are not recoverable.
+<a href="#rest-descriptive-error-code-values" name="rest-descriptive-error-code-values">:white_check_mark:</a> **DO** carefully craft unique `x-ms-error-code` string values for errors that are recoverable at runtime.  Reuse common error codes for usage errors that are not recoverable.
 
-<a name="rest-error-code-grouping"></a>
-:heavy_check_mark: **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
+<a href="#rest-error-code-grouping" name="rest-error-code-grouping">:heavy_check_mark:</a> **YOU MAY** group common customer code errors into a few `x-ms-error-code` string values.
 
-<a name="rest-error-code-header-and-body-match"></a>
-:white_check_mark: **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
+<a href="#rest-error-code-header-and-body-match" name="rest-error-code-header-and-body-match">:white_check_mark:</a> **DO** ensure that the top-level error's `code` value is identical to the `x-ms-error-code` header's value.
 
-<a name="rest-error-response-body-structure"></a>
-:white_check_mark: **DO** provide a response body with the following structure:
+<a href="#rest-error-response-body-structure" name="rest-error-response-body-structure">:white_check_mark:</a> **DO** provide a response body with the following structure:
 
 **ErrorResponse** : Object
 
@@ -419,31 +362,24 @@ Example:
 }
 ```
 
-<a name="rest-document-error-code-values"></a>
-:white_check_mark: **DO** document the service's top-level error code strings; they are part of the API contract.
+<a href="#rest-document-error-code-values" name="rest-document-error-code-values">:white_check_mark:</a> **DO** document the service's top-level error code strings; they are part of the API contract.
 
-<a name="rest-error-non-api-contract-fields"></a>
-:heavy_check_mark: **YOU MAY** treat the other fields as you wish as they are _not_ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
+<a href="#rest-error-non-api-contract-fields" name="rest-error-non-api-contract-fields">:heavy_check_mark:</a> **YOU MAY** treat the other fields as you wish as they are _not_ considered part of your service's API contract and customers should not take a dependency on them or their value. They exist to help customers self-diagnose issues.
 
-<a name="rest-error-additional-properties-allowed"></a>
-:heavy_check_mark: **YOU MAY** add additional properties for any data values in your error message so customers don't resort to parsing your error message.  For example, an error with `"message": "A maximum of 16 keys are allowed per account."` might also add a `"maximumKeys": 16` property.  This is not part of your API contract and should only be used for diagnosing problems.
+<a href="#rest-error-additional-properties-allowed" name="rest-error-additional-properties-allowed">:heavy_check_mark:</a> **YOU MAY** add additional properties for any data values in your error message so customers don't resort to parsing your error message.  For example, an error with `"message": "A maximum of 16 keys are allowed per account."` might also add a `"maximumKeys": 16` property.  This is not part of your API contract and should only be used for diagnosing problems.
 
 *Note: Do not use this mechanism to provide information developers need to rely on in code (ex: the error message can give details about why you've been throttled, but the `Retry-After` should be what developers rely on to back off).*
 
-<a name="rest-error-use-default-response"></a>
-:warning: **YOU SHOULD NOT** document specific error status codes in your OpenAPI/Swagger spec unless the "default" response cannot properly describe the specific error response (e.g. body schema is different).
+<a href="#rest-error-use-default-response" name="rest-error-use-default-response">:warning:</a> **YOU SHOULD NOT** document specific error status codes in your OpenAPI/Swagger spec unless the "default" response cannot properly describe the specific error response (e.g. body schema is different).
 
-<a name="json"></a>
+<a href="#json" name="json"></a>
 ### JSON
 
-<a name="json-field-name-casing"></a>
-:white_check_mark: **DO** use camel case for all JSON field names. Do not upper-case acronyms; use camel case.
+<a href="#json-field-name-casing" name="json-field-name-casing">:white_check_mark:</a> **DO** use camel case for all JSON field names. Do not upper-case acronyms; use camel case.
 
-<a name="json-field-names-case-sensitivity"></a>
-:white_check_mark: **DO** treat JSON field names with case-sensitivity.
+<a href="#json-field-names-case-sensitivity" name="json-field-names-case-sensitivity">:white_check_mark:</a> **DO** treat JSON field names with case-sensitivity.
 
-<a name="json-field-values-case-sensitivity"></a>
-:white_check_mark: **DO** treat JSON field values with case-sensitivity. There may be some exceptions (e.g. GUIDs) but avoid if at all possible.
+<a href="#json-field-values-case-sensitivity" name="json-field-values-case-sensitivity">:white_check_mark:</a> **DO** treat JSON field values with case-sensitivity. There may be some exceptions (e.g. GUIDs) but avoid if at all possible.
 
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
 
@@ -453,38 +389,27 @@ Services, and the clients that access them, may be written in multiple languages
  Number  | Signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
  String  | Used for everything else
 
-<a name="json-integer-values"></a>
-:white_check_mark: **DO** use integers within the acceptable range of JSON number.
+<a href="#json-integer-values" name="json-integer-values">:white_check_mark:</a> **DO** use integers within the acceptable range of JSON number.
 
-<a name="json-specify-string-constraints"></a>
-:white_check_mark: **DO** establish a well-defined contract for the format of strings. For example, determine maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
+<a href="#json-specify-string-constraints" name="json-specify-string-constraints">:white_check_mark:</a> **DO** establish a well-defined contract for the format of strings. For example, determine maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
 
-<a name="json-use-standard-string-formats"></a>
-:white_check_mark: **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC3339 for date/time.
+<a href="#json-use-standard-string-formats" name="json-use-standard-string-formats">:white_check_mark:</a> **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC3339 for date/time.
 
-<a name="json-should-be-round-trippable"></a>
-:white_check_mark: **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
+<a href="#json-should-be-round-trippable" name="json-should-be-round-trippable">:white_check_mark:</a> **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
 
-<a name="json-date-time-is-rfc3339"></a>
-:white_check_mark: **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
+<a href="#json-date-time-is-rfc3339" name="json-date-time-is-rfc3339">:white_check_mark:</a> **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
 
-<a name="json-durations-use-fixed-time-intervals"></a>
-:white_check_mark: **DO** use a fixed time interval to express durations e.g., milliseconds, seconds, minutes, days, etc., and include the time unit in the property name e.g., `backupTimeInMinutes` or `ttlSeconds`.
+<a href="#json-durations-use-fixed-time-intervals" name="json-durations-use-fixed-time-intervals">:white_check_mark:</a> **DO** use a fixed time interval to express durations e.g., milliseconds, seconds, minutes, days, etc., and include the time unit in the property name e.g., `backupTimeInMinutes` or `ttlSeconds`.
 
-<a name="json-rfc3339-time-intervals-allowed"></a>
-:heavy_check_mark: **YOU MAY** use [RFC3339 time intervals](https://wikipedia.org/wiki/ISO_8601#Durations) only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P3M" represents 3 months no matter how many days between the start and end dates, or "P1Y" represents 366 days on a leap year. The value must be round-trippable.
+<a href="#json-rfc3339-time-intervals-allowed" name="json-rfc3339-time-intervals-allowed">:heavy_check_mark:</a> **YOU MAY** use [RFC3339 time intervals](https://wikipedia.org/wiki/ISO_8601#Durations) only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P3M" represents 3 months no matter how many days between the start and end dates, or "P1Y" represents 366 days on a leap year. The value must be round-trippable.
 
-<a name="json-uuid-is-rfc4412"></a>
-:white_check_mark: **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
+<a href="#json-uuid-is-rfc4412" name="json-uuid-is-rfc4412">:white_check_mark:</a> **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
 
-<a name="json-may-nest-for-grouping"></a>
-:heavy_check_mark: **YOU MAY** use JSON objects to group sub-fields together.
+<a href="#json-may-nest-for-grouping" name="json-may-nest-for-grouping">:heavy_check_mark:</a> **YOU MAY** use JSON objects to group sub-fields together.
 
-<a name="json-use-arrays-for-ordering"></a>
-:heavy_check_mark: **YOU MAY** use JSON arrays if maintaining an order of values is required. Avoid arrays in other situations since arrays can be difficult and inefficient to work with, especially with JSON Merge Patch where the entire array needs to be read prior to any operation being applied to it.
+<a href="#json-use-arrays-for-ordering" name="json-use-arrays-for-ordering">:heavy_check_mark:</a> **YOU MAY** use JSON arrays if maintaining an order of values is required. Avoid arrays in other situations since arrays can be difficult and inefficient to work with, especially with JSON Merge Patch where the entire array needs to be read prior to any operation being applied to it.
 
-<a name="json-prefer-objects-over-arrays"></a>
-:ballot_box_with_check: **YOU SHOULD** use JSON objects instead of arrays whenever possible.
+<a href="#json-prefer-objects-over-arrays" name="json-prefer-objects-over-arrays">:ballot_box_with_check:</a> **YOU SHOULD** use JSON objects instead of arrays whenever possible.
 
 #### Enums & SDKs (Client libraries)
 It is common for strings to have an explicit set of values. These are often reflected in the OpenAPI definition as enumerations. These are extremely useful for developer tooling, e.g. code completion, and client library generation.
@@ -492,30 +417,23 @@ It is common for strings to have an explicit set of values. These are often refl
 However, it is not uncommon for the set of values to grow over the life of a service. For this reason, Microsoft's tooling uses the concept of an "extensible enum," which indicates that the set of values should be treated as only a _partial_ list.
 This indicates to client libraries and customers that values of the enumeration field should be effectively treated as strings and that undocumented value may returned in the future. This enables the set of values to grow over time while ensuring stability in client libraries and customer code.
 
-<a name="json-use-extensible-enums"></a>
-:ballot_box_with_check: **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
+<a href="#json-use-extensible-enums" name="json-use-extensible-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enumerations unless you are positive that the symbol set will NEVER change over time.
 
-<a name="json-document-extensible-enums"></a>
-:white_check_mark: **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
+<a href="#json-document-extensible-enums" name="json-document-extensible-enums">:white_check_mark:</a> **DO** document to customers that new values may appear in the future so that customers write their code today expecting these new values tomorrow.
 
-<a name="json-return-extensible-enum-value"></a>
-:heavy_check_mark: **YOU MAY** return a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+<a href="#json-return-extensible-enum-value" name="json-return-extensible-enum-value">:heavy_check_mark:</a> **YOU MAY** return a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
 
-<a name="json-accept-extensible-enum-value"></a>
-:warning: **YOU SHOULD NOT** accept a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
+<a href="#json-accept-extensible-enum-value" name="json-accept-extensible-enum-value">:warning:</a> **YOU SHOULD NOT** accept a value for an extensible enum that is not one of the values defined for the api-version specified in the request.
 
-<a name="json-removing-enum-value-is-breaking"></a>
-:no_entry: **DO NOT** remove values from your enumeration list as this breaks customer code.
+<a href="#json-removing-enum-value-is-breaking" name="json-removing-enum-value-is-breaking">:no_entry:</a> **DO NOT** remove values from your enumeration list as this breaks customer code.
 
 #### Polymorphic types
 
-<a name="json-avoid-polymorphism"></a>
-:warning: **YOU SHOULD NOT** use polymorphic JSON types because they greatly complicate the customer code due to runtime dynamic casts and the introduction of new types in the future.
+<a href="#json-avoid-polymorphism" name="json-avoid-polymorphism">:warning:</a> **YOU SHOULD NOT** use polymorphic JSON types because they greatly complicate the customer code due to runtime dynamic casts and the introduction of new types in the future.
 
 If you can't avoid them, then follow the guideline below.
 
-<a name="json-use-discriminator-for-polymorphism"></a>
-:white_check_mark: **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
+<a href="#json-use-discriminator-for-polymorphism" name="json-use-discriminator-for-polymorphism">:white_check_mark:</a> **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
 Below is an example of JSON for a Rectangle and Circle with a discriminator field named `kind`:
 **Rectangle**
@@ -554,28 +472,23 @@ Both Rectangle and Circle have common fields: `kind`, `fillColor`, `lineColor`, 
 
 The [Azure Naming Guidelines](./ConsiderationsForServiceDesign.md#common-names) recommend that the discriminator field be named `kind`.
 
-<a name="json-polymorphism-kind-extensible"></a>
-:ballot_box_with_check: **YOU SHOULD** define the discriminator field of a polymorphic type to be an extensible enum.
+<a href="#json-polymorphism-kind-extensible" name="json-polymorphism-kind-extensible">:ballot_box_with_check:</a> **YOU SHOULD** define the discriminator field of a polymorphic type to be an extensible enum.
 
-<a name="json-polymorphism-kind-immutable"></a>
-:warning: **YOU SHOULD NOT** allow an update (patch) to change the discriminator field of a polymorphic type.
+<a href="#json-polymorphism-kind-immutable" name="json-polymorphism-kind-immutable">:warning:</a> **YOU SHOULD NOT** allow an update (patch) to change the discriminator field of a polymorphic type.
 
-<a name="json-polymorphism-versioning"></a>
-:warning: **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
+<a href="#json-polymorphism-versioning" name="json-polymorphism-versioning">:warning:</a> **YOU SHOULD NOT** return properties of a polymorphic type that are not defined for the api-version specified in the request.
 
-<a name="json-polymorphism-arrays"></a>
-:warning: **YOU SHOULD NOT** have a property of an updatable resource whose value is an array of polymorphic objects.
+<a href="#json-polymorphism-arrays" name="json-polymorphism-arrays">:warning:</a> **YOU SHOULD NOT** have a property of an updatable resource whose value is an array of polymorphic objects.
 
 Updating an array property with JSON merge-patch is not version-resilient if the array contains polymorphic types.
 
 ## Common API Patterns
 
-<a name="actions"></a>
+<a href="#actions" name="actions"></a>
 ### Performing an Action
 The REST specification is used to model the state of a resource, and is primarily intended to handle CRUD (Create, Read, Update, Delete) operations. However, many services require the ability to perform an action on a resource, e.g. getting the thumbnail of an image or rebooting a VM.  It is also sometimes useful to perform an action on a collection.
 
-<a name="actions-url-pattern-for-resource-action"></a>
-:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a resource
+<a href="#actions-url-pattern-for-resource-action" name="actions-url-pattern-for-resource-action">:ballot_box_with_check:</a> **YOU SHOULD** pattern your URL like this to perform an action on a resource
 **URL Pattern**
 ```text
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
@@ -586,8 +499,7 @@ https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 https://.../users/Bob:grant?access=read
 ```
 
-<a name="actions-url-pattern-for-collection-action"></a>
-:ballot_box_with_check: **YOU SHOULD** pattern your URL like this to perform an action on a collection
+<a href="#actions-url-pattern-for-collection-action" name="actions-url-pattern-for-collection-action">:ballot_box_with_check:</a> **YOU SHOULD** pattern your URL like this to perform an action on a collection
 **URL Pattern**
 ```text
 https://.../<resource-collection>:<action>?<input parameters>
@@ -600,33 +512,25 @@ https://.../users:grant?access=read
 
 Note: To avoid potential collision of actions and resource ids, you should disallow the use of the ":" character in resource ids.
 
-<a name="actions-use-post-method"></a>
-:white_check_mark: **DO** use a POST operation for any action on a resource or collection.
+<a href="#actions-use-post-method" name="actions-use-post-method">:white_check_mark:</a> **DO** use a POST operation for any action on a resource or collection.
 
-<a name="actions-support-repeatability-headers"></a>
-:white_check_mark: **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
+<a href="#actions-support-repeatability-headers" name="actions-support-repeatability-headers">:white_check_mark:</a> **DO** support the Repeatability-Request-ID & Repeatability-First-Sent request headers if the action needs to be idempotent if retries occur.
 
-<a name="actions-synchronous-success-status-code"></a>
-:white_check_mark: **DO** return a `200-OK` when the action completes synchronously and successfully.
+<a href="#actions-synchronous-success-status-code" name="actions-synchronous-success-status-code">:white_check_mark:</a> **DO** return a `200-OK` when the action completes synchronously and successfully.
 
-<a name="actions-action-name-is-verb"></a>
-:ballot_box_with_check: **YOU SHOULD** use a verb as the `<action>` component of the path.
+<a href="#actions-action-name-is-verb" name="actions-action-name-is-verb">:ballot_box_with_check:</a> **YOU SHOULD** use a verb as the `<action>` component of the path.
 
-<a name="actions-no-actions-for-crud"></a>
-:no_entry: **DO NOT** use an action operation when the operation behavior could reasonably be defined as one of the standard REST Create, Read, Update, Delete, or List operations.
+<a href="#actions-no-actions-for-crud" name="actions-no-actions-for-crud">:no_entry:</a> **DO NOT** use an action operation when the operation behavior could reasonably be defined as one of the standard REST Create, Read, Update, Delete, or List operations.
 
-<a name="collections"></a>
+<a href="#collections" name="collections"></a>
 ### Collections
-<a name="collections-response-is-object"></a>
-:white_check_mark: **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
+<a href="#collections-response-is-object" name="collections-response-is-object">:white_check_mark:</a> **DO** structure the response to a list operation as an object with a top-level array field containing the set (or subset) of resources.
 
-<a name="collections-support-server-driven-paging"></a>
-:ballot_box_with_check: **YOU SHOULD** support paging today if there is ever a chance in the future that the number of items can grow to be very large.
+<a href="#collections-support-server-driven-paging" name="collections-support-server-driven-paging">:ballot_box_with_check:</a> **YOU SHOULD** support paging today if there is ever a chance in the future that the number of items can grow to be very large.
 
 NOTE: It is a breaking change to add paging in the future
 
-<a name="collections-use-get-method"></a>
-:heavy_check_mark: **YOU MAY** expose an operation that lists your resources by supporting a GET method with a URL to a resource-collection (as opposed to a resource-id).
+<a href="#collections-use-get-method" name="collections-use-get-method">:heavy_check_mark:</a> **YOU MAY** expose an operation that lists your resources by supporting a GET method with a URL to a resource-collection (as opposed to a resource-id).
 
 **Example Response Body**
 ```json
@@ -641,36 +545,27 @@ NOTE: It is a breaking change to add paging in the future
  }
 ```
 
-<a name="collections-items-have-id-and-etag"></a>
-:white_check_mark: **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation.
+<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation.
 
-<a name="collections-document-pagination-reliability"></a>
-:white_check_mark: **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
+<a href="#collections-document-pagination-reliability" name="collections-document-pagination-reliability">:white_check_mark:</a> **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
-<a name="collections-include-nextlink-for-more-results"></a>
-:white_check_mark: **DO** return a `nextLink` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
+<a href="#collections-include-nextlink-for-more-results" name="collections-include-nextlink-for-more-results">:white_check_mark:</a> **DO** return a `nextLink` field with an absolute URL that the client can GET in order to retrieve the next page of the collection.
 
 Note: The service is responsible for performing any URL-encoding required on the `nextLink` URL.
 
-<a name="collections-nextlink-includes-all-query-params"></a>
-:white_check_mark: **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
+<a href="#collections-nextlink-includes-all-query-params" name="collections-nextlink-includes-all-query-params">:white_check_mark:</a> **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
 
-<a name="collections-response-array-name"></a>
-:ballot_box_with_check: **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
+<a href="#collections-response-array-name" name="collections-response-array-name">:ballot_box_with_check:</a> **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
 
-<a name="collections-no-nextlink-on-last-page"></a>
-:no_entry: **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
+<a href="#collections-no-nextlink-on-last-page" name="collections-no-nextlink-on-last-page">:no_entry:</a> **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
 
-<a name="collections-nextlink-value-never-null"></a>
-:no_entry: **DO NOT** return the `nextLink` field with a value of null.
+<a href="#collections-nextlink-value-never-null" name="collections-nextlink-value-never-null">:no_entry:</a> **DO NOT** return the `nextLink` field with a value of null.
 
-<a name="collections-avoid-count-property"></a>
-:warning: **YOU SHOULD NOT** return a `count` of all objects in the collection as this may be expensive to compute.
+<a href="#collections-avoid-count-property" name="collections-avoid-count-property">:warning:</a> **YOU SHOULD NOT** return a `count` of all objects in the collection as this may be expensive to compute.
 
 #### Query options
 
-<a name="collections-query-options"></a>
-:heavy_check_mark: **YOU MAY** support the following query parameters allowing customers to control the list operation:
+<a href="#collections-query-options" name="collections-query-options">:heavy_check_mark:</a> **YOU MAY** support the following query parameters allowing customers to control the list operation:
 
 Parameter&nbsp;name | Type | Description
 ------------------- | ---- | -----------
@@ -682,30 +577,23 @@ Parameter&nbsp;name | Type | Description
 `select`       | string&nbsp;array | a list of field names to be returned for each resource
 `expand`       | string&nbsp;array | a list of the related resources to be included in line with each resource
 
-<a name="collections-error-on-unknown-parameter"></a>
-:white_check_mark: **DO** return an error if the client specifies any parameter not supported by the service.
+<a href="#collections-error-on-unknown-parameter" name="collections-error-on-unknown-parameter">:white_check_mark:</a> **DO** return an error if the client specifies any parameter not supported by the service.
 
-<a name="collections-parameter-names-case-sensitivity"></a>
-:white_check_mark: **DO** treat these query parameter names as case-sensitive.
+<a href="#collections-parameter-names-case-sensitivity" name="collections-parameter-names-case-sensitivity">:white_check_mark:</a> **DO** treat these query parameter names as case-sensitive.
 
-<a name="collections-select-expand-ordering"></a>
-:white_check_mark: **DO** apply `select` or `expand` options after applying all the query options in the table above.
+<a href="#collections-select-expand-ordering" name="collections-select-expand-ordering">:white_check_mark:</a> **DO** apply `select` or `expand` options after applying all the query options in the table above.
 
-<a name="collections-query-options-ordering"></a>
-:white_check_mark: **DO** apply the query options to the collection in the order shown in the table above.
+<a href="#collections-query-options-ordering" name="collections-query-options-ordering">:white_check_mark:</a> **DO** apply the query options to the collection in the order shown in the table above.
 
-<a name="collections-query-options-no-dollar-sign"></a>
-:no_entry: **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
+<a href="#collections-query-options-no-dollar-sign" name="collections-query-options-no-dollar-sign">:no_entry:</a> **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
 #### `filter`
 
-<a name="collections-filter-param"></a>
-:heavy_check_mark: **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
+<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
 
 The value of the `filter` option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-<a name="collections-filter-behavior"></a>
-:white_check_mark: **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
@@ -733,11 +621,9 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-<a name="collections-filter-unknown-operator"></a>
-:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
 
-<a name="collections-filter-operator-ordering"></a>
-:white_check_mark: **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -752,8 +638,7 @@ not                      | Logical negation      | not price le 3.5
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
 
-<a name="collections-filter-functions"></a>
-:heavy_check_mark: **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
+<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -790,8 +675,7 @@ GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs')
 
 #### orderby
 
-<a name="collections-orderby-param"></a>
-:heavy_check_mark: **YOU MAY** support sorting of the results of a list operation with the `orderby` query parameter.
+<a href="#collections-orderby-param" name="collections-orderby-param">:heavy_check_mark:</a> **YOU MAY** support sorting of the results of a list operation with the `orderby` query parameter.
 *NOTE: It is unusual for a service to support `orderby` because it is very expensive to implement as it requires sorting the entire large collection before being able to return any results.*
 
 The value of the `orderby` parameter is a comma-separated list of expressions used to sort the items.
@@ -799,20 +683,15 @@ A special case of such an expression is a property path terminating on a primiti
 
 Each expression in the `orderby` parameter value may include the suffix "asc" for ascending or "desc" for descending, separated from the expression by one or more spaces.
 
-<a name="collections-orderby-ordering"></a>
-:white_check_mark: **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
+<a href="#collections-orderby-ordering" name="collections-orderby-ordering">:white_check_mark:</a> **DO** sort the collection in ascending order on an expression if "asc" or "desc" is not specified.
 
-<a name="collections-orderby-null-ordering"></a>
-:white_check_mark: **DO** sort NULL values as "less than" non-NULL values.
+<a href="#collections-orderby-null-ordering" name="collections-orderby-null-ordering">:white_check_mark:</a> **DO** sort NULL values as "less than" non-NULL values.
 
-<a name="collections-orderby-behavior"></a>
-:white_check_mark: **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
+<a href="#collections-orderby-behavior" name="collections-orderby-behavior">:white_check_mark:</a> **DO** sort items by the result values of the first expression, and then sort items with the same value for the first expression by the result value of the second expression, and so on.
 
-<a name="collections-orderby-inherent-sort-order"></a>
-:white_check_mark: **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
+<a href="#collections-orderby-inherent-sort-order" name="collections-orderby-inherent-sort-order">:white_check_mark:</a> **DO** use the inherent sort order for the type of the field. For example, date-time values should be sorted chronologically and not alphabetically.
 
-<a name="collections-orderby-unsupported-field"></a>
-:white_check_mark: **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if the client requests sorting by a field that is not supported by the operation.
+<a href="#collections-orderby-unsupported-field" name="collections-orderby-unsupported-field">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if the client requests sorting by a field that is not supported by the operation.
 
 For example, to return all people sorted by name in ascending order:
 ```text
@@ -832,39 +711,31 @@ will return all people whose name is David sorted in ascending order by hireDate
 
 ##### Considerations for sorting with pagination
 
-<a name="collections-consistent-options-with-pagination"></a>
-:white_check_mark: **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
+<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
 
 ##### skip
-<a name="collections-skip-param-definition"></a>
-:white_check_mark: **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
+<a href="#collections-skip-param-definition" name="collections-skip-param-definition">:white_check_mark:</a> **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
 
-<a name="collections-skip-param"></a>
-:heavy_check_mark: **YOU MAY** allow clients to pass the `skip` query parameter to specify an offset into collection of the first resource to be returned.
+<a href="#collections-skip-param" name="collections-skip-param">:heavy_check_mark:</a> **YOU MAY** allow clients to pass the `skip` query parameter to specify an offset into collection of the first resource to be returned.
 ##### top
 
-<a name="collections-"></a>
-<a name="collections-top-param"></a>
-:heavy_check_mark: **YOU MAY** allow clients to pass the `top` query parameter to specify the maximum number of resources to return from the collection.
+<a href="#collections-" name="collections-"></a>
+<a href="#collections-top-param" name="collections-top-param">:heavy_check_mark:</a> **YOU MAY** allow clients to pass the `top` query parameter to specify the maximum number of resources to return from the collection.
 
 If supporting `top`:
 :white_check_mark: **DO** define the `top` parameter as an integer with a minimum value of 1. If not specified, `top` has a default value of infinity.
 
-<a name="collections-top-behavior"></a>
-:white_check_mark: **DO** return the collection's `top` number of resources (if available), starting from `skip`.
+<a href="#collections-top-behavior" name="collections-top-behavior">:white_check_mark:</a> **DO** return the collection's `top` number of resources (if available), starting from `skip`.
 
 ##### maxpagesize
 
-<a name="collections-maxpagesize-param"></a>
-:heavy_check_mark: **YOU MAY** allow clients to pass the `maxpagesize` query parameter to specify the maximum number of resources to include in a single page response.
+<a href="#collections-maxpagesize-param" name="collections-maxpagesize-param">:heavy_check_mark:</a> **YOU MAY** allow clients to pass the `maxpagesize` query parameter to specify the maximum number of resources to include in a single page response.
 
-<a name="collections-maxpagesize-definition"></a>
-:white_check_mark: **DO** define the `maxpagesize` parameter as an optional integer with a default value appropriate for the collection.
+<a href="#collections-maxpagesize-definition" name="collections-maxpagesize-definition">:white_check_mark:</a> **DO** define the `maxpagesize` parameter as an optional integer with a default value appropriate for the collection.
 
-<a name="collections-maxpagesize-might-return-fewer"></a>
-:white_check_mark: **DO** make clear in documentation of the `maxpagesize` parameter that the operation may choose to return fewer resources than the value specified.
+<a href="#collections-maxpagesize-might-return-fewer" name="collections-maxpagesize-might-return-fewer">:white_check_mark:</a> **DO** make clear in documentation of the `maxpagesize` parameter that the operation may choose to return fewer resources than the value specified.
 
-<a name="versioning"></a>
+<a href="#versioning" name="versioning"></a>
 ### API Versioning
 
 Azure services need to change over time. However, when changing a service, there are 2 requirements:
@@ -873,37 +744,29 @@ Azure services need to change over time. However, when changing a service, there
 
 *NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
-<a name="versioning-review-required"></a>
-:white_check_mark: **DO** review any API changes with the Azure API Stewardship Board
+<a href="#versioning-review-required" name="versioning-review-required">:white_check_mark:</a> **DO** review any API changes with the Azure API Stewardship Board
 
 Clients specify the version of the API to be used in every request to the service, even requests to an `Operation-Location` or `nextLink` URL returned by the service.
 
-<a name="versioning-api-version-query-param"></a>
-:white_check_mark: **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
+<a href="#versioning-api-version-query-param" name="versioning-api-version-query-param">:white_check_mark:</a> **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
 
-<a name="versioning-date-based-versioning"></a>
-:white_check_mark: **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
+<a href="#versioning-date-based-versioning" name="versioning-date-based-versioning">:white_check_mark:</a> **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
 
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
 ```
 
-<a name="versioning-use-later-date"></a>
-:white_check_mark: **DO** use a later date for each new preview version
+<a href="#versioning-use-later-date" name="versioning-use-later-date">:white_check_mark:</a> **DO** use a later date for each new preview version
 
 When releasing a new preview, the service team may completely retire any previous preview versions after giving customers at least 90 days to upgrade their code
 
-<a name="versioning-no-breaking-changes"></a>
-:no_entry: **DO NOT** introduce any breaking changes into the service.
+<a href="#versioning-no-breaking-changes" name="versioning-no-breaking-changes">:no_entry:</a> **DO NOT** introduce any breaking changes into the service.
 
-<a name="versioning-no-version-in-path"></a>
-:no_entry: **DO NOT** include a version number segment in any operation path.
+<a href="#versioning-no-version-in-path" name="versioning-no-version-in-path">:no_entry:</a> **DO NOT** include a version number segment in any operation path.
 
-<a name="versioning-use-later-date-2"></a>
-:no_entry: **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview `api-version` is '2021-06-04-preview', the GA version of the API **must be** a date later than 2021-06-04
+<a href="#versioning-use-later-date-2" name="versioning-use-later-date-2">:no_entry:</a> **DO NOT** use the same date when transitioning from a preview API to a GA API. If the preview `api-version` is '2021-06-04-preview', the GA version of the API **must be** a date later than 2021-06-04
 
-<a name="versioning-preview-goes-ga-within-one-year"></a>
-:no_entry: **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
+<a href="#versioning-preview-goes-ga-within-one-year" name="versioning-preview-goes-ga-within-one-year">:no_entry:</a> **DO NOT** keep a preview feature in preview for more than 1 year; it must go GA (or be removed) within 1 year after introduction.
 
 #### Use Extensible Enums
 
@@ -926,22 +789,19 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-<a name="versioning-use-extensible-enums"></a>
-:ballot_box_with_check: **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
+<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
-<a name="deprecation"></a>
+<a href="#deprecation" name="deprecation"></a>
 ### Deprecating Behavior Notification
 
 When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a [breaking change](#123-definition-of-a-breaking-change) to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-<a name="deprecation-header"></a>
-:white_check_mark: **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
+<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
 > NOTE: We do not want to scare customers with this header.
 
-<a name="deprecation-header-value"></a>
-:white_check_mark: **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
+<a href="#deprecation-header-value" name="deprecation-header-value">:white_check_mark:</a> **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
 
 Deprecations should use the following pattern:
 ```text
@@ -960,22 +820,20 @@ For example:
 - `azure-deprecating: Model version 2021-01-15 used in Sentiment analysis will retire on 2022-12-01 (https://aka.ms/ta-modelversions?sentimentAnalysis)`
 - `azure-deprecating: TLS 1.0 & 1.1 support will retire on 2022-10-01 (https://devblogs.microsoft.com/devops/deprecating-weak-cryptographic-standards-tls-1-0-and-1-1-in-azure-devops-services/)`
 
-<a name="deprecation-header-review"></a>
-:no_entry: **DO NOT** introduce this header without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
+<a href="#deprecation-header-review" name="deprecation-header-review">:no_entry:</a> **DO NOT** introduce this header without approval from [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) and an official deprecation notice on [Azure Updates](https://azure.microsoft.com/updates/).
 
-<a name="repeatability"></a>
+<a href="#repeatability" name="repeatability"></a>
 ### Repeatability of requests
 
 The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
 
-<a name="repeatability-headers"></a>
-:ballot_box_with_check: **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
+<a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
 
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
 - A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
 - When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
 
-<a name="lro"></a>
+<a href="#lro" name="lro"></a>
 ### Long-Running Operations & Jobs
 
 When the processing for an operation may take a significant amount of time to complete, it should be
@@ -985,11 +843,9 @@ through another API call.
 See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
 Considerations for Service Design for an introduction to the design of long-running operations.
 
-<a name="lro-response-time"></a>
-:white_check_mark: **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
+<a href="#lro-response-time" name="lro-response-time">:white_check_mark:</a> **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
 
-<a name="lro-no-patch-lro"></a>
-:no_entry: **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
+<a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
 
 In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
 it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
@@ -1005,81 +861,59 @@ These are described in the following two sections.
 A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
 a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
 
-<a name="lro-no-post-create"></a>
-:no_entry: **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
+<a href="#lro-no-post-create" name="lro-no-post-create">:no_entry:</a> **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
 
-<a name="lro-operation-id-request-header"></a>
-:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
+<a href="#lro-operation-id-request-header" name="lro-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
-<a name="lro-operation-id-default-is-guid"></a>
-:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+<a href="#lro-operation-id-default-is-guid" name="lro-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a name="lro-operation-id-unique-except-retries"></a>
-:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-<a name="lro-valid-inputs-synchronously"></a>
-:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+<a href="#lro-valid-inputs-synchronously" name="lro-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-<a name="lro-returns-202"></a>
-:white_check_mark: **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
+<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
-<a name="lro-returns-only-202"></a>
-:warning: **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
+<a href="#lro-returns-only-202" name="lro-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
-<a name="lro-returns-status-monitor"></a>
-:white_check_mark: **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
+<a href="#lro-returns-status-monitor" name="lro-returns-status-monitor">:white_check_mark:</a> **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
 
-<a name="lro-returns-operation-location"></a>
-:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+<a href="#lro-returns-operation-location" name="lro-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-<a name="lro-operation-location-includes-api-version"></a>
-:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
 #### PUT operation with additional long-running processing
 
 For a PUT (create or replace) with additional long-running processing:
 
-<a name="lro-put-operation-id-request-header"></a>
-:white_check_mark: **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
+<a href="#lro-put-operation-id-request-header" name="lro-put-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
-<a name="lro-put-operation-id-default-is-guid"></a>
-:white_check_mark: **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+<a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a name="lro-put-operation-id-unique-except-retries"></a>
-:white_check_mark: **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-<a name="lro-put-valid-inputs-synchronously"></a>
-:white_check_mark: **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+<a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-<a name="lro-put-returns-200-or-201"></a>
-:white_check_mark: **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
+<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
 
-<a name="lro-put-returns-operation-id-header"></a>
-:white_check_mark: **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
+<a href="#lro-put-returns-operation-id-header" name="lro-put-returns-operation-id-header">:white_check_mark:</a> **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
 
-<a name="lro-put-response-headers"></a>
-:white_check_mark: **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
+<a href="#lro-put-response-headers" name="lro-put-response-headers">:white_check_mark:</a> **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
 
-<a name="lro-put-returns-operation-location"></a>
-:ballot_box_with_check: **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+<a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-<a name="lro-put-operation-location-includes-api-version"></a>
-:ballot_box_with_check: **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
 
 #### Obtaining status and results of long-running operations
 
 For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
 
-<a name="lro-status-monitor-get-returns-200"></a>
-:white_check_mark: **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
 
-<a name="lro-status-monitor-accepts-any-api-version"></a>
-:ballot_box_with_check: **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
+<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
 
 Note: Clients may replace the value of `api-version` in the `Operation-Location` URI with a value appropriate for their application.
 
-<a name="lro-status-monitor-structure"></a>
-:white_check_mark: **DO** return a status monitor in the response body that conforms with the following structure:
+<a href="#lro-status-monitor-structure" name="lro-status-monitor-structure">:white_check_mark:</a> **DO** return a status monitor in the response body that conforms with the following structure:
 
 **OperationStatus** : Object
 
@@ -1091,22 +925,17 @@ Property | Type        | Required | Description
 `result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
 additional<br/>properties | |     | Additional named or dynamic properties of the operation
 
-<a name="lro-status-monitor-includes-all-fields"></a>
-:white_check_mark: **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
+<a href="#lro-status-monitor-includes-all-fields" name="lro-status-monitor-includes-all-fields">:white_check_mark:</a> **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
 
-<a name="lro-status-monitor-retry-after"></a>
-:white_check_mark: **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
+<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
 
-<a name="lro-status-monitor-post-action-result"></a>
-:white_check_mark: **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+<a href="#lro-status-monitor-post-action-result" name="lro-status-monitor-post-action-result">:white_check_mark:</a> **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
 
-<a name="lro-status-monitor-no-resource-result"></a>
-:no_entry: **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
 
-<a name="lro-status-monitor-retention"></a>
-:white_check_mark: **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
+<a href="#lro-status-monitor-retention" name="lro-status-monitor-retention">:white_check_mark:</a> **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
-<a name="byos"></a>
+<a href="#byos" name="byos"></a>
 ### Bring your own Storage (BYOS)
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own
 storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer
@@ -1114,30 +943,23 @@ storage APIs and should instead leverage the existing Azure Storage service. Whe
 
 While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
 
-<a name="byos-pattern"></a>
-:white_check_mark: **DO** use the Bring Your Own Storage pattern.
+<a href="#byos-pattern" name="byos-pattern">:white_check_mark:</a> **DO** use the Bring Your Own Storage pattern.
 
-<a name="byos-prefix-for-folder"></a>
-:white_check_mark: **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
+<a href="#byos-prefix-for-folder" name="byos-prefix-for-folder">:white_check_mark:</a> **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
 
-<a name="byos-allow-container-reuse"></a>
-:no_entry: **DO NOT** require a fresh container per operation.
+<a href="#byos-allow-container-reuse" name="byos-allow-container-reuse">:no_entry:</a> **DO NOT** require a fresh container per operation.
 
-<a name="byos-authorization"></a>
-:white_check_mark: **DO** use managed identity and Role Based Access Control ([RBAC](https://docs.microsoft.com/azure/role-based-access-control/overview)) as the mechanism allowing customers to grant permission to their Storage account to your service.
+<a href="#byos-authorization" name="byos-authorization">:white_check_mark:</a> **DO** use managed identity and Role Based Access Control ([RBAC](https://docs.microsoft.com/azure/role-based-access-control/overview)) as the mechanism allowing customers to grant permission to their Storage account to your service.
 
-<a name="byos-define-rbac-roles"></a>
-:white_check_mark: **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
+<a href="#byos-define-rbac-roles" name="byos-define-rbac-roles">:white_check_mark:</a> **DO** Add RBAC roles for every service operation that requires accessing Storage scoped to the exact permissions.
 
-<a name="byos-rbac-compatibility"></a>
-:white_check_mark: **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
+<a href="#byos-rbac-compatibility" name="byos-rbac-compatibility">:white_check_mark:</a> **DO** Ensure that RBAC roles are backward compatible, and specifically, do not take away permissions from a role that would break the operation of the service. Any change of RBAC roles that results in a change of the service behavior is considered a breaking change.
 
 
 #### Handling 'downstream' errors
 It is not uncommon to rely on other services, e.g. storage, when implementing your service. Inevitably, the services you depend on will fail. In these situations, you can include the downstream error code and text in the inner-error of the response body. This provides a consistent pattern for handling errors in the services you depend upon.
 
-<a name="byos-include-downstream-errors"></a>
-:white_check_mark: **DO** include error from downstream services as the 'inner-error' section of the response body.
+<a href="#byos-include-downstream-errors" name="byos-include-downstream-errors">:white_check_mark:</a> **DO** include error from downstream services as the 'inner-error' section of the response body.
 
 #### Working with files
 Generally speaking, there are two patterns that you will encounter when working with files; single file access, and file collections.
@@ -1145,30 +967,22 @@ Generally speaking, there are two patterns that you will encounter when working 
 ##### Single file access
 Designing an API for accessing a single file, depending on your scenario, is relatively straight forward.
 
-<a name="byos-sas-token"></a>
-:heavy_check_mark: **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
+<a href="#byos-sas-token" name="byos-sas-token">:heavy_check_mark:</a> **YOU MAY** use a Shared Access Signature [SAS](https://docs.microsoft.com/azure/storage/common/storage-sas-overview) to provide access to a single file. SAS is considered the minimum security for files and can be used in lieu of, or in addition to, RBAC.
 
-<a name="byos-http-insecure"></a>
-:ballot_box_with_check: **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
+<a href="#byos-http-insecure" name="byos-http-insecure">:ballot_box_with_check:</a> **YOU SHOULD** if using HTTP (not HTTPS) document to users that all information is sent over the wire in clear text.
 
-<a name="byos-http-status-code"></a>
-:white_check_mark: **DO** return an HTTP status code representing the result of your service operation's behavior.
+<a href="#byos-http-status-code" name="byos-http-status-code">:white_check_mark:</a> **DO** return an HTTP status code representing the result of your service operation's behavior.
 
-<a name="byos-include-storage-error"></a>
-:white_check_mark: **DO** include the Storage error information in the 'inner-error' section of an error response if the error was the result of an internal Storage operation failure. This helps the client determine the underlying cause of the error, e.g.: a missing storage object or insufficient permissions.
+<a href="#byos-include-storage-error" name="byos-include-storage-error">:white_check_mark:</a> **DO** include the Storage error information in the 'inner-error' section of an error response if the error was the result of an internal Storage operation failure. This helps the client determine the underlying cause of the error, e.g.: a missing storage object or insufficient permissions.
 
-<a name="byos-support-single-object"></a>
-:white_check_mark: **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
+<a href="#byos-support-single-object" name="byos-support-single-object">:white_check_mark:</a> **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
 
-<a name="byos-last-modified"></a>
-:heavy_check_mark: **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use.
+<a href="#byos-last-modified" name="byos-last-modified">:heavy_check_mark:</a> **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use.
 When reading a file, your service passes this timestamp to Azure Storage using the [if-unmodified-since](https://datatracker.ietf.org/doc/html/rfc7232#section-3.4) request header. If the Storage operation fails with 412, the Storage object was modified and your service operation should return an appropriate 4xx status code and return the Storage error in your operation's 'inner-error' (see guideline above).
 
-<a name="byos-folder-support"></a>
-:white_check_mark: **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/rest/api/storageservices/list-blobs)
+<a href="#byos-folder-support" name="byos-folder-support">:white_check_mark:</a> **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/rest/api/storageservices/list-blobs)
 
-<a name="byos-extensions"></a>
-:heavy_check_mark: **YOU MAY** offer an `extensions` field representing an array of strings indicating file extensions of desired blobs within the logical folder.
+<a href="#byos-extensions" name="byos-extensions">:heavy_check_mark:</a> **YOU MAY** offer an `extensions` field representing an array of strings indicating file extensions of desired blobs within the logical folder.
 
 A common pattern when working with multiple files is for your service to receive requests that contain the location(s) of files to process ("input") and a location(s) to place any files that result from processing ("output"). Note: the terms "input" and "output" are just examples; use terms more appropriate to your service's domain.
 
@@ -1191,29 +1005,23 @@ For example, a service's request body to configure BYOS may look like this:
 
 Depending on the requirements of the service, there can be any number of "input" and "output" sections, including none.
 
-<a name="byos-location-and-delimiter"></a>
-:white_check_mark: **DO** include a JSON object that has string values for "location" and "delimiter". For "location", the customer must pass a URL to a blob prefix which represents a directory. For "delimiter", the customer must specify the delimiter character they desire to use in the location URL; typically "/" or "\".
+<a href="#byos-location-and-delimiter" name="byos-location-and-delimiter">:white_check_mark:</a> **DO** include a JSON object that has string values for "location" and "delimiter". For "location", the customer must pass a URL to a blob prefix which represents a directory. For "delimiter", the customer must specify the delimiter character they desire to use in the location URL; typically "/" or "\".
 
-<a name="byos-directory-last-modified"></a>
-:heavy_check_mark: **YOU MAY** support the "lastModified" field for input directories (see guideline above).
+<a href="#byos-directory-last-modified" name="byos-directory-last-modified">:heavy_check_mark:</a> **YOU MAY** support the "lastModified" field for input directories (see guideline above).
 
-<a name="byos-sas-for-input-location"></a>
-:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `listing` and `read` permissions for input directories.
+<a href="#byos-sas-for-input-location" name="byos-sas-for-input-location">:white_check_mark:</a> **DO** support a "location" URL with a container-scoped SAS that has a minimum of `listing` and `read` permissions for input directories.
 
-<a name="byos-sas-for-output-location"></a>
-:white_check_mark: **DO** support a "location" URL with a container-scoped SAS that has a minimum of `write` permissions for output directories.
+<a href="#byos-sas-for-output-location" name="byos-sas-for-output-location">:white_check_mark:</a> **DO** support a "location" URL with a container-scoped SAS that has a minimum of `write` permissions for output directories.
 
-<a name="condreq"></a>
+<a href="#condreq" name="condreq"></a>
 ### Conditional Requests
 When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
 Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an `ETag` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with.
 An `ETag` is always set by the service and will enable you to _conditionally_ control how your service responds to requests, enabling you to provide predictable updates and more efficient access.
 
-<a name="condreq-return-etags"></a>
-:ballot_box_with_check: **YOU SHOULD** return an `ETag` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
+<a href="#condreq-return-etags" name="condreq-return-etags">:ballot_box_with_check:</a> **YOU SHOULD** return an `ETag` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
 
-<a name="condreq-support-etags-consistently"></a>
-:ballot_box_with_check: **YOU SHOULD** use `ETag`s consistently across your API, i.e. if you use an `ETag`, accept it on all other operations.
+<a href="#condreq-support-etags-consistently" name="condreq-support-etags-consistently">:ballot_box_with_check:</a> **YOU SHOULD** use `ETag`s consistently across your API, i.e. if you use an `ETag`, accept it on all other operations.
 
 You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232).
 
@@ -1224,13 +1032,11 @@ Implementing this strategy is relatively straightforward. First, you will return
 In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header.
 This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
 
-<a name="condreq-for-read"></a>
-:ballot_box_with_check: **YOU SHOULD** implement conditional read strategies
+<a href="#condreq-for-read" name="condreq-for-read">:ballot_box_with_check:</a> **YOU SHOULD** implement conditional read strategies
 
 When supporting conditional read strategies:
 
-<a name="condreq-for-read-behavior"></a>
-:white_check_mark: **DO** adhere to the following table for guidance:
+<a href="#condreq-for-read-behavior" name="condreq-for-read-behavior">:white_check_mark:</a> **DO** adhere to the following table for guidance:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
@@ -1243,13 +1049,11 @@ For more control over caching, please refer to the `cache-control` [HTTP header]
 An `ETag` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls.
 Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of `ETags` and the [HTTP Request / Response Pattern](#http-request--response-pattern).
 
-<a name="condreq-no-pessimistic-update"></a>
-:warning: **YOU SHOULD NOT** implement pessimistic update strategies, e.g. last writer wins.
+<a href="#condreq-no-pessimistic-update" name="condreq-no-pessimistic-update">:warning:</a> **YOU SHOULD NOT** implement pessimistic update strategies, e.g. last writer wins.
 
 When supporting optimistic concurrency:
 
-<a name="condreq-behavior"></a>
-:white_check_mark: **DO** adhere to the following table for guidance:
+<a href="#condreq-behavior" name="condreq-behavior">:white_check_mark:</a> **DO** adhere to the following table for guidance:
 
 | Operation   | Header        | Value | ETag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
@@ -1263,36 +1067,28 @@ When supporting optimistic concurrency:
 #### Computing ETags
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
 
-<a name="condreq-etag-is-hash"></a>
-:ballot_box_with_check: **YOU SHOULD** use a hash of the representation of a resource rather than a last modified/version number
+<a href="#condreq-etag-is-hash" name="condreq-etag-is-hash">:ballot_box_with_check:</a> **YOU SHOULD** use a hash of the representation of a resource rather than a last modified/version number
 
 While it may be tempting to use a revision/version number for the resource as the ETag, it interferes with client's ability to retry update requests. If a client sends a conditional update request, the service acts on the request, but the client never receives a response, a subsequent identical update will be seen as a conflict even though the retried request is attempting to make the same update.
 
-<a name="condreq-etag-hash-entire-resource"></a>
-:ballot_box_with_check: **YOU SHOULD**, if using a hash strategy, hash the entire resource.
+<a href="#condreq-etag-hash-entire-resource" name="condreq-etag-hash-entire-resource">:ballot_box_with_check:</a> **YOU SHOULD**, if using a hash strategy, hash the entire resource.
 
-<a name="condreq-strong-etag-for-range-requests"></a>
-:ballot_box_with_check: **YOU SHOULD**, if supporting range requests, use a strong ETag in order to support caching.
+<a href="#condreq-strong-etag-for-range-requests" name="condreq-strong-etag-for-range-requests">:ballot_box_with_check:</a> **YOU SHOULD**, if supporting range requests, use a strong ETag in order to support caching.
 
-<a name="condreq-timestamp-precision"></a>
-:heavy_check_mark: **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
+<a href="#condreq-timestamp-precision" name="condreq-timestamp-precision">:heavy_check_mark:</a> **YOU MAY** use or, include, a timestamp in your resource schema. If you do this, the timestamp shouldn't be returned with more than subsecond precision, and it SHOULD be consistent with the data and format returned, e.g. consistent on milliseconds.
 
-<a name="condreq-weak-etags-allowed"></a>
-:heavy_check_mark: **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
+<a href="#condreq-weak-etags-allowed" name="condreq-weak-etags-allowed">:heavy_check_mark:</a> **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
-<a name="condreq-etag-depends-on-encoding"></a>
-:white_check_box: **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
+<a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_box:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
 
-<a name="telemetry"></a>
+<a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the `User-Agent` header, `X-MS-UserAgent` header, and Open Telemetry.
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
 
-<a name="telemetry-headers"></a>
-:white_check_mark: **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
+<a href="#telemetry-headers" name="telemetry-headers">:white_check_mark:</a> **DO** follow the Azure SDK client guidelines for supporting telemetry headers and Open Telemetry.
 
-<a name="telemetry-allow-unrecognized-headers"></a>
-:no_entry: **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
+<a href="#telemetry-allow-unrecognized-headers" name="telemetry-allow-unrecognized-headers">:no_entry:</a> **DO NOT** reject a call if you have custom headers you don't understand, and specifically, distributed tracing headers.
 
 **Additional References**
 - [Azure SDK client guidelines](https://azure.github.io/azure-sdk/general_azurecore.html)
