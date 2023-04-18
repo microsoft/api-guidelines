@@ -545,7 +545,7 @@ NOTE: It is a breaking change to add paging in the future
  }
 ```
 
-<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation. Note that the tag field _must_ have escaped-quotes embedded within it; for example "\"abc\"" or W/"\"abc\"".
+<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation. Note that the etag field _must_ have escaped quotes embedded within it; for example, "\"abc\"" or W/"\"abc\"".
 
 <a href="#collections-document-pagination-reliability" name="collections-document-pagination-reliability">:white_check_mark:</a> **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
