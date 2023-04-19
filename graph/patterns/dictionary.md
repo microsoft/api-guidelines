@@ -10,9 +10,9 @@ The API design requires a resource to include an unknown quantity of data elemen
 
 ## Solution
 
-API designers use a JSON object to represent a dictionary in an `application/json` response payload. When describing the model in CSDL, a new complex type can be created that derives from `Org.OData.Core.V1.Dictionary` and then uses the `Org.OData.Validation.V1.OpenPropertyTypeConstraint` to constrain the type that can be used for the values in the dictionary.
+API designers use a JSON object to represent a dictionary in an `application/json` response payload. When describing the model in CSDL, a new complex type can be created that derives from `Org.OData.Core.V1.Dictionary` and then uses the `Org.OData.Validation.V1.OpenPropertyTypeConstraint` to constrain the type that can be used for the values in the dictionary as appropriate.
 
-Dictionary entries can be added via `POST`, updated via `PATCH`, and removed by setting the entry value to `null`. Multiple entries can be updated at the same time by using `PATCH` on the dictionary property.
+Dictionary values can be added, removed, or modified via `PATCH` to the dictionary property. Values are removed by setting the property to `null`.
 
 ## When to use this pattern
 
@@ -36,8 +36,9 @@ Because dictionary entries are removed by setting the value to `null`, dictionar
 Open questions:
 
 - Can/should PUT be supported on the dictionary property and/or the entry value?
-- What does OData say about being able to POST to a structured property? Will OData Web API allow that?
 - Must an implementer support PATCH at both the dictionary level and the entry level?
+- Should we also allow DELETE to a property to be equivalent to setting to null?
+- Why do we not allow mixed primitives or mixed primitive/complex typed values? what about collections?
 
 For more information, see the [OData reference](https://github.com/oasis-tcs/odata-vocabularies/blob/master/vocabularies/Org.OData.Core.V1.md#dictionary).
 
@@ -130,7 +131,7 @@ Response:
 #### Create an entry in the dictionary
 
 ```HTTP
-POST https://graph.microsoft.com/v1.0/users/10/roles/author
+PATCH https://graph.microsoft.com/v1.0/users/10/roles/author
 
 {
   "domain": "contoso"
@@ -175,7 +176,10 @@ PATCH https://graph.microsoft.com/v1.0/users/10/roles/author
 #### Delete an entry from the dictionary
 
 ```HTTP
-DELETE https://graph.microsoft.com/v1.0/users/10/roles/author
+PATCH https://graph.microsoft.com/v1.0/users/10/roles/author
+{
+  "domain": null
+}
 ```
 
 ### CDSL example
@@ -200,8 +204,6 @@ The following example defines a complex type **roleSettings** as well as a dicti
     <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary automatically -->
       <String>GET</String>
       <String>PATCH</String>
-      <String>DELETE</String>
-      <String>POST</String>
     <Collection>
   </Annotation>
 </ComplexType>
