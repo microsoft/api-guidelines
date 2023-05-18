@@ -16,6 +16,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
   
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2023-May-12 | Explain service response for missing/unsupported `api-version` |
 | 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
 | 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
@@ -751,6 +752,10 @@ Clients specify the version of the API to be used in every request to the servic
 <a href="#versioning-api-version-query-param" name="versioning-api-version-query-param">:white_check_mark:</a> **DO** use a required query parameter named `api-version` on every operation for the client to specify the API version.
 
 <a href="#versioning-date-based-versioning" name="versioning-date-based-versioning">:white_check_mark:</a> **DO** use `YYYY-MM-DD` date values, with a `-preview` suffix for preview versions, as the valid values for `api-version`.
+
+<a href="#versioning-api-version-missing" name="versioning-api-version-missing">:white_check_mark:</a> **DO** return HTTP 400 with error code "MissingApiVersionParameter" and message "The api-version query parameter (?api-version=) is required for all requests" if client omits the `api-version` query parameter.
+
+<a href="#versioning-api-version-unsupported" name="versioning-api-version-unsupported">:white_check_mark:</a> **DO** return HTTP 400 with error code "UnsupportedApiVersionValue" and message "Unsupported api-version '{0}'. The supported api-versions are '{1}'." if client passes an `api-version` value unrecognized by the service. For the supported api-versions, just list all the stable versions still supported by the service and just the latest public preview version (if any).
 
 ```text
 PUT https://service.azure.com/users/Jeff?api-version=2021-06-04
