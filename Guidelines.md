@@ -352,22 +352,26 @@ https://api.contoso.com/v1.0/people/7011042402/inbox
 ```
 
 ### 7.4. Supported methods
-Operations MUST use the proper HTTP methods whenever possible, and operation idempotency MUST be respected.
+Operations MUST use the proper HTTP methods whenever possible, and operation safety and idempotency MUST be respected.
+A safe method means a read-only operation that MUST NOT modify a resource.
+An idempotent method can be called many times without different outcomes.
+The result should be the same, not the resource itself.
+
 HTTP methods are frequently referred to as the HTTP verbs.
 The terms are synonymous in this context, however the HTTP specification uses the term method.
 
 Below is a list of methods that Microsoft REST services SHOULD support.
 Not all resources will support all methods, but all resources using the methods below MUST conform to their usage.
 
-Method  | Description                                                                                                                | Is Idempotent
-------- | -------------------------------------------------------------------------------------------------------------------------- | -------------
-GET     | Return the current value of an object                                                                                      | True
-PUT     | Replace an object, or create a named object, when applicable                                                               | True
-DELETE  | Delete an object                                                                                                           | True
-POST    | Create a new object based on the data provided, or submit a command                                                        | False
-HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True
-PATCH   | Apply a partial update to an object                                                                                        | False
-OPTIONS | Get information about a request; see below for details.                                                                    | True
+Method  | Description                                                                                                                | Safe | Idempotent
+------- | -------------------------------------------------------------------------------------------------------------------------- | -----|----------
+GET     | Return the current value of an object                                                                                      | True | True
+PUT     | Replace an object, or create a named object, when applicable                                                               | False | True
+DELETE  | Delete an object                                                                                                           | False | True
+POST    | Create a new object based on the data provided, or submit a command                                                        | False | False
+HEAD    | Return metadata of an object for a GET response. Resources that support the GET method MAY support the HEAD method as well | True | True
+PATCH   | Apply a partial update to an object                                                                                        | False | False
+OPTIONS | Get information about a request; see below for details.                                                                    | True | True
 
 <small>Table 1</small>
 
