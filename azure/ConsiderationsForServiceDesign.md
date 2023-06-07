@@ -148,6 +148,7 @@ The following are recommended names for properties that match the associated des
 | lastModifiedAt | The date and time the resource was last modified. |
 | deletedAt | The date and time the resource was deleted. |
 | kind   | The discriminator value for a polymorphic resource |
+| etag | The entity tag used for optimistic concurrency control, when included as a property of a resource. |
 
 ### `name` vs `id`
 
