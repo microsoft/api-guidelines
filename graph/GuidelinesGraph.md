@@ -248,6 +248,11 @@ Following are a few pros and cons to decide which pattern to use:
 > **Note:**
 > As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
 
+#### Nullable properties
+
+The facets and flat bag approaches often require nullable properties, so it is important make sure to still use non-nullable properties where appropriate, and since inheretence can often remove the use of nullable properties completely, knowing when nullable properties are necessary is also important.
+Please view the guidelines [here](./nullable.md) for more details. 
+
 ### Behavior modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
