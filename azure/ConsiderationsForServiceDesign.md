@@ -172,7 +172,7 @@ Before releasing your API plan to invest significant design effort, get customer
 As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
 Azure has a well established breaking changes policy that describes how to approach these kinds of changes. As part of this policy, the service team is required to clearly communicate to customers when their API is changing, e.g. deprecating operations. Often, this is done via an email to the address that is attached to the Azure subscription.
 
-However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specifed in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
+However, given how many organizations are structured, it's common that this email address is different from the actual people writing code against your API. To address this, the service API should declare that it may return the `azure-deprecating` header, to indicate that this operation will be removed in the future. There is a simple string convention, specified in the [Azure REST API Guidelines](https://aka.ms/azapi/guidelines) that provides more information about the forthcoming deprecation.
 This header is targeted at developers or operation professionals, and it is intended to give them enough information and lead time to properly adapt to this change. Your documentation should reference this header and encourage logging and alerting practices based on its presence.
 
 ## Avoid Surprises
@@ -234,7 +234,7 @@ PATCH must never be used for long-running operations -- it should be reserved fo
 If a long-running update is required it should be implemented with POST.
 
 There is a special form of long-running operation initiated with PUT that is described
-in [Create (PUT) with additional long-running processing](#create-put-with-additional-long-running-processing).
+in [Create (PUT) with additional long-running processing](./Guidelines.md#put-operation-with-additional-long-running-processing).
 The remainder of this section describes the pattern for long-running POST and DELETE operations.
 
 This diagram illustrates how a long-running operation with a status monitor is initiated and then how the client
@@ -491,6 +491,33 @@ An operation may support `skip` and `top` query parameters to allow the client t
 and the number of results to return, respectively.
 
 Note that when `top` specifies a value larger than the server-driven paging page size, the response will be paged accordingly.
+
+## Conditional Requests
+
+When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
+Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons.
+Both of these scenarios can be accomplished with conditional requests, where the client specifies a _precondition_
+for execution of a request, based on its last modification date or entity tag ("ETag").
+An Etag identifies a 'version' or 'instance' of a resource and is computed by the service and returned in an `ETag` response header for GET or other operations on the resource.
+
+### Cache Control
+
+One of the more common uses for conditional requests is cache control. This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency).
+A client can make a "conditional GET request" for the resource, with a precondition header that requests that
+data be returned only when the version on the service does not match the Etag or last modified date in the header.
+If there are no changes, then there is no need to return the resource, as the client already has the most recent version.
+
+Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](./Guidelines.md#computing-etags) section provides guidance on how to properly calculate the value of your `ETag`.
+In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header.
+This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
+
+### Optimistic Concurrency
+
+Optimistic concurrency is a strategy used in HTTP to avoid the "lost update" problem that can occur when multiple clients attempt to update a resource simultaneously.
+Clients can use ETags returned by the service to specify a _precondition_ for the execution of an update, to ensure that the resource has not been updated since the client last observed it.
+For example, the client can specify an `If-Match` header with the last ETag value received by the client in an update request.
+The service processes the update only if the Etag value in the header matches the ETag of the current resource on the server.
+By computing and returning ETags for your resources, you enable clients to avoid using a "pessimistic" strategy where the "last write always wins."
 
 ## Getting Help: The Azure REST API Stewardship Board
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design.
