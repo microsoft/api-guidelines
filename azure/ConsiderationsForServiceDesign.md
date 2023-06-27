@@ -148,6 +148,7 @@ The following are recommended names for properties that match the associated des
 | lastModifiedAt | The date and time the resource was last modified. |
 | deletedAt | The date and time the resource was deleted. |
 | kind   | The discriminator value for a polymorphic resource |
+| etag | The entity tag used for optimistic concurrency control, when included as a property of a resource. |
 
 ### `name` vs `id`
 
@@ -517,7 +518,7 @@ Optimistic concurrency is a strategy used in HTTP to avoid the "lost update" pro
 Clients can use ETags returned by the service to specify a _precondition_ for the execution of an update, to ensure that the resource has not been updated since the client last observed it.
 For example, the client can specify an `If-Match` header with the last ETag value received by the client in an update request.
 The service processes the update only if the Etag value in the header matches the ETag of the current resource on the server.
-By computing and returning ETags for your resources, you enable clients to avoid using a "pessimistic" strategy where the "last write always wins."
+By computing and returning ETags for your resources, you enable clients to avoid using a strategy where the "last write always wins."
 
 ## Getting Help: The Azure REST API Stewardship Board
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design.
