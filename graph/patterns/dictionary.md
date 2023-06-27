@@ -196,14 +196,6 @@ The following example defines a complex type **roleSettings** as well as a dicti
       <String>microsoft.graph.roleSettings</String>
     </Collection>
   </Annotation>
-  <Annotation Term="SupportedHttpMethod">
-    <Collection><!-- use this annotation to indicate you want the SDKs to generate additional request builders to update the dictionary automatically -->
-      <String>GET</String>
-      <String>PATCH</String>
-      <String>DELETE</String>
-      <String>POST</String>
-    <Collection>
-  </Annotation>
 </ComplexType>
 ```
 
