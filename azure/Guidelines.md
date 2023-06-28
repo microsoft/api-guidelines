@@ -1039,6 +1039,8 @@ The HTTP Standard does not allow precondition headers to be ignored, as it can b
 
 <a href="#condreq-unsupported-error" name="condreq-unsupported-error">:white_check_mark:</a> **DO** return the appropriate precondition failed error response if the service cannot verify the truth of the precondition.
 
+Note: A GA service that currently ignores precondition headers should not switch to honoring them as this could break production applications. This change should only be made prior to GA for the service or as part of a formal breaking change.
+
 While conditional requests can be implemented using last modified dates, entity tags ("ETags") are strongly
 preferred since last modified dates cannot distinguish updates made less than a second apart.
 
@@ -1046,12 +1048,12 @@ preferred since last modified dates cannot distinguish updates made less than a 
 
 #### Conditional Request behavior
 
-This section gives a summary of the processing to perform for conditional headers.
+This section gives a summary of the processing to perform for precondition headers.
 See the [Conditional Requests section of the HTTP Standard][] for details on how and when to evaluate these headers.
 
 [Conditional Requests section of the HTTP Standard]: https://datatracker.ietf.org/doc/html/rfc9110#name-conditional-requests
 
-<a href="#condreq-for-read-behavior" name="condreq-for-read-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a GET request with conditional headers:
+<a href="#condreq-for-read-behavior" name="condreq-for-read-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a GET request with precondition headers:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
@@ -1060,7 +1062,7 @@ See the [Conditional Requests section of the HTTP Standard][] for details on how
 
 For more control over caching, please refer to the `cache-control` [HTTP header](https://developer.mozilla.org/docs/Web/HTTP/Headers/Cache-Control).
 
-<a href="#condreq-behavior" name="condreq-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a PUT, PATCH, or DELETE request with conditional headers:
+<a href="#condreq-behavior" name="condreq-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a PUT, PATCH, or DELETE request with precondition headers:
 
 | Operation   | Header        | Value | ETag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
