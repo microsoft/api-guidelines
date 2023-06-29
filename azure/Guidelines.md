@@ -1023,7 +1023,7 @@ Depending on the requirements of the service, there can be any number of "input"
 
 The [HTTP Standard][] defines request headers that clients may use to specify a _precondition_
 for execution of an operation. These headers allow clients to implement efficient caching mechanisms
-and avoid data loss in the event of concurrent updates to a resource. The headers that specify conditional execution are "If-Match", "If-None-Match", "If-Modified-Since", "If-Unmodified-Since", and "If-Range".
+and avoid data loss in the event of concurrent updates to a resource. The headers that specify conditional execution are `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`, and `If-Range`.
 
 [HTTP Standard]: https://datatracker.ietf.org/doc/html/rfc9110
 
