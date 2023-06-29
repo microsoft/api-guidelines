@@ -1039,7 +1039,7 @@ The HTTP Standard does not allow precondition headers to be ignored, as it can b
 
 <a href="#condreq-unsupported-error" name="condreq-unsupported-error">:white_check_mark:</a> **DO** return the appropriate precondition failed error response if the service cannot verify the truth of the precondition.
 
-Note: A GA service that currently ignores precondition headers should not switch to honoring them as this could break production applications. This change should only be made prior to GA for the service or as part of a formal breaking change.
+Note: The Azure Breaking Changes review board will allow a GA service that currently ignores precondition headers to begin honoring them in a new API version without a formal breaking change notification. The potential for disruption to customer applications is low and outweighed by the value of conforming to HTTP standards.
 
 While conditional requests can be implemented using last modified dates, entity tags ("ETags") are strongly
 preferred since last modified dates cannot distinguish updates made less than a second apart.
