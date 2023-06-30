@@ -285,7 +285,7 @@ Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs shoul
 }
 ```
 
-The top-level error code must be aligned with HTTP response status codes according to [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6). The following examples demonstrate error modeling for common use cases:
+The top-level error code must match the HTTP response status code description, converted to camelCase, as listed in the [Status Code Registry (iana.org)](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml). The following examples demonstrate error modeling for common use cases:
 
 - **Simple error**: An API wants to report an error with top-level details only. The error object contains the top-level error code, message and target (optional).
 
