@@ -252,7 +252,7 @@ Following are a few pros and cons to decide which pattern to use:
 
 The facets and flat bag approaches often require nullable properties, so it is important make sure to still use non-nullable properties where appropriate, and since inheretence can often remove the use of nullable properties completely, knowing when nullable properties are necessary is also important.
 Please view the guidelines [here](./nullable.md) for more details. 
-
+The facet and flat bag approaches often require nullable properties, so it is important to still use non-nullable properties where appropriate. Since inheritance can often remove the use of nullable properties completely, it is also important to know when nullable properties are necessary. See [Nullable properties](./nullable.md) for more details.
 ### Behavior modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
