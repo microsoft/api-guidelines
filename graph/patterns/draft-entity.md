@@ -16,7 +16,29 @@ This "draft" can then be used to store the partial data until all of the data is
 Doing this allows the storage of the partial data without compromising the integrity of the model for the "real" entity.
 
 ```xml
+<Entity Name="someRealEntity">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="firstProp" Type="Edm.String" Nullable="false" />
+  <Property Name="secondProp" Type="Edm.Int32" Nullable="false" />
+  ...
+</Entity>
 
+<Entity Name="someRealEntityDraft">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="firstProp" Type="Edm.String" Nullable="true" />
+  <Property Name="secondProp" Type="Edm.Int32" Nullable="true" />
+  ...
+</Entity>
+
+<Action Name="realize" IsBound="true">
+  <Parameter Name="bindingParameter" Type="self.someRealEntityDraft" Nullable="false" />
+</Action>
 ```
 
 ## When to use this pattern
@@ -25,9 +47,76 @@ The "draft" entity pattern will be useful for workloads that are backing a UI an
 
 ## Issues and considerations
 
-This pattern should be avoided; instead, use some storage external to graph. 
+This pattern should be avoided; instead, use some storage external to graph. TODO write down "why"
 This pattern *may* be used as a stop-gap if a workload does not yet have the infrastructure for external storage; these entities should be deprecated immediately since they are only a stop-gap.
 
 ## Example
 
-*Provide a short example from real life.*
+```HTTP
+POST /someRealEntities
+{
+  "firstProp": "a value"
+}
+
+400 Bad Request
+{
+  "error": {
+    "code": "badRequest",
+    "message": "The 'secondProp' property must not be null."
+  }
+}
+```
+
+```HTTP
+POST /someRealEntityDrafts
+{
+  "firstProp": "a value"
+}
+
+201 Created
+{
+  "id": "{id}",
+  "firstProp": "a value",
+  "secondProp": null,
+  ...
+}
+```
+
+```HTTP
+POST /someRealEntityDrafts/{id}/realize
+
+400 Bad Request
+{
+  "error": {
+    "code": "badRequest",
+    "message": "The 'secondProp' property must not be null."
+  }
+}
+```
+
+```HTTP
+PATCH /someRealEntityDrafts/{id}
+{
+  "secondProp": 14
+}
+
+204 No Content
+```
+
+```HTTP
+POST /someRealEntityDrafts/{id}/realize
+
+204 No Content
+Location: /someRealEntities/{id2}
+```
+
+```HTTP
+GET /someRealEntities/{id2}
+
+{
+  "id": "{id2}",
+  "firstProp": "a value",
+  "secondProp": 14,
+  ...
+}
+```
