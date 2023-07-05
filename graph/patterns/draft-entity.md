@@ -47,7 +47,9 @@ The "draft" entity pattern will be useful for workloads that back a UI and expos
 
 ## Issues and considerations
 
-This pattern should be avoided; instead, use some storage external to graph. TODO write down "why"
+This pattern should be avoided; instead, use some storage external to graph. 
+Having entities that cannot be directly used by services because they are imcomplete and that have relaxed validation requirements effectively exposes an API that is equivalent to blob storage. 
+
 This pattern *may* be used as a stop-gap if a workload does not yet have the infrastructure for external storage; these entities must be deprecated immediately since they are only a stop-gap.
 
 ## Example
