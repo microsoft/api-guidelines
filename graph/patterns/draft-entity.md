@@ -43,14 +43,16 @@ Doing this allows the storage of the partial data without compromising the integ
 
 ## When to use this pattern
 
-The "draft" entity pattern will be useful for workloads that are backing a UI and expose entities which the UI creates through the use of a multi-page process. 
+The "draft" entity pattern will be useful for workloads that back a UI and expose entities which the UI creates through the use of a multi-page process. 
 
 ## Issues and considerations
 
 This pattern should be avoided; instead, use some storage external to graph. TODO write down "why"
-This pattern *may* be used as a stop-gap if a workload does not yet have the infrastructure for external storage; these entities should be deprecated immediately since they are only a stop-gap.
+This pattern *may* be used as a stop-gap if a workload does not yet have the infrastructure for external storage; these entities must be deprecated immediately since they are only a stop-gap.
 
 ## Example
+
+### {1} Create a "real" instance with only partial data, getting an error
 
 ```HTTP
 POST /someRealEntities
@@ -67,6 +69,8 @@ POST /someRealEntities
 }
 ```
 
+### {2} Create a "draft" instance with only partial data
+
 ```HTTP
 POST /someRealEntityDrafts
 {
@@ -82,6 +86,8 @@ POST /someRealEntityDrafts
 }
 ```
 
+### {3} Try to realize the draft while it still only has partial data, getting an error
+
 ```HTTP
 POST /someRealEntityDrafts/{id}/realize
 
@@ -94,6 +100,8 @@ POST /someRealEntityDrafts/{id}/realize
 }
 ```
 
+### {4} Continue updating the draft with new data as the data becomes known
+
 ```HTTP
 PATCH /someRealEntityDrafts/{id}
 {
@@ -103,12 +111,16 @@ PATCH /someRealEntityDrafts/{id}
 204 No Content
 ```
 
+### {5} Realize the draft once all data has been provided
+
 ```HTTP
 POST /someRealEntityDrafts/{id}/realize
 
 204 No Content
 Location: /someRealEntities/{id2}
 ```
+
+### {6} Retrieve the realized instance
 
 ```HTTP
 GET /someRealEntities/{id2}
