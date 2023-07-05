@@ -306,13 +306,13 @@ This facilitates discovery and eases adoption on platforms without a well-suppor
 An example of a well-structured URL is:
 
 ```
-https://api.contoso.com/v1.0/people/jdoe@contoso.com/inbox
+https://api.contoso.com/v1.0/people/1236543/inbox
 ```
 
 An example URL that is not friendly is:
 
 ```
-https://api.contoso.com/EWS/OData/Users('jdoe@microsoft.com')/Folders('AAMkADdiYzI1MjUzLTk4MjQtNDQ1Yy05YjJkLWNlMzMzYmIzNTY0MwAuAAAAAACzMsPHYH6HQoSwfdpDx-2bAQCXhUk6PC1dS7AERFluCgBfAAABo58UAAA=')
+https://api.contoso.com/EWS/OData/Users('1236543')/Folders('AAMkADdiYzI1MjUzLTk4MjQtNDQ1Yy05YjJkLWNlMzMzYmIzNTY0MwAuAAAAAACzMsPHYH6HQoSwfdpDx-2bAQCXhUk6PC1dS7AERFluCgBfAAABo58UAAA=')
 ```
 
 A frequent pattern that comes up is the use of URLs as values.
