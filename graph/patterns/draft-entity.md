@@ -44,6 +44,7 @@ Doing this allows the storage of the partial data without compromising the integ
 ## When to use this pattern
 
 The "draft" entity pattern will be useful for workloads that back a UI and expose entities which the UI creates through the use of a multi-page process. 
+It is also useful for any circumstances where the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) is effective, as this pattern is effectively a specialization of the builder pattern. 
 
 ## Issues and considerations
 
