@@ -35,7 +35,7 @@ POST /servicePrincipals
 400 Bad Request
 {
   "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "The 'appId' property is required to create a servicePrincipal."
   }
 }
@@ -156,7 +156,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 400 Bad Request
 {
   "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "null is not a valid value for the property 'bar'; 'bar' is not a nullable property."
   }
 }
@@ -218,7 +218,7 @@ POST /servicePrincipals
 400 Bad Request
 {
   "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "null is not a valid value for the property 'displayName'; 'displayName' is not a nullable property."
   }
 }
@@ -303,7 +303,7 @@ POST /servicePrincipals
 400 Bad Request
 {
   "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "null is not a valid value for the property 'bar'; 'bar' is not a nullable property."
   }
 }
