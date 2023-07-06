@@ -101,7 +101,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `displayName` can be set to any value other than `null`
-2. The response body here is provided for clarity; normally on Microsoft Graph, a `204 No Content` will be the response for a `PATCH` request
+2. The response body here is provided for clarity, and is not part of the guidance itself. The Graph standard states that the workload can decide the behavior of returning `200` with the updated entity or just `204`.
 
 ### {5} Update the foo property of a service principal to null
 
@@ -122,7 +122,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `foo` can be set to `null` because it has be marked with `Nullable="true"` in the CSDL.
-2. The response body here is provided for clarity; normally on Microsoft Graph, a `204 No Content` will be the response for a `PATCH` request
+2. The response body here is provided for clarity, and is not part of the guidance itself. The Graph standard states that the workload can decide the behavior of returning `200` with the updated entity or just `204`.
 
 ### {6} Update the foo property of a service principal to a non-default value
 
@@ -143,7 +143,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `foo` can be set to `something other than testval`
-2. The response body here is provided for clarity; normally on Microsoft Graph, a `204 No Content` will be the response for a `PATCH` request
+2. The response body here is provided for clarity, and is not part of the guidance itself. The Graph standard states that the workload can decide the behavior of returning `200` with the updated entity or just `204`.
 
 ### {7} Update the bar property of a service principal to null
 
@@ -183,7 +183,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `bar` can be set to `a new bar`
-2. The response body here is provided for clarity; normally on Microsoft Graph, a `204 No Content` will be the response for a `PATCH` request
+2. The response body here is provided for clarity, and is not part of the guidance itself. The Graph standard states that the workload can decide the behavior of returning `200` with the updated entity or just `204`.
 
 ### {9} Create a service principal while customizing the display name
 ```HTTP
