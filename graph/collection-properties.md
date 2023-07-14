@@ -22,7 +22,7 @@ Let's use the following CSDL as an example:
 </EntityType>
 ```
 
-## Adding elements to a collection
+## Adding individual elements to a collection
 
 For both `foos` and `bars`, the OData standard specifies that elements can be added to the collection using a `POST` request
 1. [Complex Types](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateaCollectionProperty):
@@ -113,3 +113,31 @@ GET  /interestingData/bars/firstBarId
   "differentProperty": 42
 }
 ```
+
+## Removing individual elements from a collection
+
+TODO
+
+## Updating individual elements in a collection
+
+TODO
+
+## Updating a collection
+
+TODO do PATCH for complex type and POST + PATCH for entity types
+
+## Exceptions
+
+TODO
+
+## Conclusion
+
+Collections of entity types have several behaviors that are not available for collections of complex types:
+1. Individual elements can be retrieved
+2. Individual elements can be removed
+3. Individual elements can be updated
+4. Several elements within the collection may be added, removed, or updated in a single request
+
+Further, to remove or update elements in a collection of complex types, the entire collection must be replace with a `PATCH` request. 
+This has the potential to result in data loss for clients who accidentally don't include all of the current elements of the collection, or encounter a race condition where two clients are attempting to `PATCH` the same collection.
+Due to the increased flexiblity of collections of entity types, and the data loss risks for collections of complex types, collections of entity types should be used. 
