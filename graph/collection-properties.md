@@ -40,6 +40,35 @@ POST  /interestingData/foos
   "someProperty": "a value"
 }
 
+204 No Content
+```
+
+### Entity Type
+
+```HTTP
+POST  /interestingData/bars
+{
+  "differentProperty": 42
+}
+
+204 No Content
+Location: /interestingData/bars/firstBarId
+```
+
+## Retrieving the elements in a collection
+
+The [OData](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358935) [standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947) also allows `foos` and `bars` both to be retrieved using a `GET` request:
+> OData services support requests for data via HTTP GET requests.
+> 
+> ...
+> 
+> OData services support querying collections of entities, complex type instances, and primitive values.
+
+### Complex Type
+
+```HTTP
+GET  /interestingData/foos
+
 200 OK
 {
   "value": [
@@ -53,10 +82,7 @@ POST  /interestingData/foos
 ### Entity Type
 
 ```HTTP
-POST  /interestingData/bars
-{
-  "differentProperty": 42
-}
+GET  /interestingData/bars
 
 200 OK
 {
@@ -69,4 +95,7 @@ POST  /interestingData/bars
 }
 ```
 
-## Retrieving elements from a collection
+## Retrieving individual elements from a collection
+
+TODOD
+https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities
