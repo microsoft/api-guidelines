@@ -136,7 +136,7 @@ There is no way to do this for complex types because there is no way to identity
 ### Entity Type
 
 ```HTTP
-DELETE  /interestingData/bars/firstBarId
+DELETE  /interestingData/bars/thirdBarId
 
 204 No Content
 ```
