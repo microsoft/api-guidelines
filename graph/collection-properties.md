@@ -97,5 +97,19 @@ GET  /interestingData/bars
 
 ## Retrieving individual elements from a collection
 
-TODOD
-https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities
+The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities) also specifies that clients can retrieve individual elements of a collection of entity types:
+> To retrieve an individual entity, the client makes a GET request to a URL that identifies the entity, e.g. its read URL.
+
+However, there is no way to do this for complex types because there is not way to identity a particular instance of a complex type. 
+
+### Entity Type
+
+```HTTP
+GET  /interestingData/bars/firstBarId
+
+200 OK
+{
+  "id": "firstBarId",
+  "differentProperty": 42
+}
+```
