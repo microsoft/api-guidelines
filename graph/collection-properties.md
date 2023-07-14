@@ -53,12 +53,12 @@ POST  /interestingData/bars
 }
 
 204 No Content
-Location: /interestingData/bars/firstBarId
+Location: /interestingData/bars/thirdBarId
 ```
 
 ## Retrieving the elements in a collection
 
-The [OData](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358935) [standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947) also allows `foos` and `bars` both to be retrieved using a `GET` request:
+The [OData](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358935) [standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947) specifies `foos` and `bars` both can be retrieved using a `GET` request:
 > OData services support requests for data via HTTP GET requests.
 > 
 > ...
@@ -73,6 +73,9 @@ GET  /interestingData/foos
 200 OK
 {
   "value": [
+    {
+      "someProperty": "an original value"
+    },
     {
       "someProperty": "a value"
     }
@@ -90,6 +93,14 @@ GET  /interestingData/bars
   "value": [
     {
       "id": "firstBarId",
+      "differentProperty": 10
+    },
+    {
+      "id": "secondBarId",
+      "differentProperty": -6914
+    }
+    {
+      "id": "thirdBarId",
       "differentProperty": 42
     }
   ]
@@ -98,10 +109,10 @@ GET  /interestingData/bars
 
 ## Retrieving individual elements from a collection
 
-The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities) also specifies that clients can retrieve individual elements of a collection of entity types:
+The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities) specifies that clients can retrieve individual elements of a collection of entity types using a `GET` request:
 > To retrieve an individual entity, the client makes a GET request to a URL that identifies the entity, e.g. its read URL.
 
-However, there is no way to do this for complex types because there is not way to identity a particular instance of a complex type. 
+There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
 
 ### Entity Type
 
@@ -117,7 +128,18 @@ GET  /interestingData/bars/firstBarId
 
 ## Removing individual elements from a collection
 
-TODO
+The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_DeleteanEntity) specifies that clients can remove individual elements of a collection of entity types using a `DELETE` request:
+> To delete an individual entity, the client makes a DELETE request to a URL that identifies the entity.
+
+There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
+
+### Entity Type
+
+```HTTP
+DELETE  /interestingData/bars/firstBarId
+
+204 No Content
+```
 
 ## Updating individual elements in a collection
 
