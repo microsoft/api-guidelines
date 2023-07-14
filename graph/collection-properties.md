@@ -7,6 +7,7 @@ Let's use the following CSDL as an example:
 <EntityType Name="interestingData">
   <Property Name="foos" Type="Collection(self.foo)" Nullable="false" />
   <NavitationProperty Name="bars" Type="Collection(self.bar)" Nullable="false" ContainsTarget="true" />
+  <!--TODO also add an example with primitives-->
 </EntityType>
 
 <ComplexType Name="foo">
