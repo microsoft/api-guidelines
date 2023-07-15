@@ -143,7 +143,21 @@ DELETE  /interestingData/bars/thirdBarId
 
 ## Updating individual elements in a collection
 
-TODO
+The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) specifies that clients can update individual elements of a collection of entity types using a `PATCH` request:
+> To update an individual entity, the client makes a PATCH or PUT request to a URL that identifies the entity.
+
+There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
+
+### Entity Type
+
+```HTTP
+PATCH  /interestingData/bars/firstBarId
+{
+  "differentProperty": "15"
+}
+
+204 No Content
+```
 
 ## Updating a collection
 
