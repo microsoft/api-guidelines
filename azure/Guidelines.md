@@ -13,7 +13,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 <details>
   <summary>Expand change history</summary>
-  
+
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
@@ -749,7 +749,7 @@ Azure services need to change over time. However, when changing a service, there
  1. Already-running customer workloads must not break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
 
-*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
+*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
 <a href="#versioning-review-required" name="versioning-review-required">:white_check_mark:</a> **DO** review any API changes with the Azure API Stewardship Board
 
@@ -809,7 +809,7 @@ When the [API Versioning](#api-versioning) guidance above cannot be followed and
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
+<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working.
 > NOTE: We do not want to scare customers with this header.
 
 <a href="#deprecation-header-value" name="deprecation-header-value">:white_check_mark:</a> **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
