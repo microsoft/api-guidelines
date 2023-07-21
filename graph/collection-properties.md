@@ -112,7 +112,7 @@ GET  /interestingData/bars
 The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_RequestingIndividualEntities) specifies that clients can retrieve individual elements of a collection of entity types using a `GET` request:
 > To retrieve an individual entity, the client makes a GET request to a URL that identifies the entity, e.g. its read URL.
 
-There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
+There is no way to do this for complex types because there is no way to address a particular instance of a complex type within a collection. 
 
 ### Entity Type
 
@@ -131,7 +131,7 @@ GET  /interestingData/bars/firstBarId
 The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_DeleteanEntity) specifies that clients can remove individual elements of a collection of entity types using a `DELETE` request:
 > To delete an individual entity, the client makes a DELETE request to a URL that identifies the entity.
 
-There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
+There is no way to do this for complex types because there is no way to address a particular instance of a complex type within a collection. 
 
 ### Entity Type
 
@@ -146,7 +146,7 @@ DELETE  /interestingData/bars/thirdBarId
 The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) specifies that clients can update individual elements of a collection of entity types using a `PATCH` request:
 > To update an individual entity, the client makes a PATCH or PUT request to a URL that identifies the entity.
 
-There is no way to do this for complex types because there is no way to identity a particular instance of a complex type within a collection. 
+There is no way to do this for complex types because there is no way to address a particular instance of a complex type within a collection. 
 
 ### Entity Type
 
@@ -175,6 +175,6 @@ Collections of entity types have several behaviors that are not available for co
 3. Individual elements can be updated
 4. Several elements within the collection may be added, removed, or updated in a single request
 
-Further, to remove or update elements in a collection of complex types, the entire collection must be replace with a `PATCH` request. 
+Further, to remove or update elements in a collection of complex types, the entire collection must be replaced with a `PATCH` request. 
 This has the potential to result in data loss for clients who accidentally don't include all of the current elements of the collection, or encounter a race condition where two clients are attempting to `PATCH` the same collection.
 Due to the increased flexiblity of collections of entity types, and the data loss risks for collections of complex types, collections of entity types should be used. 
