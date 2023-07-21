@@ -336,7 +336,26 @@ GET /interestingData/bars
 
 #### Change the elements in a collection
 
-TODO
+```HTTP
+PATCH /interestingData/bars
+{
+  "@context": "#$delta",
+  "value": [
+    {
+      "id": "fifthBarId",
+      "differentProperty": 1024
+    },
+    {
+      "id": "sixthBarId",
+      "differentProperty": 9801
+    },
+    {
+      "id": "fourthBarId",
+      "@removed": {}
+    }
+  ]
+}
+```
 
 #### Check the new contents of the collection
 
