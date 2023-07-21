@@ -7,7 +7,6 @@ Let's use the following CSDL as an example:
 <EntityType Name="interestingData">
   <Property Name="foos" Type="Collection(self.foo)" Nullable="false" />
   <NavitationProperty Name="bars" Type="Collection(self.bar)" Nullable="false" ContainsTarget="true" />
-  <!--TODO also add an example with primitives-->
 </EntityType>
 
 <ComplexType Name="foo">
@@ -379,7 +378,12 @@ GET /interestingData/bars
 
 ## Exceptions
 
-TODO
+It might not make sense for a collection property to be a collection of entities in cases where the collection must be viewed holistically; that is, cases where one element in the collection impacts or is coupled with another element in the collection. 
+The most common example of this would be a list of "tasks" that should be executed in order.
+Inserting a single task into a collection only makes sense because the client knows the preceeding and proceeding tasks.
+In cases like this, it might make sense for a collection to use a complex type instead of an entity type.
+However, even in this case, it might make sense to use a collection of entity types anyway so that clients can individually address the tasks in the list, having URLs to individual tasks that can be referred to. 
+In such a case, the delta `PATCH` request on this collection would simply be not supported. 
 
 ## Conclusion
 
