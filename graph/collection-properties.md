@@ -355,11 +355,29 @@ PATCH /interestingData/bars
     }
   ]
 }
+
+204 No Content
 ```
 
 #### Check the new contents of the collection
 
-TODO
+```HTTP
+GET /interestingData/bars
+
+200 OK
+{
+  "value": [
+    {
+      "id": "fifthBarId",
+      "differentProperty": 1024
+    },
+    {
+      "id": "sixthBarId",
+      "differentProperty": 9801
+    }
+  ]
+}
+```
 
 ## Exceptions
 
