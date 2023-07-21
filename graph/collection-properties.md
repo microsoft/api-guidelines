@@ -23,39 +23,6 @@ Let's use the following CSDL as an example:
 </EntityType>
 ```
 
-## Adding individual elements to a collection
-
-For both `foos` and `bars`, the OData standard specifies that elements can be added to the collection using a `POST` request
-1. [Complex Types](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateaCollectionProperty):
-
-   > A successful POST request to the edit URL of a collection property adds an item to the collection.
-2. [Entity Types](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358976)
-
-   > To create an entity in a collection, the client sends a POST request to that collection's URL.
-
-### Complex Type
-
-```HTTP
-POST  /interestingData/foos
-{
-  "someProperty": "a value"
-}
-
-204 No Content
-```
-
-### Entity Type
-
-```HTTP
-POST  /interestingData/bars
-{
-  "differentProperty": 42
-}
-
-204 No Content
-Location: /interestingData/bars/thirdBarId
-```
-
 ## Retrieving the elements in a collection
 
 The [OData](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358935) [standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358947) specifies `foos` and `bars` both can be retrieved using a `GET` request:
@@ -75,9 +42,6 @@ GET  /interestingData/foos
   "value": [
     {
       "someProperty": "an original value"
-    },
-    {
-      "someProperty": "a value"
     }
   ]
 }
@@ -99,6 +63,81 @@ GET  /interestingData/bars
       "id": "secondBarId",
       "differentProperty": -6914
     }
+  ]
+}
+```
+
+## Adding individual elements to a collection
+
+For both `foos` and `bars`, the OData standard specifies that elements can be added to the collection using a `POST` request
+1. [Complex Types](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateaCollectionProperty):
+
+   > A successful POST request to the edit URL of a collection property adds an item to the collection.
+2. [Entity Types](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31358976)
+
+   > To create an entity in a collection, the client sends a POST request to that collection's URL.
+
+### Complex Type
+
+#### Add an element to the collection
+
+```HTTP
+POST  /interestingData/foos
+{
+  "someProperty": "a value"
+}
+
+204 No Content
+```
+
+#### Check the new contents of the collection
+
+```HTTP
+GET  /interestingData/foos
+
+200 OK
+{
+  "value": [
+    {
+      "someProperty": "an original value"
+    },
+    {
+      "someProperty": "a value"
+    }
+  ]
+}
+```
+
+### Entity Type
+
+#### Add an element to the collection
+
+```HTTP
+POST  /interestingData/bars
+{
+  "differentProperty": 42
+}
+
+204 No Content
+Location: /interestingData/bars/thirdBarId
+```
+
+#### Check the new contents of the collection
+
+```HTTP
+GET  /interestingData/bars
+
+200 OK
+{
+  "value": [
+    {
+      "id": "firstBarId",
+      "differentProperty": 10
+    },
+    {
+      "id": "secondBarId",
+      "differentProperty": -6914
+    },
     {
       "id": "thirdBarId",
       "differentProperty": 42
@@ -135,10 +174,32 @@ There is no way to do this for complex types because there is no way to address 
 
 ### Entity Type
 
+#### Remove an element from the collection
+
 ```HTTP
 DELETE  /interestingData/bars/thirdBarId
 
 204 No Content
+```
+
+#### Check the new contents of the collection
+
+```HTTP
+GET  /interestingData/bars
+
+200 OK
+{
+  "value": [
+    {
+      "id": "firstBarId",
+      "differentProperty": 10
+    },
+    {
+      "id": "secondBarId",
+      "differentProperty": -6914
+    }
+  ]
+}
 ```
 
 ## Updating individual elements in a collection
@@ -150,6 +211,8 @@ There is no way to do this for complex types because there is no way to address 
 
 ### Entity Type
 
+#### Update an element in the collection
+
 ```HTTP
 PATCH  /interestingData/bars/firstBarId
 {
@@ -159,13 +222,110 @@ PATCH  /interestingData/bars/firstBarId
 204 No Content
 ```
 
-## Updating a collection
-/*
-https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity
-The semantics of PATCH, as defined in [RFC5789], is to merge the content in the request payload with the [entity’s] current state, applying the update only to those components specified in the request body. Collection properties and primitive properties provided in the payload corresponding to updatable properties MUST replace the value of the corresponding property in the entity or complex type. Missing properties of the containing entity or complex property, including dynamic properties, MUST NOT be directly altered unless as a side effect of changes resulting from the provided properties.
-*/
+#### Check the new contents of the collection
 
-TODO do PATCH for complex type and POST overwrite + delta PATCH for entity types
+```HTTP
+GET  /interestingData/bars
+
+200 OK
+{
+  "value": [
+    {
+      "id": "firstBarId",
+      "differentProperty": 15
+    },
+    {
+      "id": "secondBarId",
+      "differentProperty": -6914
+    }
+  ]
+}
+```
+
+## Updating a collection
+
+The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) specifies that clients can replace all elements of a collection of complex types or all elements of a collection of entity types using a `PATCH` request:
+> Collection properties...provided in the payload corresponding to updatable properties MUST replace the value of the corresponding property in the entity or complex type.
+
+TODO the dstandard also blah blah delta path blah
+
+### Complex Type
+
+#### Replace the elements in a collection
+
+```HTTP
+PATCH /interestingData
+{
+  "foos": [
+    {
+      "someProperty": "a replacement value"
+    },
+    {
+      "someProperty": "more replacement value"
+    },
+    {
+      "someProperty": "a new value demonstrating that additional elements can be in the collection"
+    }
+  ]
+}
+
+204 No Content
+```
+
+#### Check the new contents of the collection
+
+```HTTP
+GET /interestingData/foos
+
+200 OK
+{
+  "value": [
+    {
+      "someProperty": "a replacement value"
+    },
+    {
+      "someProperty": "more replacement value"
+    },
+    {
+      "someProperty": "a new value demonstrating that additional elements can be in the collection"
+    }
+  ]
+}
+```
+
+### Entity Type
+
+#### Replace the elements in a collection
+
+```HTTP
+PATCH /interestingData
+{
+  "bars": [
+    {
+      "id": "fourthBarId",
+      "differentProperty": 20
+    }
+  ]
+}
+
+204 No Content
+```
+
+#### Check the new contents of the collection
+
+```HTTP
+GET /interestingData/bars
+
+200 OK
+{
+  "value": [
+    {
+      "id": "fourthBarId",
+      "differentProperty": 20
+    }
+  ]
+}
+```
 
 ## Exceptions
 
