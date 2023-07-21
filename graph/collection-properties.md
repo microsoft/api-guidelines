@@ -160,8 +160,12 @@ PATCH  /interestingData/bars/firstBarId
 ```
 
 ## Updating a collection
+/*
+https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity
+The semantics of PATCH, as defined in [RFC5789], is to merge the content in the request payload with the [entity’s] current state, applying the update only to those components specified in the request body. Collection properties and primitive properties provided in the payload corresponding to updatable properties MUST replace the value of the corresponding property in the entity or complex type. Missing properties of the containing entity or complex property, including dynamic properties, MUST NOT be directly altered unless as a side effect of changes resulting from the provided properties.
+*/
 
-TODO do PATCH for complex type and POST + PATCH for entity types
+TODO do PATCH for complex type and POST overwrite + delta PATCH for entity types
 
 ## Exceptions
 
