@@ -1,6 +1,6 @@
 OData services treat collections of complex types differently than they treat collections of entity types. 
 This is due to the nature of entity types being "individually addressable" (they have some key which uniquely identifies them within the collection) while complex types are not individually addressable. 
-The result of these differences is that it is almost always preferable to use entity types for collections rather than complex types; please see the exceptions [here](#exceptions).
+The result of this difference is that it is almost always preferable to use entity types for collections rather than complex types; please see the exceptions [here](#exceptions).
 Let's use the following CSDL as an example:
 
 ```xml
@@ -160,7 +160,7 @@ GET  /interestingData/bars/firstBarId
 200 OK
 {
   "id": "firstBarId",
-  "differentProperty": 42
+  "differentProperty": 10
 }
 ```
 
@@ -304,6 +304,10 @@ PATCH /interestingData
     {
       "id": "fourthBarId",
       "differentProperty": 20
+    },
+    {
+      "id": "fifthBarId",
+      "differentProperty": -99999
     }
   ]
 }
@@ -383,7 +387,7 @@ The most common example of this would be a list of "tasks" that should be execut
 Inserting a single task into a collection only makes sense because the client knows the preceeding and proceeding tasks.
 In cases like this, it might make sense for a collection to use a complex type instead of an entity type.
 However, even in this case, it might make sense to use a collection of entity types anyway so that clients can individually address the tasks in the list, having URLs to individual tasks that can be referred to. 
-In such a case, the delta `PATCH` request on this collection would simply be not supported. 
+In such a case, the workload should simply not support a delta `PATCH` request on this collection.
 
 ## Conclusion
 
