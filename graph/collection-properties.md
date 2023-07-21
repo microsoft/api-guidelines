@@ -325,6 +325,10 @@ GET /interestingData/bars
     {
       "id": "fourthBarId",
       "differentProperty": 20
+    },
+    {
+      "id": "fifthBarId",
+      "differentProperty": -99999
     }
   ]
 }
