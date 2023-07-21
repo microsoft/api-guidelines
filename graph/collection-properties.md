@@ -250,8 +250,6 @@ The [OData standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-p
 The standard also specifies that collections of entities can be updated in a relative fashion using the [delta syntax](https://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#_Toc38457777) in a `PATCH` request:
 > The body of a PATCH request to a URL identifying a collection of entities...MUST contain the context control information...and...MUST contain an array-valued property named value containing all added, changed, or deleted entities...
 
-TODO the dstandard also blah blah delta path blah
-
 ### Complex Type
 
 #### Replace the elements in a collection
