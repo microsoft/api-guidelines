@@ -799,7 +799,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 <a href="#deprecation" name="deprecation"></a>
 ### Deprecating Behavior Notification
 
-When the [API Versioning](#API-Versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a [breaking change](#123-definition-of-a-breaking-change) to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
+When the [API Versioning](#api-versioning) guidance above cannot be followed and the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) approve a breaking change to a specific API version it must be communicated to its callers. The API version that is being deprecated must add the `azure-deprecating` response header with a semicolon-delimited string notifying the caller what is being deprecated, when it will no longer function, and a URL linking to more information such as what new operation they should use instead.
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
@@ -1020,28 +1020,40 @@ Depending on the requirements of the service, there can be any number of "input"
 
 <a href="#condreq" name="condreq"></a>
 ### Conditional Requests
-When designing an API, you will almost certainly have to manage how your resource is updated. For example, if your resource is a bank account, you will want to ensure that one transaction--say depositing money--does not overwrite a previous transaction.
-Similarly, it could be very expensive to send a resource to a client. This could be because of its size, network conditions, or a myriad of other reasons. To enable this level of control, services should leverage an `ETag` header, or "entity tag," which will identify the 'version' or 'instance' of the resource a particular client is working with.
-An `ETag` is always set by the service and will enable you to _conditionally_ control how your service responds to requests, enabling you to provide predictable updates and more efficient access.
+
+The [HTTP Standard][] defines request headers that clients may use to specify a _precondition_
+for execution of an operation. These headers allow clients to implement efficient caching mechanisms
+and avoid data loss in the event of concurrent updates to a resource. The headers that specify conditional execution are `If-Match`, `If-None-Match`, `If-Modified-Since`, `If-Unmodified-Since`, and `If-Range`.
+
+[HTTP Standard]: https://datatracker.ietf.org/doc/html/rfc9110
+
+<!-- condreq-support-etags-consistently has been subsumed by condreq-support but we retain the anchor to avoid broken links -->
+<a href="#condreq-support-etags-consistently" name="condreq-support-etags-consistently"></a>
+<!-- condreq-for-read has been subsumed by condreq-support but we retain the anchor to avoid broken links -->
+<a href="#condreq-for-read" name="condreq-for-read"></a>
+<!-- condreq-no-pessimistic-update has been subsumed by condreq-support but we retain the anchor to avoid broken links -->
+<a href="#condreq-no-pessimistic-update" name="condreq-no-pessimistic-update"></a>
+<a href="#condreq-support" name="condreq-support">:white_check_mark:</a> **DO** honor any precondition headers received as part of a client request.
+
+The HTTP Standard does not allow precondition headers to be ignored, as it can be unsafe to do so.
+
+<a href="#condreq-unsupported-error" name="condreq-unsupported-error">:white_check_mark:</a> **DO** return the appropriate precondition failed error response if the service cannot verify the truth of the precondition.
+
+Note: The Azure Breaking Changes review board will allow a GA service that currently ignores precondition headers to begin honoring them in a new API version without a formal breaking change notification. The potential for disruption to customer applications is low and outweighed by the value of conforming to HTTP standards.
+
+While conditional requests can be implemented using last modified dates, entity tags ("ETags") are strongly
+preferred since last modified dates cannot distinguish updates made less than a second apart.
 
 <a href="#condreq-return-etags" name="condreq-return-etags">:ballot_box_with_check:</a> **YOU SHOULD** return an `ETag` with any operation returning the resource or part of a resource or any update of the resource (whether the resource is returned or not).
 
-<a href="#condreq-support-etags-consistently" name="condreq-support-etags-consistently">:ballot_box_with_check:</a> **YOU SHOULD** use `ETag`s consistently across your API, i.e. if you use an `ETag`, accept it on all other operations.
+#### Conditional Request behavior
 
-You can learn more about conditional requests by reading [RFC7232](https://datatracker.ietf.org/doc/html/rfc7232).
+This section gives a summary of the processing to perform for precondition headers.
+See the [Conditional Requests section of the HTTP Standard][] for details on how and when to evaluate these headers.
 
-#### Cache Control
-One of the more common uses for `ETag` headers is cache control, also referred to a "conditional GET." This is especially useful when resources are large in size, expensive to compute/calculate, or hard to reach (significant network latency). That is, using the value of the `ETag` , the server can determine if the resource has changed. If there are no changes, then there is no need to return the resource, as the client already has the most recent version.
+[Conditional Requests section of the HTTP Standard]: https://datatracker.ietf.org/doc/html/rfc9110#name-conditional-requests
 
-Implementing this strategy is relatively straightforward. First, you will return an `ETag` with a value that uniquely identifies the instance (or version) of the resource. The [Computing ETags](#computing-etags) section provides guidance on how to properly calculate the value of your `ETag`.
-In these scenarios, when a request is made by the client an `ETag` header is returned, with a value that uniquely identifies that specific instance (or version) of the resource. The `ETag` value can then be sent in subsequent requests as part of the `If-None-Match` header.
-This tells the service to compare the `ETag` that came in with the request, with the latest value that it has calculated. If the two values are the same, then it is not necessary to return the resource to the client--it already has it. If they are different, then the service will return the latest version of the resource, along with the updated `ETag` value in the header.
-
-<a href="#condreq-for-read" name="condreq-for-read">:ballot_box_with_check:</a> **YOU SHOULD** implement conditional read strategies
-
-When supporting conditional read strategies:
-
-<a href="#condreq-for-read-behavior" name="condreq-for-read-behavior">:white_check_mark:</a> **DO** adhere to the following table for guidance:
+<a href="#condreq-for-read-behavior" name="condreq-for-read-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a GET request with precondition headers:
 
 | GET Request | Return code | Response                                    |
 |:------------|:------------|:--------------------------------------------|
@@ -1050,15 +1062,7 @@ When supporting conditional read strategies:
 
 For more control over caching, please refer to the `cache-control` [HTTP header](https://developer.mozilla.org/docs/Web/HTTP/Headers/Cache-Control).
 
-#### Optimistic Concurrency
-An `ETag` should also be used to reflect the create, update, and delete policies of your service. Specifically, you should avoid a "pessimistic" strategy where the 'last write always wins." These can be expensive to build and scale because avoiding the "lost update" problem often requires sophisticated concurrency controls.
-Instead, implement an "optimistic concurrency" strategy, where the incoming state of the resource is first compared against what currently resides in the service. Optimistic concurrency strategies are implemented through the combination of `ETags` and the [HTTP Request / Response Pattern](#http-request--response-pattern).
-
-<a href="#condreq-no-pessimistic-update" name="condreq-no-pessimistic-update">:warning:</a> **YOU SHOULD NOT** implement pessimistic update strategies, e.g. last writer wins.
-
-When supporting optimistic concurrency:
-
-<a href="#condreq-behavior" name="condreq-behavior">:white_check_mark:</a> **DO** adhere to the following table for guidance:
+<a href="#condreq-behavior" name="condreq-behavior">:white_check_mark:</a> **DO** adhere to the following table for processing a PUT, PATCH, or DELETE request with precondition headers:
 
 | Operation   | Header        | Value | ETag check | Return code | Response       |
 |:------------|:--------------|:------|:-----------|:------------|----------------|
@@ -1070,6 +1074,7 @@ When supporting optimistic concurrency:
 | DELETE      | `If-Match` | value of ETag     | value does NOT match the latest value on the server | `412-Preconditioned Failed` | Response body SHOULD be empty.|
 
 #### Computing ETags
+
 The strategy that you use to compute the `ETag` depends on its semantic. For example, it is natural, for resources that are inherently versioned, to use the version as the value of the `ETag`. Another common strategy for determining the value of an `ETag` is to use a hash of the resource. If a resource is not versioned, and unless computing a hash is prohibitively expensive, this is the preferred mechanism.
 
 <a href="#condreq-etag-is-hash" name="condreq-etag-is-hash">:ballot_box_with_check:</a> **YOU SHOULD** use a hash of the representation of a resource rather than a last modified/version number
@@ -1084,7 +1089,7 @@ While it may be tempting to use a revision/version number for the resource as th
 
 <a href="#condreq-weak-etags-allowed" name="condreq-weak-etags-allowed">:heavy_check_mark:</a> **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
-<a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_box:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
+<a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_mark:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
 
 <a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
