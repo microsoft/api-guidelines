@@ -1,6 +1,6 @@
 OData services treat collections of complex types differently than they treat collections of entity types. 
 This is due to the nature of entity types being "individually addressable" (they have some key which uniquely identifies them within the collection) while complex types are not individually addressable. 
-The result of these differences is that it is almost always preferable to use entity types for collections rather than complex types; please see the exceptions [here](TODO).
+The result of these differences is that it is almost always preferable to use entity types for collections rather than complex types; please see the exceptions [here](#exceptions).
 Let's use the following CSDL as an example:
 
 ```xml
