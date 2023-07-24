@@ -16,12 +16,18 @@ Existing patterns for this either have special-cased strings or have tightly cou
 
 Have an abstract base class where all variants of the subset are derived types from the base subset. For more information, see the [general subtyping guidance](./subtypes.md).
 
-The abstract base class should also hold an enum for all possible variants. The purpose of including this is to allow for easier ways to do query and filter operations on variants like `all` and `none` without relying on `isof` functions.
+The abstract base class may also optionally hold an `enum` for the different variants. If it does, the `enum` must have a member for all possible variants. The purpose of including this is to allow for easier ways to do query and filter operations on variants like `all` and `none` without relying on `isof` functions.
 
-**Base type**
+**Base type *without* an enum for the variants**
 
 ```xml
-    <ComplexType Name="membership" IsAbstract="true">
+    <ComplexType Name="membershipBase" IsAbstract="true" />
+```
+
+**Base type *with* an enum for the variants**
+
+```xml
+    <ComplexType Name="membershipBase" IsAbstract="true">
       <Property Name="membershipKind" Type="graph.membershipKind"/>
     </ComplexType>
 
@@ -36,15 +42,15 @@ The abstract base class should also hold an enum for all possible variants. The 
 **Derived types**
 
 ```xml
-    <ComplexType Name="noMembership" BaseType="graph.membership"/>
+    <ComplexType Name="noMembership" BaseType="graph.membershipBase"/>
 
-    <ComplexType Name="allMembership" BaseType="graph.membership"/>
+    <ComplexType Name="allMembership" BaseType="graph.membershipBase"/>
 
-    <ComplexType Name="enumeratedMembership" BaseType = "graph.membership">
+    <ComplexType Name="enumeratedMembership" BaseType = "graph.membershipBase">
       <Property Name="members" Type="Collection(Edm.String)"/>
     </ComplexType>
 
-    <ComplexType Name="excludedMembership" BaseType="graph.membership">
+    <ComplexType Name="excludedMembership" BaseType="graph.membershipBase">
       <Property Name="members" Type="Collection(Edm.String)"/>
     </ComplexType>
 ```
@@ -53,7 +59,7 @@ Be aware that the name values and types in the preceding examples are just examp
 
 These pattern type names should satisfy the following naming conventions:
 
-- The base type name should have the suffix `Base`, and the enumeration type name should have the suffix `Kind`.
+- The base type name should have the suffix `Base`, and the enumeration type name (if an `enum` is defined) should have the suffix `Kind`.
 - Derived child types should have names with enumeration values as the prefixes; for example, if the enumeration member value is `value1`, then the derived type name is `value1<type>`.
 
 ```xml
