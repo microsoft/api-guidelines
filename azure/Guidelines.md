@@ -430,13 +430,14 @@ This indicates to client libraries and customers that values of the enumeration 
 
 #### Polymorphic types
 
-<a href="#json-avoid-polymorphism" name="json-avoid-polymorphism">:warning:</a> **YOU SHOULD NOT** use polymorphic JSON types because they greatly complicate the customer code due to runtime dynamic casts and the introduction of new types in the future.
+Polymorphism types in REST APIs refers to the possibility to use the same property of a request or response to have similar but different shapes. This is commonly expressed as a `oneOf` in JsonSchema or OpenAPI. In order to simplify how to determine which specific type a given request or response payload corresponds to, Azure requires the use of an explicit discriminator field.
 
-If you can't avoid them, then follow the guideline below.
+Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information. 
 
 <a href="#json-use-discriminator-for-polymorphism" name="json-use-discriminator-for-polymorphism">:white_check_mark:</a> **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
 Below is an example of JSON for a Rectangle and Circle with a discriminator field named `kind`:
+
 **Rectangle**
 ```json
 {
