@@ -96,9 +96,10 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
       - [9.7.2. Operator examples](#972-operator-examples)
       - [9.7.3. Operator precedence](#973-operator-precedence)
     - [9.8. Pagination](#98-pagination)
-      - [9.8.1. Server-driven paging](#981-server-driven-paging)
-      - [9.8.2. Client-driven paging](#982-client-driven-paging)
-      - [9.8.3. Additional considerations](#983-additional-considerations)
+      - [9.8.1. Continuation tokens](#981-continuation-tokens)
+      - [9.8.2. Server-driven paging](#982-server-driven-paging)
+      - [9.8.3. Client-driven paging](#983-client-driven-paging)
+      - [9.8.4. Additional considerations](#984-additional-considerations)
     - [9.9. Compound collection operations](#99-compound-collection-operations)
     - [9.10. Empty Results](#910-empty-results)
   - [10. Delta queries](#10-delta-queries)
@@ -1008,7 +1009,7 @@ Content-Type: application/json
 }
 ```
 
-#### 9.8.3. Additional considerations
+#### 9.8.4. Additional considerations
 **Stable order prerequisite:** Both forms of paging depend on the collection of items having a stable order.
 The server MUST supplement any specified order criteria with additional sorts (typically by key) to ensure that items are always ordered consistently.
 
