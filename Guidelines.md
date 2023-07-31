@@ -984,7 +984,7 @@ The `@nextLink` MAY be populated using either server-driven paging or client-dri
 
 The server MAY provide server-driven paging by populating the continuation token with a `$skiptoken` query parameter.
 The `$skiptoken` value is opague for clients and its structure should not be assumed.
-`$skiptoken` values SHOULD expire after some period of time.
+`$skiptoken` values SHOULD expire after some period of time decided by the server.
 
 Example:
 
