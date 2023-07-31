@@ -982,7 +982,39 @@ The `@nextLink` MAY be populated using either server-driven paging or client-dri
 
 #### 9.8.2. Server-driven paging
 
-The server MAY provide
+The server MAY provide server-driven paging by populating the continuation token with a `$skiptoken` query parameter.
+The `$skiptoken` value is opague for clients and its structure should not be assumed.
+`$skiptoken` values SHOULD expire after some period of time.
+
+Example:
+
+```http
+GET http://api.contoso.com/v1.0/people HTTP/1.1
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  ...,
+  "value": [...],
+  "@nextLink": "http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken}"
+}
+```
+
+```http
+GET http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken} HTTP/1.1
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  ...,
+  "value": [...],
+  "@nextLink": "http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken2}"
+}
+```
 
 #### 9.8.3. Client-driven paging
 Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset into the collection.
