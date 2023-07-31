@@ -124,4 +124,26 @@ In the snapshot case, we want to do both: we factor the properties in a "snapsho
 
 ## Example
 
-*Provide a short example from real life.*
+### {1} Retrieve signin events that contain user data
+
+```HTTP
+GET /userSignIns
+
+200 OK
+{
+  "value": [
+    {
+      "id": "{signinid}",
+      "attemptDateTime": "2023-07-31 7:56:00 AM",
+      "requestedPermissions": [
+        "User.Read"
+      ],
+      "user": {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "displayName": "some display name",
+        "userPrincipalName": "user@domain.com"
+      }
+    }
+  ]
+}
+```
