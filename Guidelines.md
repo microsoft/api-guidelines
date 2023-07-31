@@ -954,8 +954,9 @@ Client-driven paging enables clients to request only the number of resources tha
 
 Sorting and Filtering parameters MUST be consistent across pages, because both client- and server-side paging is fully compatible with both filtering and sorting.
 
-#### 9.8.1. Server-driven paging
-Paginated responses MUST indicate a partial result by including a continuation token in the response.
+#### 9.8.1. Continuation tokens
+
+Paginated responses MUST indicate a partial result by including a continuation token in the response using the OData control information `@nextLink`.
 The absence of a continuation token means that no additional pages are available.
 
 Clients MUST treat the continuation URL as opaque, which means that query options may not be changed while iterating over a set of partial results.
@@ -976,7 +977,13 @@ Content-Type: application/json
 }
 ```
 
-#### 9.8.2. Client-driven paging
+The `@nextLink` MAY be populated using either server-driven paging or client-driven paging (`@nextLink`s generated using client-driven paging should not include the `$top` query parameter).
+
+#### 9.8.2. Server-driven paging
+
+The server MAY provide
+
+#### 9.8.3. Client-driven paging
 Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset into the collection.
 
 The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a continuation token.
