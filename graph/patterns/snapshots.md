@@ -39,7 +39,7 @@ The following CSDL demonstrates this with the `user` signin example:
   <Property Name="id" Type="Edm.String" Nullable="false" />
   <Property Name="attemptDateTime" Type="Edm.DateTimeOffset" Nullable="false" />
   <Property Name="requestedPermissions" Type="Collection(Edm.String)" Nullable="false" />
-  <Property Name="user" Type="self.userSnapshot" Nullable="false" />
+  <Property Name="userSnapshot" Type="self.userSnapshot" Nullable="false" />
 </EntityType>
 
 <ComplexType Name="userSnapshot">
@@ -138,12 +138,27 @@ GET /userSignIns
       "requestedPermissions": [
         "User.Read"
       ],
-      "user": {
+      "userSnapshot": {
         "id": "00000000-0000-0000-0000-000000000001",
         "displayName": "some display name",
         "userPrincipalName": "user@domain.com"
       }
-    }
+    },
+    ...
   ]
+}
+```
+
+### {2} Retrieve the user associated with a signin event
+
+```HTTP
+GET /userSignIns/{signinid}/userSnapshot/user
+
+200 OK
+{
+  "id": "00000000-0000-0000-0000-000000000001",
+  "displayName": "some display name",
+  "userPrincipalName": "user@domain.com",
+  ...
 }
 ```
