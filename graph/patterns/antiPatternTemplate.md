@@ -3,7 +3,7 @@
 
 *name with a negative connotation*
 
-*Example: Fleabag of properties: 
+*Example: Fleabag of properties* 
 
 ## Description
 
@@ -16,7 +16,8 @@
 
 ## Preferable solutions 
 
-*Example: It is preferable to use type hierarchy and facets patterns.* 
+*Example: It is preferable to use type hierarchy and facets patterns.
+Should provide a link to a valid pattern or patterns.* 
 
 ## Example
 
