@@ -33,7 +33,7 @@ Table of contents
 
 ## Introduction
 
-When building a digital ecosystem API, usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
+When building a digital ecosystem API usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API producer teams MUST follow to
 ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design should meet the following goals:
