@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-*Infrastructure as code (IaC) resource pattern ensures that repeated operations to a resource always results in a predictable resource end-state.*
+*Infrastructure as code (IaC) resource pattern ensures that system resources can be deployed in a reliable, repeatable, and controlled way, normally via idempotent operations.*
 
 ## Problem
 
