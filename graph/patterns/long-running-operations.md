@@ -108,7 +108,7 @@ A client wants to provision a new database:
 POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
-"displayName": "Retail DB",
+  "displayName": "Retail DB",
 }
 ```
 
@@ -121,10 +121,10 @@ HTTP/1.1 201 Created
 Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "provisioning",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "provisioning",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -135,10 +135,10 @@ GET https://graph.microsoft.com/v1.0/storage/databases/db1
 
 HTTP/1.1 200 Ok
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "succeeded",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "succeeded",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -161,10 +161,10 @@ HTTP/1.1 202 Accepted
 Retry-After: 30
 
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "deleting",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "deleting",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -181,8 +181,8 @@ HTTP/1.1 404 Not Found
 POST https://graph.microsoft.com/v1.0/storage/archives/
 
 {
-"displayName": "Image Archive",
-...
+  "displayName": "Image Archive",
+  ...
 }
 ```
 
@@ -211,9 +211,9 @@ HTTP/1.1 200 OK
 Retry-After: 30
 
 {
-"createdDateTime": "2015-06-19T12-01-03.4Z",
-"lastActionDateTime": "2015-06-19T12-01-03.45Z",
-"status": "running"
+  "createdDateTime": "2015-06-19T12-01-03.4Z",
+  "lastActionDateTime": "2015-06-19T12-01-03.45Z",
+  "status": "running"
 }
 ```
 
@@ -232,10 +232,10 @@ location:
 HTTP/1.1 200 OK
 
 {
-"createdDateTime": "2015-06-19T12-01-03.45Z",
-"lastActionDateTime": "2015-06-19T12-06-03.0024Z",
-"status": "succeeded",
-"resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
+  "createdDateTime": "2015-06-19T12-01-03.45Z",
+  "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
+  "status": "succeeded",
+  "resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
 }
 ```
 
@@ -245,8 +245,8 @@ HTTP/1.1 200 OK
 POST https://graph.microsoft.com/v1.0/storage/copyArchive
 
 {
-"displayName": "Image Archive",
-"destination": "Second-tier storage"
+  "displayName": "Image Archive",
+  "destination": "Second-tier storage"
 ...
 }
 ```
