@@ -57,10 +57,10 @@ There are some deviations from the base guidelines where Microsoft Graph API sta
   - The API response says the operation resource is being created at the URL provided in the Location header and indicates that the request is not completed by including a 202 status code.
   - Microsoft Graph doesn’t allow tenant-wide operation resources; therefore, stepwise operations are often modeled as a navigation property on the target resource.
 
-- For most implementations of the LRO pattern (like the example above), there will be 3 permissions necessary to comply with the principle of least privilege: `ArchiveOperation.ReadWrite.All` to create the operation entity, `ArchiveOperation.Read.All` to track the operation entity to completion, and `Archives.Read.All` to retrieve the resource that was created as a result of the operation.
+- For most implementations of the LRO pattern (like the example above), there will be 3 permissions necessary to comply with the principle of least privilege: `ArchiveOperation.ReadWrite.All` to create the `archiveOperation` entity, `ArchiveOperation.Read.All` to track the `archiveOperation` entity to completion, and `Archives.Read.All` to retrieve the `archive` that was created as a result of the operation.
 For APIs that would have been modeled as a simple `GET` on the resource URL, but that are modeled as long-running operations due to MSGraph performance requirements, only the `Archive.Read.All` permission is necessary as long as creating the `archiveOperation` entity is "safe".
-Here, "safe" means that there are no side effects for creating the `archiveOperation` entity that would change the functionality of any entities outside of the `archive` being retrieved.
-This requirment does not require the API to be idempotent, but an idempotent API is suffucient to meet this requirement.
+Here, "safe" means that there are no side effects of creating the `archiveOperation` entity that would change the functionality of any entities outside of the `archive` being retrieved.
+This requirment does not mean that the API must be idempotent, but an idempotent API is suffucient to meet this requirement.
 
 ## When to use this pattern
 
