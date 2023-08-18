@@ -1,12 +1,12 @@
-# Infrastructure as code
+# Upsert
 
 Microsoft Graph API Design Pattern
 
-*Infrastructure as code (IaC) resource pattern ensures that system resources can be deployed in a reliable, repeatable, and controlled way, normally via idempotent operations.*
+*The `UPSERT` pattern is a non-destructive idempotent operation using a client-provided key, that ensures that system resources can be deployed in a reliable, repeatable, and controlled way, typically used in Infrastructure as Code (IaC) scenarios.*
 
 ## Problem
 
-Infrastructure as code (IaC) defines system resources and topologies in a descriptive manner that allows teams to manage those resources as they would code. 
+Infrastructure as code (IaC) defines system resources and topologies in a descriptive manner that allows teams to manage those resources as they would code.
 Practicing IaC helps teams deploy system resources in a reliable, repeatable, and controlled way. 
 IaC also helps automate deployment and reduces the risk of human error, especially for complex large environments. 
 Customers want to adopt IaC practices for many of the resources managed through Microsoft Graph.
@@ -25,8 +25,8 @@ The solution is to use an `UPSERT` pattern, to solve for the non-idempotent crea
   * Use `PATCH` with a client-provided alternate key.
   * For a non-existent resource (specified by the alternate key) the service must handle this as a "create". As part of creation, the service must still generate the primary key value.
   * For an existing resource (specified by the alternate key) the service must handle this as an "update.
-  * Any new alternate key, used for IaC scenarios, be called `uniqueName`.
-  * NOTE: the service must also support `GET` using the alternate key pattern.
+  * Any new alternate key, used for IaC scenarios, should be called `uniqueName`, if there isn't already an existing property that could be used as an alternate key.
+* NOTE: the service must also support `GET` using the alternate key pattern.
 * For consistent CRUD Microsoft Graph behaviors, all resources, **including** resources used in IaC scenarios, should use `POST` and a service-generated primary key, per existing guidelines, and support `GET`, `PATCH` and `DELETE` using the primary key.
 * If a service does not support `UPSERT`, then a `PATCH` call against a non-existent resource must result in an HTTP "409 conflict" error.
 
@@ -43,6 +43,7 @@ This pattern should be adopted for resources that are managed through infrastruc
 * The addition of this new pattern (with alternate key) does not represent a breaking change.
 However, some API producers may have concerns about accidental usages of this new pattern unwittingly creating many new resources when the intent was an update.
 As a result, API producers can use the `Prefer: idempotent` to require clients to opt-in to the UPSERT behavior.
+* The client-provided alternate key must be immutable after being set. If its value is null then it should be settable as a way to backfill existing resources for use in IaC scenarios.
 * API producers could use `PUT` operations to create or update, but generally this approach is not recommended due to the destructive nature of `PUT`'s replace semantics.
 * API producers could to use `UPSERT` with a primary (client-provided) key and this may be appropriate for some scenarios. However, the recommendation is for resources to support creation using `POST` and a service-generated primary key, for consistency reasons.
 * API producers may annotate entity sets, singletons and collections to indicate that entities can be "upserted". The example below shows this annotation for the `groups` entity set.  
