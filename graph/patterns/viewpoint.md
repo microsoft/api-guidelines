@@ -20,7 +20,7 @@ This pattern simplifies the API client logic by hiding the state transition deta
 - Sometimes, the viewpoint can be computed on the server. In this case, an API producer should add OData annotations to the property to provide more information for downstream tools, such as SDKs and documentation generation.
 ```
     <Annotations Target="microsoft.graph.approvalItem/viewPoint">
-        <Annotation Term="Org.OData.Core.V1.Computed" Bool="true" ags:OwnerService="Microsoft.Approvals" />
+        <Annotation Term="Org.OData.Core.V1.Computed" Bool="true" />
     </Annotations>
 ```
 - An alternative to this design would be to store the user state on the client side. However, this may be problematic in some cases, because of the many devices that a user may have and the need to synchronize the state across them.
@@ -31,12 +31,12 @@ This pattern simplifies the API client logic by hiding the state transition deta
 
 The following example demonstrates how to define the 'viewpoint' property for the `chat` entity, where a chat is a collection of chatMessages between one or more participants: 
 ```
-  <ComplexType Name="chatViewpoint" ags:WorkloadIds="Microsoft.Teams.GraphSvc">
+  <ComplexType Name="chatViewpoint" >
         <Property Name="isHidden" Type="Edm.Boolean" />
         <Property Name="lastMessageReadDateTime" Type="Edm.DateTimeOffset" />
   </ComplexType>
 
-  <EntityType Name="chat" BaseType="graph.entity" ags:OwnerService="Microsoft.Teams.GraphSvc">
+  <EntityType Name="chat" BaseType="graph.entity" >
         <Property Name="chatType" Type="graph.chatType" Nullable="false" />
         <Property Name="createdDateTime" Type="Edm.DateTimeOffset" />
         <Property Name="lastUpdatedDateTime" Type="Edm.DateTimeOffset" />              
