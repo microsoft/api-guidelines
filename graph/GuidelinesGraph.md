@@ -14,7 +14,7 @@ Table of contents
     - [Resource modeling patterns](#resource-modeling-patterns)
       - [Pros and cons](#pros-and-cons)
     - [Behavior modeling](#behavior-modeling)
-    - [Error handling](#error-handling)
+    - [Error handling](#error-handling)24
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
@@ -250,8 +250,6 @@ Following are a few pros and cons to decide which pattern to use:
 
 #### Nullable properties
 
-The facets and flat bag approaches often require nullable properties, so it is important make sure to still use non-nullable properties where appropriate, and since inheretence can often remove the use of nullable properties completely, knowing when nullable properties are necessary is also important.
-Please view the guidelines [here](./nullable.md) for more details. 
 The facet and flat bag approaches often require nullable properties, so it is important to still use non-nullable properties where appropriate. Since inheritance can often remove the use of nullable properties completely, it is also important to know when nullable properties are necessary. See [Nullable properties](./nullable.md) for more details.
 ### Behavior modeling
 
