@@ -182,3 +182,36 @@ _Note: Unrelated properties on entities are omitted for easier readability._
     }
 }
 ```
+
+### Filter when base type has the "kind" enum property
+
+```HTTP
+GET .../memberships?$filter=membershipKind eq 'all'
+
+200 OK
+{
+  "value": [
+    {
+      "@odata.type": "#microsoft.graph.allMembership",
+      "membershipKind": "all"
+    },
+    ...
+  ]
+}
+```
+
+### Filter when base type lacks the "kind" enum property
+
+```HTTP
+GET .../memberships?$filter=isof(microsoft.graph.allMembership)
+
+200 OK
+{
+  "value": [
+    {
+      "@odata.type": "#microsoft.graph.allMembership",
+    },
+    ...
+  ]
+}
+```
