@@ -100,7 +100,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `displayName` can be set to any value other than `null`
-2. The response body here is provided for clarity, and is not part of the guidance itself. The [Graph standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
+2. The response body here is provided for clarity, and is not part of the guidance itself. The [OData v4.01 standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
 
 ### {5} Update the foo property of a service principal to null
 
@@ -121,7 +121,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `foo` can be set to `null` because it has be marked with `Nullable="true"` in the CSDL.
-2. The response body here is provided for clarity, and is not part of the guidance itself. The [Graph standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
+2. The response body here is provided for clarity, and is not part of the guidance itself. The [OData v4.01 standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
 
 ### {6} Update the foo property of a service principal to a non-default value
 
@@ -142,7 +142,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `foo` can be set to `something other than testval`
-2. The response body here is provided for clarity, and is not part of the guidance itself. The [Graph standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
+2. The response body here is provided for clarity, and is not part of the guidance itself. The [OData v4.01 standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
 
 ### {7} Update the bar property of a service principal to null
 
@@ -182,7 +182,7 @@ PATCH /servicePrincipals/00000000-0000-0000-0000-000000000001
 ```
 Notes:
 1. `bar` can be set to `a new bar`
-2. The response body here is provided for clarity, and is not part of the guidance itself. The [Graph standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
+2. The response body here is provided for clarity, and is not part of the guidance itself. The [OData v4.01 standard](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_UpdateanEntity) states that the workload can decide the behavior.
 
 ### {9} Create a service principal while customizing the display name
 ```HTTP
