@@ -3,7 +3,7 @@
 
 *name with a negative connotation*
 
-*Example: Fleabag of properties* 
+*Example: Flatbag of properties* 
 
 ## Description
 
