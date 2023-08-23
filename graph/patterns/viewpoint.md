@@ -13,7 +13,7 @@ The viewpoint pattern provides a solution to how to model an individual user con
 For example, the `viewpoint` property can indicate whether a message is read, deleted, or flagged for a given user. 
 The consistent naming convention ensures that when a developer uses Graph APIs all ‘viewpoints’ structural properties represent type specific user context across different M365 services and features.
 
-This pattern simplifies the API client logic by hiding the state transition details and providing state persistency on the server side. The server can manage the different viewpoints for the shared resource without exposing additional complexity to the client.To support queries for a user state the `viewpoint` property should support be filterable.
+This pattern simplifies the API client logic by hiding the state transition details and providing state persistency on the server side. The server can manage the different viewpoints for the shared resource without exposing additional complexity to the client.To support queries for a user state the `viewpoint` property should support filtering.
 ## Issues and considerations
 
 - Because the `viewpoint` property reflects an individual user's context, it is null when accessed with application permissions.
