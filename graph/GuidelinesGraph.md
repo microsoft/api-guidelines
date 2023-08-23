@@ -14,7 +14,7 @@ Table of contents
     - [Resource modeling patterns](#resource-modeling-patterns)
       - [Pros and cons](#pros-and-cons)
     - [Behavior modeling](#behavior-modeling)
-    - [Error handling](#error-handling)24
+    - [Error handling](#error-handling)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
