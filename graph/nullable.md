@@ -16,7 +16,6 @@ Below are some examples of nullable and non-nullable properties.
     <PropertyRef Name="id" />
   </Key>
   <Property Name="id" Type="Edm.String" Nullable="false" />
-
   <Property Name="appId" Type="Edm.String" Nullable="false" /> <!--required for creation-->
   <Property Name="displayName" Type="Edm.String" Nullable="false" />
   <Property Name="foo" Type="Edm.String" Nullable="true" DefaultValue="testval" />
