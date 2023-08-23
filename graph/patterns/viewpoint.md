@@ -3,7 +3,7 @@
 Microsoft Graph API Design Pattern
 
 
-*The viewpoint pattern provides the ability to manage an individual status of a shared object for multiple independent actors.*
+*The viewpoint pattern provides the ability to manage properties of a shared object that have different values for different users.*
 
 ## Problem
 A shared resource, such as a website or a group message, may have different states for different users who access it at different times in an organizational context. For example, user1 may read and delete a message, while user2 may not have seen it yet. This usually happens when a shared item is presented in an individual context.
