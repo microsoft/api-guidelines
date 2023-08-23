@@ -10,10 +10,10 @@ A shared resource, such as a website or a group message, may have different stat
 ## Solution
 
 The viewpoint pattern provides a solution to how to model an individual user context on a shared resource using a `viewpoint` structural property on an API entity type.
-For example, the `viewpoint` property can indicate whether a message is read, deleted, or flagged for a given user.
+For example, the `viewpoint` property can indicate whether a message is read, deleted, or flagged for a given user. 
 The consistent naming convention ensures that when a developer uses Graph APIs all ‘viewpoints’ structural properties represent type specific user context across different M365 services and features.
 
-This pattern simplifies the API client logic by hiding the state transition details and providing state persistency on the server side. The server can manage the different viewpoints for the shared resource without exposing them to the client. The `viewpoint` property should also be filterable.
+This pattern simplifies the API client logic by hiding the state transition details and providing state persistency on the server side. The server can manage the different viewpoints for the shared resource without exposing additional complexity to the client.To support queries for a user state the `viewpoint` property should support be filterable.
 ## Issues and considerations
 
 - Because the `viewpoint` property reflects an individual user's context, it is null when accessed with application permissions.
@@ -88,7 +88,7 @@ Content-type: application/json
 ```
 ### Updating a viewpoint
 
-You can update the `viewpoint` property only if the server does not compute it automatically. Updating the `viewpoint` property usually has a side effect, so you should use an OData action to perform the update.
+You can update the `viewpoint` property only if the server does not compute it automatically. Updating the `viewpoint` property usually has a side effect, so you may want to use an OData action to perform the update.
 
 The following example shows marking a chat as read for a user:
 
