@@ -4,6 +4,8 @@ Microsoft Graph API Design Pattern
 
 *The evolvable enums pattern allows API producers to extend enumerated types with new members without breaking API consumers.*
 
+Note: You might be interested in reading the [Enum guidance](../GuidelinesGraph.md#enums) first
+
 ## Problem
 
 Frequently API producers want to add new members to an enum type after it is initially published. Some serialization libraries might fail when they encounter members in an enum type that were added after the serialization model was generated. In this documentation, we refer to any added enum members as unknown.

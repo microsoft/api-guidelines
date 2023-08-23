@@ -15,6 +15,7 @@ Table of contents
       - [Pros and cons](#pros-and-cons)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
+    - [Enums](#enums)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
@@ -325,6 +326,78 @@ For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 <a name="api-contract-and-non-backward-compatible-changes"></a>
+
+### Enums
+
+In OData, enum are nominal types representing a subset of the nominal type they use, and are especially useful in cases where certain properties have predefined, limited options.
+
+```xml
+<EnumType Name="Color">
+    <Member Name="Red" Value="0" />
+    <Member Name="Green" Value="1" />
+    <Member Name="Blue" Value="2" />
+</EnumType>
+```
+
+#### Pros
+
+- Our SDK generators will translate the enum to the best representation of the target programming language, resulting in a better developer experience and free client side validation
+
+#### Cons
+
+- Adding a new value requires to go through a (generally fast) API Review
+- If the enum is not [evolvable](./patterns/evolvable-enums.md), adding a new value is a breaking change and will generally not be allowed
+
+#### Enum or Booleans
+
+Enumerations are a good alternative to booleans when one of the two values (`true`, `false`) conveyes other possible values not yet conceived. Let's assume we have an `Error` type and a property to communicate how to display it:
+
+```xml
+<ComplexType Name="Error">
+  <Property Name="title" Type="Edm.String" />
+  <Property Name="message" Type="Edm.String" />
+  <Property Name="displayAsTip" Type="Edm.Boolean" />
+</ComplexType>
+```
+
+The `false` value here merely communicates that the error shall not be displayed as a tip. What if, in the future, the error could be displayed as a `tip` or `alert`, and then in a more distant future, a `dialog` option is viable?
+
+With the current model, the only way is to add more boolean properties to convey the new information:
+
+```diff
+<ComplexType Name="Error">
+  <Property Name="title" Type="Edm.String" />
+  <Property Name="message" Type="Edm.String" />
+  <Property Name="displayAsTip" Type="Edm.Boolean" />
++ <Property Name="displayAsAlert" Type="Edm.Boolean" />
++ <Property Name="displayAsDialog" Type="Edm.Boolean" />
+</ComplexType>
+```
+
+Additionally speaking, the workload will now also have to validate the data structure and make sure that only one of the 3 values is `true`
+
+By using an evolvable enum, instead, all we need to do is to add new members:
+
+```diff
+<ComplexType Name="Error">
+  <Property Name="title" Type="Edm.String" />
+  <Property Name="message" Type="Edm.String" />
++ <Property Name="displayMethod" Type="microsoft.graph.displayMethod" />
+-  <Property Name="displayAsTip" Type="Edm.Boolean" />
+- <Property Name="displayAsAlert" Type="Edm.Boolean" />
+- <Property Name="displayAsDialog" Type="Edm.Boolean" />
+</ComplexType>
+```
+
+```xml
+<EnumType Name="displayMethod">
+    <Member Name="tip" Value="0" />
+    <Member Name="unknownFutureValue" Value="1" />
+    <Member Name="alert" Value="2" />
+    <Member Name="dialog" Value="3" />
+</EnumType>
+```
+
 
 ## API contract and non-backward compatible changes
 
