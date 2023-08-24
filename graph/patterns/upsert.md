@@ -2,11 +2,11 @@
 
 Microsoft Graph API Design Pattern
 
-*The `UPSERT` pattern is a non-destructive idempotent operation using a client-provided key, that ensures that system resources can be deployed in a reliable, repeatable, and controlled way, typically used in Infrastructure as Code (IaC) scenarios.*
+*The `Upsert` pattern is a non-destructive idempotent operation using a client-provided key, that ensures that system resources can be deployed in a reliable, repeatable, and controlled way, typically used in Infrastructure as Code (IaC) scenarios.*
 
 ## Problem
 
-Infrastructure as code (IaC) defines system resources and topologies in a descriptive manner that allows teams to manage those resources as they would code.
+Infrastructure as code (IaC) defines system resources and topologies in a declarative manner that allows teams to manage those resources as they would code.
 Practicing IaC helps teams deploy system resources in a reliable, repeatable, and controlled way. 
 IaC also helps automate deployment and reduces the risk of human error, especially for complex large environments. 
 Customers want to adopt IaC practices for many of the resources managed through Microsoft Graph.
@@ -19,20 +19,20 @@ Additionally, IaC code scripts or templates usually employ client-provided names
 
 ## Solution
 
-The solution is to use an `UPSERT` pattern, to solve for the non-idempotent creation and client-provided naming problems.
+The solution is to use an `Upsert` pattern, to solve for the non-idempotent creation and client-provided naming problems.
 
-* For IaC scenarios, resources must use `UPSERT` semantics with an [alternate key](./alternate-key.md):
+* For IaC scenarios, resources must use `Upsert` semantics with an [alternate key](./alternate-key.md):
   * Use `PATCH` with a client-provided alternate key.
   * For a non-existent resource (specified by the alternate key) the service must handle this as a "create". As part of creation, the service must still generate the primary key value.
   * For an existing resource (specified by the alternate key) the service must handle this as an "update.
   * Any new alternate key, used for IaC scenarios, should be called `uniqueName`, if there isn't already an existing property that could be used as an alternate key.
 * NOTE: the service must also support `GET` using the alternate key pattern.
 * For consistent CRUD Microsoft Graph behaviors, all resources, **including** resources used in IaC scenarios, should use `POST` and a service-generated primary key, per existing guidelines, and support `GET`, `PATCH` and `DELETE` using the primary key.
-* If a service does not support `UPSERT`, then a `PATCH` call against a non-existent resource must result in an HTTP "409 conflict" error.
+* If a service does not support `Upsert`, then a `PATCH` call against a non-existent resource must result in an HTTP "409 conflict" error.
 
-This solution allows for existing resources that follow Microsoft Graph conventions for CRUD operations to add `UPSERT` without impacting existing apps or functionality.
+This solution allows for existing resources that follow Microsoft Graph conventions for CRUD operations to add `Upsert` without impacting existing apps or functionality.
 
-Ideally, all new entity types should support an `UPSERT` mechanism, especially if the resource is likely be used in IaC scenarios.
+Ideally, all new entity types should support an `Upsert` mechanism, especially where they support control-plane APIs, or are used in admin style or IaC scenarios.
 
 ## When to use this pattern
 
@@ -42,10 +42,10 @@ This pattern should be adopted for resources that are managed through infrastruc
 
 * The addition of this new pattern (with alternate key) does not represent a breaking change.
 However, some API producers may have concerns about accidental usages of this new pattern unwittingly creating many new resources when the intent was an update.
-As a result, API producers can use the `Prefer: idempotent` to require clients to opt-in to the UPSERT behavior.
+As a result, API producers can use the `Prefer: idempotent` to require clients to opt-in to the Upsert behavior.
 * The client-provided alternate key must be immutable after being set. If its value is null then it should be settable as a way to backfill existing resources for use in IaC scenarios.
 * API producers could use `PUT` operations to create or update, but generally this approach is not recommended due to the destructive nature of `PUT`'s replace semantics.
-* API producers could to use `UPSERT` with a primary (client-provided) key and this may be appropriate for some scenarios. However, the recommendation is for resources to support creation using `POST` and a service-generated primary key, for consistency reasons.
+* API producers could use `Upsert` with a primary (client-provided) key and this may be appropriate for some scenarios. However, the recommendation is for resources to support creation using `POST` and a service-generated primary key, for consistency reasons.
 * API producers may annotate entity sets, singletons and collections to indicate that entities can be "upserted". The example below shows this annotation for the `groups` entity set.  
 
 ```xml
@@ -94,6 +94,7 @@ Create a new group, with a `uniqueName` of "Group157". In this case, this group 
 
 ```http
 PATCH /groups(uniqueName='Group157')
+Prefer: idempotent; return=representation
 ```
 
 ```json
@@ -107,6 +108,7 @@ Response:
 
 ```http
 201 created
+Preference-Applied: idempotent; return=representation
 ```
 
 ```json
@@ -124,6 +126,7 @@ Create a new group, with a `uniqueName` of "Group157", exactly like before. Exce
 
 ```http
 PATCH /groups(uniqueName='Group157')
+Prefer: idempotent; return=representation
 ```
 
 ```json
@@ -137,6 +140,7 @@ Response:
 
 ```http
 200 ok
+Preference-Applied: idempotent; return=representation
 ```
 
 ```json
@@ -153,10 +157,11 @@ Notice how this operation is idempotent in nature, rather than returning a 409 c
 ### Upsert not supported
 
 Create a new group, with a `uniqueName` of "Group157". In this case, this group does not exist and additionally
-the service does not `UPSERT` for groups.
+the service does not `Upsert` for groups.
 
 ```http
 PATCH /groups(uniqueName='Group157')
+Prefer: idempotent; return=representation
 ```
 
 ```json
