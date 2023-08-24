@@ -24,6 +24,7 @@ This pattern simplifies the API client logic by hiding the state transition deta
     </Annotations>
 ```
 - An alternative to this design would be to store the user state on the client side. However, this may be problematic in some cases, because of the many devices that a user may have and the need to synchronize the state across them.
+- Often, updating the `viewpoint` property may cause a side effect, so you might consider an OData action to do the update. For some user scenarios, the `PATCH` method could be a better way to update a `viewpoint`.
 
 ## Examples
 
@@ -70,7 +71,8 @@ Content-type: application/json
             "lastUpdatedDateTime": "2020-12-08T23:58:32.511Z",
             "chatType": "meeting",         
             "viewpoint":{
-                "lastMessageReadDateTime": "2021-03-28T21:10:00.000Z" // User has unread messages
+                "lastMessageReadDateTime": "2021-03-28T21:10:00.000Z" 
+                // User has unread messages
             }
         },
         {
@@ -80,17 +82,16 @@ Content-type: application/json
             "lastUpdatedDateTime": "2020-12-08T23:53:11.012Z",
             "chatType": "group",            
             "viewpoint":{
-                "lastMessageReadDateTime": "0000-01-01T00:00:00.000Z" // User hasnt read anything since no message was posted
+                "lastMessageReadDateTime": "0000-01-01T00:00:00.000Z" 
+                // User hasnt read anything since no message was posted
             }
         }
     ]
 }
 ```
-### Updating a viewpoint
+### Updating a viewpoint using an action
 
-You can update the `viewpoint` property only if the server does not compute it automatically. Updating the `viewpoint` property usually has a side effect, so you may want to use an OData action to perform the update.
-
-The following example shows marking a chat as read for a user:
+The following example shows marking a chat `viewpoint` as read for a user using an action:
 
 ```http
 
@@ -105,6 +106,29 @@ Content-length: 106
   }
 }
 ```
+
+The server responds with a  success status code and no payload:
+
+```http
+HTTP/1.1 204 No Content
+```
+### Updating a viewpoint using `PATCH` method
+
+The following example shows how to mark a topic with the `viewpoint` label as reviewed for a user by using the `PATCH` method (this example does not represent an actual API, but only an illustration):
+
+```
+PATCH https://graph.microsoft.com/beta/sampleTopics/19:7d898072-792c-4006-bb10-5ca9f259
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{  
+    "title": "Announcements: Changes to PowerPoint and Word to open files faster",
+    ...
+    "viewpoint": {
+         "isReviewed" : "true"
+    }
+}
 The server responds with a  success status code and no payload:
 
 ```http
