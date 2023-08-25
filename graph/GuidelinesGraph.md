@@ -3,8 +3,6 @@
 Table of contents
 
 - [Microsoft Graph REST API Guidelines](#microsoft-graph-rest-api-guidelines)
-  - [](#)
-      - [History](#history)
   - [Introduction](#introduction)
     - [Legend](#legend)
   - [Design approach](#design-approach)
@@ -15,21 +13,12 @@ Table of contents
     - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
+    - [Enums](#enums)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
 
-## 
-
-#### History
-
-| Date        | Notes                       |
-|-------------|-----------------------------|
-| 2023-Aug-8  | New and updated patterns |
-| 2022-Jun-14 | Edit pass for formatting, links |
-| 2021-Sep-28 | Using summary and patterns style |
-| 2020-Oct-04 | Initial version in Wiki  |
 
 ## Introduction
 
@@ -201,6 +190,8 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 - **[Facets](./patterns/facets.md)** are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
 
 - **[Flat bag of properties](./patterns/flat-bag.md)** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+
+- **[Enums](./patterns/enums.md)** represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
