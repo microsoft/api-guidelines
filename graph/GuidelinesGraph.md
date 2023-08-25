@@ -339,7 +339,7 @@ In OData, enums represent a subset of the nominal type they rely on, and are esp
 
 #### Enum or Booleans
 
-Enumerations are a good alternative to booleans when one of the two values (`true`, `false`) conveyes other possible values not yet conceived. Let's assume we have an `Error` type and a property to communicate how to display it:
+Enumerations are a good alternative to Booleans when one of the two values (`true`, `false`) conveys other possible values not yet conceived. Let's assume we have an `Error` type and a property to communicate how to display it:
 
 ```xml
 <ComplexType Name="Error">
