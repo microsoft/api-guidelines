@@ -416,6 +416,8 @@ but it is also open for future scenarios:
 </EnumType>
 ```
 
+Additionally speaking, depending on the situation, a nullable enum can very likely be avoided by adding a `none` member.
+
 #### Flag Enums or Collection of Enums
 
 In case an enum can have multiple values at the same time the tentation is to model the property as a collection of Enums:
