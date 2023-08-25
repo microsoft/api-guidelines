@@ -1,12 +1,12 @@
  # NOTICE TO READERS
  
  ## Guidance for Azure service teams
- Azure service teams should use companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information please refer to the [README](./azure/README.md) in the Azure folder. 
+Azure service teams should use companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information please refer to the [README](./azure/README.md) in the Azure folder. 
  
- ## Guidance for Microsoft Graph service teams
+## Guidance for Microsoft Graph service teams
  Microsoft Graph service teams should reference the companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) when building or modifying their services.
 
- In the process of building many of Microsoft's highest scale services, the Microsoft Graph team found the Microsoft API guidelines tremendously useful as a baseline. However, there are several areas where we need to provide more clarity on how developers should describe their APIs. The companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) is a set of amendments and clarifications for Microsoft Graph that act as further reading. Recognizing that two documents is a lot for a new API designer to absorb, our plan is to follow the approach Azure have taken and roll out guidelines for Microsoft Graph into a single consolidated document.
+In the process of building many of Microsoft's highest scale services, the Microsoft Graph team found the Microsoft API guidelines tremendously useful as a baseline. However, there are several areas where we need to provide more clarity on how developers should describe their APIs. The companion document, [Graph REST API Guidelines](./graph/GuidelinesGraph.md) is a set of amendments and clarifications for Microsoft Graph that act as further reading. Recognizing that two documents is a lot for a new API designer to absorb, our plan is to follow the approach Azure have taken and roll out guidelines for Microsoft Graph into a single consolidated document.
 
 ---
 
