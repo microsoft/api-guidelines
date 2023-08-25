@@ -3,7 +3,7 @@
 In OData, enums represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
 ```xml
-<EnumType Name="Color">
+<EnumType Name="color">
     <Member Name="Red" Value="0" />
     <Member Name="Green" Value="1" />
     <Member Name="Blue" Value="2" />
@@ -24,7 +24,7 @@ In OData, enums represent a subset of the nominal type they rely on, and are esp
 Enumerations are a good alternative to Booleans when one of the two values (`true`, `false`) conveys other possible values not yet conceived. Let's assume we have an `Error` type and a property to communicate how to display it:
 
 ```xml
-<ComplexType Name="Error">
+<ComplexType Name="error">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
   <Property Name="displayAsTip" Type="Edm.Boolean" />
@@ -36,7 +36,7 @@ The `false` value here merely communicates that the error shall not be displayed
 With the current model, the only way is to add more boolean properties to convey the new information:
 
 ```diff
-<ComplexType Name="Error">
+<ComplexType Name="error">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
   <Property Name="displayAsTip" Type="Edm.Boolean" />
@@ -50,7 +50,7 @@ Additionally speaking, the workload will now also have to validate the data stru
 By using an evolvable enum, instead, all we need to do is to add new members:
 
 ```diff
-<ComplexType Name="Error">
+<ComplexType Name="error">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
 + <Property Name="displayMethod" Type="microsoft.graph.displayMethod" />
