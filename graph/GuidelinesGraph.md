@@ -256,7 +256,8 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 
 |  Microsoft Graph rules for modeling behavior                     |
 |------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections.<BR>This approach requires the server to produce system generated identities. |
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections.<BR>This approach requires the server to produce a system generated key. |
+| :heavy_check_mark: **MAY** use PATCH to create new entities in insertable entity sets or collections.<BR>This [Upsert](./patterns/upsert.md) approach requires the caller to provide a key. |
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources.  |
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources. |
 | :heavy_check_mark: **MUST** use GET for listing and reading resources. |
@@ -389,6 +390,7 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 | [Navigation properties](./patterns/navigation-property.md) | Model resource relationships                         |
 | [Operations](./patterns/operations.md) | Model complex business operations                          |
 | [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.                                 |
+| [Upsert](./patterns/upsert.md)                   | Idempotent operation to create or update a resource using a client-provided key.   |
 
 ## References
 
