@@ -323,7 +323,6 @@ For a complete mapping of error codes to HTTP statuses, see
 <a name="api-contract-and-non-backward-compatible-changes"></a>
 
 
-
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
