@@ -21,22 +21,22 @@ In OData, enums represent a subset of the nominal type they rely on, and are esp
 
 #### Enum or Booleans
 
-Enumerations are a good alternative to Booleans when one of the two values (`true`, `false`) conveys other possible values not yet conceived. Let's assume we have an `Error` type and a property to communicate how to display it:
+Enumerations are a good alternative to Booleans when one of the two values (`true`, `false`) conveys other possible values not yet conceived. Let's assume we have an `publicNotification` type and a property to communicate how to display it:
 
 ```xml
-<ComplexType Name="error">
+<ComplexType Name="publicNotification">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
   <Property Name="displayAsTip" Type="Edm.Boolean" />
 </ComplexType>
 ```
 
-The `false` value here merely communicates that the error shall not be displayed as a tip. What if, in the future, the error could be displayed as a `tip` or `alert`, and then in a more distant future, a `dialog` option is viable?
+The `false` value here merely communicates that the notification shall not be displayed as a tip. What if, in the future, the notification could be displayed as a `tip` or `alert`, and then in a more distant future, a `dialog` option is viable?
 
 With the current model, the only way is to add more boolean properties to convey the new information:
 
 ```diff
-<ComplexType Name="error">
+<ComplexType Name="publicNotification">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
   <Property Name="displayAsTip" Type="Edm.Boolean" />
@@ -50,7 +50,7 @@ Additionally speaking, the workload will now also have to validate the data stru
 By using an evolvable enum, instead, all we need to do is to add new members:
 
 ```diff
-<ComplexType Name="error">
+<ComplexType Name="publicNotification">
   <Property Name="title" Type="Edm.String" />
   <Property Name="message" Type="Edm.String" />
 + <Property Name="displayMethod" Type="microsoft.graph.displayMethod" />
