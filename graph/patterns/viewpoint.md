@@ -72,7 +72,7 @@ Content-type: application/json
             "chatType": "meeting",         
             "viewpoint":{
                 "lastMessageReadDateTime": "2021-03-28T21:10:00.000Z" 
-                // User has unread messages
+                /* User has unread messages */
             }
         },
         {
@@ -83,7 +83,7 @@ Content-type: application/json
             "chatType": "group",            
             "viewpoint":{
                 "lastMessageReadDateTime": "0000-01-01T00:00:00.000Z" 
-                // User hasnt read anything since no message was posted
+                /* User hasnt read anything since no message was posted */
             }
         }
     ]
