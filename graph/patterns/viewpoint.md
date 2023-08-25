@@ -129,6 +129,8 @@ Content-Type: application/json
          "isReviewed" : "true"
     }
 }
+```
+
 The server responds with a  success status code and no payload:
 
 ```http
