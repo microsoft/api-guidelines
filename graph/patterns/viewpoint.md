@@ -68,11 +68,10 @@ Content-type: application/json
             "id": "19:meeting_MjdhNjM4YzUtYzExZi00OTFkLTkzZTAtNTVlNmZmMDhkNGU2@thread.v2",
             "topic": "Meeting chat sample",
             "createdDateTime": "2020-12-08T23:53:05.801Z",
-            "lastUpdatedDateTime": "2020-12-08T23:58:32.511Z",
+            "lastUpdatedDateTime": "2022-12-08T23:58:32.511Z",
             "chatType": "meeting",         
             "viewpoint":{
-                "lastMessageReadDateTime": "2021-03-28T21:10:00.000Z" 
-                /* User has unread messages */
+                "lastMessageReadDateTime": "2021-03-28T21:10:00.000Z"              
             }
         },
         {
@@ -82,8 +81,7 @@ Content-type: application/json
             "lastUpdatedDateTime": "2020-12-08T23:53:11.012Z",
             "chatType": "group",            
             "viewpoint":{
-                "lastMessageReadDateTime": "0000-01-01T00:00:00.000Z" 
-                /* User hasnt read anything since no message was posted */
+                "lastMessageReadDateTime": "0000-01-01T00:00:00.000Z"                
             }
         }
     ]
