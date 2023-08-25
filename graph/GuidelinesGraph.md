@@ -193,7 +193,6 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 
 - **[Enums](./patterns/enums.md)** represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
-
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
 | API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction |
