@@ -3,8 +3,6 @@
 Table of contents
 
 - [Microsoft Graph REST API Guidelines](#microsoft-graph-rest-api-guidelines)
-  - [](#)
-      - [History](#history)
   - [Introduction](#introduction)
     - [Legend](#legend)
   - [Design approach](#design-approach)
@@ -21,15 +19,6 @@ Table of contents
   - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
 
-## 
-
-#### History
-
-| Date        | Notes                       |
-|-------------|-----------------------------|
-| 2022-Jun-14 | Edit pass for formatting, links |
-| 2021-Sep-28 | Using summary and patterns style |
-| 2020-Oct-04 | Initial version in Wiki  |
 
 ## Introduction
 
@@ -427,7 +416,30 @@ but it is also open for future scenarios:
 </EnumType>
 ```
 
+#### Flag Enums or Collection of Enums
 
+In case an enum can have multiple values at the same time the tentation is to model the property as a collection of Enums:
+
+```xml
+<Property Name="displayMethods" Type="Collection(displayMethod)"/>
+```
+
+However, [Flagged Enums](https://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#_Toc38530378) can model this use case scenario:
+
+```diff
+- <EnumType Name="displayMethod">
++ <EnumType Name="displayMethod" isFlag="true">
+     <Member Name="tip" Value="0" />
+     <Member Name="unknownFutureValue" Value="1" />
+     <Member Name="alert" Value="2" />
+-    <Member Name="dialog" Value="3" />
++    <Member Name="dialog" Value="4" />
+</EnumType>
+```
+
+With such enum, customers can select multiple values in a single field:
+
+`displayMethod = tip | alert`
 
 ## API contract and non-backward compatible changes
 
