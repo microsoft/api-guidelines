@@ -398,6 +398,36 @@ By using an evolvable enum, instead, all we need to do is to add new members:
 </EnumType>
 ```
 
+Similarly speaking, if you find yourself using a `nullable` Enum, that is a indication that maybe what you are trying to model is something that has 3 states and an enum is more appropraite. For instance, let's assume we have a boolean property called `syncEnabled`, where `null` means that the value is undefined and inherited from the general tenant configuration. Instead of modelling like a boolean:
+
+```xml
+<Property Name="syncEnabled" Type="Edm.Boolean" Nullable="true"/>
+```
+
+An enum not only better conveys the message:
+
+```xml
+<EnumType Name="syncState">
+    <Member Name="enabled" Value="0" />
+    <Member Name="disabled" Value="1" />
+    <Member Name="tenantInherit" Value="2" />
+    <Member Name="unknownFutureValue" Value="3" />
+</EnumType>
+```
+
+but it is also open for future scenarios:
+
+```diff
+<EnumType Name="syncState">
+    <Member Name="enabled" Value="0" />
+    <Member Name="disabled" Value="1" />
+    <Member Name="tenantInherit" Value="2" />
+    <Member Name="unknownFutureValue" Value="3" />
++   <Member Name="groupInherit" Value="4" />
+</EnumType>
+```
+
+
 
 ## API contract and non-backward compatible changes
 
