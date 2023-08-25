@@ -318,7 +318,7 @@ For a complete mapping of error codes to HTTP statuses, see
 
 ### Enums
 
-In OData, enum are nominal types representing a subset of the nominal type they use, and are especially useful in cases where certain properties have predefined, limited options.
+In OData, enums represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
 ```xml
 <EnumType Name="Color">
