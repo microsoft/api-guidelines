@@ -431,11 +431,14 @@ However, [Flagged Enums](https://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/
 ```diff
 - <EnumType Name="displayMethod">
 + <EnumType Name="displayMethod" isFlag="true">
-     <Member Name="tip" Value="0" />
-     <Member Name="unknownFutureValue" Value="1" />
-     <Member Name="alert" Value="2" />
+-     <Member Name="tip" Value="0" />
++     <Member Name="tip" Value="1" />
+-     <Member Name="unknownFutureValue" Value="1" />
++     <Member Name="unknownFutureValue" Value="2" />
+-     <Member Name="alert" Value="2" />
++     <Member Name="alert" Value="4" />
 -    <Member Name="dialog" Value="3" />
-+    <Member Name="dialog" Value="4" />
++    <Member Name="dialog" Value="8" />
 </EnumType>
 ```
 
