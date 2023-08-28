@@ -185,33 +185,52 @@ _Note: Unrelated properties on entities are omitted for easier readability._
 
 ### Filter when base type has the "kind" enum property
 
-```HTTP
-GET .../memberships?$filter=membershipKind eq 'all'
+```http
+GET https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies?$filter=conditions/users/includeGuestsOrExternalUsers/externalTenants/membershipKind eq 'all'
 
 200 OK
 {
-  "value": [
-    {
-      "@odata.type": "#microsoft.graph.allMembership",
-      "membershipKind": "all"
-    },
-    ...
-  ]
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#conditionalAccessPolicy",
+    "values": [
+        {
+            "id": "66d36273-fe4c-d478-dc22-e0179d856ce7",
+            "conditions": {
+                "users": {
+                    "includeGuestsOrExternalUsers": {
+                        "externalTenants": {
+                            "@odata.type":"microsoft.graph.conditionalAccessAllExternalTenants",
+                            "membershipKind": "all"
+                        }
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
 
 ### Filter when base type lacks the "kind" enum property
 
 ```HTTP
-GET .../memberships?$filter=isof(microsoft.graph.allMembership)
+GET https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies?$filter=isof(conditions/users/includeGuestsOrExternalUsers/externalTenants, microsoft.graph.conditionalAccessAllExternalTenants)
 
 200 OK
 {
-  "value": [
-    {
-      "@odata.type": "#microsoft.graph.allMembership",
-    },
-    ...
-  ]
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#conditionalAccessPolicy",
+    "values": [
+        {
+            "id": "66d36273-fe4c-d478-dc22-e0179d856ce7",
+            "conditions": {
+                "users": {
+                    "includeGuestsOrExternalUsers": {
+                        "externalTenants": {
+                            "@odata.type":"microsoft.graph.conditionalAccessAllExternalTenants",
+                            "membershipKind": "all"
+                        }
+                    }
+                }
+            }
+        }
+    ]
 }
 ```
