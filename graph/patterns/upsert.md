@@ -154,6 +154,37 @@ Preference-Applied: idempotent; return=representation
 
 Notice how this operation is idempotent in nature, rather than returning a 409 conflict error.
 
+### Updating a record
+
+Update "Group157" group with a new description.
+
+```http
+PATCH /groups(uniqueName='Group157')
+Prefer: idempotent; return=representation
+```
+
+```json
+{
+    "description": "Some of my favorite people in the world."
+}
+```
+
+Response:
+
+```http
+200 ok
+Preference-Applied: idempotent; return=representation
+```
+
+```json
+{
+    "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66",
+    "displayName": "My favorite group",
+    "description": "Some of my favorite people in the world.",
+    "uniqueName": "Group157"
+}
+```
+
 ### Upsert not supported
 
 Create a new group, with a `uniqueName` of "Group157". In this case, this group does not exist and additionally
