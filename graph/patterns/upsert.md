@@ -21,13 +21,17 @@ Additionally, IaC code scripts or templates usually employ client-provided names
 
 The solution is to use an `Upsert` pattern, to solve for the non-idempotent creation and client-provided naming problems.
 
-* For IaC scenarios, resources must use `Upsert` semantics with an [alternate key](./alternate-key.md):
-  * Use `PATCH` with a client-provided alternate key.
-  * For a non-existent resource (specified by the alternate key) the service must handle this as a "create". As part of creation, the service must still generate the primary key value.
-  * For an existing resource (specified by the alternate key) the service must handle this as an "update.
-  * Any new alternate key, used for IaC scenarios, should be called `uniqueName`, if there isn't already an existing property that could be used as an alternate key.
+* For IaC scenarios, resources must use `Upsert` semantics with a client-provided key:
+  * Use `PATCH` with a client-provided key:
+    * If there is a natural client-provided key that can serve as the primary key, then the service should support `Upsert` with that key.
+    * If the primary key is service-generated, the client-provided key should use an [alternate key](./alternate-key.md) to support idempotent creation.
+  * For a non-existent resource (specified by the client-provided key) the service must handle this as a "create". As part of creation, the service must still generate the primary key value, if appropriate.
+  * For an existing resource (specified by the client-provided key) the service must handle this as an "update".
+  * Any new alternate key, used for IaC scenarios, should be called `uniqueName`, if there isn't already a more natural existing property that could be used as an alternate key.
 * NOTE: the service must also support `GET` using the alternate key pattern.
-* For consistent CRUD Microsoft Graph behaviors, all resources, **including** resources used in IaC scenarios, should use `POST` and a service-generated primary key, per existing guidelines, and support `GET`, `PATCH` and `DELETE` using the primary key.
+* Services should always support `POST` to the collection URL.
+  * For service-generated keys, this should return the server generated key.
+  * For client-provided keys, the client should provide the key as part of the request payload.
 * If a service does not support `Upsert`, then a `PATCH` call against a non-existent resource must result in an HTTP "409 conflict" error.
 
 This solution allows for existing resources that follow Microsoft Graph conventions for CRUD operations to add `Upsert` without impacting existing apps or functionality.
@@ -40,12 +44,11 @@ This pattern should be adopted for resources that are managed through infrastruc
 
 ## Issues and considerations
 
-* The addition of this new pattern (with alternate key) does not represent a breaking change.
+* The addition of this new pattern (with an alternate key) to an existing API does not represent a breaking change.
 However, some API producers may have concerns about accidental usages of this new pattern unwittingly creating many new resources when the intent was an update.
 As a result, API producers can use the `Prefer: idempotent` to require clients to opt-in to the Upsert behavior.
 * The client-provided alternate key must be immutable after being set. If its value is null then it should be settable as a way to backfill existing resources for use in IaC scenarios.
 * API producers could use `PUT` operations to create or update, but generally this approach is not recommended due to the destructive nature of `PUT`'s replace semantics.
-* API producers could use `Upsert` with a primary (client-provided) key and this may be appropriate for some scenarios. However, the recommendation is for resources to support creation using `POST` and a service-generated primary key, for consistency reasons.
 * API producers may annotate entity sets, singletons and collections to indicate that entities can be "upserted". The example below shows this annotation for the `groups` entity set.  
 
 ```xml
@@ -57,6 +60,8 @@ As a result, API producers can use the `Prefer: idempotent` to require clients t
   </Annotation>
 </EntitySet>
 ```
+
+* `Upsert` can also be supported against singletons, using a `PATCH` to the singleton's URL.
 
 ## Examples
 
@@ -71,12 +76,12 @@ For these examples we'll use the `group` entity type, which defines both a prima
   <Property Name="uniqueName" Type="Edm.String"/>
   <Property Name="displayName" Type="Edm.String"/>
   <Property Name="description" Type="Edm.String"/> 
-  <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
+  <Annotation Term="Org.OData.Core.V1.AlternateKeys">
     <Collection>
-      <Record Type="OData.Community.Keys.V1.AlternateKey">
+      <Record Type="Org.OData.Core.V1.AlternateKey">
         <PropertyValue Property="Key">
         <Collection>
-            <Record Type="OData.Community.Keys.V1.PropertyRef">
+            <Record Type="Org.OData.Core.V1.PropertyRef">
             <PropertyValue Property="Name" PropertyPath="uniqueName" />
             </Record>
         </Collection>
