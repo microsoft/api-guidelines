@@ -63,21 +63,21 @@ Declare `mail` and `ssn` as alternate keys on an entity:
 
    <Property Name="mail" Type="Edm.String" />
    <Property Name="ssn" Type="Edm.String" />
-   <Annotation Term="Keys.AlternateKeys">
+   <Annotation Term="OData.Community.Keys.V1.AlternateKeys">
       <Collection>
-         <Record>
+         <Record Type="OData.Community.Keys.V1.AlternateKey">
             <PropertyValue Property="Key">
                <Collection>
-                  <Record>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
                      <PropertyValue Property="Name" PropertyPath="mail" />
                   </Record>
                </Collection>
             </PropertyValue>
          </Record>
-         <Record>
+         <Record Type="OData.Community.Keys.V1.AlternateKey">
             <PropertyValue Property="Key">
                <Collection>
-                  <Record>
+                  <Record Type="OData.Community.Keys.V1.PropertyRef">
                      <PropertyValue Property="Name" PropertyPath="ssn" />
                   </Record>
                </Collection>
@@ -153,7 +153,7 @@ Declare `mail` and `ssn` as alternate keys on an entity:
     }
     ```
 
-4. Request a resource where the alternate key property does not exist on any resource in the colleciton:
+4. Request a resource where the alternate key property does not exist on any resource in the collection:
 
     ```http
     GET https://graph.microsoft.com/v1.0/users(email='unknown@contoso.com')

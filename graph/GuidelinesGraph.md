@@ -3,35 +3,26 @@
 Table of contents
 
 - [Microsoft Graph REST API Guidelines](#microsoft-graph-rest-api-guidelines)
-  - [](#)
-      - [History](#history)
   - [Introduction](#introduction)
     - [Legend](#legend)
   - [Design approach](#design-approach)
     - [Naming](#naming)
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
-    - [Query support](#query-support)
     - [Resource modeling patterns](#resource-modeling-patterns)
+      - [Pros and cons](#pros-and-cons)
+    - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
+    - [Enums](#enums)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
 
-## 
-
-#### History
-
-| Date        | Notes                       |
-|-------------|-----------------------------|
-| 2022-Jun-14 | Edit pass for formatting, links |
-| 2021-Sep-28 | Using summary and patterns style |
-| 2020-Oct-04 | Initial version in Wiki  |
 
 ## Introduction
 
-When building a digital ecosystem API, usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
+When building a digital ecosystem API usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API producer teams MUST follow to
 ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design should meet the following goals:
@@ -124,6 +115,7 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem or userId on auditActor <BR> - **Wrong:** webUrl on contact when it's the companyWebUrl |
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
+| :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages |
 
 ### Uniform Resource Locators (URLs)
 
@@ -158,32 +150,14 @@ In Microsoft Graph, a top-level API category might represent one of the followin
 
 Effectively, top-level categories define a perimeter for the API surface; thus, a new category creation requires additional rigor and governance approval.
 
-### Query support
-
-Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
-
-|Requirements                                                                                        |
-|----------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
-| :ballot_box_with_check: **SHOULD** support `\$filter with eq`, `ne` operations on properties of entities for collections. |
-| :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
-| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
-| :ballot_box_with_check: **SHOULD** support `$count` for collections. |
-| :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
-
-The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
-[OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
-
-Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
-
 ### Resource modeling patterns
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must not use complex type to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
- <EntityType Name="Author">
+ <EntityType Name="author">
     <Key>
         <PropertyRef Name="id" />
     </Key>
@@ -191,7 +165,7 @@ Because objects of complex types in Microsoft Graph don’t have unique identifi
     <Property Name="name" Type="Edm.String" />
     <Property Name="address" Type="microsoft.graph.Address" />
 </EntityType>
-<ComplexType Name="Address">
+<ComplexType Name="address">
     <Property Name="city" Type="Edm.String" />
     <Property Name="street" Type="Edm.String" />
     <Property Name="stateOrProvince" Type="Edm.String" />
@@ -211,11 +185,13 @@ Because objects of complex types in Microsoft Graph don’t have unique identifi
 There are different approaches for designing an API resource model in situations with multiple variants of a common concept.
 The three most often used patterns in Microsoft Graph today are type hierarchy, facets, and flat bag of properties:
 
-- [Type hierarchy](./patterns/subtypes.md) is represented by one abstract base type with a few common properties and one subtype for each variant.
+- **[Type hierarchy](./patterns/subtypes.md)** is represented by one abstract base type with a few common properties and one subtype for each variant.
 
-- [Facets](./patterns/facets.md) are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
+- **[Facets](./patterns/facets.md)** are represented by a single entity type with common properties and one facet property (of complex type) per variant. The facet properties only have a value when the object represents that variant.
 
-- Flat bag of properties is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+- **[Flat bag of properties](./patterns/flat-bag.md)** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
+
+- **[Enums](./patterns/enums.md)** represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
@@ -223,7 +199,48 @@ The following table shows a summary of the main qualities for each pattern and c
 |-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|
 | Type hierarchy          | yes                                           | no                                                | no                        |
 | Facets                  | partially                                     | yes                                               | yes                       |
-| Flat bag of properties  | no                                            | no                                                | yes                       |
+| Flat bag                | no                                            | no                                                | yes                       |
+
+#### Pros and cons
+
+Following are a few pros and cons to decide which pattern to use:
+
+- In **[hierarchy](./patterns/subtypes.md)**, the interdependencies of properties, that is, which properties are relevant for which variants, is fully captured in metadata, and client code can potentially leverage that to construct and/or validate requests.
+
+- Introducing new cases in **hierarchy** is relatively isolated (which is why it is so familiar to OOP) and is considered backwards compatible (at least syntactically).
+
+- Introducing new cases/variants in **[facets](./patterns/facets.md)** is straightforward. You need to be careful because it can introduce situations where previously only one of the facets was non-null and now all the old ones are null. This is not unlike adding new subtypes in the **hierarchy** pattern or adding a new type value in the **[flat bag](./patterns/flat-bag.md)** pattern.
+
+- **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat bag** is more familiar to developers of less strongly typed languages.
+
+- **facets** has the potential to model what is typically associated with multiple inheritance. 
+
+- **facets** and **flat bag** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
+
+- **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
+
+> **Note:**
+> As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
+
+### Query support
+
+Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
+|Requirements                                                                                        |
+|----------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
+| :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
+| :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
+| :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
+| :ballot_box_with_check: **SHOULD** support `$count` for collections. |
+| :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
+
+The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
+[OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
+
+Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
+
 
 ### Behavior modeling
 
@@ -244,6 +261,7 @@ Operation resources must have a binding parameter that matches the type of the b
 
 For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
 
+
 ### Error handling
 
 Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
@@ -251,27 +269,27 @@ Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs shoul
 ```http
 {
 "error": {
-    "code": "BadRequest",
+    "code": "badRequest",
     "message": "Cannot process the request because a required field is missing.",
     "target": "query",    
     "innererror": {
-                "code": "RequiredFieldMissing",
+                "code": "requiredFieldMissing",
                            
                 }
     }
 }
 ```
 
-The top-level error code must be aligned with HTTP response status codes according to [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6). The following examples demonstrate error modeling for common use cases:
+The top-level error code must match the HTTP response status code description, converted to camelCase, as listed in the [Status Code Registry (iana.org)](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml). The following examples demonstrate error modeling for common use cases:
 
 - **Simple error**: An API wants to report an error with top-level details only. The error object contains the top-level error code, message and target (optional).
 
    ```http
     {
       "error": {
-        "code": "BadRequest",
+        "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
-    	"target": "Resource X (Optional)"
+    	"target": "resource X (Optional)"
       }
     }
    ```
@@ -281,7 +299,7 @@ The top-level error code must be aligned with HTTP response status codes accordi
    ```http
     {
       "error": {
-        "code": "BadRequest",
+        "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
         "innererror": {
           "code": "requiredFieldOrParameterMissing",
@@ -301,10 +319,12 @@ The top-level error code must be aligned with HTTP response status codes accordi
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
+<a name="api-contract-and-non-backward-compatible-changes"></a>
+
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and not considered a breaking change.
+[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
 
 **Non-breaking changes:**
 
@@ -353,12 +373,18 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 |--------------------------------------------------|----------------------------------------------------------------------------|
 | [Alternate key](./patterns/alternate-key.md)     | Uniquely identify and query resources using an alternate key.              |
 | [Change tracking](./patterns/change-tracking.md) | Keep API consumers in sync with changes without polling.                   |
+| [Collection subsets](./patterns/subsets.md) | Model collection subsets   |
 | [Dictionary](./patterns/dictionary.md)           | Clients can provide an unknown quantity of data elements of the same type. |
 | [Evolvable enums](./patterns/evolvable-enums.md) | Extend enumerated types without breaking changes.                          |
 | [Facets](./patterns/facets.md)                   | Model parent-child relationships.                                          |
+| [Flat bag](./patterns/flat-bag.md)               | Model variants of the same type.                                           |
+| [Long running operations](./patterns/longRunningOperations.md)| Model operations where processing a client request takes a long time. |
 | [Modeling subsets](./patterns/subsets.md)        | Model collection subsets for All, None, Included, or Excluded criteria.    |
 | [Namespace](./patterns/namespace.md)             | Organize resource definitions into a logical set.                          |
-| [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.                                 |
+| [Navigation properties](./patterns/navigation-property.md) | Model resource relationships                         |
+| [Operations](./patterns/operations.md) | Model complex business operations                          |
+| [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.   
+| [Viewpoint](./patterns/viewpoint.md)         | Model user specific properties for a shared resource. 
 
 ## References
 

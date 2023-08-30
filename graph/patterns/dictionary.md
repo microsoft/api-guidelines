@@ -241,6 +241,7 @@ PATCH /users/10/assignedRoles
   },
   "architect": null
 }
+
 ```
 
 ## See also
