@@ -380,6 +380,7 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 | [Alternate key](./patterns/alternate-key.md)     | Uniquely identify and query resources using an alternate key.              |
 | [Change tracking](./patterns/change-tracking.md) | Keep API consumers in sync with changes without polling.                   |
 | [Collection subsets](./patterns/subsets.md) | Model collection subsets   |
+| [Default properties](./patterns/default-properties.md) | Omit non-default properties from the response unless they are explicitly requested using `$select`.
 | [Dictionary](./patterns/dictionary.md)           | Clients can provide an unknown quantity of data elements of the same type. |
 | [Evolvable enums](./patterns/evolvable-enums.md) | Extend enumerated types without breaking changes.                          |
 | [Facets](./patterns/facets.md)                   | Model parent-child relationships.                                          |
