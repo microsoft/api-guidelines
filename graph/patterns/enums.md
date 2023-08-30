@@ -1,25 +1,33 @@
 # Enums
 
-In OData, enums represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
+Microsoft Graph API Design Pattern
 
-```xml
-<EnumType Name="color">
-    <Member Name="Red" Value="0" />
-    <Member Name="Green" Value="1" />
-    <Member Name="Blue" Value="2" />
-</EnumType>
-```
+Enums represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
-## Pros
+## Problem
+
+The API Design requires that a specific property of a data structure has a finite and limited set of values, and such limitation needs to be clearly communicated to the user and give the developer the same structure
+
+## Solution
+
+In OData, Enums represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
+
+## When to use this pattern
+
+Everytime a specific property of a data structure has a finite and limited set of values, and such limitation needs to be clearly communicated to the user and give the developer the same structure.
+
+## Issues and considerations
+
+### Pros
 
 - Our SDK generators will translate the enum to the best representation of the target programming language, resulting in a better developer experience and free client side validation
 
-## Cons
+### Cons
 
 - Adding a new value requires to go through a (generally fast) API Review
 - If the enum is not [evolvable](./patterns/evolvable-enums.md), adding a new value is a breaking change and will generally not be allowed
 
-## Enum or Booleans
+### Enum or Booleans
 
 Enumerations are a good alternative to Booleans when one of the two values (`true`, `false`) conveys other possible values not yet conceived. Let's assume we have an `publicNotification` type and a property to communicate how to display it:
 
@@ -100,7 +108,7 @@ but it is also open for future scenarios:
 
 Additionally speaking, depending on the situation, a nullable enum can very likely be avoided by adding a `none` member.
 
-## Flag Enums or Collection of Enums
+### Flag Enums or Collection of Enums
 
 In case an enum can have multiple values at the same time the tentation is to model the property as a collection of Enums:
 
@@ -128,27 +136,19 @@ With such enum, customers can select multiple values in a single field:
 
 `displayMethod = tip | alert`
 
-## Evolvable enums
-
-_The evolvable enums pattern allows API producers to extend enumerated types with new members without breaking API consumers._
-
-### Problem
+### Evolvable enums
 
 Frequently API producers want to add new members to an enum type after it is initially published. Some serialization libraries might fail when they encounter members in an enum type that were added after the serialization model was generated. In this documentation, we refer to any added enum members as unknown.
-
-### Solution
 
 The solution is to add a 'sentinel' member named `unknownFutureValue` at the end of the currently known enum members. The API producer then replaces any member that is numerically after `unknownFutureValue` with `unknownFutureValue`.
 
 If an API consumer can handle unknown enum values, the consumer can opt into receiving the unknown enum members by specifying the `Prefer: include-unknown-enum-members` HTTP header in their requests. The API producer then indicates that this preference has been applied by returning the `Preference-Applied: include-unknown-enum-members` HTTP header in the response.
 
-### When to use this pattern
-
 It is a best practice to include an `unknownFutureValue` value when the enum is initially introduced to allow flexibility to extend the enum during the lifetime of the API. Even if the API producer believes that they have included all possible members in an enum, we still strongly recommend that you include an `unknownFutureValue` member to allow for unforeseen future circumstances that may require extending the enum.
 
 This pattern must not be used in scenarios where an API consumer wants to use enum members that are not known to the API producer.
 
-### Issues and considerations
+#### Considerations
 
 Consider the following:
 
@@ -204,7 +204,17 @@ Consider the following:
 
 - If an evolvable enum is included in an `$orderby` clause, the actual numeric value of the member should be used to order the collection. After sorting, the member should then be replaced with `unknownFutureValue` when the `Prefer: include-unknown-enum-members` header is absent.
 
-### Examples
+## Example
+
+```xml
+<EnumType Name="color">
+    <Member Name="Red" Value="0" />
+    <Member Name="Green" Value="1" />
+    <Member Name="Blue" Value="2" />
+</EnumType>
+```
+
+### Evolveable enum examples
 
 For the following examples, we consider the `managedDevice` entity, which refers to the `managedDeviceArchitecture` enum type.
 
@@ -244,7 +254,7 @@ The enum was later extended to add a new value of `quantum`, leading to the foll
 </EnumType>
 ```
 
-#### Default behavior
+### Default behavior
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture
@@ -274,7 +284,7 @@ GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=dis
 
 In this case, the value of the `processorArchitecture` property is `quantum`. However, because the client did not request the `include-unknown-enum-members` header, the value was replaced with `unknownFutureValue`.
 
-#### Include opt-in header
+### Include opt-in header
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture
@@ -303,7 +313,7 @@ Preference-Applied: include-unknown-enum-members
 }
 ```
 
-#### Default sort behavior
+### Default sort behavior
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture&$orderBy=processorArchitecture
@@ -328,7 +338,7 @@ GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=dis
 }
 ```
 
-#### Sort behavior with opt-in header
+### Sort behavior with opt-in header
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture
@@ -357,7 +367,7 @@ Preference-Applied: include-unknown-enum-members
 }
 ```
 
-#### Default filter behavior
+### Default filter behavior
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture&$filter=processorArchitecture gt x64
@@ -378,7 +388,7 @@ GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=dis
 }
 ```
 
-#### Filter behavior with opt-in header
+### Filter behavior with opt-in header
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceManagement/managedDevices?$select=displayName,processorArchitecture&$filter=processorArchitecture gt x64
@@ -403,7 +413,7 @@ Preference-Applied: include-unknown-enum-members
 }
 ```
 
-#### Patch example
+### Patch example
 
 ```http
 PATCH https://graph.microsoft.com/v1.0/deviceManagement/managedDevices/1
@@ -539,7 +549,7 @@ Preference-Applied: include-unknown-enum-members
 }
 ```
 
-#### Flag enum default filter behavior
+### Flag enum default filter behavior
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceAppManagement/mobileApps?$select=displayName,applicableArchitectures&$filter=applicableArchitectures has unknownFutureValue
@@ -562,7 +572,7 @@ GET https://graph.microsoft.com/v1.0/deviceAppManagement/mobileApps?$select=disp
 }
 ```
 
-#### Flag enum include opt-in header filter behavior
+### Flag enum include opt-in header filter behavior
 
 ```http
 GET https://graph.microsoft.com/v1.0/deviceAppManagement/mobileApps?$select=displayName,applicableArchitectures&$filter=applicableArchitectures has unknownFutureValue
@@ -578,7 +588,7 @@ Preference-Applied: include-unknown-enum-members
 }
 ```
 
-#### Flag enum patch example
+### Flag enum patch example
 
 ```http
 PATCH https://graph.microsoft.com/v1.0/deviceAppManagement/mobileApps/1
