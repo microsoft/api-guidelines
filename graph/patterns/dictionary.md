@@ -2,24 +2,24 @@
 
 Microsoft Graph API Design Pattern
 
-*The dictionary type provides the ability to create a set of primitives or objects of the same type where the API consumer can define a name for each value in the set.*
+_The dictionary type provides the ability to create a set key/value pairs where the set of keys is dynamically specified by the API consumer._
 
 ## Problem
 
-The API design requires a resource to include an unknown quantity of data elements of the same type that must be named by using values provided by the API consumer.
+The API design requires a resource to include an unknown quantity of data values whose keys are defined by the API consumer.
 
 ## Solution
 
-API designers use a JSON object to represent a dictionary in an `application/json` response payload. When describing the model in CSDL, a new complex type can be created that derives from `Org.OData.Core.V1.Dictionary` and then uses the `Org.OData.Validation.V1.OpenPropertyTypeConstraint` to constrain the type that can be used for the values in the dictionary.
+API designers use a JSON object to represent a dictionary in an `application/json` response payload. When describing the model in CSDL, a new complex type can be created that derives from `graph.Dictionary` and optionally uses the `Org.OData.Validation.V1.OpenPropertyTypeConstraint` to constrain the type that can be used for the values in the dictionary as appropriate.
 
-Dictionary entries can be added via `POST`, updated via `PATCH`, and removed by setting the entry value to `null`. Multiple entries can be updated at the same time by using `PATCH` on the dictionary property.
+Dictionary entries can be added, removed, or modified via `PATCH` to the dictionary property. Entries are removed by setting the property to `null`.
 
 ## When to use this pattern
 
 Before using a dictionary type in your API definition, make sure that your scenario fits the following criteria:
 
 - The data values MUST be related to one another semantically as a collection.
-- The value types MUST be a primitive type or a **ComplexType**. Mixed primitive types are not allowed.
+- The values MUST be primitive or complex types.
 - The client MUST define the keys of this type, as opposed to the service defining them in advance.
 
 ### Alternatives
@@ -31,80 +31,111 @@ Before using a dictionary type in your API definition, make sure that your scena
 
 Dictionaries, sometimes called maps, are a collection of name-value pairs. They allow dynamic data sets to be accessed in a systematic manner and are a good compromise between a strictly defined-ahead-of-time structure with all its named properties and a loosely defined dynamic object (such as OData OpenTypes).
 
-Because dictionary entries are removed by setting the value to `null`, dictionaries can only support values that are non-nullable.
-
-Open questions:
-
-- Can/should PUT be supported on the dictionary property and/or the entry value?
-- What does OData say about being able to POST to a structured property? Will OData Web API allow that?
-- Must an implementer support PATCH at both the dictionary level and the entry level?
+Because dictionary entries are removed by setting the value to `null`, dictionaries don't support null values.
 
 For more information, see the [OData reference](https://github.com/oasis-tcs/odata-vocabularies/blob/master/vocabularies/Org.OData.Core.V1.md#dictionary).
 
 ## Examples
 
-### JSON payload example
+### Declaring a string dictionary
+The following example demonstrates defining a dictionary that can contain string values.
 
-The following example illustrates the resulting JSON for a property of dictionary type. The parent object has been omitted for brevity.
+```xml
+<ComplexType Name="stringDictionary" BaseType="graph.Dictionary">
+  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
+    <Collection>
+      <String>Edm.String</String>
+    </Collection>
+  </Annotation>
+</ComplexType>
+```
 
+### Defining a dictionary property
+The following example shows defining a dictionary property, "userTags", on the item entity type.
+
+```xml
+<EntityType Name="item">
+  ...
+  <Property Name="userTags" Type="self.stringDictionary"/>
+</EntityType>
+```
+
+### Reading a dictionary
+Dictionaries are represented in JSON payloads as a JSON object, where the property names are comprised of the keys and their values are the corresponding key values. 
+
+The following example shows reading an item with a dictionary property named "userTags":
+
+```HTTP
+GET /item
+```
+Response:
 ```json
 {
-  "author": {
-    "domain": "contoso"
-  },
-  "maintainer": {
-    "domain": "fabrikam"
-  },
-  "architect": {
-    "domain": "adventureWorks"
+  ...
+  "userTags":
+  {
+    "anniversary": "2002-05-19",
+    "favoriteMovie": "Princess Bride"
   }
 }
 ```
 
-### HTTP calls examples
+### Setting a dictionary value
+The following example shows setting a dictionary value.  If "hairColor" already exists, it is updated, otherwise it is added.
 
-In this set of examples, we model a **roles** property of dictionary type on the user entity, which is exposed by the users entity set.
-
-#### Get an entry from the dictionary
-
-```HTTP
-GET https://graph.microsoft.com/v1.0/users/10/roles/author
+```http
+PATCH /item/userTags
 ```
-
-Response:
-
 ```json
 {
-  "domain": "contoso"
+   "hairColor": "purple"
 }
 ```
 
-#### Get the dictionary
-
-```HTTP
-GET https://graph.microsoft.com/v1.0/users/10/roles
+### Deleting a dictionary value
+A dictionary value can be removed by setting the value to null.
+```http
+PATCH /item/userTags
 ```
-
-Response:
-
 ```json
 {
-  "author": {
-    "domain": "contoso"
-  },
-  "maintainer": {
-    "domain": "fabrikam"
-  },
-  "architect": {
-    "domain": "adventureWorks"
-  }
+   "hairColor": null
 }
 ```
 
-#### Get the entity with the dictionary
+### Declaring a complex typed dictionary
+Dictionaries can also contain complex types whose values may be constrained to a particular set of complex types.
+
+The following example defines a complex type **roleSettings**, an **assignedRoleGroupDictionary** that contains **roleSettings**, and an **assignedRoles** property that uses the dictionary..
+
+```xml
+<EntityType Name="principal">
+  ...
+  <Property Name="assignedRoles" Type="self.assignedRoleGroupDictionary">
+</EntityType>
+
+<ComplexType Name="roleSettings">
+  <Property Name ="domain" Type="Edm.String" Nullable="false" />
+</ComplexType>
+
+<ComplexType Name="assignedRoleGroupDictionary" BaseType="graph.Dictionary">
+  <!-- Note: Strongly-typed dictionary
+  of roleSettings
+  keyed by name of roleGroup. -->
+  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
+    <Collection>
+      <String>microsoft.graph.roleSettings</String>
+    </Collection>
+  </Annotation>
+</ComplexType>
+```
+
+### Reading a entity with a complex-typed dictionary
+
+The following example illustrates reading an entity containing the complex-typed dictionary "assignedRoles".
 
 ```HTTP
-GET https://graph.microsoft.com/v1.0/users/10
+GET /users/10
 ```
 
 Response:
@@ -113,7 +144,7 @@ Response:
 {
   "id": "10",
   "displayName": "Jane Smith",
-  "roles": {
+  "assignedRoles": {
     "author": {
       "domain": "contoso"
     },
@@ -127,21 +158,77 @@ Response:
 }
 ```
 
-#### Create an entry in the dictionary
+### Reading the dictionary property
+The following example shows getting just the "assignedRoles" dictionary property.
 
 ```HTTP
-POST https://graph.microsoft.com/v1.0/users/10/roles/author
+GET /users/10/assignedRoles
+```
 
+Response:
+
+```json
+{
+  "author": {
+    "domain": "contoso"
+  },
+  "maintainer": {
+    "domain": "fabrikam"
+  },
+  "architect": {
+    "domain": "adventureWorks"
+  }
+}
+```
+
+#### Reading an individual entry from the dictionary
+The following example shows reading a single complex-typed entry named "author" from the "assignedRoles" dictionary.
+
+```HTTP
+GET /users/10/assingedRoles/author
+```
+
+Response:
+
+```json
 {
   "domain": "contoso"
 }
 ```
 
-#### Update the dictionary
+#### Setting an individual entry in the dictionary
+The following examples shows updating the dictionary to set the value for the "author" entry. If the "author" entry does not exists it is added with the specified values; otherwise, if the "author" entry already exists, it is updated with the specified values (unspecified values are left unchanged).
 
 ```HTTP
-PATCH https://graph.microsoft.com/v1.0/users/10/roles
+PATCH /users/10/assignedRoles/author
+```
+```json
+{
+  "author" : {
+     "domain": "contoso"
+  }
+}
+```
 
+#### Deleting an individual entry from the dictionary
+The following example shows deleting the "author" entry by setting its value to null.
+
+```HTTP
+PATCH /users/10/assignedRoles
+```
+```json
+{
+  "author": null
+}
+```
+
+#### Setting multiple dictionary entries
+The following example sets values for the "author", "maintainer" and "viewer" entries, and removes the "architect" entry by setting it to null.
+
+```HTTP
+PATCH /users/10/assignedRoles
+```
+```json
 {
   "author": {
     "domain": "contoso1"
@@ -154,49 +241,7 @@ PATCH https://graph.microsoft.com/v1.0/users/10/roles
   },
   "architect": null
 }
-```
 
-> **Notes:**
->
-> - Setting one of the keys to **null** deletes it from the dictionary.
-> - The domain values for the existing author and maintainer entries are updated.
-> - The reviewer entry is inserted in the dictionary.
-
-#### Update an entry in the dictionary
-
-```HTTP
-PATCH https://graph.microsoft.com/v1.0/users/10/roles/author
-
-{
-  "domain": "fabrikam"
-}
-```
-
-#### Delete an entry from the dictionary
-
-```HTTP
-DELETE https://graph.microsoft.com/v1.0/users/10/roles/author
-```
-
-### CDSL example
-
-The following example defines a complex type **roleSettings** as well as a dictionary of which the key will be a string and the value a **roleSettings**.
-
-```xml
-<ComplexType Name="roleSettings">
-  <Property Name ="domain" Type="Edm.String" Nullable="false" />
-</ComplexType>
-
-<ComplexType Name="assignedRoleGroupDictionary" BaseType="Org.OData.Core.V1.Dictionary">
-  <!-- Note: Strongly-typed dictionary
-  of roleSettings
-  keyed by name of roleGroup. -->
-  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
-    <Collection>
-      <String>microsoft.graph.roleSettings</String>
-    </Collection>
-  </Annotation>
-</ComplexType>
 ```
 
 ## See also
