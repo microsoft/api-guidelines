@@ -115,7 +115,7 @@ HTTP/1.1 204 No Content
 
 The following example shows how to mark a topic with the `viewpoint` label as reviewed for a user by using the `PATCH` method (this example does not represent an actual API, but only an illustration):
 
-```
+```http
 PATCH https://graph.microsoft.com/beta/sampleTopics/19:7d898072-792c-4006-bb10-5ca9f259
 
 {  
