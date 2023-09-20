@@ -57,9 +57,12 @@ GET https://graph.microsoft.com/v1.0/users/8b081ef6-4792-4def-b2c9-c363a1bf41d5/
 ```
 
 ```http
+
 HTTP/1.1 200 OK
 Content-type: application/json
+```
 
+```
 {
     "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#chats",
     "@odata.count": 3,
@@ -94,8 +97,6 @@ The following example shows marking a chat `viewpoint` as read for a user using 
 ```http
 
 POST https://graph.microsoft.com/beta/chats/19:7d898072-792c-4006-bb10-5ca9f2590649_8ea0e38b-efb3-4757-924a-5f94061cf8c2@unq.gbl.spaces/markChatReadForUser
-Content-Type: application/json
-Content-length: 106
 
 {
  "user": {
@@ -114,11 +115,8 @@ HTTP/1.1 204 No Content
 
 The following example shows how to mark a topic with the `viewpoint` label as reviewed for a user by using the `PATCH` method (this example does not represent an actual API, but only an illustration):
 
-```
+```http
 PATCH https://graph.microsoft.com/beta/sampleTopics/19:7d898072-792c-4006-bb10-5ca9f259
-
-HTTP/1.1 200 OK
-Content-Type: application/json
 
 {  
     "title": "Announcements: Changes to PowerPoint and Word to open files faster",
