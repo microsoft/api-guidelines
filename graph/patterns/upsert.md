@@ -21,18 +21,18 @@ Additionally, IaC code scripts or templates usually employ client-provided names
 
 The solution is to use an `Upsert` pattern, to solve for the non-idempotent creation and client-provided naming problems.
 
-* For IaC scenarios, resources must use `Upsert` semantics with a client-provided key:
-  * Use `PATCH` with a client-provided key:
-    * If there is a natural client-provided key that can serve as the primary key, then the service should support `Upsert` with that key.
-    * If the primary key is service-generated, the client-provided key should use an [alternate key](./alternate-key.md) to support idempotent creation.
-  * For a non-existent resource (specified by the client-provided key) the service must handle this as a "create". As part of creation, the service must still generate the primary key value, if appropriate.
+* `Upsert` uses `PATCH` with a client-provided key in the URL:
+  * If there is a natural client-provided key that can serve as the primary key, then the service should support `Upsert` with that key.
+  * If the primary key is service-generated, the client-provided key should use an [alternate key](./alternate-key.md) to support idempotent creation.
+  * For a non-existent resource (specified by the client-provided key) the service must handle this as a "create" (aka insert). As part of creation, the service must still generate the primary key value, if appropriate.
   * For an existing resource (specified by the client-provided key) the service must handle this as an "update".
-  * Any new alternate key, used for IaC scenarios, should be called `uniqueName`, if there isn't already a more natural existing property that could be used as an alternate key.
-* NOTE: the service must also support `GET` using the alternate key pattern.
+* If using an alternate key, then
+  * for IaC scenarios, the alternate key should be called `uniqueName`, if there isn't already a more natural existing property that could be used as an alternate key.
+  * the service must also support `GET` using the alternate key pattern.
 * Services should always support `POST` to the collection URL.
   * For service-generated keys, this should return the server generated key.
-  * For client-provided keys, the client should provide the key as part of the request payload.
-* If a service does not support `Upsert`, then a `PATCH` call against a non-existent resource must result in an HTTP "409 conflict" error.
+  * For client-provided keys, the client can provide the key as part of the request payload.
+* If a service does not support `Upsert`, then a `PATCH` call against a non-existent resource must result in an HTTP "404 not found" error.
 
 This solution allows for existing resources that follow Microsoft Graph conventions for CRUD operations to add `Upsert` without impacting existing apps or functionality.
 
@@ -44,9 +44,12 @@ This pattern should be adopted for resources that are managed through infrastruc
 
 ## Issues and considerations
 
-* The addition of this new pattern (with an alternate key) to an existing API does not represent a breaking change.
-However, some API producers may have concerns about accidental usages of this new pattern unwittingly creating many new resources when the intent was an update.
-As a result, API producers can use the `Prefer: idempotent` to require clients to opt-in to the Upsert behavior.
+* Services with existing APIs that use a client-defined key that want to start supporting the `Upsert` pattern may have concerns about backwards compatibility.
+API producers can require clients to opt-in to the `Upsert` pattern, by using the `Prefer: create-if-missing` HTTP request header.
+* `Upsert` can also be supported against singletons, using a `PATCH` to the singleton's URL.
+* Services that support `Upsert` should allow clients to use the:
+  * `If-Match=*` request header to explicitly treat an `Upsert` request as an update and not an insert.
+  * `If-None-Match=*` request header to explicitly treat an `Upsert` request as an insert and not an update.
 * The client-provided alternate key must be immutable after being set. If its value is null then it should be settable as a way to backfill existing resources for use in IaC scenarios.
 * API producers could use `PUT` operations to create or update, but generally this approach is not recommended due to the destructive nature of `PUT`'s replace semantics.
 * API producers may annotate entity sets, singletons and collections to indicate that entities can be "upserted". The example below shows this annotation for the `groups` entity set.  
@@ -61,11 +64,9 @@ As a result, API producers can use the `Prefer: idempotent` to require clients t
 </EntitySet>
 ```
 
-* `Upsert` can also be supported against singletons, using a `PATCH` to the singleton's URL.
-
 ## Examples
 
-For these examples we'll use the `group` entity type, which defines both a primary (service-generated) key (`id`) and an alternate (client-provided) key (`uniqueName`).  
+For these examples we'll use the `group` entity type, which defines both a primary (service-generated) key (`id`) and an alternate (client-provided) key (`uniqueName`). 
 
 ```xml
 <EntityType Name="group">
@@ -99,7 +100,7 @@ Create a new group, with a `uniqueName` of "Group157". In this case, this group 
 
 ```http
 PATCH /groups(uniqueName='Group157')
-Prefer: idempotent; return=representation
+Prefer: return=representation
 ```
 
 ```json
@@ -113,7 +114,7 @@ Response:
 
 ```http
 201 created
-Preference-Applied: idempotent; return=representation
+Preference-Applied: return=representation
 ```
 
 ```json
@@ -131,7 +132,7 @@ Create a new group, with a `uniqueName` of "Group157", exactly like before. Exce
 
 ```http
 PATCH /groups(uniqueName='Group157')
-Prefer: idempotent; return=representation
+Prefer: return=representation
 ```
 
 ```json
@@ -145,7 +146,7 @@ Response:
 
 ```http
 200 ok
-Preference-Applied: idempotent; return=representation
+Preference-Applied: return=representation
 ```
 
 ```json
@@ -165,7 +166,7 @@ Update "Group157" group with a new description.
 
 ```http
 PATCH /groups(uniqueName='Group157')
-Prefer: idempotent; return=representation
+Prefer: return=representation
 ```
 
 ```json
@@ -178,7 +179,7 @@ Response:
 
 ```http
 200 ok
-Preference-Applied: idempotent; return=representation
+Preference-Applied: return=representation
 ```
 
 ```json
@@ -190,14 +191,14 @@ Preference-Applied: idempotent; return=representation
 }
 ```
 
-### Upsert not supported
+### Upsert opt-in request
 
-Create a new group, with a `uniqueName` of "Group157". In this case, this group does not exist and additionally
-the service does not `Upsert` for groups.
+In this case, the group API is a pre-existing API that supports `PATCH` with a client-provided alternate key. To enable `Upsert` behavior,
+the client must opt-in using an HTTP request header, to create a new group using `PATCH`.
 
 ```http
 PATCH /groups(uniqueName='Group157')
-Prefer: idempotent; return=representation
+Prefer: create-if-missing; return=representation
 ```
 
 ```json
@@ -210,5 +211,38 @@ Prefer: idempotent; return=representation
 Response:
 
 ```http
-409 conflict
+201 created
+Preference-Applied: create-if-missing; return=representation
+```
+
+```json
+{
+    "id": "1a89ade6-9f59-4fea-a139-23f84e3aef66",
+    "displayName": "My favorite group",
+    "description": "All my favorite people in the world",
+    "uniqueName": "Group157"
+}
+```
+
+### Upsert (create) not supported
+
+Following on from the last example, the same request to create a new group, with a `uniqueName` of "Group157",
+without the opt-in header, results in a 404 HTTP response code.
+
+```http
+PATCH /groups(uniqueName='Group157')
+Prefer: return=representation
+```
+
+```json
+{
+    "displayName": "My favorite group",
+    "description": "All my favorite people in the world"
+}
+```
+
+Response:
+
+```http
+404 not found
 ```
