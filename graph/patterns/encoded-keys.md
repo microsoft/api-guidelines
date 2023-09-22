@@ -30,4 +30,49 @@ A plaintext property that allows filtering can help to reduce this impact, but f
 
 ## Example
 
-*Provide a short example from real life.*
+```xml
+<EntityType Name="foo">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false">
+    <Annotation Term="Org.OData.Core.V1.Description" String="The base64url encoding of the idPlaintext property" />
+  </Property>
+  <Property Name="idPlaintext" Type="Edm.String" Nullable="false" />
+  ...
+</EntityType>
+```
+```json
+GET /foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
+
+200 OK
+{
+  "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
+  "idPlaintext": "this is an id with /",
+  ...
+}
+```
+```json
+GET /foos('dGhpcyBpcyBhbiBpZCB3aXRoIC8')
+
+200 OK
+{
+  "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
+  "idPlaintext": "this is an id with /",
+  ...
+}
+```
+```json
+GET /foos?$filter=idPlaintext eq 'this is an id with /'
+
+200 OK
+{
+  "value": [
+    {
+      "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
+      "idPlaintext": "this is an id with /",
+      ...
+    }
+  ]
+}
+```
