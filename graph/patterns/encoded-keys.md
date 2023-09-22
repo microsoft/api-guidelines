@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-*Provide a short description of the pattern.*
+Key properties should be encoded with [base64url encoding](https://datatracker.ietf.org/doc/html/rfc4648#section-5) when their values can include the `/` character. 
 
 
 ## Problem
