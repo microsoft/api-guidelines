@@ -39,17 +39,15 @@ A plaintext property that allows filtering can help to reduce this impact, but f
     <Annotation Term="Org.OData.Core.V1.Description" String="The base64url encoding of the idPlaintext property" />
   </Property>
   <Property Name="idPlaintext" Type="Edm.String" Nullable="false" />
-  ...
 </EntityType>
 ```
 ```http
-GET https://www.test.com/foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
+GET /foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
 
 200 OK
 {
   "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
-  "idPlaintext": "this is an id with /",
-  ...
+  "idPlaintext": "this is an id with /"
 }
 ```
 ```http
@@ -58,8 +56,7 @@ GET /foos('dGhpcyBpcyBhbiBpZCB3aXRoIC8')
 200 OK
 {
   "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
-  "idPlaintext": "this is an id with /",
-  ...
+  "idPlaintext": "this is an id with /"
 }
 ```
 ```http
@@ -70,8 +67,7 @@ GET /foos?$filter=idPlaintext eq 'this is an id with /'
   "value": [
     {
       "id": "dGhpcyBpcyBhbiBpZCB3aXRoIC8",
-      "idPlaintext": "this is an id with /",
-      ...
+      "idPlaintext": "this is an id with /"
     }
   ]
 }
