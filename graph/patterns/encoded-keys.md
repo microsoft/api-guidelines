@@ -43,7 +43,7 @@ A plaintext property that allows filtering can help to reduce this impact, but f
 </EntityType>
 ```
 ```json
-GET /foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
+GET https://www.test.com/foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
 
 200 OK
 {
