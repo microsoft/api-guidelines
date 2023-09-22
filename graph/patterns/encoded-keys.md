@@ -1,4 +1,4 @@
-# Pattern name
+# Encoded Key Properties
 
 Microsoft Graph API Design Pattern
 
