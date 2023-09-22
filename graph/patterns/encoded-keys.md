@@ -42,7 +42,7 @@ A plaintext property that allows filtering can help to reduce this impact, but f
   ...
 </EntityType>
 ```
-```json
+```http
 GET https://www.test.com/foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
 
 200 OK
@@ -52,7 +52,7 @@ GET https://www.test.com/foos/dGhpcyBpcyBhbiBpZCB3aXRoIC8
   ...
 }
 ```
-```json
+```http
 GET /foos('dGhpcyBpcyBhbiBpZCB3aXRoIC8')
 
 200 OK
@@ -62,7 +62,7 @@ GET /foos('dGhpcyBpcyBhbiBpZCB3aXRoIC8')
   ...
 }
 ```
-```json
+```http
 GET /foos?$filter=idPlaintext eq 'this is an id with /'
 
 200 OK
