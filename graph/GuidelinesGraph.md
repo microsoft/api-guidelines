@@ -222,6 +222,12 @@ Following are a few pros and cons to decide which pattern to use:
 > **Note:**
 > As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
 
+#### Nullable properties
+
+The facet and flat bag approaches often require nullable properties, so it is important to still use non-nullable properties where appropriate.
+Since inheritance can often remove the use of nullable properties completely, it is also important to know when nullable properties are necessary.
+See [Nullable properties](./nullable.md) for more details.
+
 ### Query support
 
 Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
@@ -240,7 +246,6 @@ The query options part of an OData URL can be quite long, potentially exceeding 
 [OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
 Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
-
 
 ### Behavior modeling
 
