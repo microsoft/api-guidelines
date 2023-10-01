@@ -57,6 +57,11 @@ There are some deviations from the base guidelines where Microsoft Graph API sta
   - The API response says the operation resource is being created at the URL provided in the Location header and indicates that the request is not completed by including a 202 status code.
   - Microsoft Graph doesn’t allow tenant-wide operation resources; therefore, stepwise operations are often modeled as a navigation property on the target resource.
 
+- For most implementations of the LRO pattern (like the example above), there will be 3 permissions necessary to comply with the principle of least privilege: `ArchiveOperation.ReadWrite.All` to create the `archiveOperation` entity, `ArchiveOperation.Read.All` to track the `archiveOperation` entity to completion, and `Archives.Read.All` to retrieve the `archive` that was created as a result of the operation.
+For APIs that would have been modeled as a simple `GET` on the resource URL, but that are modeled as long-running operations due to MSGraph performance requirements, only the `Archive.Read.All` permission is necessary as long as creating the `archiveOperation` entity is "safe".
+Here, "safe" means that there are no side effects of creating the `archiveOperation` entity that would change the functionality of any entities outside of the `archive` being retrieved.
+This requirment does not mean that the API must be idempotent, but an idempotent API is suffucient to meet this requirement.
+
 ## When to use this pattern
 
 Any API call that is expected to take longer than one second in the 99th percentile should use the long running operations pattern.
@@ -103,7 +108,7 @@ A client wants to provision a new database:
 POST https://graph.microsoft.com/v1.0/storage/databases/
 
 {
-"displayName": "Retail DB",
+  "displayName": "Retail DB",
 }
 ```
 
@@ -116,10 +121,10 @@ HTTP/1.1 201 Created
 Location: https://graph.microsoft.com/v1.0/storage/databases/db1
 
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "provisioning",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "provisioning",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -130,10 +135,10 @@ GET https://graph.microsoft.com/v1.0/storage/databases/db1
 
 HTTP/1.1 200 Ok
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "succeeded",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "succeeded",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -156,10 +161,10 @@ HTTP/1.1 202 Accepted
 Retry-After: 30
 
 {
-"id": "db1",
-"displayName": "Retail DB",
-"status": "deleting",
-[ … other fields for "database" …]
+  "id": "db1",
+  "displayName": "Retail DB",
+  "status": "deleting",
+  [ … other fields for "database" …]
 }
 ```
 
@@ -176,8 +181,8 @@ HTTP/1.1 404 Not Found
 POST https://graph.microsoft.com/v1.0/storage/archives/
 
 {
-"displayName": "Image Archive",
-...
+  "displayName": "Image Archive",
+  ...
 }
 ```
 
@@ -206,9 +211,9 @@ HTTP/1.1 200 OK
 Retry-After: 30
 
 {
-"createdDateTime": "2015-06-19T12-01-03.4Z",
-"lastActionDateTime": "2015-06-19T12-01-03.45Z",
-"status": "running"
+  "createdDateTime": "2015-06-19T12-01-03.4Z",
+  "lastActionDateTime": "2015-06-19T12-01-03.45Z",
+  "status": "running"
 }
 ```
 
@@ -227,10 +232,10 @@ location:
 HTTP/1.1 200 OK
 
 {
-"createdDateTime": "2015-06-19T12-01-03.45Z",
-"lastActionDateTime": "2015-06-19T12-06-03.0024Z",
-"status": "succeeded",
-"resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
+  "createdDateTime": "2015-06-19T12-01-03.45Z",
+  "lastActionDateTime": "2015-06-19T12-06-03.0024Z",
+  "status": "succeeded",
+  "resourceLocation": "https://graph.microsoft.com/v1.0/storage/archives/987"
 }
 ```
 
@@ -240,8 +245,8 @@ HTTP/1.1 200 OK
 POST https://graph.microsoft.com/v1.0/storage/copyArchive
 
 {
-"displayName": "Image Archive",
-"destination": "Second-tier storage"
+  "displayName": "Image Archive",
+  "destination": "Second-tier storage"
 ...
 }
 ```
