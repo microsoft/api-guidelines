@@ -150,26 +150,6 @@ In Microsoft Graph, a top-level API category might represent one of the followin
 
 Effectively, top-level categories define a perimeter for the API surface; thus, a new category creation requires additional rigor and governance approval.
 
-### Query support
-
-Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
-
-|Requirements                                                                                        |
-|----------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
-| :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
-| :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
-| :heavy_check_mark: **MUST** support pagination of collections (of entity types or complex types) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
-| :ballot_box_with_check: **MAY** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using `$skiptoken`.  |
-| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip`. |
-| :ballot_box_with_check: **SHOULD** support `$count` for collections. |
-| :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
-
-The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
-[OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
-
-Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
-
 ### Resource modeling patterns
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
@@ -257,8 +237,9 @@ Microsoft Graph APIs should support basic query options in conformance with ODat
 | :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
 | :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
 | :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
-| :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
-| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
+| :heavy_check_mark: **MUST** support pagination of collections (of entity types or complex types) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
+| :ballot_box_with_check: **MAY** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using `$skiptoken`.  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip`. |
 | :ballot_box_with_check: **SHOULD** support `$count` for collections. |
 | :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
 
