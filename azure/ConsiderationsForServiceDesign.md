@@ -180,12 +180,7 @@ This header is targeted at developers or operation professionals, and it is inte
 A major inhibitor to adoption and usage is when an API behaves in an unexpected way. Often, these are subtle design decisions that seem benign at the time, but end up introducing significant downstream friction for developers.
 
 One common area of friction for developers is _polymorphism_ -- where a value may have any of several types or structures.
-Polymorphism can be beneficial in certain cases, e.g. as a way to express inheritance, but also creates friction
-because it requires the value to be introspected before being processed and cannot be represented in a natural/useful way in many type-safe languages.
-
-:ballot_box_with_check: **YOU SHOULD** avoid polymorphism, especially in the response. An endpoint **YOU SHOULD** work with a single type to avoid problems during SDK creation.
-
-:ballot_box_with_check: **YOU SHOULD** return a homogeneous collection (single type).  Do not return heterogeneous collections unless there is a really good reason to do so. If you feel heterogeneous collections are required, discuss the requirement with an API reviewer prior to implementation.
+Polymorphism can be beneficial in certain cases, e.g. as a way to express inheritance, but also creates friction because it requires the value to be introspected before being processed and cannot be represented in a natural/useful way in many nominally typed languages. The use of a discriminator field (`kind`) simplifies the introspection, but developers frequently end up having to explicitly cast the response to the appropriate type in order to use it.
 
 Collections are another common area of friction for developers. It is important to define collections in a consistent manner within your service and across services of the platform.  In particular, features such as pagination, filtering, and sorting, when supported, should follow common API patterns. See [Collections](./Guidelines.md#collections) for specific guidance.
 

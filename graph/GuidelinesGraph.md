@@ -3,36 +3,26 @@
 Table of contents
 
 - [Microsoft Graph REST API Guidelines](#microsoft-graph-rest-api-guidelines)
-  - [](#)
-      - [History](#history)
   - [Introduction](#introduction)
     - [Legend](#legend)
   - [Design approach](#design-approach)
     - [Naming](#naming)
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
-    - [Query support](#query-support)
     - [Resource modeling patterns](#resource-modeling-patterns)
       - [Pros and cons](#pros-and-cons)
+    - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
+    - [Enums](#enums)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
 
-## 
-
-#### History
-
-| Date        | Notes                       |
-|-------------|-----------------------------|
-| 2022-Jun-14 | Edit pass for formatting, links |
-| 2021-Sep-28 | Using summary and patterns style |
-| 2020-Oct-04 | Initial version in Wiki  |
 
 ## Introduction
 
-When building a digital ecosystem API, usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
+When building a digital ecosystem API usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API producer teams MUST follow to
 ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design should meet the following goals:
@@ -125,6 +115,7 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem or userId on auditActor <BR> - **Wrong:** webUrl on contact when it's the companyWebUrl |
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
+| :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages |
 
 ### Uniform Resource Locators (URLs)
 
@@ -220,6 +211,8 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 
 - **[Flat bag of properties](./patterns/flat-bag.md)** is represented by one entity type with all the potential properties plus an additional property to distinguish the variants, often called type. The type property describes the variant and also defines properties that are required or meaningful for the variant given by the type property.
 
+- **[Enums](./patterns/enums.md)** represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
+
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
 | API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction |
@@ -249,6 +242,31 @@ Following are a few pros and cons to decide which pattern to use:
 > **Note:**
 > As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
 
+#### Nullable properties
+
+The facet and flat bag approaches often require nullable properties, so it is important to still use non-nullable properties where appropriate.
+Since inheritance can often remove the use of nullable properties completely, it is also important to know when nullable properties are necessary.
+See [Nullable properties](./nullable.md) for more details.
+
+### Query support
+
+Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
+|Requirements                                                                                        |
+|----------------------------------------------------------------------------------------------------|
+| :heavy_check_mark: **MUST** support `$select on resource` to enable properties projection. |
+| :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
+| :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
+| :heavy_check_mark: **MUST** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip` (or `$skipToken`). |
+| :ballot_box_with_check: **SHOULD** support `$count` for collections. |
+| :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
+
+The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
+[OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
+
+Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
+
 ### Behavior modeling
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
@@ -257,7 +275,8 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 
 |  Microsoft Graph rules for modeling behavior                     |
 |------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections.<BR>This approach requires the server to produce system generated identities. |
+| :heavy_check_mark: **MUST** use POST to create new entities in insertable entity sets or collections.<BR>This approach requires the service to produce a system-generated key, or for a caller to provide a key in the request payload. |
+| :ballot_box_with_check: **SHOULD** additionally use PATCH to create new entities in insertable entity sets or collections.<BR>This [Upsert](./patterns/upsert.md) approach requires the caller to provide a key in the request URL. |
 | :heavy_check_mark: **MUST** use PATCH to edit updatable resources.  |
 | :heavy_check_mark: **MUST** use DELETE to delete deletable resources. |
 | :heavy_check_mark: **MUST** use GET for listing and reading resources. |
@@ -267,6 +286,7 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 Operation resources must have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
 
 For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+
 
 ### Error handling
 
@@ -390,6 +410,8 @@ The guidelines in previous sections are intentionally brief and provide a jump s
 | [Navigation properties](./patterns/navigation-property.md) | Model resource relationships                         |
 | [Operations](./patterns/operations.md) | Model complex business operations                          |
 | [Type hierarchy](./patterns/subtypes.md)         | Model `is-a` relationships using subtypes.                                 |
+| [Upsert](./patterns/upsert.md)                   | Idempotent operation to create or update a resource using a client-provided key.   |
+| [Viewpoint](./patterns/viewpoint.md)         | Model user specific properties for a shared resource. |
 
 ## References
 
