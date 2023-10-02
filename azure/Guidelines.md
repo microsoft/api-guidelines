@@ -16,6 +16,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
   
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2023-Oct-02 | Clarified LRO pattern & added VLRO pattern                     |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
 | 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
 | 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
@@ -840,32 +841,27 @@ The ability to retry failed requests for which a client never received a respons
 - When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
 
 <a href="#lro" name="lro"></a>
-### Long-Running Operations & Jobs
+### Long-Running Operations (LROs)
 
-When the processing for an operation may take a significant amount of time to complete, it should be
-implemented as a _long-running operation (LRO)_. This allows clients to continue running while the
-operation is being processed. The client obtains the outcome of the operation at some later time
-through another API call.
-See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
+A _long-running operation (LRO)_ is an operation that should execute synchronously but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts the operation must execute asynchronously. For this pattern, the client initiates the operation on the service and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion. See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
 Considerations for Service Design for an introduction to the design of long-running operations.
 
-<a href="#lro-response-time" name="lro-response-time">:white_check_mark:</a> **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
+NOTE: Use the _Very Long-Running Operations (VLRO)_ guidelines for operations that should execute asynchronously where clients should not logically block waiting for the operation to complete.
+ 
+<a href="#lro-response-time" name="lro-response-time">:white_check_mark:</a> **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1 second and when the client should poll the operation before making more progress.
 
-<a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
-
-In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
-it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
+<a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO. If LRO update is required, it must be implemented using the POST-Action pattern.
 
 There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
 operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
 The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
 For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
-These are described in the following two sections.
+These two patterns are described in the following two sections.
 
 #### POST or DELETE LRO pattern
 
 A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
-a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
+a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) reflecting the operation's progress.
 
 <a href="#lro-no-post-create" name="lro-no-post-create">:no_entry:</a> **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
 
@@ -885,11 +881,11 @@ a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) 
 
 <a href="#lro-returns-operation-location" name="lro-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-<a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request but expect a client to change the api-version value to whatever a new/different client desires it to be.
 
 #### PUT operation with additional long-running processing
 
-For a PUT (create or replace) with additional long-running processing:
+For a PUT (create or replace) requiring long-running processing:
 
 <a href="#lro-put-operation-id-request-header" name="lro-put-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
@@ -907,15 +903,15 @@ For a PUT (create or replace) with additional long-running processing:
 
 <a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-put-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request but expect a client to change the api-version value to whatever a new/different client desires it to be.
 
 #### Obtaining status and results of long-running operations
 
-For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
+For all long-running operations, a client repeatedly polls the service to GET the operation's status monitor resource to obtain the current status of the operation.
 
-<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the operation's status monitor.
 
-<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
+<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the GET operation on the status monitor.
 
 Note: Clients may replace the value of `api-version` in the `Operation-Location` URI with a value appropriate for their application.
 
@@ -923,29 +919,43 @@ Note: Clients may replace the value of `api-version` in the `Operation-Location`
 
 **OperationStatus** : Object
 
-Property | Type        | Required | Description
+Property | Type | Required | Description
 -------- | ----------- | :------: | -----------
-`id`     | string      | true     | The unique id of the operation
-`status` | string      | true     | enum that includes values "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
-`error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
-`result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
-additional<br/>properties | |     | Additional named or dynamic properties of the operation
+`id` | string | true | The unique id of the operation
+`status` | string | true | enum that includes values "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
+`error` | ErrorDetail | | Error object that describes the error when status is "Failed"
+`result` | object | | Only for a POST-Action LRO, the results of the operation when it completes successfully
+additional<br/>properties | | | Additional named or dynamic properties of the operation
 
 <a href="#lro-status-monitor-includes-all-fields" name="lro-status-monitor-includes-all-fields">:white_check_mark:</a> **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
 
 <a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
 
-<a href="#lro-status-monitor-post-action-result" name="lro-status-monitor-post-action-result">:white_check_mark:</a> **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+<a href="#lro-status-monitor-post-action-result" name="lro-status-monitor-post-action-result">:white_check_mark:</a> **DO** include the `result` property (if any) in the status monitor for a POST-Action long-running operation when the operation completes successfully.
 
-<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST-Action long-running operation.
 
 <a href="#lro-status-monitor-retention" name="lro-status-monitor-retention">:white_check_mark:</a> **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
+
+<a href="#vlro" name="vlro"></a>
+### Very Long-Running Operations (VLROs)
+
+A _very long-running operation (VLRO)_ is an operation that should execute asynchronously. Typically, a VLRO can be identified when 1 or more logical clients need to get the result. For example, if one client initiates the operation and a different browser/client needs the result. An example would be a dashboard or portal that shows all the operations along with their status. In fact, the VLRO pattern offers a way to list all the operations while the LRO pattern does not. Also, the VLRO pattern does not expect a client to make no forward progress due to polling for the long period of time it takes to complete of the operation.
+
+The VLRO pattern is very simple to implement.
+<a href="#vlro-create-update" name="vlro-create-update">:white_check_mark:</a> **DO** implement a PATCH operation to create/update a VLRO service resource. The request/response schemas are identical. The client's request must specify any properties required to create/update the VLRO operation. The response includes the operations's properties as well as the status monitor properties. 
+
+<a href="#vlro-create-only" name="vlro-create-replace">:white_check_mark:</a> **DO** return 409-Conflict if the operation cannot be updated or replaced after it has been created.
+
+<a href="#vlro-get-op" name="vlro-get-op">:white_check_mark:</a> **DO** implement a GET operation which returns the same schema and values as PATCH. If the operation is not yet complete, inlcude a Retry-After response header indicated the number of seconds a client should at least wait before GETting the operation resource again.
+
+<a href="#vlro-get-all" name="vlro-get-all">:white_check_mark:</a> **DO** implement a GET for the operation's parent collection which can return pages of arrays where each array element is an operation (same schema as returned by GET/PATCH).
 
 <a href="#byos" name="byos"></a>
 ### Bring your own Storage (BYOS)
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own
-storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer
-"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service.
+storage APIs and should instead leverage the customer's existing Azure Storage account. When doing this, the customer
+"owns" the storage account and just tells the Azure service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service.
 
 While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
 
