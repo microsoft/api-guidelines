@@ -96,9 +96,10 @@ This document establishes the guidelines Microsoft REST APIs SHOULD follow so RE
       - [9.7.2. Operator examples](#972-operator-examples)
       - [9.7.3. Operator precedence](#973-operator-precedence)
     - [9.8. Pagination](#98-pagination)
-      - [9.8.1. Server-driven paging](#981-server-driven-paging)
-      - [9.8.2. Client-driven paging](#982-client-driven-paging)
-      - [9.8.3. Additional considerations](#983-additional-considerations)
+      - [9.8.1. Continuation tokens](#981-continuation-tokens)
+      - [9.8.2. Server-driven paging](#982-server-driven-paging)
+      - [9.8.3. Client-driven paging](#983-client-driven-paging)
+      - [9.8.4. Additional considerations](#984-additional-considerations)
     - [9.9. Compound collection operations](#99-compound-collection-operations)
     - [9.10. Empty Results](#910-empty-results)
   - [10. Delta queries](#10-delta-queries)
@@ -954,8 +955,9 @@ Client-driven paging enables clients to request only the number of resources tha
 
 Sorting and Filtering parameters MUST be consistent across pages, because both client- and server-side paging is fully compatible with both filtering and sorting.
 
-#### 9.8.1. Server-driven paging
-Paginated responses MUST indicate a partial result by including a continuation token in the response.
+#### 9.8.1. Continuation tokens
+
+Paginated responses MUST indicate a partial result by including a continuation token in the response using the OData control information `@nextLink`.
 The absence of a continuation token means that no additional pages are available.
 
 Clients MUST treat the continuation URL as opaque, which means that query options may not be changed while iterating over a set of partial results.
@@ -976,7 +978,45 @@ Content-Type: application/json
 }
 ```
 
-#### 9.8.2. Client-driven paging
+The `@nextLink` MAY be populated using either server-driven paging or client-driven paging (`@nextLink`s generated using client-driven paging should not include the `$top` query parameter).
+
+#### 9.8.2. Server-driven paging
+
+The server MAY provide server-driven paging by populating the continuation token with a `$skiptoken` query parameter.
+The `$skiptoken` value is opaque for clients and its structure should not be assumed.
+`$skiptoken` values SHOULD expire after some period of time decided by the server.
+
+Example:
+
+```http
+GET http://api.contoso.com/v1.0/people HTTP/1.1
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  ...,
+  "value": [...],
+  "@nextLink": "http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken}"
+}
+```
+
+```http
+GET http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken} HTTP/1.1
+Accept: application/json
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  ...,
+  "value": [...],
+  "@nextLink": "http://api.contoso.com/v1.0/people?$skiptoken={opaquetoken2}"
+}
+```
+
+#### 9.8.3. Client-driven paging
 Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset into the collection.
 
 The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a continuation token.
@@ -1001,7 +1041,7 @@ Content-Type: application/json
 }
 ```
 
-#### 9.8.3. Additional considerations
+#### 9.8.4. Additional considerations
 **Stable order prerequisite:** Both forms of paging depend on the collection of items having a stable order.
 The server MUST supplement any specified order criteria with additional sorts (typically by key) to ensure that items are always ordered consistently.
 
