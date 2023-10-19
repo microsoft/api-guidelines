@@ -589,23 +589,23 @@ Parameter&nbsp;name | Type | Description
 
 <a href="#collections-query-options-no-dollar-sign" name="collections-query-options-no-dollar-sign">:no_entry:</a> **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
-#### `filter`
+#### filter
 
-<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
+<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support filtering of the results of a list operation with the `filter` query parameter.
 
-The value of the `filter` option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
+The value of the `filter` query parameter is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the filter expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
 ```text
-GET https://api.contoso.com/products?`filter`=price lt 10.00
+GET https://api.contoso.com/products?filter=price lt 10.00
 ```
 
-##### `filter` operators
+##### filter operators
 
-:heavy_check_mark: **YOU MAY** support the following operators in `filter` expressions:
+:heavy_check_mark: **YOU MAY** support the following operators in filter expressions:
 
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
@@ -623,9 +623,9 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a filter expression that is not supported by the operation.
 
-<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating filter expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -640,7 +640,7 @@ not                      | Logical negation      | not price le 3.5
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
 
-<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
+<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and filter functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -648,31 +648,31 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk'
+GET https://api.contoso.com/products?filter=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name ne 'Milk'
+GET https://api.contoso.com/products?filter=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
@@ -705,15 +705,15 @@ For example, to return all people sorted by name in descending order and a secon
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
-Sorting MUST compose with `filter`ing such that:
+Sorting MUST compose with filtering such that:
 ```text
-GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
+GET https://api.contoso.com/people?filter=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
 
 ##### Considerations for sorting with pagination
 
-<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
+<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
 
 ##### skip
 <a href="#collections-skip-param-definition" name="collections-skip-param-definition">:white_check_mark:</a> **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
