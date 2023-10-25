@@ -2295,6 +2295,7 @@ Service owners adding such terms SHOULD propose additions to this document.
  createdDateTime |
  childCount    |
  children      |
+ completedDateTime |
  contentUrl    |
  country       |
  createdBy     |
