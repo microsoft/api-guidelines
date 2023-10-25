@@ -14,6 +14,7 @@ Table of contents
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
     - [Enums](#enums)
+  - [External Standards](#external-standards)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
@@ -327,6 +328,17 @@ For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 <a name="api-contract-and-non-backward-compatible-changes"></a>
+
+## External standards
+
+For ease of client use and interoperatibility, some APIs should implement a standard that is defined external to Microsoft Graph and OData. 
+Workloads should follow these standards exactly, even if they conflict with the OData standard and/or the Microsoft Graph guidelines. 
+Workloads must define these standards in their CSDL model if they do not conflict with the OData standard.
+Standards that *do* conflict with the OData standard may be defined in the CSDL in one of two ways:
+1. Using `Edm.Untyped` only and support for the external standard will come directly from the service implementation; OR
+2. Adding CSDL elements to model the external standard using `Edm.String` for `EnumType`s that conflict with the OData standard and `Edm.Untyped` wherever any other conflict with the OData standard occurs
+
+The benefit of the second approach is that strongly-typed models have SDK support for clients and also have significant tooling support for both the workload and clients. Note that it is backwards compatible for a workload to migrate from the second approach to the first approach in case the external standard is *initially* compliant with the OData standard and *later* conflicts with the OData standard. 
 
 ## API contract and non-backward compatible changes
 
