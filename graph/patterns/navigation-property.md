@@ -42,7 +42,7 @@ Navigation properties defined within an entity are not returned by default when 
 Implementing support for accessing the "$ref" of a navigation property allows a caller to return just the URL of related resource. e.g. `/user/23/manager/$ref`. This is useful when a client wishes to identify the related resource but doesn't need all of its properties.
 
 The strongly-typed nature of navigation properties is valuable for backend services and for client applications.
-Strong typing allows documentation and visualizations to be automatically generated, it allows SDK generation, and it allows some automated client code generation; it also prevents the need to store duplicate data on the service side and as a result has improved data consistency across APIs since the duplicate data does not need to be regularly refreshed. 
+Strong typing allows some documentation and visualizations to be automatically generated, it allows SDK generation, and it allows some automated client code generation; it also prevents the need to store duplicate data on the service side and as a result has improved data consistency across APIs since the duplicate data does not need to be regularly refreshed. 
 
 ## When to Use this Pattern
 ------------------------
