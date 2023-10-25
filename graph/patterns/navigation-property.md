@@ -35,11 +35,14 @@ These relationships can be described in CSDL as follows:
 ## Issues and Considerations
 -------------------------
 
-In the current Microsoft Graph implementation, there are some limitations on the use of navigation properties that cross between backend services. These limitations are being eliminated over time, but it will be necessary to ensure support for any particular scenario.  [Limitations of the current implementation](https://dev.azure.com/msazure/One/_wiki/wikis/Microsoft%20Graph%20Partners/354352/Cross-workload-navigations?anchor=supported-scenarios) are documented internally.
+In the current Microsoft Graph implementation, there are scenarios which use navigation properties that cross backend services that have automatic support; there are also some limitations for other scenarios. These limitations are being eliminated over time, but it will be necessary to ensure support for any particular scenario.  [Automatic support and limitations of the current implementation](https://dev.azure.com/msazure/One/_wiki/wikis/Microsoft%20Graph%20Partners/354352/Cross-workload-navigations?anchor=supported-scenarios) are documented internally.
  
 Navigation properties defined within an entity are not returned by default when retreiving the representation of an entity unless explicity desired by a service.  The API can consumer can use the `expand` query parameterm, where supported, to retreive both the source and the target entity of the relationship in a single request.
 
 Implementing support for accessing the "$ref" of a navigation property allows a caller to return just the URL of related resource. e.g. `/user/23/manager/$ref`. This is useful when a client wishes to identify the related resource but doesn't need all of its properties.
+
+The strongly-typed nature of navigation properties is valuable for backend services and for client applications.
+Strong typing allows documentation and visualizations to be automatically generated, it allows SDK generation, and it allows some automated client code generation; it also prevents the need to store duplicate data on the service side and as a result has improved data consistency across APIs since the duplicate data does not need to be regularly refreshed. 
 
 ## When to Use this Pattern
 ------------------------
