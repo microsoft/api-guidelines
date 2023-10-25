@@ -338,7 +338,9 @@ Standards that *do* conflict with the OData standard may be defined in the CSDL 
 1. Using `Edm.Untyped` only and support for the external standard will come directly from the service implementation; OR
 2. Adding CSDL elements to model the external standard using `Edm.String` for `EnumType`s that conflict with the OData standard and `Edm.Untyped` wherever any other conflict with the OData standard occurs
 
-The benefit of the second approach is that strongly-typed models have SDK support for clients and also have significant tooling support for both the workload and clients. Note that it is backwards compatible for a workload to migrate from the second approach to the first approach in case the external standard is *initially* compliant with the OData standard and *later* conflicts with the OData standard. 
+In either case, any use of `Edm.String` instead of an `EnumType` or any use of `Edm.Untyped` must be documented with references to the standard that the client is expected to follow.
+The benefit of the second approach is that strongly-typed models have SDK support for clients and also have significant tooling support for both the workload and clients.
+Note that it is backwards compatible for a workload to migrate from the second approach to the first approach in case the external standard is *initially* compliant with the OData standard and *later* conflicts with the OData standard. 
 
 ## API contract and non-backward compatible changes
 
