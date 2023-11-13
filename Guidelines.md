@@ -2245,7 +2245,7 @@ Services SHOULD use verbose naming patterns and SHOULD NOT use abbreviations oth
 ### 17.2. Casing
 - Acronyms SHOULD follow the casing conventions as though they were regular words (e.g. Url).
 - All identifiers including namespaces, entityTypes, entitySets, properties, actions, functions and enumeration values SHOULD use lowerCamelCase.
-- HTTP headers are the exception and SHOULD use standard HTTP convention of Capitalized-Hyphenated-Terms.
+- Ideally, HTTP headers are sent over the wire using lowercase letters as the HTTP/2 specification mandates this ([RFC](https://http2.github.io/http2-spec/#HttpHeaders)). For backwards compatibility, services should treat request headers in a case-insensitive fashion. New services should send response headers in all lowercase. For legacy services (which do not send lowercase response headers), the client should process the response headers in a case-insensitive fashion. If a client converts headers into a map/dictionary where the lanaguge does not support looking up keys in a case-insensitive way, the client library should lowercase the header keys when adding them to the map/dictionary.
 
 ### 17.3. Names to avoid
 Certain names are so overloaded in API domains that they lose all meaning or clash with other common usages in domains that cannot be avoided when using REST APIs, such as OAUTH.
