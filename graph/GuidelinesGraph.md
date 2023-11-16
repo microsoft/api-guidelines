@@ -106,6 +106,7 @@ Following is a short summary of the most often used conventions.
 | **CASING** | |
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
 | :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount |
+| :ballot_box_with_check: **SHOULD** case `id` properties the same as a normal word.   | - **Right:** id or fileId <BR> - **Wrong:** ID or fileID |
 | :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
 | :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geocoordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
