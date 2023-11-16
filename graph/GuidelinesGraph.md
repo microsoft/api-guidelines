@@ -119,6 +119,13 @@ Following is a short summary of the most often used conventions.
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
 | :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages |
 
+#### Tree and graph structures
+
+When a tree or graph structure is being modeled, the direct sub-nodes are usually named `children` or `members`. 
+If a property is desired that represents a "flattened" data structure, the property **SHOULD** be prefixed with "transitive", e.g. `transitiveChildren` or `transitiveMembers`.
+Such properties **MUST** represent a mathematically [transitive relationship](https://en.wikipedia.org/wiki/Transitive_relation). 
+To simplify, if `A` is a child of `B` and `B` is a child of `C`, then `A` is a child of `C` via a transitive relationship; this **MUST** be true for properties using word "transitive" in their name.
+
 ### Uniform Resource Locators (URLs)
 
 A Uniform Resource Locator (URL) is how developers access the resources of your API.
