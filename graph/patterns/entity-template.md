@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-*An entity template is a template which can be used to create a new instance of an entity. *
+*An entity template is a template which can be used to create a new instance of an entity.*
 
 
 ## Problem
