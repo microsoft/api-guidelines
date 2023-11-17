@@ -64,7 +64,7 @@ POST .../foos //// TODO full URL
 
 ## Issues and considerations
 
-*Describe tradeoffs of the solution.*
+TODO if managing templates is more consuming that managing the entities
 
 ## Example
 
