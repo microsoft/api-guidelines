@@ -52,6 +52,7 @@ In order to create a `foo` from the `fooTemplate` with ID `{templateId}`, the cl
 POST .../foos //// TODO full URL
 {
   "template@odata.bind": ".../fooTemplates/{templateId}" //// TODO full URL
+//// TODO this has the same problem as the "draft" antipattern where foos now can't be properly validated
 }
 ```
 
