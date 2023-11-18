@@ -11,6 +11,9 @@ A customer wants to create instances of an entity that all start from the same b
 
 ## Solution
 
+//// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
+//// TODO templates are just a new constructor overload
+
 For an existing `foo` entity:
 ```
 <EntityType Name="foo">
