@@ -168,6 +168,11 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 <a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 #### HTTP Query Parameters and Header Values
+
+<a href="#http-query-names-casing" name="http-query-names-casing">:white_check_mark:</a> **DO** use camel case for query parameter names.
+
+Note: Certain legacy query parameter names use kebab-casing and are allowed only for backwards compatibility.
+
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
 <a href="#http-parameter-validation" name="http-parameter-validation">:white_check_mark:</a> **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
