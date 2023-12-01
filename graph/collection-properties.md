@@ -1,4 +1,4 @@
-OData services treat collections of complex types differently than they treat collections of entity types. 
+Microsoft Graph treats collections of complex types differently than collections of entity types. 
 This is due to the nature of entity types being "individually addressable" (they have some key which uniquely identifies them within the collection) while complex types are not individually addressable. 
 As a result, it is almost always preferable to use entity types for collections rather than complex types. See [exceptions](#exceptions) for acceptable usage of complex types in collections.
 Let's use the following CSDL as an example:
