@@ -838,7 +838,7 @@ For example:
 ### Repeatability of requests
 
 Fault tolerant applications require that clients retry requests for which they never got a response, and services must handle these retried requests idempotently. In Azure, all HTTP operations are naturally idempotent except for POST used to create a resource and [POST when used to invoke an action](
-https://github.com/microsoft/api-guidelines/blob/d81151d990b437b34dcf7d05d9504b754eb4f456/azure/Guidelines.md#performing-an-action). 
+https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#performing-an-action). 
 
 <a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html) for POST operations to make them retriable.
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
