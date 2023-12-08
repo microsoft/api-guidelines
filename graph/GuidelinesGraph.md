@@ -115,7 +115,7 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem or userId on auditActor <BR> - **Wrong:** webUrl on contact when it's the companyWebUrl |
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
-| :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages <BR> - **NOTE** there is an exception for resources that *only* exist under the `/admin` root segment |
+| :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages <BR> - **NOTE** there is an exception for resources that *only* exist under the `/admin` root segment and the `/users/{userId}/settings` path. |
 
 ### Uniform Resource Locators (URLs)
 
