@@ -43,7 +43,7 @@ Suppose that you have a collection of attempted sign-ins for an organization. Yo
 Clients could then request all of the successful, multifactor sign-in attempts by calling:
 
 ```http
-GET /signInAttempts?$filter=isSuccessful eq true and otherFactorsUsed/any(factor: true)
+GET /signInAttempts?$filter=isSuccessful eq true and otherFactorsUsed/$count ne 0
 
 HTTP/1.1 200 OK
 {
@@ -65,6 +65,43 @@ HTTP/1.1 200 OK
   ]
 }
 ```
+
+An API producer could alias this common filtering use case by adding a function to the CSDL:
+
+```xml
+<Function Name="successfulMultifactorSignIns" IsBound="true">
+  <Parameter Name="bindingParameter" Type="Collection(self.signInAttempt)" Nullable="false" />
+  <ReturnType Type="self.signInAttempt" />
+</Function>
+```
+
+Clients would then be able to call:
+
+```http
+GET /signInAttempts/successfulMultifactorSignIns
+
+HTTP/1.1 200 OK
+{
+  "value": [
+    {
+      "id": "{id1}",
+      "firstFactorUsed": {
+        // other properties here
+      },
+      "otherFactorsUsed": [
+        {
+          // other properties here
+        },
+        ...
+      ],
+      "isSuccessful": true
+    },
+    ...
+  ]
+}
+```
+
+to retreive the same data.
 
 ## When to use this pattern
 
