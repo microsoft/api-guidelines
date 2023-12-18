@@ -2,17 +2,17 @@
 
 Microsoft Graph API Design Pattern
 
-*The default properties pattern allows API producers to omit specific properties from the response unless they are explicitly requested using `$select`. The pattern also uses an instance annotation to inform callers that other properties are also available. The same annotation is also use to encourage callers to use `$select`.*
+*The default properties pattern allows API producers to omit specific properties from the response unless they are explicitly requested using `$select`.*
 
 ## Problem
 
-API producers want to control the set of properties that their entities return by default, when the incoming request does not specify a `$select`. This can be desirable when an entity type has many properties or an API producer needs to add properties that are computationally expensive to return by default.
+API designers want to control the set of properties that their entities return by default, when the incoming request does not specify a `$select`. This can be desirable when an entity type has many properties or an API producer needs to add properties that are computationally expensive to return by default.
 
 ## Solution
 
-For incoming requests targeting an entity type where the caller does not specify a `$select`` clause, API producers **may** return a subset of the entity type's properties, omitting computationally expensive properties.
+For incoming requests targeting an entity type where the caller does not specify a `$select` clause, API producers **may** return a subset of the entity type's properties, omitting computationally expensive properties. To get the non-default properties of an entity type, callers must explicitly request them using `$select`.
 
-To get the non-default properties of an entity type, callers must explicitly request them using `$select`.
+The pattern also uses an instance annotation to inform callers that other properties are also available. The same annotation is also used to encourage callers to use `$select`.
 
 ## When to use this pattern
 
