@@ -10,11 +10,11 @@ Table of contents
     - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
     - [Resource modeling patterns](#resource-modeling-patterns)
       - [Pros and cons](#pros-and-cons)
+      - [Nullable properties](#nullable-properties)
     - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
-    - [Enums](#enums)
-  - [External Standards](#external-standards)
+  - [External standards](#external-standards)
   - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
@@ -34,8 +34,7 @@ ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new 
 
 - Be sustainable and evolvable by using clear API contracts.
 
-The Microsoft Graph REST API Guidelines are an extension of the
-[Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/). It is assumed that readers are following the Microsoft REST API Guidelines except where this document outlines specific differences or exceptions to those guidelines. Together, these guidelines and a library of API patterns serve as the means by which API teams discuss and come to consensus on API review requirements.
+The Microsoft Graph REST API Guidelines consist of a concise overview document, a collection of articles on Graph standards, and a library of patterns that provide best practices for resolving common API design problems.Together, these documents serve as the means by which API teams discuss and come to consensus on API review requirements.
 
 Technology and software are constantly changing and evolving, and as such, this
 is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will frequently change to add guidance in areas previously uncovered or to clarify existing guidance. It will less frequently change the directional guidance it has already provided. To suggest a change or propose a new idea,
@@ -91,7 +90,7 @@ At every step of your design, you need to consider security, privacy, and compli
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#17-naming-guidelines).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](Guidelines.md#17-naming-guidelines).
 
 Following is a short summary of the most often used conventions.
 
@@ -155,7 +154,7 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](Guidelines-deprecated.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
@@ -227,11 +226,11 @@ Following are a few pros and cons to decide which pattern to use:
 
 The facet and flat bag approaches often require nullable properties, so it is important to still use non-nullable properties where appropriate.
 Since inheritance can often remove the use of nullable properties completely, it is also important to know when nullable properties are necessary.
-See [Nullable properties](./nullable.md) for more details.
+See [Nullable properties](./articles/nullable.md) for more details.
 
 ### Query support
 
-Microsoft Graph APIs should support basic query options in conformance with OData specifications and [Microsoft REST API Guidelines for error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Microsoft REST API Guidelines](Guidelines-deprecated.md#9-collections).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
@@ -239,8 +238,8 @@ Microsoft Graph APIs should support basic query options in conformance with ODat
 | :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
 | :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
 | :heavy_check_mark: **MUST** support pagination of collections (of entity types or complex types) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
-| :ballot_box_with_check: **MAY** support [server-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#981-server-driven-paging) of collections using `$skiptoken`.  |
-| :ballot_box_with_check: **SHOULD** support [client-driven pagination](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#982-client-driven-paging) of collections using `$top` and `$skip`. |
+| :ballot_box_with_check: **MAY** support [server-driven pagination](Guidelines-deprecated.md#981-server-driven-paging) of collections using `$skiptoken`.  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](Guidelines-deprecated.md#982-client-driven-paging) of collections using `$top` and `$skip`. |
 | :ballot_box_with_check: **SHOULD** support `$count` for collections. |
 | :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
 
@@ -267,7 +266,7 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 
 Operation resources must have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
 
-For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses).
+For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](Guidelines-deprecated.md#7102-error-condition-responses).
 
 
 ### Error handling
@@ -345,7 +344,7 @@ Note that it is backwards compatible for a workload to migrate from the second a
 ## API contract and non-backward compatible changes
 
 The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines definition of a breaking change](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
+[Microsoft REST API Guidelines definition of a breaking change](Guidelines-deprecated.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
 
 **Non-breaking changes:**
 
@@ -388,7 +387,7 @@ Detailed requirements for versioning and deprecation are described in the [Depre
 
 ## Recommended API design patterns
 
-The guidelines in previous sections are intentionally brief and provide a jump start for Microsoft Graph API developers. More detailed design guidance about REST APIs is published at the [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/). Microsoft Graph-specific patterns are outlined in the following table.
+The guidelines in previous sections are intentionally brief and provide a jump start for Microsoft Graph API developers. More detailed design guidance about REST APIs is published at the [Microsoft REST API Guidelines](Guidelines-deprecated.md). Microsoft Graph-specific patterns are outlined in the following table.
 
 | Pattern                                          | Description                                                                |
 |--------------------------------------------------|----------------------------------------------------------------------------|
