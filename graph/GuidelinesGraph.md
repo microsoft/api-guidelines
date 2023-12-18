@@ -155,7 +155,9 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#93-collection-url-patterns).
+This is also why [collection properties](./collection-properties.md) should almost always be modeled using an entity type rather than a complex type. 
+Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
