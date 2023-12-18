@@ -4,7 +4,6 @@ Microsoft Graph API Design Pattern
 
 *Query option aliasing is providing functions with friendly names as an additional mechanism for clients to make certain kinds of requests that involve the use of OData query options.*
 
-
 ## Problem
 
 Some APIs are very data-focused.
