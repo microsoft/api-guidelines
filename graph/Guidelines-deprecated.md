@@ -1,13 +1,13 @@
-# Microsoft REST API Guidelines
-> # NOTICE TO READERS
+
+> # DEPRECATION NOTICE TO READERS
 > <mark>This document has been deprecated and has been merged with [Microsoft Graph REST API Guidelines](./graph/Guidelines_deprecated.md). Please refer to the notes below for the latest guidance.</mark>
 > 
-> ## **Guidance for Azure service teams**
-> Azure service teams should use the companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information, see the [README](./azure/README.md) in the Azure folder.
 > ## **Guidance for Microsoft Graph service teams**
 > Graph service teams should reference the companion document, [Microsoft Graph REST API Guidelines](GuidelinesGraph.md) when building or modifying their services. This document and the associated pattern catalog provides a refined set of guidance targeted specifically for Microsoft Graph services.
 >
 ---
+# Microsoft REST API Guidelines
+
 This are Microsoft's internal company-wide REST API design guidelines.
 Teams at Microsoft typically reference this document when setting API design policy.
 They may additionally create documents specific to their team, adding further guidance or making adjustments as appropriate to their circumstances.
