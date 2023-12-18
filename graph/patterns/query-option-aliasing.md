@@ -17,7 +17,54 @@ The solution to this problem is to provide support for the query options and to 
 Doing this gives client developers a low barrier-of-entry to using the API (familiarizing themselves with the shape of the data), and it also gives those developers extensiblity in the future to grow beyond the basic cases to write clients that are specific to their own business needs.
 The functions can further provide discoverability by using names for concepts that customers are familiar with, letting them know that those concepts are supported.
 
-//// TODO example
+Suppose that you have a collection of attempted sign-ins for an organization. You might model this as:
+
+```xml
+<EntityContainer Name="container">
+  <EntitySet Name="signInAttempts" EntityType="self.signInAttempt" />
+</EntityContainer>
+
+<EntityType Name="signInAttempt">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+  <Property Name="firstFactorUsed" Type="self.authenticationFactor" Nullable="false" />
+  <Property Name="otherFactorsUsed" Type="Collection(self.authenticationFactor)" Nullable="false" />
+  <Property Name="isSuccessful" Type="Edm.Boolean" Nullable="false" />
+</EntityType>
+
+<ComplexType Name="authenticationFactor">
+  <!--other properties here-->
+</ComplexType>
+```
+
+Clients could then request all of the successful, multifactor sign-in attempts by calling:
+
+```http
+GET /signInAttempts?$filter=isSuccessful eq true and otherFactorsUsed/any(factor: true)
+
+HTTP/1.1 200 OK
+{
+  "value": [
+    {
+      "id": "{id1}",
+      "firstFactorUsed": {
+        // other properties here
+      },
+      "otherFactorsUsed": [
+        {
+          // other properties here
+        },
+        ...
+      ],
+      "isSuccessful": true
+    },
+    ...
+  ]
+}
+```
 
 ## When to use this pattern
 
