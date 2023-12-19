@@ -91,7 +91,94 @@ This means that we cannot just add a `frob` property to the `fooTemplate`.
 //// TODO is the conclusion then that we should have "not provided" types for templates?
 
 
+### TODO start of scratch pad
 
+```xml
+<ComplexType Name="templateProperty" Abstract="true" />
+<ComplexType Name="notProvidedTemplateProperty" BaseType="self.templateProperty" />
+
+<ComplexType Name="fizzTemplateProperty" BaseType="self.templateProperty">
+  <Property Name="value" Type="self.fizz" />
+</ComplexType>
+<ComplexType Name="buzzTemplateProperty" BaseType="self.templateProperty">
+  <Property Name="value" Type="self.buzz" />
+</ComplexType>
+
+      <EntityType Name="fooTemplate">
+        <Key>
+          <PropertyRef Name="id" />
+        </Key>
+        <Property Name="id" Type="Edm.String" Nullable="false" />
+        <Property Name="fizz" Type="self.fizzTemplateProperty" />
+        <Property Name="buzz" Type="self.buzzTemplateProperty" />
+      </EntityType>
+```
+
+
+```http
+POST /fooTemplates
+{
+  "fizz": {
+    "@odata.type": "#self.fizzTemplateProperty",
+	"value": {
+	  // fizz properties here
+	}
+  }
+}
+
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId}
+
+{
+  "id": "{templateId}",
+  "fizz": {
+    "@odata.type": "#self.fizzTemplateProperty",
+	"value": {
+	  // fizz properties here
+	}
+  },
+  "buzz": {
+    "@odata.type": "#self.notProvidedTemplateProperty"
+  }
+}
+```
+
+```xml
+<Action Name="create" IsBound="true">
+  <Parameter Name="bindingParameter" Type="Collection(self.fooTemplate)" Nullable="false" />
+  <Parameter Name="foo" Type="self.foo" Nullable="false" />
+  <ReturnType Type="self.fooTemplate" />
+</Action>
+```
+
+```http
+POST /fooTemplates/create
+{
+  "foo": {
+    "fizz": {
+	  // fizz properties here
+	}
+  }
+}
+
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId}
+
+{
+  "id": "{templateId}",
+  "fizz": {
+    "@odata.type": "#self.fizzTemplateProperty",
+	"value": {
+	  // fizz properties here
+	}
+  },
+  "buzz": {
+    "@odata.type": "#self.notProvidedTemplateProperty"
+  }
+}
+```
+
+### TODO end of scratch pad
 
 
 
