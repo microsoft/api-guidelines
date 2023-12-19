@@ -265,12 +265,11 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 
 Operation resources MUST have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
 
-For a complete list of standard HTTP operations, see the [Error condition responses](Guidelines-deprecated.md#7102-error-condition-responses).
-
+For an additional list of standard HTTP methods, see the [RFC7230](https://www.rfc-editor.org/rfc/rfc9112)).
 
 ### Error handling
 
-Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs SHOULD follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
+ You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
 
 ```http
 {
@@ -295,7 +294,7 @@ The top-level error code MUST match the HTTP response status code description, c
       "error": {
         "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
-    	"target": "resource X (Optional)"
+        "target": "resource X (Optional)"
       }
     }
    ```
@@ -321,6 +320,8 @@ The top-level error code MUST match the HTTP response status code description, c
 | :heavy_check_mark: **MUST** return a 403 Forbidden error when the application or signed-in user has insufficient permissions present in the auth token. |
 | :heavy_check_mark: **MUST** return a 429 Too Many Requests error when the client exceeded throttling limits, and a 503 Service Unavailable error when the service overloaded but the client is within throttling limits.|
 | :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 error would result in information disclosure. |
+
+For additional guidance, see [Error condition responses article](Guidelines-deprecated.md#7102-error-condition-responses).
 
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
