@@ -44,6 +44,7 @@ An action should also be introduced that will create the `foo` based on the `foo
 <Action Name="create" IsBound="true">
   <Parameter Name="bindingParameter" Type="Collection(self.foo)" Nullable="false" />
   <Parameter Name="template" Type="self.fooTemplate" Nullable="false" />
+  <ReturnType Type="self.foo" />
 </Action>
 ```
 A client can then create a `foo` from a `fooTemplate` by calling:
