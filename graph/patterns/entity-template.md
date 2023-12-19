@@ -10,7 +10,7 @@ A customer wants to create instances of an entity that all start from the same b
 
 ## Solution
 
-Introduce a new entity type that is a template for the entity that the customer is trying to create. 
+### Introduce a new entity type that is a template for the entity that the customer is trying to create. 
 For an existing `foo` entity:
 ```xml
 <EntityContainer Name="Container">
@@ -67,6 +67,7 @@ Location: /foos/{fooId}
 }
 ```
 
+### Add a new property to an existing entity and update its associated template entity
 
 
 
