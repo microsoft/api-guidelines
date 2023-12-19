@@ -34,10 +34,10 @@ ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new 
 
 - Be sustainable and evolvable by using clear API contracts.
 
-The Microsoft Graph REST API Guidelines consist of a concise overview document, a collection of articles on Graph standards, and a library of patterns that provide best practices for resolving common API design problems.Together, these documents serve as the means by which API teams discuss and come to consensus on API review requirements.
+The Microsoft Graph REST API Guidelines consist of a concise overview document, a collection of articles on Graph standards, and a library of patterns that provide best practices for resolving common API design problems. Together, these documents serve as the means by which API teams discuss and come to consensus on API review requirements.
 
-Technology and software are constantly changing and evolving, and as such, this
-is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will frequently change to add guidance in areas previously uncovered or to clarify existing guidance. It will less frequently change the directional guidance it has already provided. To suggest a change or propose a new idea,
+Technology and software are constantly changing and evolving, and as such, this document
+is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will frequently change to add guidance in areas previously uncovered or to clarify existing guidance. It will less frequently change the directional guidance it provides. To suggest a change or propose a new idea,
 [open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose).
 
 ### Legend
@@ -78,19 +78,19 @@ In general, API design includes the following steps:
 
 1. Specify errors.
 
-When creating your API contract, you define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources. It is important to plan ahead how the API evolves; to do this, it is essential to understand and document your user scenarios as the foundation of the API design. There is no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details.
+When creating your API contract, you define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources. It's important to plan ahead how the API evolves; to do this, it's essential to understand and document your user scenarios as the foundation of the API design. There's no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details.
 
 We recommend creating a simple resource diagram like the following to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
 
 ![Resource model example](ModelExample.png)
 
-After you define your resources, it’s time to think about the behavior of your API, which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior, you identify a happy path and various exceptions and deviations that will be expressed as errors and represented by using HTTP codes and error messages.
+After you define your resources, it’s time to think about the behavior of your API, which can be expressed via HTTP methods and operational resources such as functions and actions. As you think about API behavior, you identify a happy path and various exceptions and deviations that are expressed as errors and represented by using HTTP codes and error messages.
 
 At every step of your design, you need to consider security, privacy, and compliance as intrinsic components of your API implementation.
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](Guidelines.md#17-naming-guidelines).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](Guidelines-deprecated.md#17-naming-guidelines).
 
 Following is a short summary of the most often used conventions.
 
@@ -98,7 +98,7 @@ Following is a short summary of the most often used conventions.
 | ------------------------------------------------------------------------|-------------------------------|
 | :no_entry: **MUST NOT** use redundant words in names.                   | - **Right:** /places/{id}/**displayName** or /phones/{id}/**number** <BR> -  **Wrong:** /places/{id}/**placeName** or /phones/{id}/**phoneNumber** |
 | :warning: **SHOULD NOT** use brand names in type or property names.     | - **Right:** chat   <BR> -  **Wrong:** teamsChat  |
-| :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong:** msodsUrl or dlp |
+| :warning: **SHOULD NOT** use acronyms or abbreviations unless they're broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong:** msodsUrl or dlp |
 | :heavy_check_mark: **MUST** use singular nouns for type names.          | - **Right:** address  <BR> - **Wrong:** addresses  |
 | :heavy_check_mark: **MUST** use plural nouns for collections (for listing type or collection properties). | - **Right:** addresses <BR> - **Wrong:** address |
 | :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
@@ -106,11 +106,11 @@ Following is a short summary of the most often used conventions.
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
 | :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount |
 | :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
-| :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geocoordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
+| :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geo coordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
 | **PREFIXES AND SUFFIXES** | |
-| :heavy_check_mark: **MUST** suffix date and time properties with Date, Time, or DateTime  | - **Right:** dueDate — an Edm.Date <BR> - **Right:** recurringMeetingTime — an Edm.TimeOfDay <BR> - **Right:** createdDateTime — an Edm.DateTimeOffset <BR>- **Wrong:** dueOn or startTime <BR> - **Right:** Instead, both of the preceding are an Edm.DateTimeOffset |
-| :ballot_box_with_check: **SHOULD** use the Duration type for durations, but if using an `int`, append the units. | - **Right:** passwordValidityPeriod — an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (use of Edm.Duration type is preferable) <BR>- **Wrong:** passwordValidityPeriod — an Edm.Int32 |
+| :heavy_check_mark: **MUST** suffix date and time properties with Date, Time, or DateTime  | - **Right:** dueDate—an Edm.Date <BR> - **Right:** recurringMeetingTime—an Edm.TimeOfDay <BR> - **Right:** createdDateTime—an Edm.DateTimeOffset <BR>- **Wrong:** dueOn or startTime <BR> - **Right:** Instead, both of the preceding are an Edm.DateTimeOffset |
+| :ballot_box_with_check: **SHOULD** use the Duration type for durations, but if using an `int`, append the units. | - **Right:** passwordValidityPeriod—an Edm.Duration <BR> - **Right:** passwordValidityPeriodInDays — an Edm.Int32 (use of Edm.Duration type is preferable) <BR>- **Wrong:** passwordValidityPeriod — an Edm.Int32 |
 | :no_entry: **MUST NOT** use suffix property names with primitive type names unless the type is temporal. | - **Right:** isEnabled or amount <BR> - **Wrong:** enabledBool |
 | :ballot_box_with_check: **SHOULD** prefix property names for properties concerning a different entity.   | - **Right:** siteWebUrl on driveItem or userId on auditActor <BR> - **Wrong:** webUrl on contact when it's the companyWebUrl |
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
@@ -121,7 +121,7 @@ Following is a short summary of the most often used conventions.
 
 A Uniform Resource Locator (URL) is how developers access the resources of your API.
 
-Navigation paths to Microsoft Graph resources are generally broken into multiple segments,
+Navigation paths to Microsoft Graph resources are broken into multiple segments,
 `{scheme}://{host}/{version}/{category}/[{pathSegment}][?{query}]` where:
 
 - `scheme` and `host` segments are always [`https://graph.microsoft.com`](https://graph.microsoft.com/v1.0/users).
@@ -152,9 +152,9 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 ### Resource modeling patterns
 
-You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type does not. In Microsoft Graph, this key property is called `id` for server-created key values. If there is a natural name for the key property, then the workload can use that.
+You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type doesn't. In Microsoft Graph, this key property is called `id` for server-created key values. If there's a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Microsoft REST API Guidelines collection URL patterns](Guidelines-deprecated.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](Guidelines-deprecated.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
@@ -213,11 +213,11 @@ Following are a few pros and cons to decide which pattern to use:
 
 - **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat bag** is more familiar to developers of less strongly typed languages.
 
-- **facets** has the potential to model what is typically associated with multiple inheritance. 
+- **facets** has the potential to model what is typically associated with multiple inheritances. 
 
 - **facets** and **flat bag** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
 
-- **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it very explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
+- **hierarchy** can be refined by annotating the collections with OData derived type constraints; see [validation vocabulary](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Validation.V1.md). This annotation restricts the values to certain sub-trees of an inheritance **hierarchy**. It makes it explicit that the collection only contains elements of some of the subtypes and helps to not return objects of a type that are semantically not suitable.
 
 > **Note:**
 > As can be seen in a few of the pros and cons, one of the important aspects discussed here is that the API design goes beyond the syntactical aspects of the API. Therefore, it is important to plan ahead how the API evolves, lay the foundation, and allow users to form a good understanding of the semantics of the API. **Changing the semantics is always a breaking change.** The different modeling patterns differ in how they express syntax and semantics and how they allow the API to evolve without breaking compatibility. For more information, see [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes) later in this article.
@@ -230,7 +230,7 @@ See [Nullable properties](./articles/nullable.md) for more details.
 
 ### Query support
 
-Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Microsoft REST API Guidelines](Guidelines-deprecated.md#9-collections).
+Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](Guidelines-deprecated.md#9-collections).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
@@ -348,7 +348,7 @@ The Microsoft Graph definition of breaking changes is based on the
 
 **Non-breaking changes:**
 
-- Adding properties that are nullable or have a default value
+- To add properties that are nullable or have a default value
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
 - Changing the order of properties
@@ -373,7 +373,7 @@ The Microsoft Graph definition of breaking changes is based on the
 
 As the market and technology evolves, your APIs will require modifications. In this case, you must avoid breaking changes and add new resources and features incrementally. If that is not possible, then you must version elements of your APIs. Microsoft Graph allows versioning of elements, including entities and properties. Versioning involves adding a new, uniquely named version of the element and marking the old version as deprecated.
 
-In some cases, there is a natural new name for the element. In other cases, where the original name is still the most descriptive, the suffix _v2 can be added to the original name to make it unique. The original element is then marked as deprecated by using annotations.
+In some cases, there's a natural new name for the element. In other cases, where the original name is still the most descriptive, the suffix _v2 can be added to the original name to make it unique. The original element is then marked as deprecated by using annotations.
 
 Microsoft Graph provides two public endpoints to support the API lifecycle:
 - [API sets on the v1.0 endpoint](https://graph.microsoft.com/v1.0) are in general availability (GA) status.
@@ -387,7 +387,7 @@ Detailed requirements for versioning and deprecation are described in the [Depre
 
 ## Recommended API design patterns
 
-The guidelines in previous sections are intentionally brief and provide a jump start for Microsoft Graph API developers. More detailed design guidance about REST APIs is published at the [Microsoft REST API Guidelines](Guidelines-deprecated.md). Microsoft Graph-specific patterns are outlined in the following table.
+The guidelines in previous sections provide a brief overview and a quick start for Microsoft Graph API developers. For a more detailed dive into a specific topic, you can explore [additional articles](./articles/) or learn more about modeling patterns with the Microsoft Graph patterns listed in the following table. 
 
 | Pattern                                          | Description                                                                |
 |--------------------------------------------------|----------------------------------------------------------------------------|
