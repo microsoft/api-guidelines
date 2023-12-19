@@ -69,6 +69,20 @@ Location: /foos/{fooId}
 
 ### Add a new property to an existing entity and update its associated template entity
 
+If a property `frob` is added to the `foo` entity:
+```xml
+<EntityType Name="foo">
+  ...
+  <Property Name="frob" Type="self.frob" Nullable="true" />
+</EntityType>
+```
+then the associated `fooTemplate` type should be updated to accommodate `frob`.
+It is tempting to just add `frob` to `fooTemplate`.
+There are 3 important cases to consider with the `frob` property:
+1. If `frob` is provided as `null`, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
+2. If `frob` is provided as `null`, then `frob` is assigned the value of `null`
+3. If `frob` is not provided, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
+4. If `frob` is not provided, then `frob` is assigned the value of `null`
 
 
 
