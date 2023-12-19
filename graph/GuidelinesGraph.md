@@ -153,7 +153,7 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type doesn't. In Microsoft Graph, this key property is called `id` for server-created key values. If there's a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you SHOULD use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](./articles/collections.md#3-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you SHOULD use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection guidance](./articles/collections.md). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
@@ -229,7 +229,7 @@ See [Nullable properties](./articles/nullable.md) for more details.
 
 ### Query support
 
-Microsoft Graph APIs returning collections of resources SHOULD support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](./articles/collections.md).
+Microsoft Graph APIs returning collections of resources SHOULD support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection guidance](./articles/collections.md).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
