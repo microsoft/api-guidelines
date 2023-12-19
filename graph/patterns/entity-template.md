@@ -78,12 +78,16 @@ If a property `frob` is added to the `foo` entity:
 ```
 then the associated `fooTemplate` type should be updated to accommodate `frob`.
 It is tempting to just add `frob` to `fooTemplate`.
-There are 3 important cases to consider with the `frob` property:
+There are 4 important cases to consider with the `frob` property:
 1. If `frob` is provided as `null`, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
 2. If `frob` is provided as `null`, then `frob` is assigned the value of `null`
 3. If `frob` is not provided, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
 4. If `frob` is not provided, then `frob` is assigned the value of `null`
 
+Because these cases can be used in combination with each other (for example, 3 and 4 can coexist), templates need to accommodate these situations.
+As a result, if 3 and 4 coexist, adding a `frob` property to the `fooTemplate` changes the semantics of existing instances of the `fooTemplate`; any existing template now needs to have the `frob` property backfilled to some concrete default value, or `null`, but `null` is different from the value not being provided.
+This means that we cannot just add a `frob` property to the `fooTemplate`.
+//// TODO is the conclusion then that we should have "not provided" types for templates?
 
 
 
@@ -91,34 +95,11 @@ There are 3 important cases to consider with the `frob` property:
 
 
 
-`foo` is then updated to have a navigation property to a `fooTemplate`:
-```
-<EntityType Name="foo">
-  <Key>
-    <PropertyRef Name="id" />
-  </Key>
-  <Property Name="id" Type="Edm.String" Nullable="false" />
-  <Property Name="fizz" Type="self.fizz" />
-  <Property Name="buzz" Type="self.buzz" />
-  <NavigationProperty Name="template" Type="self.fooTemplate" /> //// TODO create-only
-</EntityType>
-```
-In order to create a `foo` from the `fooTemplate` with ID `{templateId}`, the client can call:
-```
-POST .../foos //// TODO full URL
-{
-  "template@odata.bind": ".../fooTemplates/{templateId}" //// TODO full URL
-//// TODO this has the same problem as the "draft" antipattern where foos now can't be properly validated
-}
-```
 
-
-
-
+//// TODO do you want to talk about "non-provided" properties? if `fizz` isn't in the template creation, it becomes `null`; do we need a way to say "don't use `fizz` when creating the instance from the template"?
 //// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
 //// TODO templates are just a new constructor overload
 //// TODO managing templates
-//// TODO do you want to talk about "non-provided" properties? if `fizz` isn't in the template creation, it becomes `null`; do we need a way to say "don't use `fizz` when creating the instance from the template"?
 
 ## When to use this pattern
 
