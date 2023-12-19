@@ -389,7 +389,7 @@ Detailed requirements for versioning and deprecation are described in the [Depre
 
 ## Recommended API design patterns
 
-The guidelines in previous sections provide a brief overview and a quick start for Microsoft Graph API developers. For a more detailed dive into a specific topic, you can explore [additional articles](./articles/) or learn more about modeling patterns with the Microsoft Graph patterns listed in the following table. 
+The guidelines in previous sections provide a brief overview and a quick start for Microsoft Graph API developers. For a more detailed dive into a specific topic, you can explore [additional articles](./articles/) or learn more about [modeling patterns with the Microsoft Graph](./patterns/) listed in the following table.
 
 | Pattern                                          | Description                                                                |
 |--------------------------------------------------|----------------------------------------------------------------------------|
