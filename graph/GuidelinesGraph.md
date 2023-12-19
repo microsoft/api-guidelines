@@ -15,7 +15,7 @@ Table of contents
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
   - [External standards](#external-standards)
-  - [API contract and non-backward compatible changes](#api-contract-and-non-backward-compatible-changes)
+  - [API contract and nonbackward compatible changes](#api-contract-and-nonbackward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
   - [Recommended API design patterns](#recommended-api-design-patterns)
   - [References](#references)
@@ -26,7 +26,7 @@ Table of contents
 When building a digital ecosystem API usability becomes a business priority. The success of your ecosystem depends on APIs that are easy to discover, simple to use, fit for purpose, and consistent across your products.
 
 This document offers guidance that Microsoft Graph API producer teams MUST follow to
-ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design should meet the following goals:
+ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new API design SHOULD meet the following goals:
 
 - Be developer friendly by using consistent naming, patterns, and web standards (HTTP, REST, JSON).
 
@@ -36,8 +36,7 @@ ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new 
 
 The Microsoft Graph REST API Guidelines consist of a concise overview document, a collection of articles on Graph standards, and a library of patterns that provide best practices for resolving common API design problems. Together, these documents serve as the means by which API teams discuss and come to consensus on API review requirements.
 
-Technology and software are constantly changing and evolving, and as such, this document
-is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface. Consequently, this document will frequently change to add guidance in areas previously uncovered or to clarify existing guidance. It will less frequently change the directional guidance it provides. To suggest a change or propose a new idea,
+Technology and software are constantly changing and evolving, and as such, this document is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface.Therefore, the general principles and directions that this document offers will be more stable than the specific recommendations for areas that are new or significantly different. The guidance might change as needed to address new scenarios and to clarify existing guidance. The guidance might change as needed to address new scenarios and to clarify existing guidance. To suggest a change or propose a new idea,
 [open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose).
 
 ### Legend
@@ -56,7 +55,7 @@ If you do not follow this advice, you MUST disclose your reasons during the Micr
 
 ## Design approach
 
-The design of your API is arguably the most important investment you will make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote an API-first design approach where you begin your product design by focusing on how information is exchanged and represented and by creating an interface contract for your API, which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs.
+The design of your API is arguably the most important investment you'll make. API design is what creates the first impression for developers when they discover and learn how to use your APIs. We promote an API-first design approach where you begin your product design by focusing on how information is exchanged and represented and by creating an interface contract for your API, which is followed by design and implementation of the backing service. This approach ensures decoupling of the interface from your implementation and is essential for agility, predictability, and reuse of your APIs.
 
 An established interface contract allows developers to use your API while internal teams are still working on implementation; API specifications enable designing user experience and test cases in parallel. Starting with user-facing contracts also promotes a good understanding of system interactions, your modeling domain, and an understanding of how the service will evolve.
 
@@ -78,7 +77,7 @@ In general, API design includes the following steps:
 
 1. Specify errors.
 
-When creating your API contract, you define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources. It's important to plan ahead how the API evolves; to do this, it's essential to understand and document your user scenarios as the foundation of the API design. There's no one-to-one correspondence between domain model elements and API resources because you should simplify your customer facing APIs for better usability and to obfuscate implementation details.
+When creating your API contract, you define resources based on the domain model supporting your service and identify interactions based on user scenarios. Good API design goes beyond modeling the current state of resources. It's important to plan ahead how the API evolves; to do this, it's essential to understand and document your user scenarios as the foundation of the API design. There's no one-to-one correspondence between domain model elements and API resources because you SHOULD simplify your customer facing APIs for better usability and to obfuscate implementation details.
 
 We recommend creating a simple resource diagram like the following to show resources and their relationships and make it easier to reason about modeling choices and the shape of your API.
 
@@ -90,7 +89,7 @@ At every step of your design, you need to consider security, privacy, and compli
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](./articles/naming.md).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and MUST be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you SHOULD favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Naming guidelines](./articles/naming.md).
 
 Following is a short summary of the most often used conventions.
 
@@ -132,7 +131,7 @@ Navigation paths to Microsoft Graph resources are broken into multiple segments,
 
 - `pathSegment` is one or many navigation segments that can address an entity, collection of entities, property, or operation available for an entity.
 
-- `query` string must follow the OData standard for query representations and is covered in the Query section of OData specifications.
+- `query` string MUST follow the OData standard for query representations and is covered in the Query section of OData specifications.
 
 While HTTP defines no constraints on how different resources are related, it does encourage the use of URL path segment hierarchies to convey relationships. In Microsoft Graph, relationships between resources are supported by the OData concepts of singletons, entity sets, entities, complex types, and navigation properties.
 
@@ -154,7 +153,7 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type doesn't. In Microsoft Graph, this key property is called `id` for server-created key values. If there's a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](./articles/collections.md#3-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you SHOULD use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](./articles/collections.md#3-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
@@ -230,7 +229,7 @@ See [Nullable properties](./articles/nullable.md) for more details.
 
 ### Query support
 
-Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](./articles/collections.md).
+Microsoft Graph APIs returning collections of resources SHOULD support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](./articles/collections.md).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
@@ -243,14 +242,14 @@ Microsoft Graph APIs returning collections of resources should support basic que
 | :ballot_box_with_check: **SHOULD** support `$count` for collections. |
 | :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
 
-The query options part of an OData URL can be quite long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
+The query options part of an OData URL can be long, potentially exceeding the maximum length of URLs supported by components involved in transmitting or processing the request. One way to avoid this is to use the POST verb instead of GET with the `$query` segment, and pass the query options part of the URL in the request body as described in the chapter
 [OData Query Options](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody).
 
 Another way to avoid this is to use JSON batch as described in the [Microsoft Graph batching documentation](https://docs.microsoft.com/graph/json-batching#bypassing-url-length-limitations-with-batching).
 
 ### Behavior modeling
 
-The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
+The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern SHOULD be one of the first implementation decisions you make.
 
 If possible, APIs SHOULD use resource-based designs with standard HTTP methods rather than operation resources. Operation resources are either functions or actions. According to [OData standards](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31359009), a function represents an operation that returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action might have side effects and might return a result represented as a single entity or collection of any type.
 
@@ -264,14 +263,14 @@ If possible, APIs SHOULD use resource-based designs with standard HTTP methods r
 | :warning: **SHOULD NOT** use PUT for updating resources. |
 | :ballot_box_with_check: **SHOULD** avoid using multiple round trips to complete a single logical operation. |
 
-Operation resources must have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
+Operation resources MUST have a binding parameter that matches the type of the bound resource. In addition, both actions and functions support overloading, meaning an API definition might contain multiple actions or functions with the same name.
 
-For a complete list of standard HTTP operations, see the [Microsoft REST API Guidelines error condition responses](Guidelines-deprecated.md#7102-error-condition-responses).
+For a complete list of standard HTTP operations, see the [Error condition responses](Guidelines-deprecated.md#7102-error-condition-responses).
 
 
 ### Error handling
 
-Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs should follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
+Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs SHOULD follow when returning error condition responses. You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
 
 ```http
 {
@@ -287,7 +286,7 @@ Microsoft REST API Guidelines provide guidelines that Microsoft Graph APIs shoul
 }
 ```
 
-The top-level error code must match the HTTP response status code description, converted to camelCase, as listed in the [Status Code Registry (iana.org)](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml). The following examples demonstrate error modeling for common use cases:
+The top-level error code MUST match the HTTP response status code description, converted to camelCase, as listed in the [Status Code Registry (iana.org)](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml). The following examples demonstrate error modeling for common use cases:
 
 - **Simple error**: An API wants to report an error with top-level details only. The error object contains the top-level error code, message and target (optional).
 
@@ -330,21 +329,21 @@ For a complete mapping of error codes to HTTP statuses, see
 
 ## External standards
 
-For ease of client use and interoperatibility, some APIs should implement a standard that is defined external to Microsoft Graph and OData. 
-Workloads should follow these standards exactly, even if they conflict with the OData standard and/or the Microsoft Graph guidelines. 
-Workloads must define these standards in their CSDL model if they do not conflict with the OData standard.
-Standards that *do* conflict with the OData standard may be defined in the CSDL in one of two ways:
+For ease of client use and interoperatibility, some APIs might implement a standard that is defined external to Microsoft Graph and OData. 
+Workloads SHOULD follow these standards exactly, even if they conflict with the OData standard and/or the Microsoft Graph guidelines. 
+Workloads SHOULD define these standards in their CSDL model if they do not conflict with the OData standard.
+Standards that *do* conflict with the OData standard might be defined in the CSDL in one of two ways:
 1. Using `Edm.Untyped` only and support for the external standard will come directly from the service implementation; OR
-2. Adding CSDL elements to model the external standard using `Edm.String` for `EnumType`s that conflict with the OData standard and `Edm.Untyped` wherever any other conflict with the OData standard occurs
+2. Adding CSDL elements to model the external standard using `Edm.String` for `EnumType`s that conflict with the OData standard and `Edm.Untyped` wherever any other conflict with the OData standard occurs.
 
-In either case, any use of `Edm.String` instead of an `EnumType` or any use of `Edm.Untyped` must provide a [description annotation](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.xml#L105) to document references to the standard that the client is expected to follow.
+In either case, any use of `Edm.String` instead of an `EnumType` or any use of `Edm.Untyped` MUST provide a [description annotation](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.xml#L105) to document references to the standard that the client is expected to follow.
 The benefit of the second approach is that strongly-typed models have SDK support for clients and also have significant tooling support for both the workload and clients.
-Note that it is backwards compatible for a workload to migrate from the second approach to the first approach in case the external standard is *initially* compliant with the OData standard and *later* conflicts with the OData standard. 
+Note that it's backwards compatible for a workload to migrate from the second approach to the first approach in case the external standard is *initially* compliant with the OData standard and *later* conflicts with the OData standard. 
 
-## API contract and non-backward compatible changes
+## API contract and nonbackward compatible changes
 
-The Microsoft Graph definition of breaking changes is based on the
-[Microsoft REST API Guidelines definition of a breaking change](Guidelines-deprecated.md#123-definition-of-a-breaking-change). In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
+The Microsoft Graph defines breaking changes as any change that requires a client to change its implementation to continue working with the service, it includes changes to the API contract, API behavior, and nonbackward compatible changes.
+In general, making all but additive changes to the API contract for existing elements is considered breaking. Adding new elements is allowed and is not considered a breaking change.
 
 **Non-breaking changes:**
 
@@ -361,7 +360,7 @@ The Microsoft Graph definition of breaking changes is based on the
 - Removing, renaming, or changing an incompatible type of a declared property
 - Removing or renaming APIs or API parameters
 - Adding a required request header
-- Adding EnumType members for non-evolvable enumerations
+- Adding EnumType members for nonevolvable enumerations
 - Adding Nullable="false" properties to existing types
 - Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
@@ -369,9 +368,11 @@ The Microsoft Graph definition of breaking changes is based on the
 - Introducing server-side pagination to existing collections
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
 
+The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
+
 ### Versioning and deprecation
 
-As the market and technology evolves, your APIs will require modifications. In this case, you must avoid breaking changes and add new resources and features incrementally. If that is not possible, then you must version elements of your APIs. Microsoft Graph allows versioning of elements, including entities and properties. Versioning involves adding a new, uniquely named version of the element and marking the old version as deprecated.
+As the market and technology evolves, your APIs will require modifications. In this case, you MUST avoid breaking changes and add new resources and features incrementally. If that isn't possible, then you MUST version elements of your APIs. Microsoft Graph allows versioning of elements, including entities and properties. Versioning involves adding a new, uniquely named version of the element and marking the old version as deprecated.
 
 In some cases, there's a natural new name for the element. In other cases, where the original name is still the most descriptive, the suffix _v2 can be added to the original name to make it unique. The original element is then marked as deprecated by using annotations.
 
