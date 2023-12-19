@@ -103,7 +103,7 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
 | **CASING** | |
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
-| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount<BR>  - **Exception:** ID properties similar to driveId or applicationId|
+| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Right:** 'id' properties similar to driveId or applicationId <BR> - **Wrong:** iOLimit or totalIoAmount|
 | :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
 | :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geo coordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
@@ -212,7 +212,7 @@ Following are a few pros and cons to decide which pattern to use:
 
 - **hierarchy** and **facets** (to a slightly lesser degree) are well-suited for strongly typed client programming languages, whereas **flat bag** is more familiar to developers of less strongly typed languages.
 
-- **facets** has the potential to model what is typically associated with multiple inheritances. 
+- **facets** has the potential to model what is typically associated with multiple inheritances.
 
 - **facets** and **flat bag** lend to syntactically simpler filter query expression. **hierarchy** is more explicit but requires the cast segments in the filter query.
 
