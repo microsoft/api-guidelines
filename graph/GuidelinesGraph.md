@@ -90,7 +90,7 @@ At every step of your design, you need to consider security, privacy, and compli
 
 ### Naming
 
-API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](Guidelines-deprecated.md#17-naming-guidelines).
+API resources are typically described by nouns. Resource and property names appear in API URLs and payloads and must be descriptive and easy to understand. Ease of understanding comes from familiarity and recognition; therefore, when thinking about naming, you should favor consistency with other Microsoft Graph APIs, names in the product user interface, and industry standards. Microsoft Graph naming conventions follow the [Microsoft REST API naming guidelines](./articles/naming.md).
 
 Following is a short summary of the most often used conventions.
 
@@ -104,7 +104,7 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
 | **CASING** | |
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
-| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount |
+| :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Wrong:** iOLimit or totalIoAmount<BR>  - **Exception:** ID properties similar to driveId or applicationId|
 | :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
 | :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geo coordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
@@ -154,7 +154,7 @@ Effectively, top-level categories define a perimeter for the API surface; thus, 
 
 You can model structured resources for your APIs by using the OData entity type or complex type. The main difference between these types is that an entity type declares a key property to uniquely identify its objects, and a complex type doesn't. In Microsoft Graph, this key property is called `id` for server-created key values. If there's a natural name for the key property, then the workload can use that.
 
-Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](Guidelines-deprecated.md#93-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
+Because objects of complex types in Microsoft Graph don’t have unique identifiers, they are not directly addressable via URIs. Therefore, you must use entity types to model addressable resources such as individually addressable items within a collection. For more information, see the [Collection URL patterns](./articles/collections.md#3-collection-url-patterns). Complex types are better suited to represent composite properties of API entities.
 
 ```xml
  <EntityType Name="author">
@@ -230,7 +230,7 @@ See [Nullable properties](./articles/nullable.md) for more details.
 
 ### Query support
 
-Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](Guidelines-deprecated.md#9-collections).
+Microsoft Graph APIs returning collections of resources should support basic query options in conformance with [OData specifications](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#sec_PassingQueryOptionsintheRequestBody) and [Collection Guidance](./articles/collections.md).
 
 |Requirements                                                                                        |
 |----------------------------------------------------------------------------------------------------|
@@ -238,8 +238,8 @@ Microsoft Graph APIs returning collections of resources should support basic que
 | :ballot_box_with_check: **SHOULD** support `/entityTypeCollection/{id}?$expand=navProp1` option for navigation properties of entities. |
 | :ballot_box_with_check: **SHOULD** support `$filter` with `eq` and `ne` operations on properties of entity collections. |
 | :heavy_check_mark: **MUST** support pagination of collections (of entity types or complex types) using a [nextLink](http://docs.oasis-open.org/odata/odata-json-format/v4.01/odata-json-format-v4.01.html#sec_ControlInformationnextLinkodatanextL).  |
-| :ballot_box_with_check: **MAY** support [server-driven pagination](Guidelines-deprecated.md#981-server-driven-paging) of collections using `$skiptoken`.  |
-| :ballot_box_with_check: **SHOULD** support [client-driven pagination](Guidelines-deprecated.md#982-client-driven-paging) of collections using `$top` and `$skip`. |
+| :ballot_box_with_check: **MAY** support [server-driven pagination](./articles/collections.md#81-server-driven-paging) of collections using `$skiptoken`.  |
+| :ballot_box_with_check: **SHOULD** support [client-driven pagination](./articles/collections.md#82-client-driven-paging) of collections using `$top` and `$skip`. |
 | :ballot_box_with_check: **SHOULD** support `$count` for collections. |
 | :ballot_box_with_check: **SHOULD** support sorting with `$orderby` both ascending and descending on properties of the entities. |
 
@@ -252,7 +252,7 @@ Another way to avoid this is to use JSON batch as described in the [Microsoft Gr
 
 The HTTP operations dictate how your API behaves. The URL of an API, along with its request/response bodies, establishes the overall contract that developers have with your service. As an API provider, how you manage the overall request/response pattern should be one of the first implementation decisions you make.
 
-If possible, APIs SHOULD use resource-based designs with standard HTTP methods rather than operation resources. Operation resources are either functions or actions. According to [OData standards](http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/part3-csdl/odata-v4.0-errata03-os-part3-csdl-complete.html#_The_edm:Function_Element_2), a function represents an operation that returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action might have side effects and might return a result represented as a single entity or collection of any type.
+If possible, APIs SHOULD use resource-based designs with standard HTTP methods rather than operation resources. Operation resources are either functions or actions. According to [OData standards](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#_Toc31359009), a function represents an operation that returns a single instance or collection of instances of any type and doesn’t have an observable side effect. An action might have side effects and might return a result represented as a single entity or collection of any type.
 
 |  Microsoft Graph rules for modeling behavior                     |
 |------------------------------------------------------------------|
@@ -409,8 +409,8 @@ The guidelines in previous sections provide a brief overview and a quick start f
 
 ## References
 
-- [Microsoft REST API Guidelines](https://github.com/microsoft/api-guidelines/)
-- [OData guidelines](http://www.odata.org/documentation/)
-- [RESTful web API design](https://docs.microsoft.com/azure/architecture/best-practices/api-design)
 - [Microsoft Graph documentation](https://docs.microsoft.com/graph/overview)
+- [Microsoft REST API Guidelines-deprecated](Guidelines-deprecated.md)
+- [OData guidelines](http://www.odata.org/documentation/)
+- [Azure RESTful web API design](https://docs.microsoft.com/azure/architecture/best-practices/api-design)
 - [Graph Explorer](https://developer.microsoft.com/graph/graph-explorer)
