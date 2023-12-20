@@ -90,6 +90,7 @@ Because these cases can be used in combination with each other (for example, 3 a
 As a result, if 3 and 4 coexist, adding a `frob` property to the `fooTemplate` changes the semantics of existing instances of the `fooTemplate`; any existing template now needs to have the `frob` property backfilled to some concrete default value, or `null`, but `null` is different from the value not being provided.
 This means that we cannot just add a `frob` property to the `fooTemplate`.
 //// TODO is the conclusion then that we should have "not provided" types for templates?
+//// TODO use a not provided instance annotation
 
 
 ### TODO start of scratch pad
