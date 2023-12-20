@@ -47,11 +47,12 @@ An action should also be introduced that will create the `foo` based on the `foo
   <ReturnType Type="self.foo" />
 </Action>
 ```
+//// TODO show the template before this sample
 A client can then create a `foo` from a `fooTemplate` by calling:
 ```http
 POST /foos/create
 {
-  "template@odata.bind": "/templates/{templateId}"
+  "template@odata.bind": "/fooTemplates/{templateId}"
 }
 
 HTTP/1.1 201 Created
