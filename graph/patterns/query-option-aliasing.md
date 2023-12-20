@@ -2,7 +2,7 @@
 
 Microsoft Graph API Design Pattern
 
-*Query option aliasing is providing functions with friendly names as an additional mechanism for clients to make certain kinds of requests that involve the use of OData query options.*
+*Exposing functions for common queries is providing functions with friendly names as an additional mechanism for clients to make certain kinds of requests that involve the use of OData query options.*
 
 ## Problem
 
@@ -21,14 +21,14 @@ The functions can further provide discoverability by using names for concepts th
 
 This pattern can be employed in almost any circumstance.
 It is also able to be used once an API as shipped and in any order.
-It is ok to ship a data-focused API with robust `$filter`ing support, and *later* ship functions that alias certain specific filters.
+It is ok to ship a data-focused API with robust `$filter`ing support, and *later* ship functions that act in the same way as certain specific filters.
 It is likewise fine to ship a handful of functions and then later ship an API that is a collection of data with a more fully-featured set of filters.
 
 ## Issues and considerations
 
 The tradeoff with this pattern is ensuring that the functions don't become so numerous that they remove the aliasing benefit.
 It is important to remember that the functions exist to lower dicsoverability, decrease onboarding costs, and prevent client mistakes writing complicated OData queries.
-If an alias is being considered that does not directly address one of these issues, it likely shouldn't be aliased.
+If a function is being considered that does not directly address one of these issues, it likely shouldn't be introduced.
 
 ## Example
 
