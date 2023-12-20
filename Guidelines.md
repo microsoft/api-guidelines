@@ -1,5 +1,5 @@
 > # NOTICE TO READERS
-> This document has been deprecated and has been merged with the [Microsoft Graph REST API Guidelines](./graph/Guidelines.md). Please refer to the notes below for the latest guidance.
+> This document has been deprecated and has been moved to the [Microsoft REST API Guidelines deprecated](./graph/Guidelines-deprecated.md). Please refer to the notes below for the latest guidance.
 > 
 > ## **Guidance for Azure service teams**
 > Azure service teams should use the companion documents, [Azure REST API Guidelines](./azure/Guidelines.md) and [Considerations for Service Design](./azure/ConsiderationsForServiceDesign.md), when building or modifying their services. These documents provide a refined set of guidance targeted specifically for Azure services. For more information, see the [README](./azure/README.md) in the Azure folder.
