@@ -1,4 +1,4 @@
-# Query option aliasing
+# Exposing functions for common queries
 
 Microsoft Graph API Design Pattern
 
