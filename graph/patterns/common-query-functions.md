@@ -27,7 +27,7 @@ It is likewise fine to ship a handful of functions and then later ship an API th
 ## Issues and considerations
 
 The tradeoff with this pattern is ensuring that the functions don't become so numerous that they remove the aliasing benefit.
-It is important to remember that the functions exist to lower dicsoverability, decrease onboarding costs, and prevent client mistakes writing complicated OData queries.
+It is important to remember that the functions exist to lower discoverability, decrease onboarding costs, and prevent client mistakes writing complicated OData queries.
 If a function is being considered that does not directly address one of these issues, it likely shouldn't be introduced.
 
 ## Example
