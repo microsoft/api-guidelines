@@ -243,8 +243,54 @@ Location: /foos/{fooId3}
 
 ### no value is specified for `frob`
 
-//// TODO
+The client creates a new template without specifying any value for `frob`:
+```http
+POST /fooTemplates
+{
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  }
+}
 
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId4}
+
+{
+  "id": "{templateId4}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob@notProvided": true
+}
+```
+
+The client then uses that template to create a `foo`:
+```http
+POST /foos/create
+{
+  "template@odata.bind": "/fooTemplates/{templateId4}"
+}
+
+HTTP/1.1 201 Created
+Location: /foos/{fooId4}
+
+{
+  "id": "{fooId3}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": // server-generated default value for frob here
+}
+```
 
 
 
