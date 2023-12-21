@@ -76,7 +76,7 @@ This template can then be used to create a `foo`:
 ```http
 POST /foos/create
 {
-  "template@odata.bind": "/fooTemplates/{templateId}" //// TODO get this syntax correct
+  "template@odata.bind": "/fooTemplates/{templateId}"
 }
 
 HTTP/1.1 201 Created
