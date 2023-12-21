@@ -384,7 +384,7 @@ Microsoft Graph APIs in the GA version guarantee API stability and consistency f
 
 On the beta endpoint, breaking changes and deprecation of APIs are allowed with consideration of dependencies and customer impact. It is a best practice to test new element versions on the beta endpoint at first and then promote API changes to the GA endpoint.
 
-Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./deprecation.md).
+Detailed requirements for versioning and deprecation are described in the [Deprecation guidelines](./articles/deprecation.md).
 
 ## Recommended API design patterns
 
