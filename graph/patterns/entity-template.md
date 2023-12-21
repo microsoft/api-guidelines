@@ -189,7 +189,7 @@ Location: /foos/{fooId2}
 }
 ```
 
-### `null` is explicitly specified for `frob`
+#### `null` is explicitly specified for `frob`
 
 The client creates a new template specifying `null` for `frob`:
 ```http
@@ -241,7 +241,7 @@ Location: /foos/{fooId3}
 }
 ```
 
-### no value is specified for `frob`
+#### no value is specified for `frob`
 
 The client creates a new template without specifying any value for `frob`:
 ```http
