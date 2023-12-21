@@ -25,6 +25,7 @@ For an existing `foo` entity:
   <Property Name="buzz" Type="self.buzz" />
 </EntityType>
 ```
+
 a "template" entity is defined for `foo`:
 ```xml
 <EntityType Name="fooTemplate">
@@ -39,6 +40,7 @@ a "template" entity is defined for `foo`:
   <EntitySet Name="fooTemplates" EntityType="self.fooTemplate" />
 </EntityContainer>
 ```
+
 An action should also be introduced that will create the `foo` based on the `fooTemplate`:
 ```xml
 <Action Name="create" IsBound="true">
@@ -47,12 +49,34 @@ An action should also be introduced that will create the `foo` based on the `foo
   <ReturnType Type="self.foo" />
 </Action>
 ```
-//// TODO show the template before this sample
-A client can then create a `foo` from a `fooTemplate` by calling:
+
+A client can now create a `fooTemplate`, something like:
+```http
+POST /fooTemplates
+{
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": null
+}
+
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId}
+
+{
+  "id": "{templateId}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": null
+}
+```
+
+This template can then be used to create a `foo`:
 ```http
 POST /foos/create
 {
-  "template@odata.bind": "/fooTemplates/{templateId}"
+  "template@odata.bind": "/fooTemplates/{templateId}" //// TODO get this syntax correct
 }
 
 HTTP/1.1 201 Created
