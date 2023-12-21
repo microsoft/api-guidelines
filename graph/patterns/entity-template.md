@@ -163,6 +163,8 @@ Location: /fooTemplates/{templateId2}
 }
 ```
 
+//// TODO show a foo created from this template
+
 ### `null` is explicitly specified for `frob`
 
 //// TODO
@@ -174,6 +176,7 @@ Location: /fooTemplates/{templateId2}
 
 
 
+//// TODO make sure you know how to implement this in webapi
 
 
 
