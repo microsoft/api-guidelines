@@ -61,10 +61,10 @@ POST /fooTemplates
 }
 
 HTTP/1.1 201 Created
-Location: /fooTemplates/{templateId}
+Location: /fooTemplates/{templateId1}
 
 {
-  "id": "{templateId}",
+  "id": "{templateId1}",
   "fizz": {
     // fizz properties here
   },
@@ -76,7 +76,7 @@ This template can then be used to create a `foo`:
 ```http
 POST /foos/create
 {
-  "template@odata.bind": "/fooTemplates/{templateId}"
+  "template@odata.bind": "/fooTemplates/{templateId1}"
 }
 
 HTTP/1.1 201 Created
@@ -95,13 +95,79 @@ Location: /foos/{fooId}
 
 ### Add a new property to an existing entity and update its associated template entity
 
-If a property `frob` is added to the `foo` entity:
+A property `frob` may be added to the `foo` entity:
 ```xml
 <EntityType Name="foo">
   ...
   <Property Name="frob" Type="self.frob" Nullable="true" />
 </EntityType>
 ```
+
+Likely, clients will want an analogous property on the `fooTemplate`.
+Because the default value of such a property on `foo` is ambiguous (the default may be `null`, some static value, or a service-generated value only known based on the overall state at runtime), the `fooTemplate` needs a clear way to indicate whether a value was specified for the `frob` property.
+This is done with the use of the `notProvided` instance annotation. //// TODO link to docs about instance annotations, and figure out the correct name for "notProvided"
+`frob` will be defined on `fooTemplate` as usual:
+```xml
+<EntityType Name="fooTemplate">
+  ...
+  <Property Name="frob" Type="self.frob" Nullable="true" />
+</EntityType>
+```
+
+Now, existing templates will return the `notProvided` instance annotation for `frob`:
+```http
+GET /fooTemplates/{templateId1}
+
+HTTP/1.1 200 OK
+{
+  "id": "{templateId1}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": null,
+  "frob@notProvided": true
+}
+```
+
+A new template can be created by specifying `frob`:
+```
+POST /fooTemplates
+{
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": {
+    // frob properties here
+  }
+}
+
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId2}
+
+{
+  "id": "{templateId2}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": {
+    // frob properties here
+  }
+}
+```
+
+
+
+
+
+
+
+
 then the associated `fooTemplate` type should be updated to accommodate `frob`.
 It is tempting to just add `frob` to `fooTemplate`.
 There are 4 important cases to consider with the `frob` property:
@@ -153,10 +219,10 @@ POST /fooTemplates
 }
 
 HTTP/1.1 201 Created
-Location: /fooTemplates/{templateId}
+Location: /fooTemplates/{templateId1}
 
 {
-  "id": "{templateId}",
+  "id": "{templateId1}",
   "fizz": {
     "@odata.type": "#self.fizzTemplateProperty",
 	"value": {
@@ -188,7 +254,7 @@ POST /fooTemplates/create
 }
 
 HTTP/1.1 201 Created
-Location: /fooTemplates/{templateId}
+Location: /fooTemplates/{templateId1}
 
 {
   "id": "{templateId}",
