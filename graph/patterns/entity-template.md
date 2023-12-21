@@ -80,10 +80,10 @@ POST /foos/create
 }
 
 HTTP/1.1 201 Created
-Location: /foos/{fooId}
+Location: /foos/{fooId1}
 
 {
-  "id": "{fooId}",
+  "id": "{fooId1}",
   "fizz": {
     ...
   },
@@ -132,7 +132,9 @@ HTTP/1.1 200 OK
 A new template can be created in the following ways
 
 #### a value for `frob` is specified by the client
-```
+
+The client creates a new template with a value for `frob`:
+```http
 POST /fooTemplates
 {
   "fizz": {
@@ -163,11 +165,81 @@ Location: /fooTemplates/{templateId2}
 }
 ```
 
-//// TODO show a foo created from this template
+The client then uses that template to create a `foo`:
+```http
+POST /foos/create
+{
+  "template@odata.bind": "/fooTemplates/{templateId2}"
+}
+
+HTTP/1.1 201 Created
+Location: /foos/{fooId2}
+
+{
+  "id": "{fooId2}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": {
+    // frob properties here
+  }
+}
+```
 
 ### `null` is explicitly specified for `frob`
 
-//// TODO
+The client creates a new template specifying `null` for `frob`:
+```http
+POST /fooTemplates
+{
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": null
+}
+
+HTTP/1.1 201 Created
+Location: /fooTemplates/{templateId3}
+
+{
+  "id": "{templateId3}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": null
+}
+```
+
+The client then uses that template to create a `foo`:
+```http
+POST /foos/create
+{
+  "template@odata.bind": "/fooTemplates/{templateId3}"
+}
+
+HTTP/1.1 201 Created
+Location: /foos/{fooId3}
+
+{
+  "id": "{fooId3}",
+  "fizz": {
+    // fizz properties here
+  },
+  "buzz": {
+    // buzz properties here
+  },
+  "frob": null
+}
+```
 
 ### no value is specified for `frob`
 
