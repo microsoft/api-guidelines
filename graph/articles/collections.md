@@ -217,7 +217,7 @@ RESTful APIs that return collections MAY return partial sets.
 Consumers of these services MUST expect partial result sets and correctly page through to retrieve an entire set.
 
 There are two forms of pagination that MAY be supported by RESTful APIs.
-Server-driven paging mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads.
+Server-driven paging allows servers to even out load across clients and mitigates against denial-of-service attacks by forcibly paginating a request over multiple response payloads.
 Client-driven paging enables clients to request only the number of resources that it can use at a given time.
 
 Sorting and Filtering parameters MUST be consistent across pages, because both client- and server-side paging is fully compatible with both filtering and sorting.
