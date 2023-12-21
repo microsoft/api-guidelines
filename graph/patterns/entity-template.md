@@ -35,7 +35,7 @@ a "template" entity is defined for `foo`:
   <Property Name="fizz" Type="self.fizz" />
   <Property Name="buzz" Type="self.buzz" />
 </EntityType>
-<EntityContainer ...>
+<EntityContainer Name="Container">
   <EntitySet Name="fooTemplates" EntityType="self.fooTemplate" />
 </EntityContainer>
 ```
