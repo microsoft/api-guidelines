@@ -224,10 +224,10 @@ Sorting and Filtering parameters MUST be consistent across pages, because both c
 
 ### 8.1. Server-driven paging
 
-Paginated responses MUST indicate a partial result by including a continuation token in the response.
-The absence of a continuation token means that no additional pages are available.
+Paginated responses MUST indicate a partial result by including a `@odata.nextLink` token in the response.
+The absence of a `nextLink` token means that no additional pages are available, see [Odata 4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ServerDrivenPaging) for more details.
 
-Clients MUST treat the continuation URL as opaque, which means that query options may not be changed while iterating over a set of partial results.
+Clients MUST treat the `nextLink` URL as opaque, which means that query options may not be changed while iterating over a set of partial results.
 
 Example:
 
@@ -240,7 +240,7 @@ Content-Type: application/json
 
 {
   "value": [...],
-  "@nextLink": "{opaqueUrl}"
+  "@odata.nextLink": "{opaqueUrl}"
 }
 ```
 
@@ -248,7 +248,7 @@ Content-Type: application/json
 
 Clients MAY use _$top_ and _$skip_ query parameters to specify a number of results to return and an offset into the collection.
 
-The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a continuation token.
+The server SHOULD honor the values specified by the client; however, clients MUST be prepared to handle responses that contain a different page size or contain a `@odata.nextLink` token.
 
 When both _$top_ and _$skip_ are given by a client, the server SHOULD first apply _$skip_ and then _$top_ on the collection.
 
@@ -286,7 +286,7 @@ If the page size requested by the client is larger than the default page size su
 The server SHOULD honor this preference if the specified page size is smaller than the server's default page size.
 
 **Paginating embedded collections:** It is possible for both client-driven paging and server-driven paging to be applied to embedded collections.
-If a server paginates an embedded collection, it MUST include additional continuation tokens as appropriate.
+If a server paginates an embedded collection, it MUST include additional `nextLink` tokens as appropriate.
 
 **Recordset count:** Developers who want to know the full number of records across all pages, MAY include the query parameter _$count=true_ to tell the server to include the count of items in the response.
 
