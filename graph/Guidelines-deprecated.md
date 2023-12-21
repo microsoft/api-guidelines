@@ -1,9 +1,10 @@
 
 > # DEPRECATION NOTICE TO READERS
 >
-> <mark>This document is being deprecated and merged with the  [Microsoft Graph REST API Guidelines](./graph/Guidelines_deprecated.md), with a removal date of 07/01/2024.</mark> Please refer to the notes below for the latest guidance.
+> <mark>This document is being deprecated and merged with the  [Microsoft Graph REST API Guidelines](GuidelinesGraph.md), with a removal date of 07/01/2024.</mark> Please refer to the notes below for the latest guidance.
 >
 > ## **Guidance for Microsoft Graph service teams**
+>
 > Graph service teams should reference the companion document, [Microsoft Graph REST API Guidelines](GuidelinesGraph.md) when building or modifying their services. This document and the associated pattern catalog provides a refined set of guidance targeted specifically for Microsoft Graph services.
 >
 ---
