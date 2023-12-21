@@ -295,28 +295,14 @@ Location: /foos/{fooId4}
 
 
 //// TODO make sure you know how to implement this in webapi
-
-
-
-
-
-
-
-
-
-
-
 //// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
 //// TODO templates are just a new constructor overload
 
 ## When to use this pattern
 
-*Describe when and why the solution is applicable and when it might not be.*
+This pattern should be used whenever customers need to create instances of an entity using the same basic outline, but where those instances have their own, individual lifecycle.
 
 ## Issues and considerations
 
-TODO if managing templates is more consuming that managing the entities
-
-## Example
-
-*Provide a short example from real life.*
+Templates for relatively small entities should be avoided.
+Generally speaking, managing templates should not be more costly for clients than directly managing the entities themselves.
