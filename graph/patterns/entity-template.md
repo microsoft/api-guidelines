@@ -129,7 +129,9 @@ HTTP/1.1 200 OK
 }
 ```
 
-A new template can be created by specifying `frob`:
+A new template can be created in the following ways
+
+#### a value for `frob` is specified by the client
 ```
 POST /fooTemplates
 {
@@ -161,6 +163,13 @@ Location: /fooTemplates/{templateId2}
 }
 ```
 
+### `null` is explicitly specified for `frob`
+
+//// TODO
+
+### no value is specified for `frob`
+
+//// TODO
 
 
 
