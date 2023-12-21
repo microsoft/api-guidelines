@@ -8,7 +8,7 @@ Collections MAY support delta queries, see the [Change Tracking pattern](../patt
 
 ## 2. Serialization
 
-Collections are represented in JSON using standard array notation for `value` property. 
+Collections are represented in JSON using standard array notation for `value` property.
 
 ## 3. Collection URL patterns
 
@@ -108,7 +108,6 @@ And once executed again, would likely lead to another resource:
 Location: https://graph.microsoft.com/beta/teamwork/devices/124
 ```
 
-
 ## 6. Sorting collections
 
 The results of a collection query MAY be sorted based on property values.
@@ -152,7 +151,6 @@ GET https://graph.microsoft.com/beta/teamwork/devices?$orderBy=companyAssetTag d
 Will return all devices sorted by companyAssetTag in descending order and a secondary sort order of activityState in ascending order.
 
 Sorting MUST compose with filtering see [Odata 4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31361038) for more details.
-
 
 ### 6.1. Interpreting a sorting expression
 
@@ -301,9 +299,9 @@ When these operations are performed together, the evaluation order MUST be:
 
 ## 10. Empty Results
 
-When a filter is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code. 
-In this example the filters supplied by the client resulted in a empty result set. 
-The response body is returned as normal and the _value_ attribute is set to a empty collection. 
+When a filter is performed on a collection and the result set is empty you MUST respond with a valid response body and a 200 response code.
+In this example the filters supplied by the client resulted in a empty result set.
+The response body is returned as normal and the _value_ attribute is set to a empty collection.
 You SHOULD maintain consistency in your API whenever possible.
 
 ```http
