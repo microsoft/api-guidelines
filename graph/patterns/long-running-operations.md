@@ -46,10 +46,6 @@ The RELO pattern is the preferred pattern for long running operations and should
 used wherever possible. The pattern avoids complexity, and consistent resource
 presentation makes things simpler for our users and tooling chain.
 
-In general, Microsoft Graph API guidelines for long running operations follow [Microsoft REST API
-Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations).
-There are some deviations from the base guidelines where Microsoft Graph API standards require that you do one of the following:
-
 - For the RELO pattern, you should return the Location header that indicates the location of the resource.
   - The API response says the targeted resource is being created by returning a 201 status code and the resource URI is provided in the Location header, but the response indicates that the request is not completed by including "Provisioning" status.
 
