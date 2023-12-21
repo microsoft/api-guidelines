@@ -269,7 +269,7 @@ For an additional list of standard HTTP methods, see the [RFC7230](https://www.r
 
 ### Error handling
 
- You can improve API traceability and consistency by using the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
+ To improve API traceability and consistency you MUST use the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
 
 ```http
 {
@@ -294,7 +294,7 @@ The top-level error code MUST match the HTTP response status code description, c
       "error": {
         "code": "badRequest",
         "message": "Cannot process the request because it is malformed or incorrect.",
-        "target": "resource X (Optional)"
+        "target": "resource"
       }
     }
    ```
@@ -321,7 +321,7 @@ The top-level error code MUST match the HTTP response status code description, c
 | :heavy_check_mark: **MUST** return a 429 Too Many Requests error when the client exceeded throttling limits, and a 503 Service Unavailable error when the service overloaded but the client is within throttling limits.|
 | :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 error would result in information disclosure. |
 
-For additional guidance, see [Error condition responses article](Guidelines-deprecated.md#7102-error-condition-responses).
+For additional guidance, see [Error condition responses article](./articles/errorResponses.md).
 
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
