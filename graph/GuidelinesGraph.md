@@ -277,11 +277,10 @@ For an additional list of standard HTTP methods, see the [RFC7230](https://www.r
     "code": "badRequest",
     "message": "Cannot process the request because a required field is missing.",
     "target": "query",    
-    "innererror": {
-                "code": "requiredFieldMissing",
-                           
-                }
-    }
+    "innererror":{
+      "code": "requiredFieldMissing",
+      "message": "A required field is missing.",                  
+     }
 }
 ```
 
@@ -308,7 +307,7 @@ The top-level error code MUST match the HTTP response status code description, c
         "message": "Cannot process the request because it is malformed or incorrect.",
         "innererror": {
           "code": "requiredFieldOrParameterMissing",
-               
+          "message": "A required field or parameter is missing.",               
         }
       }
     }
