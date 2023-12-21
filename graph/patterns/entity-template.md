@@ -180,118 +180,16 @@ Location: /fooTemplates/{templateId2}
 
 
 
-then the associated `fooTemplate` type should be updated to accommodate `frob`.
-It is tempting to just add `frob` to `fooTemplate`.
-There are 4 important cases to consider with the `frob` property:
-1. If `frob` is provided as `null`, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
-2. If `frob` is provided as `null`, then `frob` is assigned the value of `null`
-3. If `frob` is not provided, then `frob` is assigned a default value by the service that is dynamic based on the service state and the customer configuration
-4. If `frob` is not provided, then `frob` is assigned the value of `null`
-
-Because these cases can be used in combination with each other (for example, 3 and 4 can coexist), templates need to accommodate these situations.
-As a result, if 3 and 4 coexist, adding a `frob` property to the `fooTemplate` changes the semantics of existing instances of the `fooTemplate`; any existing template now needs to have the `frob` property backfilled to some concrete default value, or `null`, but `null` is different from the value not being provided.
-This means that we cannot just add a `frob` property to the `fooTemplate`.
-//// TODO is the conclusion then that we should have "not provided" types for templates?
-//// TODO use a not provided instance annotation
-
-
-### TODO start of scratch pad
-
-```xml
-<ComplexType Name="templateProperty" Abstract="true" />
-<ComplexType Name="notProvidedTemplateProperty" BaseType="self.templateProperty" />
-
-<ComplexType Name="fizzTemplateProperty" BaseType="self.templateProperty">
-  <Property Name="value" Type="self.fizz" />
-</ComplexType>
-<ComplexType Name="buzzTemplateProperty" BaseType="self.templateProperty">
-  <Property Name="value" Type="self.buzz" />
-</ComplexType>
-
-      <EntityType Name="fooTemplate">
-        <Key>
-          <PropertyRef Name="id" />
-        </Key>
-        <Property Name="id" Type="Edm.String" Nullable="false" />
-        <Property Name="fizz" Type="self.fizzTemplateProperty" />
-        <Property Name="buzz" Type="self.buzzTemplateProperty" />
-      </EntityType>
-```
-
-
-```http
-POST /fooTemplates
-{
-  "fizz": {
-    "@odata.type": "#self.fizzTemplateProperty",
-	"value": {
-	  // fizz properties here
-	}
-  }
-}
-
-HTTP/1.1 201 Created
-Location: /fooTemplates/{templateId1}
-
-{
-  "id": "{templateId1}",
-  "fizz": {
-    "@odata.type": "#self.fizzTemplateProperty",
-	"value": {
-	  // fizz properties here
-	}
-  },
-  "buzz": {
-    "@odata.type": "#self.notProvidedTemplateProperty"
-  }
-}
-```
-
-```xml
-<Action Name="create" IsBound="true">
-  <Parameter Name="bindingParameter" Type="Collection(self.fooTemplate)" Nullable="false" />
-  <Parameter Name="foo" Type="self.foo" Nullable="false" />
-  <ReturnType Type="self.fooTemplate" />
-</Action>
-```
-
-```http
-POST /fooTemplates/create
-{
-  "foo": {
-    "fizz": {
-	  // fizz properties here
-	}
-  }
-}
-
-HTTP/1.1 201 Created
-Location: /fooTemplates/{templateId1}
-
-{
-  "id": "{templateId}",
-  "fizz": {
-    "@odata.type": "#self.fizzTemplateProperty",
-	"value": {
-	  // fizz properties here
-	}
-  },
-  "buzz": {
-    "@odata.type": "#self.notProvidedTemplateProperty"
-  }
-}
-```
-
-### TODO end of scratch pad
 
 
 
 
 
-//// TODO do you want to talk about "non-provided" properties? if `fizz` isn't in the template creation, it becomes `null`; do we need a way to say "don't use `fizz` when creating the instance from the template"?
+
+
+
 //// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
 //// TODO templates are just a new constructor overload
-//// TODO managing templates
 
 ## When to use this pattern
 
