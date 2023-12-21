@@ -1,12 +1,12 @@
-#  Naming guidelines
+#  Naming 
 ##  1. Approach
 Naming policies should aid developers in discovering functionality without having to constantly refer to documentation.
 Use of common patterns and standard conventions greatly aids developers in correctly guessing common property names and meanings.
-Services SHOULD use verbose naming patterns and SHOULD NOT use abbreviations other than acronyms that are the dominant mode of expression in the domain being represented by the API, (e.g. Url).
+Services SHOULD use verbose naming patterns and MUST NOT use abbreviations other than acronyms that are the dominant mode of expression in the domain being represented by the API, (e.g. Url).
 
 ##  2. Casing
 - Acronyms SHOULD follow the casing conventions as though they were regular words (e.g. Url).
-- All identifiers including namespaces, entityTypes, entitySets, properties, actions, functions and enumeration values SHOULD use lowerCamelCase.
+- All identifiers including namespaces, entityTypes, entitySets, properties, actions, functions and enumeration values MUST use lowerCamelCase.
 - HTTP headers are the exception and SHOULD use standard HTTP convention of Capitalized-Hyphenated-Terms.
 
 ##  3. Names to avoid
