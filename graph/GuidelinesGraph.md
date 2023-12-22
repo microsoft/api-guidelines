@@ -269,7 +269,7 @@ For an additional list of standard HTTP methods, see the [RFC7230](https://www.r
 
 ### Error handling
 
- To improve API traceability and consistency you MUST use the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service:
+ To improve API traceability and consistency you MUST use the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service. The value for the "message" name/value pair MUST be a human-readable representation of the error, tailored to provide enough information for the developer to understand the error and take appropriate action. The message is intended only as an aid to developers and should not be exposed to end users.
 
 ```http
 {
@@ -278,8 +278,7 @@ For an additional list of standard HTTP methods, see the [RFC7230](https://www.r
     "message": "Cannot process the request because a required field is missing.",
     "target": "query",    
     "innererror":{
-      "code": "requiredFieldMissing",
-      "message": "A required field is missing.",                  
+      "code": "requiredFieldMissing"             
      }
 }
 ```
@@ -304,10 +303,9 @@ The top-level error code MUST match the HTTP response status code description, c
     {
       "error": {
         "code": "badRequest",
-        "message": "Cannot process the request because it is malformed or incorrect.",
+        "message": "Cannot process the request because a required field is missing.",
         "innererror": {
-          "code": "requiredFieldOrParameterMissing",
-          "message": "A required field or parameter is missing.",               
+          "code": "requiredFieldOrParameterMissing"                   
         }
       }
     }
@@ -320,7 +318,7 @@ The top-level error code MUST match the HTTP response status code description, c
 | :heavy_check_mark: **MUST** return a 429 Too Many Requests error when the client exceeded throttling limits, and a 503 Service Unavailable error when the service overloaded but the client is within throttling limits.|
 | :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 error would result in information disclosure. |
 
-For additional guidance, see [Error condition responses article](./articles/errorResponses.md).
+For more detailed guidance, see the article on [Error condition responses](./articles/errorResponses.md).
 
 For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
