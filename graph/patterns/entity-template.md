@@ -294,7 +294,7 @@ Location: /foos/{fooId4}
 
 
 
-//// TODO make sure you know how to implement this in webapi
+//// TODO make sure you know how to implement this in webapi - https://github.com/OData/AspNetCoreOData/tree/corranrogue9/instanceannotation
 //// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
 //// TODO templates are just a new constructor overload
 
