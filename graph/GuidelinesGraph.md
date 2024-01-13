@@ -345,25 +345,25 @@ In general, making all but additive changes to the API contract for existing ele
 
 **Non-breaking changes:**
 
-- To add properties that are nullable or have a default value
+- To add properties that are nullable or have a default value //// TODO this sort of contradicts the nullable=false point below; also we should make clear that defaults don't necessarily have to come from the csdl
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
-- Adding or removing an annotation OpenType="true"
+- Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
 
 **Breaking changes:**
 
 - Changing the URL or fundamental request/response associated with a resource
-- Removing, renaming, or changing an incompatible type of a declared property
+- Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
 - Adding Nullable="false" properties to existing types
-- Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions
+- Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions //// TODO null doesn't always mean the same thing as "default"; would action overloads be more appropriate for these cases?
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
-- Changing top-level error codes
-- Introducing server-side pagination to existing collections
+- Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
+- Introducing server-side pagination to existing collections //// TODO do we have an established pattern to introduce server-side pagination to existing collections?
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
 
 The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
