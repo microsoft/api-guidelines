@@ -351,6 +351,8 @@ In general, making all but additive changes to the API contract for existing ele
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
 - Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
+//// TODO add notes that introducing type hierarchies aren't breaking changes?
+//// TODO add notes that returning new derived tpyes in a collection are/aren't breaking changes?
 
 **Breaking changes:**
 
