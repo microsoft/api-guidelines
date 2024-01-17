@@ -355,7 +355,34 @@ In general, making all but additive changes to the API contract for existing ele
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
 - Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
-//// TODO add notes that introducing type hierarchies aren't breaking changes?
+//// sdk:
+//// removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
+//// removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
+
+//// TODO differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break
+//// TODO this doc should be about the rest api and not necessarily about the sdk (maybe a different doc for those? that's a whole other topic though)
+
+PATCH /someEntity
+{
+  "foo": "...",
+  "dynamicProperty": "..."
+}
+
+
+PATCH /someEntity
+{
+  "foo": "...",
+  "dynamicProperty": "..."
+}
+//// whenever you close an open type, all dyanmic properties should be schematized
+
+
+//// TODO add notes that expanding type hierarchies aren't breaking changes? 
+//// ^ sdks can have issues
+
+
+//// TODO this is where we left off
+//// TODO add notes that base types type hierarchies aren't breaking changes?
 //// TODO add notes that returning new derived tpyes in a collection are/aren't breaking changes?
 
 **Breaking changes:**
