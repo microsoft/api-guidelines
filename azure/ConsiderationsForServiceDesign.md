@@ -1,6 +1,7 @@
 # Considerations for Service Design
 
-<!-- cspell:ignore autorest, etag, idempotency -->
+<!-- cspell:ignore autorest, etag, idempotency, maxpagesize, openapi -->
+<!-- markdownlint-disable MD033 -->
 
 ## History
 
@@ -23,11 +24,11 @@ Azure Service teams should engage the Azure HTTP/REST Stewardship Board early in
 
 It is critically important to design your service to avoid disrupting users as the API evolves:
 
-:white_check_mark: **DO** implement API versioning starting with the very first release of the service.
+<a href="#principles-api-versioning" name="principles-api-versioning">:white_check_mark:</a> **DO** implement API versioning starting with the very first release of the service.
 
-:white_check_mark: **DO** ensure that customer workloads never break
+<a href="#principles-compatibility" name="principles-compatibility">:white_check_mark:</a> **DO** ensure that customer workloads never break
 
-:white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
+<a href="#principles-backward-compatibility" name="principles-backward-compatibility">:white_check_mark:</a> **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
 
 ## Azure Management Plane vs Data Plane
 _Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review._
@@ -63,27 +64,27 @@ _For this reason, it is **much better** to ship with fewer features and only add
 
 Focusing on hero scenarios reduces development, support, and maintenance costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A telltale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another.
 
-:white_check_mark: **DO** define "hero scenarios" first including abstractions, naming, relationships, and then define the API describing the operations required
+<a href="#hero-scenarios-design" name="hero-scenarios-design">:white_check_mark:</a> **DO** define "hero scenarios" first including abstractions, naming, relationships, and then define the API describing the operations required.
 
-:white_check_mark: **DO** provide example code demonstrating the "Hero Scenarios"
+<a href="#hero-scenarios-examples" name="hero-scenarios-examples">:white_check_mark:</a> **DO** provide example code demonstrating the "Hero Scenarios".
 
-:white_check_mark: **DO** consider how your abstractions will be represented in different high-level languages.
+<a href="#hero-scenarios-high-level-languages" name="hero-scenarios-high-level-languages">:white_check_mark:</a> **DO** consider how your abstractions will be represented in different high-level languages.
 
-:white_check_mark: **DO** develop code examples in at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#) to illustrate your abstractions and high-level language representations.
+<a href="#hero-scenarios-hll-examples" name="hero-scenarios-hll-examples">:white_check_mark:</a> **DO** develop code examples in at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#) to illustrate your abstractions and high-level language representations.
 
-:no_entry: **DO NOT** proactively add APIs for speculative features customers might want
+<a href="#hero-scenarios-yagni" name="hero-scenarios-yagni">:no_entry:</a> **DO NOT** proactively add APIs for speculative features customers might want.
 
 ### Start with your API Definition
 Understanding how your service is used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It reflects the abstractions & naming decisions and makes it easy for developers to implement the hero scenarios.
 
-:white_check_mark: **DO** create an [OpenAPI Definition](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
+<a href="#openapi-description" name="openapi-description">:white_check_mark:</a> **DO** create an [OpenAPI description](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) for the service API. The OpenAPI description is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of service APIs.
 
 ## Design for Change Resiliency
 As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
 
-:ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
+<a href="#resiliency-enums" name="resiliency-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
 
-:ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
+<a href="#resiliency-conditional-requests" name="resiliency-conditional-requests">:ballot_box_with_check:</a> **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
 ## Use Good Names
 
@@ -99,43 +100,43 @@ Use common patterns and standard conventions to aid developers in correctly gues
 Use verbose naming patterns and avoid abbreviations other than
 well-known acronyms in your service domain.
 
-:heavy_check_mark: **DO** use the same name for the same concept and different names for different concepts wherever possible.
+<a href="#naming-consistency" name="naming-consistency">:white_check_mark:</a> **DO** use the same name for the same concept and different names for different concepts wherever possible.
 
 ### Recommended Naming Conventions
 
 The following are recommended naming conventions for Azure services:
 
-:heavy_check_mark: **DO** name collections as plural nouns or plural noun phrases using correct English.
+<a href="#naming-collections" name="naming-collections">:white_check_mark:</a> **DO** name collections as plural nouns or plural noun phrases using correct English.
 
-:heavy_check_mark: **DO** name values that are not collections as singular nouns or singular noun phrases.
+<a href="#naming-values" name="naming-values">:white_check_mark:</a> **DO** name values that are not collections as singular nouns or singular noun phrases.
 
-:ballot_box_with_check: **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
+<a href="#naming-adjective-before-noun" name="naming-adjective-before-noun">:ballot_box_with_check:</a> **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
 
 For example, `collectedItems` not `itemsCollected`
 
-:ballot_box_with_check: **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
+<a href="#naming-acronym-case" name="naming-acronym-case">:ballot_box_with_check:</a> **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
 
 For example, `nextUrl` not `nextURL`.
 
-:ballot_box_with_check: **YOU SHOULD** use an "At" suffix in names of `date-time` values.
+<a href="#naming-date-time" name="naming-date-time">:ballot_box_with_check:</a> **YOU SHOULD** use an "At" suffix in names of `date-time` values.
 
 For example, `createdAt` not `created` or `createdDateTime`.
 
-:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
+<a href="#naming-include-units" name="naming-include-units">:ballot_box_with_check:</a> **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
-:ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
+<a href="#naming-duration" name="naming-duration">:ballot_box_with_check:</a> **YOU SHOULD** use an int for time durations and include the time units in the name.
 
 For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
-:warning: **YOU SHOULD NOT** use brand names in resource or property names.
+<a href="#naming-brand-names" name="naming-brand-names">:warning:</a> **YOU SHOULD NOT** use brand names in resource or property names.
 
-:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
+<a href="#naming-avoid-acronyms" name="naming-avoid-acronyms">:warning:</a> **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
 
-:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
+<a href="#naming-avoid-reserved-words" name="naming-avoid-reserved-words">:warning:</a> **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
 
-:no_entry: **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
+<a href="#naming-boolean" name="naming-boolean">:no_entry:</a> **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
 
-:no_entry: **DO NOT** use redundant words in names.
+<a href="#naming-avoid-redundancy" name="naming-avoid-redundancy">:no_entry:</a> **DO NOT** use redundant words in names.
 
 For example, `/phones/number` and not `phone/phoneNumber`.
 
@@ -153,22 +154,22 @@ The following are recommended names for properties that match the associated des
 
 ### `name` vs `id`
 
-:heavy_check_mark: **DO** use "Id" suffix for the name of the identifier of a resource.
+<a href="#naming-name-vs-id" name="naming-name-vs-id">:white_check_mark:</a> **DO** use "Id" suffix for the name of the identifier of a resource.
 
 This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
 
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
-:ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
+<a href="#previews-hypotheses" name="previews-hypotheses">:ballot_box_with_check:</a> **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
 
-:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.
+<a href="#previews-at-least-two" name="previews-at-least-two">:ballot_box_with_check:</a> **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.
 
-:ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
+<a href="#previews-key-scenarios" name="previews-key-scenarios">:ballot_box_with_check:</a> **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
 
-:ballot_box_with_check: **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
+<a href="#previews-code-with" name="previews-code-with">:ballot_box_with_check:</a> **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
 
-:ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
+<a href="#previews-share-results" name="previews-share-results">:ballot_box_with_check:</a> **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
 ## Communicate Deprecations
 As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
@@ -187,12 +188,12 @@ Collections are another common area of friction for developers. It is important 
 
 An important consideration when defining a new service is support for pagination.
 
-:ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands. See [Collections](./Guidelines.md#collections) for specific guidance.
+<a href="#support-paging" name="support-paging">:ballot_box_with_check:</a> **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands. See [Collections](./Guidelines.md#collections) for specific guidance.
 
 Another consideration for collections is support for sorting the set of returned items with the _orderby_ query parameter.
 Sorting collection results can be extremely expensive for a service to implement as it must retrieve all items to sort them. And if the operation supports paging (which is likely), then a client request to get another page may have to retrieve all items and sort them again to determine which items are on the desired page.
 
-:heavy_check_mark: **YOU MAY** support `orderby` if customer scenarios really demand it and the service is confident that it can support it in perpetuity (even if the backing storage service changes someday).
+<a href="#paging-orderby" name="paging-orderby">:heavy_check_mark:</a> **YOU MAY** support `orderby` if customer scenarios really demand it and the service is confident that it can support it in perpetuity (even if the backing storage service changes someday).
 
 Another important design pattern for avoiding surprises is idempotency. An operation is idempotent if it can be performed multiple times and have the same result as a single execution.
 HTTP requires certain operations like GET, PUT, and DELETE to be idempotent, but for cloud services it is important to make _all_ operations idempotent so that clients can use retry in failure scenarios without risk of unintended consequences.
