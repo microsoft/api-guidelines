@@ -802,7 +802,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
+<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
 <a href="#deprecation" name="deprecation"></a>
 ### Deprecating Behavior Notification
