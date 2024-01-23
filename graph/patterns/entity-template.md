@@ -95,6 +95,8 @@ Location: /foos/{fooId1}
 }
 ```
 
+You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/e9422d6a520112c1f1467828bf0eb0c7e46ccff1).
+
 ### Add a new property to an existing entity and update its associated template entity
 
 A property `frob` may be added to the `foo` entity:
@@ -107,7 +109,7 @@ A property `frob` may be added to the `foo` entity:
 
 Likely, clients will want an analogous property on the `fooTemplate`.
 Because the default value of such a property on `foo` is ambiguous (the default may be `null`, some static value, or a service-generated value only known based on the overall state at runtime), the `fooTemplate` needs a clear way to indicate whether a value was specified for the `frob` property.
-This is done with the use of the `notProvided` instance annotation. //// TODO link to docs about instance annotations, and figure out the correct name for "notProvided"
+This is done with the use of the `notProvided` instance annotation.
 `frob` will be defined on `fooTemplate` as usual:
 ```xml
 <EntityType Name="fooTemplate">
@@ -294,11 +296,7 @@ Location: /foos/{fooId4}
 }
 ```
 
-
-
-//// TODO make sure you know how to implement this in webapi - https://github.com/OData/AspNetCoreOData/tree/corranrogue9/instanceannotation
-//// TODO establish a general pattern for actions bound to an entity collection where the actions are different constructor overloads; the "original" overload is still just a post to the collection
-//// TODO templates are just a new constructor overload
+You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/84b23c5f81fecd90b0d8f5ae74292896d22663d0).
 
 ## When to use this pattern
 
