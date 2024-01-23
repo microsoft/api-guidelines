@@ -1,4 +1,5 @@
 TODO go through the code TODOs
+TODO double check any updates to the CSDL with this branch: https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/pullrequest/9262077
 
 # Entity template
 
