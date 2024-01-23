@@ -1,3 +1,5 @@
+TODO go through the code TODOs
+
 # Entity template
 
 Microsoft Graph API Design Pattern
