@@ -104,6 +104,7 @@ Following is a short summary of the most often used conventions.
 | **CASING** | |
 | :heavy_check_mark: **MUST** use lower camel case for *all* names and namespaces.   | - **Right:** automaticRepliesStatus <BR> - **Wrong:** kebab-case or snake_case |
 | :ballot_box_with_check: **SHOULD** case two-letter acronyms with the same case.   | - **Right:** ioLimit or totalIOAmount <BR> - **Right:** 'id' properties similar to driveId or applicationId <BR> - **Wrong:** iOLimit or totalIoAmount|
+| :ballot_box_with_check: **SHOULD** case `id` properties the same as a normal word.   | - **Right:** id or fileId <BR> - **Wrong:** ID or fileID |
 | :ballot_box_with_check: **SHOULD** case three+ letter acronyms the same as a normal word.  | - **Right:** fidoKey or oauthUrl <BR> - **Wrong:** webHTML |
 | :no_entry: **MUST NOT** capitalize the word following a [prefix](https://www.thoughtco.com/common-prefixes-in-english-1692724) or words within a [compound word](http://www.learningdifferences.com/Main%20Page/Topics/Compound%20Word%20Lists/Compound_Word_%20Lists_complete.htm).                                     | - **Right:** subcategory, geo coordinate, or crosswalk <BR> - **Wrong:** metaData, semiCircle, or airPlane |
 | :heavy_check_mark: **MUST** capitalize within hyphenated and open (spaced) compound words. | - **Right:** fiveYearOld, daughterInLaw, or postOffice <BR> - **Wrong:** paperclip or fullmoon |
@@ -115,6 +116,13 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR> - **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
 | :no_entry: **MUST NOT** contain  product names.  | - **Right:** chatMessages <BR> - **Wrong:** teamsMessages |
+
+#### Tree and graph structures
+
+When a tree or graph structure is being modeled, the direct sub-nodes are usually named `children` or `members`. 
+If a property is desired that represents a "flattened" data structure, the property **SHOULD** be prefixed with "transitive", e.g. `transitiveChildren` or `transitiveMembers`.
+Such properties **MUST** represent a mathematically [transitive relationship](https://en.wikipedia.org/wiki/Transitive_relation). 
+To simplify, if `A` is a child of `B` and `B` is a child of `C`, then `A` is a child of `C` via a transitive relationship; this **MUST** be true for properties using word "transitive" in their name.
 
 ### Uniform Resource Locators (URLs)
 
