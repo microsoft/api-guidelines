@@ -1,3 +1,1 @@
-# These are the set of folks who should review PRs on the azureRestUpdates branch.
-* @microsoft/azure-api-stewardship-board @Azure/api-stewardship-board
-/graph/* @microsoft/graphguidelinesapprovers
+/graph/ @microsoft/graphguidelinesapprovers
