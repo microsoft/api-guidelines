@@ -58,4 +58,4 @@ POST /identityProtection/riskyUsers/filter(expression='id IN (''{userId1}'',''{u
 
 NOTE: the `'` literal in the filter expression must be escaped with `''`
 
-An example implementation of a filter function can be found [here](TODO).
+An example implementation of a filter function using OData WebApi can be found [here](TODO).
