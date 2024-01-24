@@ -6,7 +6,7 @@ For example, the `riskyUsers` API on Microsoft Graph has an action defined to le
 
 ```xml
 <Action Name="dismiss" IsBound="true">
-  <Parameter Name="bindingParameter" Type="Collection(self.riskyUser)" />
+  <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.riskyUser)" />
   <Parameter Name="userIds" Type="Collection(Edm.String)" />
 </Action>
 ```
@@ -32,10 +32,10 @@ in order to dismiss the risky users with the provided IDs. Using the filter-as-s
 </Action>
 ```
 
-and clients could call:
+and clients could call
 
 ```http
-POST /identityProtection/riskyUsers/$filter=@f/dismiss?@f=id IN ({userId1},{userId2},...)
+POST /identityProtection/riskyUsers/$filter=@f/dismiss?@f=id IN ('{userId1}','{userId2}',...)
 ```
 
 Doing this is beneficial due to the robust nature of OData filter expressions: clients will be able to dismiss risky users based on any supported filter without the service team needing to implement a new `dismiss` overload that filters based on the new criteria.
@@ -43,9 +43,15 @@ However, there are some concerns about the discoverability of using the filter-a
 As a result, functions should be introduced that act in the same way as the filter-as-segment:
 
 ```xml
-<Function Name="userFilter" IsBound="true" IsComposable="true">
-  <Parameter Name="bindingParameter" Type="Collection(Microsoft.DirectoryServices.user)" Nullable="false" />
+<Function Name="filter" IsBound="true" IsComposable="true">
+  <Parameter Name="bindingParameter" Type="Collection(microsoft.graph.riskyUser)" Nullable="false" />
   <Parameter Name="expression" Type="Edm.String" Nullable="false" />
-  <ReturnType Type="Collection(Microsoft.DirectoryServices.user)" />
+  <ReturnType Type="Collection(microsoft.graph.riskyUser)" />
 </Function>
+```
+
+Clients would now be able to call
+
+```http
+POST /identityProtection/riskyUsers/filter(expression='id IN (''{userId1}'',''{userId2}'',...)')/dismiss
 ```
