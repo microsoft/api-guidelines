@@ -55,3 +55,7 @@ Clients would now be able to call
 ```http
 POST /identityProtection/riskyUsers/filter(expression='id IN (''{userId1}'',''{userId2}'',...)')/dismiss
 ```
+
+NOTE: the `'` literal in the filter expression must be escaped with `''`
+
+An example implementation of a filter function can be found [here](TODO).
