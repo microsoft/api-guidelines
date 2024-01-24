@@ -98,7 +98,7 @@ Location: /foos/{fooId1}
 }
 ```
 
-You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/e9422d6a520112c1f1467828bf0eb0c7e46ccff1).
+You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/d9fa5db0177e1ee8e71a87641ad097dae3ee5e5d).
 
 ### Add a new property to an existing entity and update its associated template entity
 
@@ -299,7 +299,7 @@ Location: /foos/{fooId4}
 }
 ```
 
-You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/84b23c5f81fecd90b0d8f5ae74292896d22663d0).
+You can find an example of how to implement this using OData WebApi [here](https://github.com/OData/AspNetCoreOData/commit/cf5583a5fd2c8acedf178df90d6dd6cab9820e62).
 
 ## When to use this pattern
 
