@@ -293,12 +293,12 @@ The operation is initiated with a POST operation and the operation path ends in 
 
 ```text
 POST /<service-or-resource-url>:<action>?api-version=2022-05-01
-Operation-Id: 22 
- 
-{ 
-   "arg1": 123 
-   "arg2": "abc" 
-} 
+Operation-Id: 22
+
+{
+   "arg1": 123
+   "arg2": "abc"
+}
 ```
 
 The response is a `202 Accepted` as described above.
@@ -306,7 +306,7 @@ The response is a `202 Accepted` as described above.
 ```text
 HTTP/1.1 202 Accepted
 Operation-Location: https://<status-monitor-endpoint>/22
- 
+
 {
    "id": "22",
    "status": "NotStarted"
@@ -323,7 +323,7 @@ When the operation completes successfully, the result (if there is one) will be 
 
 ```text
 HTTP/1.1 200 OK
- 
+
 {
    "id": "22",
    "status": "Succeeded",
@@ -344,7 +344,7 @@ PUT /items/FooBar&api-version=2022-05-01
 Operation-Id: 22
 
 {
-   "prop1": 555, 
+   "prop1": 555,
    "prop2": "something"
 }
 ```
@@ -358,13 +358,13 @@ The response may also include an `Operation-Location` header for backward compat
 If the resource supports ETags, the response may contain an `etag` header and possibly an `etag` property in the resource.
 
 ```text
-HTTP/1.1 201 Created 
+HTTP/1.1 201 Created
 Operation-Id: 22
 Operation-Location: https://items/operations/22
 etag: "123abc"
 
 {
-  "id": "FooBar", 
+  "id": "FooBar",
   "etag": "123abc",
   "prop1": 555,
   "prop2": "something"
@@ -381,7 +381,7 @@ When the additional processing completes, the status monitor will indicate if it
 
 ```text
 HTTP/1.1 200 OK
- 
+
 {
    "id": "22",
    "status": "Succeeded"
@@ -412,8 +412,8 @@ POST /<status-monitor-url>:cancel?api-version=2022-05-01
 A successful response to a control operation should be a `200 OK` with a representation of the status monitor.
 
 ```text
-HTTP/1.1 200 OK 
- 
+HTTP/1.1 200 OK
+
 {
    "id": "22",
    "status": "Canceled"
@@ -514,6 +514,61 @@ Clients can use ETags returned by the service to specify a _precondition_ for th
 For example, the client can specify an `If-Match` header with the last ETag value received by the client in an update request.
 The service processes the update only if the ETag value in the header matches the ETag of the current resource on the server.
 By computing and returning ETags for your resources, you enable clients to avoid using a strategy where the "last write always wins."
+
+## Returning String Offsets & Lengths (Substrings)
+
+Some Azure services return substring offset & length values within a string. For example, the offset & length within a string to a name, email address, or phone #.
+When a service response includes a string, the client's programming language deserializes that string into that language's internal string encoding. Below are the possible encodings and examples of languages that use each encoding:
+
+| Encoding    | Example languages |
+| -------- | ------- |
+| UTF-8 | Go, Rust, Ruby, PHP |
+| UTF-16 | JavaScript, Java, C# |
+| CodePoint (UTF-32) | Python |
+
+Because the service doesn't know what language a client is written in and what string encoding that language uses, the service can't return UTF-agnostic offset and length values that the client can use to index within the string. To address this, the service response must include offset & length values for all 3 possible encodings and then the client code must select the encoding it required by its language's internal string encoding.
+
+For example, if a service response needed to identify offset & length values for "name" and "email" substrings, the JSON response would look like this:
+
+```
+{
+  (... other properties not shown...)
+  "fullString": "(...some string containing a name and an email address...)",
+  "name": {
+    "offset": {
+      "utf8": 12,
+      "utf16": 10,
+      "codePoint":  4
+    },
+    "length": {
+      "uft8": 10,
+      "utf16": 8,
+      "codePoint":  2
+    }
+  },
+  "email": {
+    "offset": {
+      "utf8": 12,
+      "utf16": 10,
+      "codePoint":  4
+    },
+    "length": {
+      "uft8": 10,
+      "utf16": 8,
+      "codePoint":  4
+    }
+  }
+}
+```
+
+Then, the Go developer, for example, would get the substring containing the name using code like this:
+
+```
+   var response := client.SomeMethodReturningJSONShownAbove(...)
+   name := response.fullString[ response.name.offset.utf8 : response.name.offset.utf8 + response.name.length.utf8]
+```
+
+The service must calculate the offset & length for all 3 encodings and return them because clients find it difficult working with Unicode encodings and how to convert from one encoding to another. In other words, we do this to simplify client development and ensure customer success when isolating a substring.
 
 ## Getting Help: The Azure REST API Stewardship Board
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design.

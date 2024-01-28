@@ -16,6 +16,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
 | 2023-Apr-21 | Update/clarify guidelines on POST method repeatability         |
 | 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
@@ -438,7 +439,7 @@ This indicates to client libraries and customers that values of the enumeration 
 
 Polymorphism types in REST APIs refers to the possibility to use the same property of a request or response to have similar but different shapes. This is commonly expressed as a `oneOf` in JsonSchema or OpenAPI. In order to simplify how to determine which specific type a given request or response payload corresponds to, Azure requires the use of an explicit discriminator field.
 
-Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information. 
+Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information.
 
 <a href="#json-use-discriminator-for-polymorphism" name="json-use-discriminator-for-polymorphism">:white_check_mark:</a> **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
@@ -838,7 +839,7 @@ For example:
 ### Repeatability of requests
 
 Fault tolerant applications require that clients retry requests for which they never got a response, and services must handle these retried requests idempotently. In Azure, all HTTP operations are naturally idempotent except for POST used to create a resource and [POST when used to invoke an action](
-https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#performing-an-action). 
+https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#performing-an-action).
 
 <a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html) for POST operations to make them retriable.
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
@@ -1097,6 +1098,14 @@ While it may be tempting to use a revision/version number for the resource as th
 <a href="#condreq-weak-etags-allowed" name="condreq-weak-etags-allowed">:heavy_check_mark:</a> **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
 <a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_mark:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
+
+<a href="#substrings" name="substrings"></a>
+### Returning String Offsets & Lengths (Substrings)
+
+All string values in JSON are inherently Unicode and UTF-8 encoded, but clients written in a high-level programming language must work with strings in that language's string encoding, which may be UTF-8, UTF-16, or CodePoints (UTF-32).
+When a service response includes a string offset or length value, it should specify these values in all 3 encodings to simplify client development and ensure customer success when isolating a substring.
+
+<a href="#substrings-return-value-for-each-encoding" name="substrings-return-value-for-each-encoding">:white_check_mark:</a> **DO** include all 3 encodings (UTF-8, UTF-16, and CodePoint) for every string offset or length value in a service response.
 
 <a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
