@@ -394,6 +394,7 @@ PATCH /someEntity
 
 - Changing the URL or fundamental request/response associated with a resource
 - Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
+//// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
