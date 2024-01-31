@@ -56,7 +56,7 @@ The following example demonstrates defining a dictionary that can contain string
 ```
 
 Please note that schema validation will fail due to the casing of `Dictionary`.
-This warning should be suppressed.
+This warning should be suppressed. //// TODO file issue for this
 
 ### Defining a dictionary property
 The following example shows defining a dictionary property, "userTags", on the item entity type.
