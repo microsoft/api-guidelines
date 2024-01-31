@@ -350,6 +350,8 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
 
 - To add properties that are nullable or have a default value //// TODO this sort of contradicts the nullable=false point below; also we should make clear that defaults don't necessarily have to come from the csdl
+//// TODO non-nullable values aren't breaking if they have a server-provided default value
+//// TODO this is orthogonal to required for creation properties; link to the nullable doc
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
 - Changing the order of properties
