@@ -361,6 +361,9 @@ In general, making all but additive changes to the API contract for existing ele
 //// removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
 //// removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
 
+
+//// TODO adding new properties that are required for creation is breaking
+
 //// TODO differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break
 //// TODO this doc should be about the rest api and not necessarily about the sdk (maybe a different doc for those? that's a whole other topic though)
 
