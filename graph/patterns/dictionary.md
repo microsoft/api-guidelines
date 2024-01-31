@@ -41,13 +41,18 @@ For more information, see the [OData reference](https://github.com/oasis-tcs/oda
 The following example demonstrates defining a dictionary that can contain string values.
 
 ```xml
-<ComplexType Name="stringDictionary" BaseType="graph.Dictionary">
-  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
-    <Collection>
-      <String>Edm.String</String>
-    </Collection>
-  </Annotation>
-</ComplexType>
+<Schema Namespace="WorkloadNamespace">
+  <ComplexType Name="Dictionary" OpenType="true">
+    <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
+  </ComplexType>
+  <ComplexType Name="stringDictionary" BaseType="WorkloadNamespace.Dictionary">
+    <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
+      <Collection>
+        <String>Edm.String</String>
+      </Collection>
+    </Annotation>
+  </ComplexType>
+</Schema>
 ```
 
 ### Defining a dictionary property
