@@ -45,7 +45,7 @@ The following example demonstrates defining a dictionary that can contain string
   <ComplexType Name="Dictionary" OpenType="true">
     <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
   </ComplexType>
-  <ComplexType Name="stringDictionary" BaseType="WorkloadNamespace.Dictionary">
+  <ComplexType Name="stringDictionary" BaseType="WorkloadNamespace.Dictionary"> //// TODO does this need to be marked as an open type?
     <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
       <Collection>
         <String>Edm.String</String>
@@ -54,6 +54,9 @@ The following example demonstrates defining a dictionary that can contain string
   </ComplexType>
 </Schema>
 ```
+
+Please note that schema validation will fail due to the casing of `Dictionary`.
+This warning should be suppressed.
 
 ### Defining a dictionary property
 The following example shows defining a dictionary property, "userTags", on the item entity type.
