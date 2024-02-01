@@ -81,7 +81,7 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 
 ### Change tracking on entity set
 
-```
+```xml
 <Function Name="delta" IsBound="true">
         <Parameter Name="bindingParameter" Type="Collection(graph.user)" />
         <ReturnType Type="Collection(graph.user)" />
@@ -97,7 +97,7 @@ API consumers need guaranteed data integrity over the set of changes to Microsof
 
 ### Change tracking on navigation property
 
-```
+```xml
 <EntityType Name="educationRoot">
     <NavigationProperty Name="classes" Type="Collection(graph.educationClass)" ContainsTarget="true" />
     <NavigationProperty Name="me" Type="graph.educationUser" ContainsTarget="true" />
@@ -157,7 +157,7 @@ GET https://graph.microsoft.com/v1.0/communications/onlineMeetings/getAllRecordi
 
  Here after the initial delta call, a user resource is updated, and there is one user added to and one removed from that user’s directReports collection. Additionally, a second user is deleted. In this case, there are no further pages of change records currently available. For detailed sequence of requests see [Change Tracking](https://learn.microsoft.com/en-us/graph/delta-query-overview?tabs=http#use-delta-query-to-track-changes-in-a-resource-collection).
 
-```
+```http
 GET https://graph.microsoft.com/v1.0/users/delta?$skiptoken=pqwSUjGYvb3jQpbwVAwEL7yuI3dU1LecfkkfLPtnIjvB7XnF_yllFsCrZJ
 
 {
