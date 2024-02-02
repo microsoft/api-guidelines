@@ -360,20 +360,21 @@ option 2
 
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
-//// TODO gareth has mentioned that tooling relies on annotations, so these *should* be considered breaking changes
-//// TODO this is actually about instance annotations; this needs to be discussed further
-//// TODO follow up on both topics with gareth and mike
+/* TODO
+gareth has mentioned that tooling relies on annotations, so these *should* be considered breaking changes
+this is actually about instance annotations; this needs to be discussed further
+follow up on both topics with gareth and mike
 
 "foo@microsoft.old" //// removing this should not be allowed depending on if it was always being returned vs contextually returned vs etc
 "foo@microsoft.new" //// adding this should be allowed
-//// TODO overall, the instanace annotations thing shuold follow the same guidance as properties
-//// you can select instance annotations (if marked up this way), so removing even a contextually returned one is a break in those cases
 
-//// control information that was always returned by default should not be removed from the payload
-//// type of instance annotations should definitely not change (or should follow the other guidance)
+overall, the instanace annotations thing shuold follow the same guidance as properties
+you can select instance annotations (if marked up this way), so removing even a contextually returned one is a break in those cases
 
+control information that was always returned by default should not be removed from the payload
+type of instance annotations should definitely not change (or should follow the other guidance)
+*/
 
-//// TODO we should further discuss this same thing but about model annotations
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
 - Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
@@ -403,6 +404,7 @@ PATCH /someEntity
 //// TODO add notes that expanding type hierarchies aren't breaking changes? 
 //// ^ sdks can have issues
 
+//// TODO we should further discuss model annotations
 
 //// TODO this is where we left off
 //// TODO add notes that base types type hierarchies aren't breaking changes?
