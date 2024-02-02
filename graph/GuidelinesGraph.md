@@ -363,6 +363,7 @@ option 2
 - Adding a property that is marked with the `DefaultValue` attribute
 - Adding a property that has a service-provided default value (a suppression will be required in this case) 
 
+--end of options
 
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
