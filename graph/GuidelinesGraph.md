@@ -369,25 +369,9 @@ option 2
 - Adding new instance annotations to a response payload //// TODO link to docs
 - Adding control information to a response payload //// TODO link to docs
 - Removing an instance annotaiton from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
+- Removing control information from a response payload if the current behavior is that the control information is not always present in the response payload
 
 
-
-
-- Removing, renaming, or changing the type of annotation
-/* TODO
-gareth has mentioned that tooling relies on annotations, so these *should* be considered breaking changes
-this is actually about instance annotations; this needs to be discussed further
-follow up on both topics with gareth and mike
-
-"foo@microsoft.old" //// removing this should not be allowed depending on if it was always being returned vs contextually returned vs etc
-"foo@microsoft.new" //// adding this should be allowed
-
-overall, the instanace annotations thing shuold follow the same guidance as properties
-you can select instance annotations (if marked up this way), so removing even a contextually returned one is a break in those cases
-
-control information that was always returned by default should not be removed from the payload
-type of instance annotations should definitely not change (or should follow the other guidance)
-*/
 
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
@@ -404,6 +388,10 @@ type of instance annotations should definitely not change (or should follow the 
 
 **Breaking changes:**
 
+- Changing the type of an instance annotation
+- Removing an instance annotation from a response paylod if the annotation is selectable
+- Removing an instance annotaiton from a response payload if the current behavior is that the annotation is always present in the response payload
+- Removing control information from a response payload if the current behavior is that the control information is always present in the response payload
 - Adding a property that is required for the creation of the type it is defined on
 - Changing the URL or fundamental request/response associated with a resource
 - Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
