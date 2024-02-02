@@ -366,6 +366,13 @@ option 2
 
 
 - Adding a member after the sentinel member to an evolvable enumeration
+- Adding new instance annotations to a response payload //// TODO link to docs
+- Adding control information to a response payload //// TODO link to docs
+- Removing an instance annotaiton from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
+
+
+
+
 - Removing, renaming, or changing the type of annotation
 /* TODO
 gareth has mentioned that tooling relies on annotations, so these *should* be considered breaking changes
