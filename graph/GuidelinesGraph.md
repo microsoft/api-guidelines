@@ -382,8 +382,6 @@ option 2
 //// removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
 
 
-//// TODO adding new properties that are required for creation is breaking
-
 //// TODO differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break
 //// TODO this doc should be about the rest api and not necessarily about the sdk (maybe a different doc for those? that's a whole other topic though)
 
@@ -412,6 +410,7 @@ PATCH /someEntity
 
 **Breaking changes:**
 
+- Adding a property that is required for the creation of the type it is defined on
 - Changing the URL or fundamental request/response associated with a resource
 - Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
 //// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
