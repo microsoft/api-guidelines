@@ -349,6 +349,12 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
 
+/*TODO sdk breaks
+differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
+removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
+removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
+*/
+
 option 1
 - Adding a property that has a default value (NOTE: a new property that is marked `Nullable="false"` and does not have a `DefaultValue` attribute specified may still have a service-provided default value, though a suppression will be required in this case; also note that [nullability and default values are orthogonal](https://github.com/microsoft/api-guidelines/blob/corranrogue9/breakingchanges/graph/articles/nullable.md) to properties that are required for creation)
 
@@ -378,13 +384,10 @@ type of instance annotations should definitely not change (or should follow the 
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
 - Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
-//// sdk:
-//// removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
-//// removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
 
 
-//// TODO differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break
-//// TODO this doc should be about the rest api and not necessarily about the sdk (maybe a different doc for those? that's a whole other topic though)
+
+
 
 PATCH /someEntity
 {
