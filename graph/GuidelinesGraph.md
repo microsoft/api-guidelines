@@ -349,9 +349,15 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
 
-- To add properties that are nullable or have a default value //// TODO this sort of contradicts the nullable=false point below; also we should make clear that defaults don't necessarily have to come from the csdl
-//// TODO non-nullable values aren't breaking if they have a server-provided default value
-//// TODO this is orthogonal to required for creation properties; link to the nullable doc
+option 1
+- Adding a property that has a default value (NOTE: a new property that is marked `Nullable="false"` and does not have a `DefaultValue` attribute specified may still have a service-provided default value, though a suppression will be required in this case; also note that [nullability and default values are orthogonal](https://github.com/microsoft/api-guidelines/blob/corranrogue9/breakingchanges/graph/articles/nullable.md) to properties that are required for creation)
+
+option 2
+- Adding a property that is marked `Nullable="true"`
+- Adding a property that is marked with the `DefaultValue` attribute
+- Adding a property that has a service-provided default value (a suppression will be required in this case) 
+
+
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
 //// TODO gareth has mentioned that tooling relies on annotations, so these *should* be considered breaking changes
