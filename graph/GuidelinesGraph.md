@@ -383,9 +383,9 @@ type of instance annotations should definitely not change (or should follow the 
 
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
-- Adding or removing an annotation OpenType="true" //// isn't closing a type a breaking change for write APIs?
-
-
+- Adding the `OpenType="true"` attribute
+- Removing the `OpenType="true"` attribute for read-only APIs
+- Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
 
 
 
