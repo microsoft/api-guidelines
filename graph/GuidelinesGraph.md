@@ -353,6 +353,7 @@ In general, making all but additive changes to the API contract for existing ele
 differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
 removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
 removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
+sdks can have issues with expanding type hierarchies
 */
 
 option 1
@@ -361,9 +362,8 @@ option 1
 option 2
 - Adding a property that is marked `Nullable="true"`
 - Adding a property that is marked with the `DefaultValue` attribute
-- Adding a property that has a service-provided default value (a suppression will be required in this case) 
+- Adding a property that has a service-provided default value (a suppression will be required in this case)
 
---end of options
 
 - Adding a member after the sentinel member to an evolvable enumeration
 - Removing, renaming, or changing the type of annotation
@@ -389,28 +389,9 @@ type of instance annotations should definitely not change (or should follow the 
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
 
 
-
-PATCH /someEntity
-{
-  "foo": "...",
-  "dynamicProperty": "..."
-}
-
-
-PATCH /someEntity
-{
-  "foo": "...",
-  "dynamicProperty": "..."
-}
-//// whenever you close an open type, all dyanmic properties should be schematized
-
-
-//// TODO add notes that expanding type hierarchies aren't breaking changes? 
-//// ^ sdks can have issues
-
-//// TODO we should further discuss model annotations
-
 //// TODO this is where we left off
+//// TODO we should further discuss model annotations
+//// TODO add notes that expanding type hierarchies aren't breaking changes
 //// TODO add notes that base types type hierarchies aren't breaking changes?
 //// TODO add notes that returning new derived tpyes in a collection are/aren't breaking changes?
 
