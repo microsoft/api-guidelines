@@ -364,27 +364,22 @@ option 2
 - Adding a property that is marked with the `DefaultValue` attribute
 - Adding a property that has a service-provided default value (a suppression will be required in this case)
 
-
 - Adding a member after the sentinel member to an evolvable enumeration
 - Adding new instance annotations to a response payload //// TODO link to docs
 - Adding control information to a response payload //// TODO link to docs
 - Removing an instance annotaiton from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
 - Removing control information from a response payload if the current behavior is that the control information is not always present in the response payload
-
-
-
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
 - Adding the `OpenType="true"` attribute
 - Removing the `OpenType="true"` attribute for read-only APIs
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
 
-
-//// TODO this is where we left off
-//// TODO we should further discuss model annotations
 //// TODO add notes that expanding type hierarchies aren't breaking changes
 //// TODO add notes that base types type hierarchies aren't breaking changes?
 //// TODO add notes that returning new derived tpyes in a collection are/aren't breaking changes?
+//// TODO this is where we left off
+//// TODO we should further discuss model annotations
 
 **Breaking changes:**
 
