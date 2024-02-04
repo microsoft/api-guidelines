@@ -1107,6 +1107,14 @@ When a service response includes a string offset or length value, it should spec
 
 <a href="#substrings-return-value-for-each-encoding" name="substrings-return-value-for-each-encoding">:white_check_mark:</a> **DO** include all 3 encodings (UTF-8, UTF-16, and CodePoint) for every string offset or length value in a service response.
 
+<a href="#substrings-return-value-structure" name="substrings-return-value-structure">:white_check_mark:</a> **DO** define every string offset or length value in a service response as an object with the following structure:
+
+| Property    | Type    | Required | Description |
+| ----------- | ------- | :------: | ----------- |
+| `utf8`      | integer | true     | The offset or length of the substring in UTF-8 encoding |
+| `utf16`     | integer | true     | The offset or length of the substring in UTF-16 encoding |
+| `codePoint` | integer | true     | The offset or length of the substring in CodePoint encoding |
+
 <a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
 Azure SDK client guidelines specify that client libraries must send telemetry data through the `User-Agent` header, `X-MS-UserAgent` header, and Open Telemetry.
