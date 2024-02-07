@@ -371,13 +371,85 @@ option 2
 - Removing control information from a response payload if the current behavior is that the control information is not always present in the response payload
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
-- Adding the `OpenType="true"` attribute
+- Adding the `OpenType="true"` attribute //// TODO remove this?  linnk to a place where we say you can't have open types; maybehave a non-recommending non-breaking changes
 - Removing the `OpenType="true"` attribute for read-only APIs
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
 
+
+//// TODO expanded type hierarchies are source or binary compatibility issues
 //// TODO add notes that expanding type hierarchies aren't breaking changes
+
+starting:
+
+foo
+  prop3
+  prop4
+
+bar : foo
+  prop1
+  prop2
+
+next release
+
+base
+  prop3
+
+foo : base
+  prop4
+
+bar : foo
+  prop1
+  prop2
+
+<Property Name="mycollection" Type="Collection(self.foo)" />
+->
+[
+  {
+    "prop3":
+    "prop4": 
+  }
+]
+
+TODO is it a break to add the below? the decision is that it is not a break
+TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner
+
+otherbar : foo
+  prop7
+  prop8
+
+
+
 //// TODO add notes that base types type hierarchies aren't breaking changes?
-//// TODO add notes that returning new derived tpyes in a collection are/aren't breaking changes?
+
+starting:
+
+foo
+  prop3
+  prop4
+
+bar : foo
+  prop1
+  prop2
+
+<Property Name="mycollection" Type="Collection(self.foo)" />
+
+next release
+
+foo
+
+intermediate : foo
+  prop3
+  prop4
+
+bar : intermediate
+  prop1
+  prop2
+
+<Property Name="mycollection" Type="Collection(self.intermediate)" /> //// TODo this is an sdk break
+
+
+
+
 //// TODO this is where we left off
 //// TODO we should further discuss model annotations
 
