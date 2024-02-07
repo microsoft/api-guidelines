@@ -93,6 +93,7 @@ For example, the following request:
 
 ```http
 POST https://graph.microsoft.com/beta/teamwork/devices
+```
 
 Would lead to a response indicating the location of the new collection item:
 
