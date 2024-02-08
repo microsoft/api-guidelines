@@ -376,16 +376,8 @@ option 2
 - Adding the `OpenType="true"` attribute //// TODO remove this?  linnk to a place where we say you can't have open types; maybehave a non-recommending non-breaking changes
 - Removing the `OpenType="true"` attribute for read-only APIs
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
-- Adding a new base type provided that no property `Type` attributes are changed
-
-
-
-TODO is it a break to add the below? the decision is that it is not a break
-TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner
-
-otherbar : foo
-  prop7
-  prop8
+- Adding a new base type to an existing type provided that no property `Type` attributes are changed
+- Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner
 
 
 
