@@ -355,6 +355,7 @@ differentiate between sdk vs rest breaking changes; also differentiate if client
 removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
 removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
 sdks can have issues with expanding type hierarchies
+adding a new base type (regardless of if referencing properties are changed)
 */
 
 option 1
@@ -375,41 +376,9 @@ option 2
 - Adding the `OpenType="true"` attribute //// TODO remove this?  linnk to a place where we say you can't have open types; maybehave a non-recommending non-breaking changes
 - Removing the `OpenType="true"` attribute for read-only APIs
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
+- Adding a new base type provided that no property `Type` attributes are changed
 
 
-//// TODO expanded type hierarchies are source or binary compatibility issues
-//// TODO add notes that expanding type hierarchies aren't breaking changes
-
-starting:
-
-foo
-  prop3
-  prop4
-
-bar : foo
-  prop1
-  prop2
-
-next release
-
-base
-  prop3
-
-foo : base
-  prop4
-
-bar : foo
-  prop1
-  prop2
-
-<Property Name="mycollection" Type="Collection(self.foo)" />
-->
-[
-  {
-    "prop3":
-    "prop4": 
-  }
-]
 
 TODO is it a break to add the below? the decision is that it is not a break
 TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner
