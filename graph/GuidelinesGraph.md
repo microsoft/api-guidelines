@@ -356,6 +356,7 @@ removing open type and don't schematize: the property will remain in the dynamic
 removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
 sdks can have issues with expanding type hierarchies
 adding a new base type (regardless of if referencing properties are changed)
+adding an intermediate type
 */
 
 option 1
@@ -376,43 +377,12 @@ option 2
 - Adding the `OpenType="true"` attribute //// TODO remove this?  linnk to a place where we say you can't have open types; maybehave a non-recommending non-breaking changes
 - Removing the `OpenType="true"` attribute for read-only APIs
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
-- Adding a new base type to an existing type provided that no property `Type` attributes are changed
+- Adding a new base type to an existing type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing type into the base type
 - Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner
-
-
-
-//// TODO add notes that base types type hierarchies aren't breaking changes?
-
-starting:
-
-foo
-  prop3
-  prop4
-
-bar : foo
-  prop1
-  prop2
-
-<Property Name="mycollection" Type="Collection(self.foo)" />
-
-next release
-
-foo
-
-intermediate : foo
-  prop3
-  prop4
-
-bar : intermediate
-  prop1
-  prop2
-
-<Property Name="mycollection" Type="Collection(self.intermediate)" /> //// TODo this is an sdk break
-
-
-
+- Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this include moving properties from the existing child type into the new base type
 
 //// TODO this is where we left off
+//// TODO during the last discussion, the above was said to require a change to the type attributes of properties; i don't think this is the case
 //// TODO we should further discuss model annotations
 
 **Breaking changes:**
