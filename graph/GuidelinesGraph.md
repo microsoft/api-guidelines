@@ -348,6 +348,7 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO merge rest guidelines into this
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
+//// TODO update verbiage of sdk vs api versions: https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707321601369?context=%7B%22contextType%22%3A%22chat%22%7D
 
 /*TODO sdk breaks
 differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
