@@ -531,7 +531,7 @@ Because the service doesn't know in what language a client is written and what s
 
 For example, if a service response needed to identify offset & length values for "name" and "email" substrings, the JSON response would look like this:
 
-```json
+```text
 {
   (... other properties not shown...)
   "fullString": "(...some string containing a name and an email address...)",
