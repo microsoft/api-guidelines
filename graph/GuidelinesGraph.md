@@ -379,7 +379,60 @@ option 2
 - Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
 - Adding a new base type to an existing type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing type into the base type
 - Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner; TODO follow up if this is an SDK break https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707412726923?context=%7B%22contextType%22%3A%22chat%22%7D
-- Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this include moving properties from the existing child type into the new base type
+- Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing child type into the new base type
+
+v1
+{
+foo
+  prop1
+  prop2
+
+bar : foo
+  prop3
+  prop4
+
+foos collection(foo)
+bars collection(bar)
+}
+
+v2
+{
+foo
+  prop1
+  prop2
+
+intermediate : foo //// TODO can't move prop2 to intermediate without a change to the foos collection
+  prop3
+
+bar : intermediate
+  prop4
+
+foos collection(foo)
+bars collection(bar)
+}
+
+v3
+{
+foo
+  prop1
+
+intermediate : foo
+  prop3
+  prop2
+
+bar : intermediate
+  prop4
+
+foos collection(intermediate)
+bars collection(bar)
+}
+
+POST .../foos
+{
+//// TODO this will now fail, it's a break
+  "@odata.type": "#...foo",
+}
+
 
 //// TODO this is where we left off
 //// TODO during the last discussion, the above was said to require a change to the type attributes of properties; i don't think this is the case
