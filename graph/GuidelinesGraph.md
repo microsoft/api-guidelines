@@ -436,6 +436,7 @@ POST .../foos
 
 //// TODO this is where we left off
 //// TODO during the last discussion, the above was said to require a change to the type attributes of properties; i don't think this is the case
+//// TODO examples of each of these?
 //// TODO we should further discuss model annotations
 
 **Breaking changes:**
@@ -457,6 +458,7 @@ POST .../foos
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 - Introducing server-side pagination to existing collections //// TODO do we have an established pattern to introduce server-side pagination to existing collections?
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
+//// TODO make clear any of the "add stuff to the type hierarchy" changes that *are* breaking? e.g. adding an intermediate type and changing a `Type` attribute (breaks clients that are currently using `@odata.type`), adding an intermediate type and moving a property from the base type to the new type, etc.?
 
 The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
 
