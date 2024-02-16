@@ -381,61 +381,7 @@ option 2
 - Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner; TODO follow up if this is an SDK break https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707412726923?context=%7B%22contextType%22%3A%22chat%22%7D
 - Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing child type into the new base type
 
-v1
-{
-foo
-  prop1
-  prop2
-
-bar : foo
-  prop3
-  prop4
-
-foos collection(foo)
-bars collection(bar)
-}
-
-v2
-{
-foo
-  prop1
-  prop2
-
-intermediate : foo //// TODO can't move prop2 to intermediate without a change to the foos collection
-  prop3
-
-bar : intermediate
-  prop4
-
-foos collection(foo)
-bars collection(bar)
-}
-
-v3
-{
-foo
-  prop1
-
-intermediate : foo
-  prop3
-  prop2
-
-bar : intermediate
-  prop4
-
-foos collection(intermediate)
-bars collection(bar)
-}
-
-POST .../foos
-{
-//// TODO this will now fail, it's a break
-  "@odata.type": "#...foo",
-}
-
-
 //// TODO this is where we left off
-//// TODO during the last discussion, the above was said to require a change to the type attributes of properties; i don't think this is the case
 //// TODO examples of each of these?
 //// TODO we should further discuss model annotations
 
@@ -458,6 +404,7 @@ POST .../foos
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 - Introducing server-side pagination to existing collections //// TODO do we have an established pattern to introduce server-side pagination to existing collections?
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
+//// TODO related to the below comment, do we really want to specify what are breaking changes? aren't we really just creating a contract with client developers saying what are acceptable changes so that they can code defensively for them? i understand that it will limit us/make this document invalid if we ever need to do something that's *not* enumerated (like a header or something), but if we don't take a strong stance on this, then what's the point of the doc at all?
 //// TODO make clear any of the "add stuff to the type hierarchy" changes that *are* breaking? e.g. adding an intermediate type and changing a `Type` attribute (breaks clients that are currently using `@odata.type`), adding an intermediate type and moving a property from the base type to the new type, etc.?
 
 The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
