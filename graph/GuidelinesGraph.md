@@ -349,6 +349,7 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
 //// TODO update verbiage of sdk vs api versions: https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707321601369?context=%7B%22contextType%22%3A%22chat%22%7D
+//// TODO we should further discuss model annotations? we will not document these as breaks today; we will kick this down the road for when we are using typespec and the annotations that graph is publishing are actually accurate
 
 /*TODO sdk breaks
 differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
@@ -370,7 +371,7 @@ option 2
 - Adding a member after the sentinel member to an evolvable enumeration
 - Adding new instance annotations to a response payload //// TODO link to docs
 - Adding control information to a response payload //// TODO link to docs
-- Removing an instance annotaiton from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
+- Removing an instance annotation from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
 - Removing control information from a response payload if the current behavior is that the control information is not always present in the response payload
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
@@ -381,9 +382,7 @@ option 2
 - Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner; TODO follow up if this is an SDK break https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707412726923?context=%7B%22contextType%22%3A%22chat%22%7D
 - Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing child type into the new base type
 
-//// TODO this is where we left off
-//// TODO examples of each of these?
-//// TODO we should further discuss model annotations
+//// TODO ahve a breaking change article that has samples, and in this doc have hihg level categories of brekaing changes
 
 **Breaking changes:**
 
