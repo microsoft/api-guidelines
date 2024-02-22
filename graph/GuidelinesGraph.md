@@ -395,7 +395,36 @@ option 2
 - Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
 //// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
 
-//// TODO actually come up with samples for the above
+<ComplexType Name="foo">
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.foo">
+</ComplexType>
+<ComplexType Name="bar" BaseType="self.intermediate">
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.intermediate" />
+</EntityType>
+
+GET /containers
+
+{
+  "value": [
+    {
+      "id": "{containerId1}",
+      "propName": {
+      }
+    }
+  ]
+}
+
+//// I don't really see how you can change the type of `propName`. If you make it `foo`, then any `intermediate`s that are returned now have an odata.type that clients need to check. If you make it `bar`, then `intermediate`s can no longer be returned; further, if you only ever returned `bar`s before, they now wouldn't have the `@odata.type`. 
+//// On the writing side of things, it seems like you could make `propName` into `foo`, except that now, previous requests would fail because they don't have `@odata.type` of `intermediate`. Changing it to `bar` would now prevent the `intermediate`s from being written entirely.
+//// Does anyone have examples of when change the `Type` attribute of a property is allowed?
 
 - Removing or renaming APIs or API parameters
 - Adding a required request header
