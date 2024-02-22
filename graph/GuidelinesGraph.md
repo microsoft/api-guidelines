@@ -432,6 +432,13 @@ GET /containers
 - Adding Nullable="false" properties to existing types
 - Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions //// TODO null doesn't always mean the same thing as "default"; would action overloads be more appropriate for these cases?
 
+nullable:
+commit - https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/commit/716416d651b4b0c835ae07840f1883532fff946c?refName=refs%2Fheads%2Fgdebruin%2Foptionalparameters&path=%2FWorkloads%2FMicrosoft.DirectoryServices%2Foverride%2Fschema-Review-beta.csdl&_a=compare
+build - https://msazure.visualstudio.com/One/_build/results?buildId=88052971&view=logs&j=15dfcb1a-0989-5cf6-3160-3e181e44de87&t=44b6206c-e047-57cb-8bd1-54146504f81b
+
+optional parameter:
+
+
 <Parameter Name="foo" Type="Edm.Int32" Nullable="true">
 </Parameter>
 
@@ -444,18 +451,26 @@ GET /containers
 //// TODO check linting rules are ok with this guidance before shipping it
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
-//// TODO 5xx can be changed to 4xx
+
+Redirects:
+2xx can be changed to 3xx //// TODO does everyone agree with this?
+4xx can be changed to 3xx //// TODO does everyone agree with this?
+5xx can be changed to 3xx //// TODO does everyone agree with this?
+
+Success:
+we've decided in the past that we can't change 200 to 202
+//// TODO can any other changes be made?
+
+Error:
+5xx can be changed to 4xx //// TODO does everyone agree with this?
 //// TODO cannot within the 4xx's
 //// can you change within 5xx's?
-//// clients should never code against 400 specifically; in these branches, they should check for *any* 4xx
+
+
 //// TODO do we want to require that innererrors remain the same?
-
-//// TODO have success, redirect, and error categories
-//// can't change 200 to 202
-
 //// TODO what about http status codes? the top-level error codes are expected to be the same as http status codes (is this guidance actually written?)
 
-//// TODO beginning the use of redirects should be ok
+
 - Introducing server-side pagination to existing collections //// TODO do we have an established pattern to introduce server-side pagination to existing collections?
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
 //// TODO related to the below comment, do we really want to specify what are breaking changes? aren't we really just creating a contract with client developers saying what are acceptable changes so that they can code defensively for them? i understand that it will limit us/make this document invalid if we ever need to do something that's *not* enumerated (like a header or something), but if we don't take a strong stance on this, then what's the point of the doc at all?
