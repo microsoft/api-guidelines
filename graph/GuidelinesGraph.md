@@ -439,7 +439,8 @@ commit - https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workload
 build - https://msazure.visualstudio.com/One/_build/results?buildId=88052971&view=logs&j=15dfcb1a-0989-5cf6-3160-3e181e44de87&t=44b6206c-e047-57cb-8bd1-54146504f81b
 
 optional parameter:
-
+commit - https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/commit/4715045eb3a38de22a1125c8f02d4d62ef495088?refName=refs%2Fheads%2Fgdebruin%2Foptionalparameters
+build - https://msazure.visualstudio.com/One/_build/results?buildId=88114937&view=logs&j=15dfcb1a-0989-5cf6-3160-3e181e44de87&t=44b6206c-e047-57cb-8bd1-54146504f81b
 
 <Parameter Name="foo" Type="Edm.Int32" Nullable="true">
 </Parameter>
