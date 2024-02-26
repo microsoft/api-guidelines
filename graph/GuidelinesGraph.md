@@ -426,6 +426,8 @@ GET /containers
 //// On the writing side of things, it seems like you could make `propName` into `foo`, except that now, previous requests would fail because they don't have `@odata.type` of `intermediate`. Changing it to `bar` would now prevent the `intermediate`s from being written entirely.
 //// Does anyone have examples of when change the `Type` attribute of a property is allowed?
 
+- Change the `Type` attribute of a property unless the property is read-only, the new `Type` is a derived type of the original `Type`, and the property now only returns instances of the new `Type` or its derived types
+
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
