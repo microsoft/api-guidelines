@@ -16,7 +16,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2024-Feb-17 | Updated LRO guidelines                                         |
+| 2024-Mar-17 | Updated LRO guidelines                                         |
 | 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
 | 2023-Apr-21 | Update/clarify guidelines on POST method repeatability         |
@@ -847,10 +847,10 @@ https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#perfo
 - Document the POST operation's support for the `Repeatability-First-Sent`, `Repeatability-Request-ID`, and `Repeatability-Result` headers in the API contract and documentation.
 - Any operation that does not support repeatability headers should return a 501 (Not Implemented) response for any request that contains valid repeatability request headers.
 
-<a href="#lro" name="lro"></a>
 ### Long-Running Operations (LROs)
+<a href="#lro" name="lro"></a>
 
-A _long-running operation (LRO)_ is typically an operation that should execute synchronously but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts the operation must execute asynchronously. For this pattern, the client initiates the operation on the service and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion. 
+A _long-running operation (LRO)_ is typically an operation that should execute synchronously but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts the operation must execute asynchronously. For this pattern, the client initiates the operation on the service and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion.
 
 LROs are always started by 1 logical client and may be be polled (have their status checked) by the same client, another client, or even multiple clients/browsers. An example would be a dashboard or portal that shows all the operations along with their status.  See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in Considerations for Service Design for an introduction to the design of long-running operations.
 
@@ -858,7 +858,7 @@ LROs are always started by 1 logical client and may be be polled (have their sta
 
 <a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO. If LRO update semantics are required, implement it using the [LRO POST action pattern](#lro-existing-resource) .
 
-## Patterns to Initiate a Long-Running Operation
+#### Patterns to Initiate a Long-Running Operation
 
 <a href="#lro-valid-inputs-synchronously" name="lro-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating an LRO operation to alert clients of errors early.
 
@@ -868,17 +868,20 @@ LROs are always started by 1 logical client and may be be polled (have their sta
 
 <a href="#lro-put-response-headers" name="lro-put-response-headers">:white_check_mark:</a> **DO** include response headers with any additional values needed for a [GET polling request](#lro-poll) to the status monitor (e.g. location).
 
-<a href="#lro-retry-after" name="lro-retry-after">:white_check_mark:</a> **DO** include a `retry-after` header in the response if the operation is not complete. The value of this header should be an integer number of seconds that the client should wait before polling the status monitor again.
+#### Create or replace operation with additional long-running processing
+<a href="#put-operation-with-additional-long-running-processing" name="put-operation-with-additional-long-running-processing"></a>
 
-<a href="#lro-create-init" name="lro-create-init">:white_check_mark:</a> **DO** use the following pattern when implementing an operation that creates a resource that takes time to initialize:<p>
-```
+<a href="#lro-create-init" name="lro-create-init">:white_check_mark:</a> **DO** use the following pattern when implementing an operation that creates or replaces a resource that involves additional long-running processing:
+
+```text
 PUT /UrlToResourceBeingCreated
 operation-id: <optionalStatusMonitorResourceId>`
 <JSON Resource in body>
 ```
 
-The response must look like this:<p>
-```
+The response must look like this:
+
+```text
 200 OK
 operation-id: <statusMonitorResourceId>
 operation-location: https://operations/<operation-id>
@@ -886,20 +889,34 @@ retry-after: <delay-seconds>    (if status not terminal)
 <JSON Resource in body>
 ```
 
-- PUT creates the resource immediately and returns but the initialization of the resource can take time to complete.
+The request and response body schemas must be identical and represent the resource.
 
-- The request & response body schemas must be identical & represent the resource.
+The PUT creates or replaces the resource immediately and returns but the additional long-running processing can take time to complete.
 
-  - The resource schema must contain an `initializationStatus` property indicating whether the initialization is `Running`, `Failed`, `Succeeded`, etc.
+For an idempotent PUT (same `operation-id` or same request body within some short time window), the service should return the same response as shown above.
 
-- This operation implicitly creates a status monitor resource and sets its `kind` property to something like `<ResourceType>Initializing`; for example `VMInitializing`.
+For a non-idempotent PUT, the service can choose to overwrite the existing resource (as if the resource were deleted) or the service can return `409-Conflict` with the error's code property indicated why this PUT operation failed.
 
-- The `operation-id` header allows the client to specify the status monitor's resource ID and is also used for retries/idempotency. If unspecified, the service may create an operation-id (typically a GUID) and return it via the `operation-id` and `operation-location` response headers; in this case the service must figure out how to deal with retries/idempotency.
+<a href="#lro-put-operation-id-request-header" name="lro-put-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
 
-  - For an idempotent PUT (same `operation-id` or same request body within some short time window), the service should return the same response as shown above.
+If the `Operation-Id` header is not specified, the service may create an operation-id (typically a GUID) and return it via the `operation-id` and `operation-location` response headers; in this case the service must figure out how to deal with retries/idempotency.
 
-  - For a non-idempotent PUT, the service can choose to overwrite the existing resource (as if the resource were deleted) or the service can return `409-Conflict` with the error's code property indicated why this PUT operation failed.
- 
+<a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
+
+<a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+
+<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
+
+<a href="#lro-put-returns-operation-id-header" name="lro-put-returns-operation-id-header">:white_check_mark:</a> **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
+
+<a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+
+#### DELETE LRO pattern
+
 <a href="#lro-delete" name="lro-delete">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO operation to delete a resource:<p>
 ```
 DELETE /UrlToResourceBeingDeleted
@@ -914,13 +931,18 @@ operation-location: https://operations/<operation-id>
 retry-after: <delay-seconds>    (if status not terminal)
 ```
 
-- If a request body is specified, return `400-Bad Request`.
+Consistent with non-LRO DELETE operations, if a request body is specified, return `400-Bad Request`.
 
-- Do not return a response body.
+<a href="#lro-delete-operation-id-request-header" name="lro-delete-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
-- This operation implicitly creates a status monitor resource and sets its `kind` property to something like `<ResourceType>Deleting`; for example `VMDeleting`.
+<a href="#lro-delete-operation-id-default-is-guid" name="lro-delete-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-- The `operation-id` header allows the client to specify the status monitor's resource ID and is also used for retries/idempotency. If unspecified, the service may create an operation-id (typically a GUID) and return it via the `operation-id` and `operation-location` response headers; in this case the service must figure out how to deal with retries/idempotency.
+<a href="#lro-delete-returns-202" name="lro-delete-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated.
+
+<a href="#lro-delete-returns-only-202" name="lro-delete-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
+
+#### LRO action on a resource pattern
+<a href="#post-or-delete-lro-pattern" name="post-or-delete-lro-pattern"></a><!-- Preserve old header link -->
 
 <a href="#lro-existing-resource" name="lro-existing-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action operating on an existing resource:<p>
 ```
@@ -938,17 +960,27 @@ retry-after: <delay-seconds>    (if status not terminal)
 <JSON Status Monitor Resource in body>
 ```
 
-- The request body identifies parameters required to execute the action.
+The request body contains information to be used to execute the action.
 
-- This operation implicitly creates a status monitor resource and sets its `kind` property to something like `<ResourceType><action>`; for example `VMRebooting`.
+For an idempotent POST (same `operation-id` and request body within some short time window), the service should return the same response as the initial request.
 
-- The response body must be the implicily created status monitor resource.
+For a non-idempotent POST, the service can treat the POST operation as idempotent (if performed within a short time window) or can treat the POST operation as initiating a brand new LRO action operation.
 
-- The `operation-id` header allows the client to specify the status monitor's resource ID and is also used for retries/idempotency. If unspecified, the service may create an operation-id (typically a GUID) and return it via the `operation-id` and `operation-location` response headers; in this case, the service must figure out how to deal with retries/idempotency.
+<a href="#lro-no-post-create" name="lro-no-post-create">:no_entry:</a> **DO NOT** use a long-running POST to create a resource -- use PUT as described above.
 
-  - For an idempotent POST (same `operation-id` or same request body within some short time window), the service should return the same response as shown above.
+<a href="#lro-operation-id-request-header" name="lro-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
-  - For a non-idempotent POST, the service can treat the POST operation as idempotent (if performed within a short time window) or can treat the POST operation as initiating a brand new LRO action operation.
+<a href="#lro-operation-id-default-is-guid" name="lro-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+
+<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
+
+<a href="#lro-returns-only-202" name="lro-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
+
+<a href="#lro-returns-status-monitor" name="lro-returns-status-monitor">:white_check_mark:</a> **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
+
+#### LRO action with no related resource pattern
 
 <a href="#lro-action-no-resource" name="lro-action-no-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action not related to a specific resource (such as a batch operation):<p>
 ```
@@ -969,10 +1001,13 @@ retry-after: <delay-seconds>    (if status not terminal)
 
 - The response body is the status monitor resource whose schema must be idential to the request's body.
 
-- The `operation-id` URL segment (not header) is *mandatory* forcing the client to specify the status monitor's resource ID and is also used for retries/idempotency. 
+- The `operation-id` URL segment (not header) is *mandatory* forcing the client to specify the status monitor's resource ID and is also used for retries/idempotency.
 
-## The Status Monitor Resource
-All patterns that initiate a LRO either implicitly or explicitly create a [Status Monitor resource](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) in the service's `operations` collection. A Status Monitor resource must look like this:
+#### The Status Monitor Resource
+
+All patterns that initiate a LRO either implicitly or explicitly create a [Status Monitor resource](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) in the service's `operations` collection.
+
+<a href="#lro-status-monitor-structure" name="lro-status-monitor-structure">:white_check_mark:</a> **DO** return a status monitor in the response body that conforms with the following structure:
 
 Property | Type        | Required | Description
 -------- | ----------- | :------: | -----------
@@ -985,27 +1020,39 @@ additional<br/>properties | | | Additional named or dynamic properties of the op
 
 - Because services can support different kinds of operations, status monitor resources in this collection *must be* polymorphic; the `kind` property indicates the kind of long-running operation.
 
-## Pattern to Poll a Long-Running Operation's Status
+#### Obtaining status and results of long-running operations
 
-<a href="#lro-poll" name="lro-poll">:white_check_mark:</a> **DO** use the following pattern to allow clients to poll the current state of a Status Monitor resource:<p>
+<a href="#lro-poll" name="lro-poll">:white_check_mark:</a> **DO** use the following pattern to allow clients to poll the current state of a Status Monitor resource:
+
 ```
 GET /operations/<operation-id>
 ```
 
-The response must look like this:<p>
+The response must look like this:
+
 ```
 200 OK
 retry-after: <delay-seconds>    (if status not terminal)
 <JSON Status Monitor Resource in body>
 ```
 
-<a href="#lro-poll-accepts-any-api-version" name="lro-poll-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the GET operation on the status monitor.
+<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+
+<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the GET operation on the status monitor.
 
   - Note: Clients may replace the value of `api-version` in the `operation-location` URL with a value appropriate for their application. Remember that the client initiating the LRO may not be the same client polling the LRO's status.
 
+<a href="#lro-status-monitor-includes-all-fields" name="lro-status-monitor-includes-all-fields">:white_check_mark:</a> **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
+
+<a href="#lro-status-monitor-post-action-result" name="lro-status-monitor-post-action-result">:white_check_mark:</a> **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
+
+<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not an action-type long-running operation.
+
+<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `retry-after` header in the response if the operation is not complete. The value of this header should be an integer number of seconds that the client should wait before polling the status monitor again.
+
 <a href="#lro-status-monitor-retention" name="lro-status-monitor-retention">:white_check_mark:</a> **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
-## Pattern to List Status Monitors (optional)
+#### Pattern to List Status Monitors (optional)
 
 <a href="#lro-list" name="lro-list">:white_check_mark:</a> **DO** use the following pattern to allow clients to list Status Monitor resources:<p>
 ```
@@ -1024,8 +1071,8 @@ The response must look like this:<p>
     "nextLink": "{opaqueUrl}"
 }
 ```
- - The values for the `kind` and `status` query parameters are logically OR'd together. 
- 
+ - The values for the `kind` and `status` query parameters are logically OR'd together.
+
    - The above example returns all status monitor resources whose `kind` is either "VMInitializing" *or* "VMRebooting" and whose status is "NotStarted" *or* "Succeeded".
 
 <a href="#byos" name="byos"></a>
