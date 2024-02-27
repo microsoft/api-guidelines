@@ -45,7 +45,7 @@ These guidelines apply to Azure service teams implementing _data plane_ APIs. Th
   2. Customers can adopt a version without requiring code changes
 Technology and software is constantly changing and evolving, and as such, this is intended to be a living document. [Open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest a change or propose a new idea. Please read the [Considerations for Service Design](./ConsiderationsForServiceDesign.md) for an introduction to the topic of API design for Azure services. *For an existing GA'd service, don't change/break its existing API; instead, leverage these concepts for future APIs while prioritizing consistency within your existing service.*
 
-*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/Azure/azure-resource-manager-rpc).*
+*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/cloud-and-ai-microsoft/resource-provider-contract).*
 
 ### Prescriptive Guidance
 This document offers prescriptive guidance labeled as follows:
