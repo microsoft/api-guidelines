@@ -392,8 +392,13 @@ option 2
 - Removing control information from a response payload if the current behavior is that the control information is always present in the response payload
 - Adding a property that is required for the creation of the type it is defined on
 - Changing the URL or fundamental request/response associated with a resource
-- Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
-//// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
+- Removing, renaming, or changing an incompatible type of a declared property
+
+**TODO start here**
+//// TODO i would like to propose that we don't allow any changes to the `Type` attribute
+//// TODO is this a potential guiding principle? anything that doesn't change what's on the wire shouldn't be considered a breaking change; we should have documentation to the workload teams for how to maintain the on-the-wire representation for these cases, as well as what this will mean for their future maintainability
+
+
 
 ### Case {1}
 
@@ -605,13 +610,78 @@ GET /containers/{id}
   }
 }
 
+### Case {4}
 
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
 
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.foo" />
+</EntityType>
 
-//// TODO if there are no derived types of the newly specified type, nor of the existing specified type, then we just need duck typing
+#### Transition {a} - non-breaking
 
-//// TODO anything that doesn't change what's on the wire shouldn't be considered a breaking change; we should have documentation to the workload teams for how to maintain the on-the-wire representation for these cases, as well as what this will mean for their future maintainability
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.bar" />
+**/CHANGED**
+</EntityType>
+
+**HOWEVER**, this does break (maybe? depends on our answer to other questions) if we make a *future* change:
+
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+**CHANGED**
+<ComplexType Name="fooDerived" BaseType="self.foo">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+**/CHANGED**
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.bar" />
+</EntityType>
+
+GET /containers/{id}
+
+{
+  "propName": {
+    "@odata.type": "$self.fooDerived",
+    "prop1": "..."
+    // client doesn't know to not expect prop2; also, for the write case, a client would have needed to be updated to try *writing* a fooDerived, so that client should be expected to realize that propName is not of type foo anymore
+  }
+}
+
 //// TODO we should also be careful for when URIs get broken; this needs to be accounted for
+//// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
 
 - Removing or renaming APIs or API parameters
 - Adding a required request header
