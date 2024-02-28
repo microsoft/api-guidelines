@@ -567,7 +567,7 @@ PATCH /containers/{id}
     <PropertyRef Name="id" />
   </Key>
   <Property Name="id" Type="Edm.String" Nullable="false" />
-  <Property Name="propName" Type="self.intermediate" /> <!--write-only-->
+  <Property Name="propName" Type="self.intermediate" /> <!--read-only-->
 </EntityType>
 
 #### Transition {a} - non-breaking
@@ -609,7 +609,6 @@ GET /containers/{id}
 
 
 
-//// TODO if there's a peer to bar, such as `baz` derives `intermediate`, it would still work to change it to `baz`
 //// TODO are there edge cases where it's not "read-only" but actually "no creating" types?
 
 //// TODO if there are no derived types of the newly specified type, nor of the existing specified type, then we just need duck typing
