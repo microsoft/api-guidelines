@@ -608,9 +608,6 @@ GET /containers/{id}
 
 
 
-
-//// TODO are there edge cases where it's not "read-only" but actually "no creating" types?
-
 //// TODO if there are no derived types of the newly specified type, nor of the existing specified type, then we just need duck typing
 
 //// TODO anything that doesn't change what's on the wire shouldn't be considered a breaking change; we should have documentation to the workload teams for how to maintain the on-the-wire representation for these cases, as well as what this will mean for their future maintainability
