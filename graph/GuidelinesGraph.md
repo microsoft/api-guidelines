@@ -687,28 +687,7 @@ GET /containers/{id}
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
 - Adding Nullable="false" properties to existing types //// TODO this should be "adding properties that have default values" (whether or not the `DefaultValue` attribute is used)
-- Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions //// TODO null doesn't always mean the same thing as "default"; would action overloads be more appropriate for these cases?
-
-nullable:
-commit - https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/commit/716416d651b4b0c835ae07840f1883532fff946c?refName=refs%2Fheads%2Fgdebruin%2Foptionalparameters&path=%2FWorkloads%2FMicrosoft.DirectoryServices%2Foverride%2Fschema-Review-beta.csdl&_a=compare
-build - https://msazure.visualstudio.com/One/_build/results?buildId=88052971&view=logs&j=15dfcb1a-0989-5cf6-3160-3e181e44de87&t=44b6206c-e047-57cb-8bd1-54146504f81b
-
-optional parameter:
-commit - https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/commit/4715045eb3a38de22a1125c8f02d4d62ef495088?refName=refs%2Fheads%2Fgdebruin%2Foptionalparameters
-build - https://msazure.visualstudio.com/One/_build/results?buildId=88114937&view=logs&j=15dfcb1a-0989-5cf6-3160-3e181e44de87&t=44b6206c-e047-57cb-8bd1-54146504f81b
-
-<Parameter Name="foo" Type="Edm.Int32" Nullable="true">
-</Parameter>
-
-<Parameter Name="foo" Type="Edm.Int32" Nullable="false">
-  <OptionalPArameter></OptionalPArameter>
-</Parameter>
-
-//// TODO can you overload actions? apparently not...
-//// TODO can we use the optionalparamter annotation? yes, we should suggest this 
-//// TODO check linting rules are ok with this guidance before shipping it
-
-//// TODO actually take the optional parameter thing for action
+- Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing action //// TODO this is currently broken in the linting rules; file a bug and make a note that this should be expected: https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/pullrequest/9577509?_a=files
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 
