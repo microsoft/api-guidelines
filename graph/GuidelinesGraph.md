@@ -446,7 +446,7 @@ GET /containers
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
-- Adding Nullable="false" properties to existing types
+- Adding Nullable="false" properties to existing types //// TODO what does this mean?
 - Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions //// TODO null doesn't always mean the same thing as "default"; would action overloads be more appropriate for these cases?
 
 nullable:
@@ -467,6 +467,8 @@ build - https://msazure.visualstudio.com/One/_build/results?buildId=88114937&vie
 //// TODO can you overload actions? apparently not...
 //// TODO can we use the optionalparamter annotation? yes, we should suggest this 
 //// TODO check linting rules are ok with this guidance before shipping it
+
+//// TODO actually take the optional parameter thing for action
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 
