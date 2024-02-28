@@ -395,11 +395,11 @@ option 2
 - Removing, renaming, or changing an incompatible type of a declared property //// TODO should we make clear what incompatible types are add making "compatible" type changes to the non-breaking list?
 //// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
 
-<ComplexType Name="foo">
+<ComplexType Name="animal">
 </ComplexType>
-<ComplexType Name="intermediate" BaseType="self.foo">
+<ComplexType Name="pet" BaseType="self.animal">
 </ComplexType>
-<ComplexType Name="bar" BaseType="self.intermediate">
+<ComplexType Name="dog" BaseType="self.pet">
 </ComplexType>
 
 <EntityType Name="container">
@@ -407,8 +407,16 @@ option 2
     <PropertyRef Name="id" />
   </Key>
   <Property Name="id" Type="Edm.String" Nullable="false" />
-  <Property Name="propName" Type="self.intermediate" />
+  <Property Name="propName" Type="self.pet" />
 </EntityType>
+
+
+PATCH /containers/{id}
+{
+  "propName": {
+    
+  }
+}
 
 GET /containers
 
@@ -427,6 +435,10 @@ GET /containers
 //// Does anyone have examples of when change the `Type` attribute of a property is allowed?
 
 - Change the `Type` attribute of a property unless the property is read-only, the new `Type` is a derived type of the original `Type`, and the property now only returns instances of the new `Type` or its derived types
+//// TODO make the note about if intermediate is abstract; in this case, odata.type would be rqeuired to be returned still
+//// TODO if there's a peer to bar, such as `baz` derives `intermediate`, it would still work to change it to `baz`
+//// TODO are there edge cases where it's not "read-only" but actually "no creating" types?
+//// TODO if there are no derived types of the newly specified type, nor of the existing specified type, then we just need duck typing
 
 - Removing or renaming APIs or API parameters
 - Adding a required request header
