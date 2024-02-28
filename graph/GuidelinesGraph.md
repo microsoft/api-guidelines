@@ -492,6 +492,8 @@ Redirects:
 
 Success:
 we've decided in the past that we can't change 200 to 202
+204 to 200 should be allowed? maybe with a "feature flag" header? header isn't really different than `$select`s or the representation prefer header?
+
 //// TODO can any other changes be made?
 
 Error:
