@@ -381,6 +381,8 @@ option 2
 - Adding a new base type to an existing type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing type into the base type
 - Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner; TODO follow up if this is an SDK break https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707412726923?context=%7B%22contextType%22%3A%22chat%22%7D
 - Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing child type into the new base type
+- Updating an HTTP status code from 3xx to anything else
+- Updating an HTTP status from anything to 3xx
 
 //// TODO ahve a breaking change article that has samples, and in this doc have hihg level categories of brekaing changes
 
@@ -690,24 +692,6 @@ GET /containers/{id}
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing action //// TODO this is currently broken in the linting rules; file a bug and make a note that this should be expected: https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/pullrequest/9577509?_a=files
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
-
-no intentional changes from 3xx to 5xx
-
-Redirects:
-2xx can be changed to 3xx //// TODO does everyone agree with this?
-//// we undersatnd existing apps might be impacted, but apps deved from this guindace going forward should expect this
-//// we are agreed
-4xx can be changed to 3xx //// TODO does everyone agree with this?
-//// we are agreed
-5xx can be changed to 3xx //// TODO does everyone agree with this?
-//// we are agreed
-
-3xx to 2xx? yes, we accept this; this is often a security concern, so we need to make this part of our idioms
-//// we are agreed
-3xx to 4xx?
-//// we are agreed
-3xx to 5xx?
-//// we are agreed
 
 Success:
 we've decided in the past that we can't change 200 to 202
