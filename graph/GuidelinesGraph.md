@@ -415,7 +415,7 @@ option 2
   <Property Name="propName" Type="self.intermediate" /> <!--read-only-->
 </EntityType>
 
-#### Transition {a} - breaking?
+#### Transition {a} - TODO is this breaking?
 
 <ComplexType Name="base">
   <Property Name="prop1" Type="Edm.String" />
@@ -474,6 +474,87 @@ GET /containers/{id}
 
 #### Transition {c} - 
 
+### Case {2}
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.intermediate" /> <!--write-only-->
+</EntityType>
+
+#### Transition {a} - breaking
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.base" /> <!--write-only-->
+**/CHANGED**
+</EntityType>
+
+PATCH /containers/{id}
+{
+  "prop2": "..."
+  // this fails now because there is no prop2 on base
+}
+
+#### Transition {b} - TODO is this breaking?
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.derived" /> <!--write-only-->
+**/CHANGED**
+</EntityType>
+
+PATCH /containers/{id}
+{
+  "prop2": "..."
+  // prop3 is not provided; if prop3 is not required, this isn't a breaking change?
+}
+
+
+
+
 
 //// I don't really see how you can change the type of `propName`. If you make it `foo`, then any `intermediate`s that are returned now have an odata.type that clients need to check. If you make it `bar`, then `intermediate`s can no longer be returned; further, if you only ever returned `bar`s before, they now wouldn't have the `@odata.type`. 
 //// On the writing side of things, it seems like you could make `propName` into `foo`, except that now, previous requests would fail because they don't have `@odata.type` of `intermediate`. Changing it to `bar` would now prevent the `intermediate`s from being written entirely.
@@ -483,6 +564,7 @@ GET /containers/{id}
 //// TODO make the note about if intermediate is abstract; in this case, odata.type would be rqeuired to be returned still
 //// TODO if there's a peer to bar, such as `baz` derives `intermediate`, it would still work to change it to `baz`
 //// TODO are there edge cases where it's not "read-only" but actually "no creating" types?
+
 //// TODO if there are no derived types of the newly specified type, nor of the existing specified type, then we just need duck typing
 
 //// TODO anything that doesn't change what's on the wire shouldn't be considered a breaking change; we should have documentation to the workload teams for how to maintain the on-the-wire representation for these cases, as well as what this will mean for their future maintainability
