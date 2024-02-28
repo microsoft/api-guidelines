@@ -472,8 +472,6 @@ GET /containers/{id}
 **/CHANGED**
 </EntityType>
 
-#### Transition {c} - 
-
 ### Case {2}
 
 <ComplexType Name="base">
