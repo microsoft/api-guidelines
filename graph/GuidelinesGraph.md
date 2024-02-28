@@ -472,10 +472,14 @@ build - https://msazure.visualstudio.com/One/_build/results?buildId=88114937&vie
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 
+no intentional changes from 3xx to 5xx
+
 Redirects:
 2xx can be changed to 3xx //// TODO does everyone agree with this?
 //// we undersatnd existing apps might be impacted, but apps deved from this guindace going forward should expect this
+//// we are agreed
 4xx can be changed to 3xx //// TODO does everyone agree with this?
+
 5xx can be changed to 3xx //// TODO does everyone agree with this?
 
 3xx to 2xx? yes, we accept this; this is often a security concern, so we need to make this part of our idioms
