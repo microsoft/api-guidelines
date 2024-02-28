@@ -474,8 +474,13 @@ build - https://msazure.visualstudio.com/One/_build/results?buildId=88114937&vie
 
 Redirects:
 2xx can be changed to 3xx //// TODO does everyone agree with this?
+//// we undersatnd existing apps might be impacted, but apps deved from this guindace going forward should expect this
 4xx can be changed to 3xx //// TODO does everyone agree with this?
 5xx can be changed to 3xx //// TODO does everyone agree with this?
+
+3xx to 2xx? yes, we accept this; this is often a security concern, so we need to make this part of our idioms
+3xx to 4xx?
+3xx to 5xx?
 
 Success:
 we've decided in the past that we can't change 200 to 202
