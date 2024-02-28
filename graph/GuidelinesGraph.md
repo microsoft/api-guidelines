@@ -686,7 +686,7 @@ GET /containers/{id}
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
-- Adding Nullable="false" properties to existing types //// TODO what does this mean?
+- Adding Nullable="false" properties to existing types //// TODO this should be "adding properties that have default values" (whether or not the `DefaultValue` attribute is used)
 - Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions //// TODO null doesn't always mean the same thing as "default"; would action overloads be more appropriate for these cases?
 
 nullable:
