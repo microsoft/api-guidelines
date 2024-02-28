@@ -479,12 +479,16 @@ Redirects:
 //// we undersatnd existing apps might be impacted, but apps deved from this guindace going forward should expect this
 //// we are agreed
 4xx can be changed to 3xx //// TODO does everyone agree with this?
-
+//// we are agreed
 5xx can be changed to 3xx //// TODO does everyone agree with this?
+//// we are agreed
 
 3xx to 2xx? yes, we accept this; this is often a security concern, so we need to make this part of our idioms
+//// we are agreed
 3xx to 4xx?
+//// we are agreed
 3xx to 5xx?
+//// we are agreed
 
 Success:
 we've decided in the past that we can't change 200 to 202
