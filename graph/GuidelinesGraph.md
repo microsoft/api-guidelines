@@ -349,7 +349,7 @@ In general, making all but additive changes to the API contract for existing ele
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
 //// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
 //// TODO update verbiage of sdk vs api versions: https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707321601369?context=%7B%22contextType%22%3A%22chat%22%7D
-//// TODO we should further discuss model annotations? we will not document these as breaks today; we will kick this down the road for when we are using typespec and the annotations that graph is publishing are actually accurate
+//// TODO we should further discuss model annotations? we will not document these as breaks today; we will kick this down the road for when we are using typespec and the annotations that graph is publishing are actually accurate; when we re-evaluate, we should go through the kinds of annotations that are used and make judgment calls on each; consider sdk generation, client code generation, docs generation, and ags features that leverage annotations
 
 /*TODO sdk breaks
 differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
@@ -713,6 +713,7 @@ Error:
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
 //// TODO related to the below comment, do we really want to specify what are breaking changes? aren't we really just creating a contract with client developers saying what are acceptable changes so that they can code defensively for them? i understand that it will limit us/make this document invalid if we ever need to do something that's *not* enumerated (like a header or something), but if we don't take a strong stance on this, then what's the point of the doc at all?
 //// TODO make clear any of the "add stuff to the type hierarchy" changes that *are* breaking? e.g. adding an intermediate type and changing a `Type` attribute (breaks clients that are currently using `@odata.type`), adding an intermediate type and moving a property from the base type to the new type, etc.?
+//// TODO how do we introduce new breaking change guidance?
 
 The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
 
