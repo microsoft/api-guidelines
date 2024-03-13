@@ -704,7 +704,7 @@ Error:
 5xx can be changed to 4xx //// TODO does everyone agree with this? yes, everyone agress
 
 
-//// TODO cannot within the 4xx's
+//// TODO cannot within the 4xx's //// getting lots of feedback that we *shouldn't* allow this, some feedback about specific cases where it makes sense; go through the status codes offline and bring back a proposal
 //// can you change within 5xx's?
 
 
