@@ -693,14 +693,17 @@ GET /containers/{id}
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
 - Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
 
+//// TODO write out the guidnace that 3xx's are allowed
 Success:
-we've decided in the past that we can't change 200 to 202
+we've decided in the past that we can't change 200 to 202 //// we should keep this guidance
 204 to 200 should be allowed? maybe with a "feature flag" header? header isn't really different than `$select`s or the representation prefer header?
 
 //// TODO can any other changes be made?
 
 Error:
-5xx can be changed to 4xx //// TODO does everyone agree with this?
+5xx can be changed to 4xx //// TODO does everyone agree with this? yes, everyone agress
+
+
 //// TODO cannot within the 4xx's
 //// can you change within 5xx's?
 
