@@ -41,7 +41,7 @@ For more information, see the [OData reference](https://github.com/oasis-tcs/oda
 The following example demonstrates defining a dictionary that can contain string values.
 
 ```xml
-<Schema Namespace="microsoft.graph">
+<Schema Namespace="microsoft.graph"> <!--NOTE: the namespace that declares the Dictionary complex type *must* be microsoft.graph-->
   <ComplexType Name="Dictionary" OpenType="true">
     <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
   </ComplexType>
@@ -119,8 +119,7 @@ Dictionaries can also contain complex types whose values may be constrained to a
 The following example defines a complex type **roleSettings**, an **assignedRoleGroupDictionary** that contains **roleSettings**, and an **assignedRoles** property that uses the dictionary..
 
 ```xml
-
-<Schema Namespace="microsoft.graph">
+<Schema Namespace="microsoft.graph"> <!--NOTE: the namespace that declares the Dictionary complex type *must* be microsoft.graph-->
   <ComplexType Name="Dictionary" OpenType="true">
     <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
   </ComplexType>
