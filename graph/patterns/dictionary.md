@@ -37,7 +37,9 @@ For more information, see the [OData reference](https://github.com/oasis-tcs/oda
 
 ## Examples
 
-### Declaring a string dictionary
+### String dictionary
+
+#### CSDL declaration
 The following example demonstrates defining a dictionary that can contain string values.
 
 ```xml
@@ -60,7 +62,7 @@ The following example demonstrates defining a dictionary that can contain string
 Please note that schema validation will fail due to the casing of `Dictionary`.
 This warning should be suppressed.
 
-### Defining a dictionary property
+#### Defining a dictionary property
 The following example shows defining a dictionary property, "userTags", on the item entity type.
 
 ```xml
@@ -70,7 +72,7 @@ The following example shows defining a dictionary property, "userTags", on the i
 </EntityType>
 ```
 
-### Reading a dictionary
+#### Reading a dictionary
 Dictionaries are represented in JSON payloads as a JSON object, where the property names are comprised of the keys and their values are the corresponding key values. 
 
 The following example shows reading an item with a dictionary property named "userTags":
@@ -90,7 +92,7 @@ Response:
 }
 ```
 
-### Setting a dictionary value
+#### Setting a dictionary value
 The following example shows setting a dictionary value.  If "hairColor" already exists, it is updated, otherwise it is added.
 
 ```http
@@ -102,7 +104,7 @@ PATCH /item/userTags
 }
 ```
 
-### Deleting a dictionary value
+#### Deleting a dictionary value
 A dictionary value can be removed by setting the value to null.
 ```http
 PATCH /item/userTags
@@ -113,7 +115,9 @@ PATCH /item/userTags
 }
 ```
 
-### Declaring a complex typed dictionary
+### Complex typed dictionary
+
+#### CSDL declaration
 Dictionaries can also contain complex types whose values may be constrained to a particular set of complex types.
 
 The following example defines a complex type **roleSettings**, an **assignedRoleGroupDictionary** that contains **roleSettings**, and an **assignedRoles** property that uses the dictionary..
@@ -147,7 +151,7 @@ The following example defines a complex type **roleSettings**, an **assignedRole
 </Schema>
 ```
 
-### Reading a entity with a complex-typed dictionary
+#### Reading a entity with a complex-typed dictionary
 
 The following example illustrates reading an entity containing the complex-typed dictionary "assignedRoles".
 
@@ -175,7 +179,7 @@ Response:
 }
 ```
 
-### Reading the dictionary property
+#### Reading the dictionary property
 The following example shows getting just the "assignedRoles" dictionary property.
 
 ```HTTP
