@@ -46,7 +46,8 @@ a "template" entity is defined for `foo`:
 
 An action should also be introduced that will create the `foo` based on the `fooTemplate`:
 ```xml
-<Action Name="create" IsBound="true">
+<!--because actions cannot be overloaded, and for a consistent client experience, the name "createFromTemplate" should be used instead of other names-->
+<Action Name="createFromTemplate" IsBound="true">
   <Parameter Name="bindingParameter" Type="Collection(self.foo)" Nullable="false" />
   <Parameter Name="template" Type="self.fooTemplate" Nullable="false" />
   <ReturnType Type="self.foo" />
@@ -77,7 +78,7 @@ Location: /fooTemplates/{templateId1}
 
 This template can then be used to create a `foo`:
 ```http
-POST /foos/create
+POST /foos/createFromTemplate
 {
   "template": {
     "@id": "/fooTemplates/{templateId1}"
@@ -106,7 +107,7 @@ A property `frob` may be added to the `foo` entity:
 ```xml
 <EntityType Name="foo">
   ...
-  <Property Name="frob" Type="self.frob" Nullable="true" />
+  <Property Name="frob" Type="self.frob" Nullable="true" /> <!--NOTE: this property is nullable for illustrative purposes; new properties do not need to be marked nullable-->
 </EntityType>
 ```
 
@@ -117,7 +118,7 @@ This is done with the use of the `notProvided` instance annotation.
 ```xml
 <EntityType Name="fooTemplate">
   ...
-  <Property Name="frob" Type="self.frob" Nullable="true" />
+  <Property Name="frob" Type="self.frob" Nullable="true" /> <!--NOTE: this property is nullable for illustrative purposes; new properties do not need to be marked nullable-->
 </EntityType>
 ```
 
@@ -174,7 +175,7 @@ Location: /fooTemplates/{templateId2}
 
 The client then uses that template to create a `foo`:
 ```http
-POST /foos/create
+POST /foos/createFromTemplate
 {
   "template@odata.bind": "/fooTemplates/{templateId2}"
 }
@@ -228,7 +229,7 @@ Location: /fooTemplates/{templateId3}
 
 The client then uses that template to create a `foo`:
 ```http
-POST /foos/create
+POST /foos/createFromTemplate
 {
   "template@odata.bind": "/fooTemplates/{templateId3}"
 }
@@ -279,7 +280,7 @@ Location: /fooTemplates/{templateId4}
 
 The client then uses that template to create a `foo`:
 ```http
-POST /foos/create
+POST /foos/createFromTemplate
 {
   "template@odata.bind": "/fooTemplates/{templateId4}"
 }
