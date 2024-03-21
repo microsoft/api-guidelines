@@ -139,7 +139,7 @@ The following example defines a complex type **roleSettings**, an **assignedRole
   </ComplexType>
 
   <ComplexType Name="assignedRoleGroupDictionary" BaseType="microsoft.graph.Dictionary">
-    <!-- Note: Strongly-typed dictionary
+    <!-- Note: Strongly-typed dictionary of roleSettings keyed by name of roleGroup. -->
     of roleSettings
     keyed by name of roleGroup. -->
     <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
