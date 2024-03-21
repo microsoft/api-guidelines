@@ -352,26 +352,378 @@ In general, making all but additive changes to the API contract for existing ele
 
 **Non-breaking changes:**
 
-- To add properties that are nullable or have a default value
+//// TODO merge rest guidelines into this
+//// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support#api-contract-and-nonbackward-compatible-changes
+//// TODO sync this with https://learn.microsoft.com/en-us/graph/versioning-and-support
+//// TODO update verbiage of sdk vs api versions: https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707321601369?context=%7B%22contextType%22%3A%22chat%22%7D
+//// TODO we should further discuss model annotations? we will not document these as breaks today; we will kick this down the road for when we are using typespec and the annotations that graph is publishing are actually accurate; when we re-evaluate, we should go through the kinds of annotations that are used and make judgment calls on each; consider sdk generation, client code generation, docs generation, and ags features that leverage annotations
+
+/*TODO sdk breaks
+differentiate between sdk vs rest breaking changes; also differentiate if clients need to update the sdk for it to be a break:
+removing open type and don't schematize: the property will remain in the dynamic properties collection, so no issue
+removing open type and schematizing: the schematized property will no longer be in the dynamic properties colleciton, so if a client is looking for it in the collection, they won't find it now
+sdks can have issues with expanding type hierarchies
+adding a new base type (regardless of if referencing properties are changed)
+adding an intermediate type
+*/
+
+option 1
+- Adding a property that has a default value (NOTE: a new property that is marked `Nullable="false"` and does not have a `DefaultValue` attribute specified may still have a service-provided default value, though a suppression will be required in this case; also note that [nullability and default values are orthogonal](https://github.com/microsoft/api-guidelines/blob/corranrogue9/breakingchanges/graph/articles/nullable.md) to properties that are required for creation)
+
+option 2
+- Adding a property that is marked `Nullable="true"`
+- Adding a property that is marked with the `DefaultValue` attribute
+- Adding a property that has a service-provided default value (a suppression will be required in this case)
+
 - Adding a member after the sentinel member to an evolvable enumeration
-- Removing, renaming, or changing the type of annotation
+- Adding new instance annotations to a response payload //// TODO link to docs
+- Adding control information to a response payload //// TODO link to docs
+- Removing an instance annotation from a response payload if the annotation is not selectable and the current behavior is that the annotation is not always present in the response payload
+- Removing control information from a response payload if the current behavior is that the control information is not always present in the response payload
 - Changing the order of properties
 - Changing the length or format of opaque strings, such as resource IDs
-- Adding or removing an annotation OpenType="true"
+- Adding the `OpenType="true"` attribute //// TODO remove this?  linnk to a place where we say you can't have open types; maybehave a non-recommending non-breaking changes
+- Removing the `OpenType="true"` attribute for read-only APIs
+- Removing the `OpenType="true"` attribute for write APIs if all of the possible dynamic properties are also schematized in the same change
+- Adding a new base type to an existing type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing type into the base type
+- Adding a new derived type to an existing type //// TODO we should ghave guidance for workloads + clients regardless; evolvable enums but for derived types? maybe the guidnace should be that it shuold be treated as a breaking change from a "customer communication" p[oint of view (like a blog post or something); you need to follow up with others to really nail this down, it's not just a one-liner; TODO follow up if this is an SDK break https://teams.microsoft.com/l/message/19:a87c7e39-080d-45df-abfa-956c25d852c7_c3e0b685-1b22-4bd3-a5f2-ad4f17c5a30d@unq.gbl.spaces/1707412726923?context=%7B%22contextType%22%3A%22chat%22%7D
+- Adding a new type in the inheritance hierarchy between an existing type and its current base type provided that no property `Type` attributes are changed that currently reference the existing type; this includes moving properties from the existing child type into the new base type
+- Updating an HTTP status code from 3xx to anything else
+- Updating an HTTP status from anything to 3xx
+
+//// TODO ahve a breaking change article that has samples, and in this doc have hihg level categories of brekaing changes
 
 **Breaking changes:**
 
+- Changing the type of an instance annotation
+- Removing an instance annotation from a response paylod if the annotation is selectable
+- Removing an instance annotaiton from a response payload if the current behavior is that the annotation is always present in the response payload
+- Removing control information from a response payload if the current behavior is that the control information is always present in the response payload
+- Adding a property that is required for the creation of the type it is defined on
 - Changing the URL or fundamental request/response associated with a resource
 - Removing, renaming, or changing an incompatible type of a declared property
+
+**TODO start here**
+//// TODO i would like to propose that we don't allow any changes to the `Type` attribute
+//// TODO is this a potential guiding principle? anything that doesn't change what's on the wire shouldn't be considered a breaking change; we should have documentation to the workload teams for how to maintain the on-the-wire representation for these cases, as well as what this will mean for their future maintainability
+
+
+
+### Case {1}
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.intermediate" /> <!--read-only-->
+</EntityType>
+
+#### Transition {a} - TODO is this breaking?
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+    
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+    
+**CHANGED**
+  <Property Name="propName" Type="self.base" /> <!--read-only-->
+**/CHANGED**
+</EntityType>
+
+GET /containers/{id}
+
+{
+  "propName": {
+    "prop1": "..."
+    // client doesn't know to not expect prop2
+  }
+}
+
+#### Transition {b} - non-breaking
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+    
+**CHANGED**
+  <!--only derived is returned from now on-->
+  <Property Name="propName" Type="self.derived" /> <!--read-only-->
+**/CHANGED**
+</EntityType>
+
+### Case {2}
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.intermediate" /> <!--write-only-->
+</EntityType>
+
+#### Transition {a} - breaking
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.base" /> <!--write-only-->
+**/CHANGED**
+</EntityType>
+
+PATCH /containers/{id}
+{
+  "prop2": "..."
+  // this fails now because there is no prop2 on base
+}
+
+#### Transition {b} - TODO is this breaking?
+
+<ComplexType Name="base">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.derived" /> <!--write-only-->
+**/CHANGED**
+</EntityType>
+
+PATCH /containers/{id}
+{
+  "prop2": "..."
+  // prop3 is not provided; if prop3 is not required, this isn't a breaking change?
+}
+
+### Case {3}
+
+<ComplexType Name="base" Abstract="true">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base" Abstract="true">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.intermediate" /> <!--read-only-->
+</EntityType>
+
+#### Transition {a} - non-breaking
+
+<ComplexType Name="base" Abstract="true">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="intermediate" BaseType="self.base" Abstract="true">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+<ComplexType Name="derived" BaseType="self.intermediate">
+  <Property Name="prop3" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+    
+**CHANGED**
+  <!--only derived is returned from now on-->
+  <Property Name="propName" Type="self.derived" /> <!--read-only-->
+**/CHANGED**
+</EntityType>
+
+GET /containers/{id}
+
+{
+  "propName": {
+    "@odata.type": "#self.derived", // the @odata.type is still required since existing clients are likely looking for it from the previous version where they could get other types derived from intermediate
+    "prop1": "...",
+    "prop2": "...",
+    "prop3": "..."
+  }
+}
+
+### Case {4}
+
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.foo" />
+</EntityType>
+
+#### Transition {a} - non-breaking
+
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+
+**CHANGED**
+  <Property Name="propName" Type="self.bar" />
+**/CHANGED**
+</EntityType>
+
+**HOWEVER**, this does break (maybe? depends on our answer to other questions) if we make a *future* change:
+
+<ComplexType Name="foo">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+**CHANGED**
+<ComplexType Name="fooDerived" BaseType="self.foo">
+  <Property Name="prop2" Type="Edm.String" />
+</ComplexType>
+**/CHANGED**
+<ComplexType Nme="bar">
+  <Property Name="prop1" Type="Edm.String" />
+</ComplexType>
+
+<EntityType Name="container">
+  <Key>
+    <PropertyRef Name="id" />
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false" />
+  <Property Name="propName" Type="self.bar" />
+</EntityType>
+
+GET /containers/{id}
+
+{
+  "propName": {
+    "@odata.type": "$self.fooDerived",
+    "prop1": "..."
+    // client doesn't know to not expect prop2; also, for the write case, a client would have needed to be updated to try *writing* a fooDerived, so that client should be expected to realize that propName is not of type foo anymore
+  }
+}
+
+//// TODO we should also be careful for when URIs get broken; this needs to be accounted for
+//// TODO the compatible types are still lieklly to be breaking sdk changes for some languages
+
 - Removing or renaming APIs or API parameters
 - Adding a required request header
 - Adding EnumType members for nonevolvable enumerations
-- Adding Nullable="false" properties to existing types
-- Adding a parameter not marked as [Nullable](http://docs.oasis-open.org/odata/odata-csdl-xml/v4.01/odata-csdl-xml-v4.01.html#sec_Nullable) to existing actions
+- Adding Nullable="false" properties to existing types //// TODO this should be "adding properties that have default values" (whether or not the `DefaultValue` attribute is used)
+- Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing action //// TODO this is currently broken in the linting rules; file a bug and make a note that this should be expected: https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/pullrequest/9577509?_a=files
 - Adding a parameter not marked as [Optional](https://github.com/oasis-tcs/odata-vocabularies/blob/main/vocabularies/Org.OData.Core.V1.md#OptionalParameter) to an existing function
-- Changing top-level error codes
-- Introducing server-side pagination to existing collections
+- Changing top-level error codes //// TODO is this really a rule? to what extent do we hold ourselves to this standard?
+
+//// TODO write out the guidnace that 3xx's are allowed
+Success:
+we've decided in the past that we can't change 200 to 202 //// we should keep this guidance
+204 to 200 should be allowed? maybe with a "feature flag" header? header isn't really different than `$select`s or the representation prefer header?
+
+//// TODO can any other changes be made?
+
+Error:
+5xx can be changed to 4xx //// TODO does everyone agree with this? yes, everyone agress
+
+
+//// TODO cannot within the 4xx's //// getting lots of feedback that we *shouldn't* allow this, some feedback about specific cases where it makes sense; go through the status codes offline and bring back a proposal
+//// can you change within 5xx's?
+
+
+//// TODO do we want to require that innererrors remain the same?
+//// TODO what about http status codes? the top-level error codes are expected to be the same as http status codes (is this guidance actually written?)
+
+
+- Introducing server-side pagination to existing collections //// TODO do we have an established pattern to introduce server-side pagination to existing collections?
 - Making significant changes to the performance of APIs such as increased latency, rate limits, or concurrency
+//// TODO related to the below comment, do we really want to specify what are breaking changes? aren't we really just creating a contract with client developers saying what are acceptable changes so that they can code defensively for them? i understand that it will limit us/make this document invalid if we ever need to do something that's *not* enumerated (like a header or something), but if we don't take a strong stance on this, then what's the point of the doc at all?
+//// TODO make clear any of the "add stuff to the type hierarchy" changes that *are* breaking? e.g. adding an intermediate type and changing a `Type` attribute (breaks clients that are currently using `@odata.type`), adding an intermediate type and moving a property from the base type to the new type, etc.?
+//// TODO how do we introduce new breaking change guidance?
 
 The applicable changes described in the [Model Versioning of the OData V4.01 spec](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_ModelVersioning) SHOULD be considered part of the minimum bar that all services MUST consider a breaking change.
 
