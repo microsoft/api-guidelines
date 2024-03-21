@@ -1,6 +1,3 @@
-TODO go through the code TODOs
-TODO double check any updates to the CSDL with this branch, then delete the branch: https://msazure.visualstudio.com/One/_git/AD-AggregatorService-Workloads/pullrequest/9262077
-
 # Entity template
 
 Microsoft Graph API Design Pattern
