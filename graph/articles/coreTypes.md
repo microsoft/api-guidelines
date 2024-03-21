@@ -16,12 +16,11 @@ The following types are identified as core types, and will require strong justif
 
 ## Alternatives to Adding Structural Properties
 
-Instead of adding a structural property to an existing type, do the following:
-1. Create a new type that models the information captured in the proposed structural property.
-2. Create a navigation property linking the new type to the existing type, doing one of the following:
-   - Contain the new type in an entity set elsewhere, and add a navigation property to the existing type on the new type.
-   - Contain the new type in an entity set elsewhere, and add a navigation property to the new type on the existing type.
-   - Add a navigation property to the new type on the existing type, containing the new type.
+Instead of adding a structural property to the existing type (`user`, `group` or `device`), create a new type that models the information captured in the proposed structural property(s).
+Then, do one of the following:
+- Add a navigation property on the existing type to the new type, containing the new type.
+- Contain the new type in an entity set elsewhere, and add a navigation property to the existing type on the new type.
+- Contain the new type in an entity set elsewhere, and add a navigation property to the new type on the existing type.
 
 ## Example:
 
@@ -40,16 +39,18 @@ Don't add new properties to core types such as `user`.
 
 ### Do:
 
-Instead, create a new entity modeling the concept that you wish to introduce, and create a navigation property connecting that entity to the desired type.
+First, create a new type that models the information captured in the desired structural property(s).
 
 ```xml
 <EntityType name="bankAccountInformation">
     <Property Name="accountNumber" Type="Edm.string"/>
     <Property Name="routingNumber" Type="Edm.string"/>
 </EntityType>
+```
 
-...
+Then, for example, add a navigation property on the existing type, containing the new type:
 
+```xml
 <EntityType name="user">
     <NavigationProperty Name="bankAccountInformation" Type="bankAccountInformation" ContainsTarget="true"/>
 </EntityType>
