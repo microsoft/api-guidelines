@@ -13,10 +13,12 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 <details>
   <summary>Expand change history</summary>
-  
+
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
+| 2023-Apr-21 | Update/clarify guidelines on POST method repeatability         |
 | 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
 | 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
@@ -43,7 +45,7 @@ These guidelines apply to Azure service teams implementing _data plane_ APIs. Th
   2. Customers can adopt a version without requiring code changes
 Technology and software is constantly changing and evolving, and as such, this is intended to be a living document. [Open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest a change or propose a new idea. Please read the [Considerations for Service Design](./ConsiderationsForServiceDesign.md) for an introduction to the topic of API design for Azure services. *For an existing GA'd service, don't change/break its existing API; instead, leverage these concepts for future APIs while prioritizing consistency within your existing service.*
 
-*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/Azure/azure-resource-manager-rpc).*
+*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/cloud-and-ai-microsoft/resource-provider-contract).*
 
 ### Prescriptive Guidance
 This document offers prescriptive guidance labeled as follows:
@@ -168,6 +170,11 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 <a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 #### HTTP Query Parameters and Header Values
+
+<a href="#http-query-names-casing" name="http-query-names-casing">:white_check_mark:</a> **DO** use camel case for query parameter names.
+
+Note: Certain legacy query parameter names use kebab-casing and are allowed only for backwards compatibility.
+
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
 <a href="#http-parameter-validation" name="http-parameter-validation">:white_check_mark:</a> **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
@@ -292,7 +299,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
-PATCH/PUT | Any JSON field name/value not known/valid | `400-Bad Request`
+PATCH/PUT | Any JSON field name/value not known/valid to the api-version | `400-Bad Request`
 PATCH/PUT | Any Read field passed (client can't set Read fields) | `400-Bad Request`
 | **If&nbsp;the&nbsp;resource&nbsp;does&nbsp;not&nbsp;exist** |
 PATCH/PUT | Any mandatory Create/Update field missing | `400-Bad Request`
@@ -432,7 +439,7 @@ This indicates to client libraries and customers that values of the enumeration 
 
 Polymorphism types in REST APIs refers to the possibility to use the same property of a request or response to have similar but different shapes. This is commonly expressed as a `oneOf` in JsonSchema or OpenAPI. In order to simplify how to determine which specific type a given request or response payload corresponds to, Azure requires the use of an explicit discriminator field.
 
-Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information. 
+Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information.
 
 <a href="#json-use-discriminator-for-polymorphism" name="json-use-discriminator-for-polymorphism">:white_check_mark:</a> **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
@@ -538,16 +545,16 @@ NOTE: It is a breaking change to add paging in the future
 ```json
 {
     "value": [
-       { "id": "Item 01", "etag": "0xabc", "price": 99.95, "sizes": null },
+       { "id": "Item 01", "etag": "\"abc\"", "price": 99.95, "sizes": null },
        { … },
        { … },
-       { "id": "Item 99", "etag": "0xdef", "price": 59.99, "sizes": null }
+       { "id": "Item 99", "etag": "\"def\"", "price": 59.99, "sizes": null }
     ],
     "nextLink": "{opaqueUrl}"
  }
 ```
 
-<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation.
+<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation. Note that the etag field _must_ have escaped quotes embedded within it; for example, "\"abc\"" or W/"\"abc\"".
 
 <a href="#collections-document-pagination-reliability" name="collections-document-pagination-reliability">:white_check_mark:</a> **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
@@ -589,23 +596,23 @@ Parameter&nbsp;name | Type | Description
 
 <a href="#collections-query-options-no-dollar-sign" name="collections-query-options-no-dollar-sign">:no_entry:</a> **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
-#### `filter`
+#### filter
 
-<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
+<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support filtering of the results of a list operation with the `filter` query parameter.
 
-The value of the `filter` option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
+The value of the `filter` query parameter is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the filter expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
 ```text
-GET https://api.contoso.com/products?`filter`=price lt 10.00
+GET https://api.contoso.com/products?filter=price lt 10.00
 ```
 
-##### `filter` operators
+##### filter operators
 
-:heavy_check_mark: **YOU MAY** support the following operators in `filter` expressions:
+:heavy_check_mark: **YOU MAY** support the following operators in filter expressions:
 
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
@@ -623,9 +630,9 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a filter expression that is not supported by the operation.
 
-<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating filter expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -640,7 +647,7 @@ not                      | Logical negation      | not price le 3.5
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
 
-<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
+<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and filter functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -648,31 +655,31 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk'
+GET https://api.contoso.com/products?filter=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name ne 'Milk'
+GET https://api.contoso.com/products?filter=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
@@ -705,15 +712,15 @@ For example, to return all people sorted by name in descending order and a secon
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
-Sorting MUST compose with `filter`ing such that:
+Sorting MUST compose with filtering such that:
 ```text
-GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
+GET https://api.contoso.com/people?filter=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
 
 ##### Considerations for sorting with pagination
 
-<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
+<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
 
 ##### skip
 <a href="#collections-skip-param-definition" name="collections-skip-param-definition">:white_check_mark:</a> **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
@@ -744,7 +751,7 @@ Azure services need to change over time. However, when changing a service, there
  1. Already-running customer workloads must not break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
 
-*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
+*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
 <a href="#versioning-review-required" name="versioning-review-required">:white_check_mark:</a> **DO** review any API changes with the Azure API Stewardship Board
 
@@ -795,7 +802,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
+<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
 <a href="#deprecation" name="deprecation"></a>
 ### Deprecating Behavior Notification
@@ -804,7 +811,7 @@ When the [API Versioning](#api-versioning) guidance above cannot be followed and
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
+<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working.
 > NOTE: We do not want to scare customers with this header.
 
 <a href="#deprecation-header-value" name="deprecation-header-value">:white_check_mark:</a> **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
@@ -831,13 +838,13 @@ For example:
 <a href="#repeatability" name="repeatability"></a>
 ### Repeatability of requests
 
-The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
+Fault tolerant applications require that clients retry requests for which they never got a response, and services must handle these retried requests idempotently. In Azure, all HTTP operations are naturally idempotent except for POST used to create a resource and [POST when used to invoke an action](
+https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#performing-an-action).
 
-<a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
-
+<a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html) for POST operations to make them retriable.
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
-- A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
-- When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
+- Document the POST operation's support for the `Repeatability-First-Sent`, `Repeatability-Request-ID`, and `Repeatability-Result` headers in the API contract and documentation.
+- Any operation that does not support repeatability headers should return a 501 (Not Implemented) response for any request that contains valid repeatability request headers.
 
 <a href="#lro" name="lro"></a>
 ### Long-Running Operations & Jobs
@@ -1091,6 +1098,25 @@ While it may be tempting to use a revision/version number for the resource as th
 <a href="#condreq-weak-etags-allowed" name="condreq-weak-etags-allowed">:heavy_check_mark:</a> **YOU MAY** consider Weak ETags if you have a valid scenario for distinguishing between meaningful and cosmetic changes or if it is too expensive to compute a hash.
 
 <a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_mark:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
+
+<a href="#substrings" name="substrings"></a>
+### Returning String Offsets & Lengths (Substrings)
+
+All string values in JSON are inherently Unicode and UTF-8 encoded, but clients written in a high-level programming language must work with strings in that language's string encoding, which may be UTF-8, UTF-16, or CodePoints (UTF-32).
+When a service response includes a string offset or length value, it should specify these values in all 3 encodings to simplify client development and ensure customer success when isolating a substring.
+See the [Returning String Offsets & Lengths] section in Considerations for Service Design for more detail, including an example JSON response containing string offset and length fields.
+
+[Returning String Offsets & Lengths]: https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#returning-string-offsets--lengths-substrings
+
+<a href="#substrings-return-value-for-each-encoding" name="substrings-return-value-for-each-encoding">:white_check_mark:</a> **DO** include all 3 encodings (UTF-8, UTF-16, and CodePoint) for every string offset or length value in a service response.
+
+<a href="#substrings-return-value-structure" name="substrings-return-value-structure">:white_check_mark:</a> **DO** define every string offset or length value in a service response as an object with the following structure:
+
+| Property    | Type    | Required | Description |
+| ----------- | ------- | :------: | ----------- |
+| `utf8`      | integer | true     | The offset or length of the substring in UTF-8 encoding |
+| `utf16`     | integer | true     | The offset or length of the substring in UTF-16 encoding |
+| `codePoint` | integer | true     | The offset or length of the substring in CodePoint encoding |
 
 <a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
