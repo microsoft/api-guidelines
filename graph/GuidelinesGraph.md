@@ -14,6 +14,7 @@ Table of contents
     - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
     - [Error handling](#error-handling)
+    - [Limitations on core types](#limitations-on-core-types)
   - [External standards](#external-standards)
   - [API contract and nonbackward compatible changes](#api-contract-and-nonbackward-compatible-changes)
     - [Versioning and deprecation](#versioning-and-deprecation)
@@ -331,6 +332,15 @@ For a complete mapping of error codes to HTTP statuses, see
 [rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 <a name="api-contract-and-non-backward-compatible-changes"></a>
+
+### Limitations on core types
+
+The types `user`, `group`, and `device` should not have any new structural property(s) added, without compelling justification.
+Instead, model the concept represented in those property(s) as a new entity, and do one of the following:
+1. Add navigation to the new entity from `user`, `group`, or `device`.
+2. Contain the new entity elsewhere, and add a navigation from the new entity to `user`, `group` or `device`.
+
+More details and examples are available in [Core types](./articles/coreTypes.md).
 
 ## External standards
 
