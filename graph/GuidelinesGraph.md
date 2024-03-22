@@ -337,8 +337,8 @@ For a complete mapping of error codes to HTTP statuses, see
 
 The types `user`, `group`, and `device` should not have any new structural property(s) added, without compelling justification.
 Instead, model the concept represented in those property(s) as a new entity, and do one of the following:
-1. Add navigation to the new entity from `user`, `group`, or `device`.
-2. Contain the new entity elsewhere, and add a navigation from the new entity to `user`, `group` or `device`.
+1. Add navigation from `user`, `group`, or `device` to the new entity.
+2. Add a navigation from the new entity to `user`, `group` or `device`.
 
 More details and examples are available in [Core types](./articles/coreTypes.md).
 
