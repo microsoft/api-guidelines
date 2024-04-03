@@ -208,7 +208,7 @@ It is good practice to define the path for action operations that is easily dist
 2) use a special character not in the set of valid characters for resource names to distinguish the "action" in the path.
 
 In Azure we recommend distinguishing action operations by appending a ':' followed by an action verb to the final path segment.  E.g.
-```http
+```text
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 ```
 
@@ -238,7 +238,7 @@ The following sections describe these patterns in detail.
 ### Create or replace a resource requiring additional long-running processing
 <a href="#put-with-additional-long-running-processing"></a> <!-- Preserve anchor of previous heading -->
 
-A special case of long-running operation that occurs often is a PUT operation to create or replace a resource
+A special case of long-running operations that occurs often is a PUT operation to create or replace a resource
 that involves some additional long-running processing.
 One example is a resource that requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
 
@@ -247,7 +247,7 @@ In this case:
 - The URL identifies resource being created or replaced.
 - The request and response body have identical schemas & represent the resource.
 - The request may contain an `Operation-Id` header that the service will use as
-the ID of the status monitor created for the operation.
+  the ID of the status monitor created for the operation.
 
 ```text
 PUT /items/FooBar&api-version=2022-05-01
@@ -352,7 +352,7 @@ If the status is `Failed`, the status monitor resource contains an `error` field
 6. There may be some cases where a long-running DELETE operation can be completed before the response to the initial request.
 In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
 
-7. The service is responsible for purging the status-monitor resource.
+7. The service is responsible for purging the status monitor resource.
 It should auto-purge the status monitor resource after completion (at least 24 hours).
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
@@ -450,7 +450,7 @@ If the status is `Succeeded`, the operation results will be returned in the `res
 6. There may be some cases where a long-running action operation can be completed before the response to the initial request.
 In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
 
-7. The service is responsible for purging the status-monitor resource.
+7. The service is responsible for purging the status monitor resource.
 It should auto-purge the status monitor resource after completion (at least 24 hours).
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
@@ -459,22 +459,30 @@ The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 When an long-running action operation is not related to a specific resource (a batch operation is one example),
 another approach is needed.
 
-A long-running action operation not related to a resource should use a PUT operation for a resource that combines a status monitor with the request and results of the operation. In this pattern, clients obtain the status of the operation by issuing a GET on the same URL as the PUT operation.
+This type of LRO should be initiated with a PUT method on a URL that represents the operation to be performed,
+and includes a final path parameter for the user-specified operation ID.
+The response of the PUT includes a response body containing a representation of the status monitor for the operation
+and an `Operation-Location` response header that contains the absolute URL of the status monitor.
+In this type of LRO, the status monitor should include any information from the request used to initiate the operation,
+so that a failed operation could be reissued if necessary.
+
+Clients will use a GET on the status monitor URL to obtain the status and results of the operation.
+For this type of LRO, the status monitor URL will often be the same URL as the PUT operation.
 
 The following examples illustrate this pattern.
 
 ```text
 PUT /translate-operations/<operation-id>
 
-<Request body is combination of status monitor and operation properties>
+<JSON body with parameters for the operation>
 ```
 
 Note that the client specifies the operation id in the URL path.
 
 A successful response to the PUT operation should have a `201 Created` status and response body
-of the same structure as the request body, possibly with some additional output-only fields.
+that contains a representation of the status monitor _and_ ny information from the request used to initiate the operation.
 
-The service is responsible for purging the combined status-monitor/request/response resource.
+The service is responsible for purging the status monitor after some period of time.
 It should auto-purge this resource after completion (at least 24 hours).
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
@@ -484,7 +492,7 @@ It might be necessary to support some control action on a long-running operation
 This is implemented as a POST on the status monitor endpoint with `:<action>` added.
 
 ```text
-POST /<status-monitor-url>:cancel?api-version=2022-05-01
+POST /<status-monitor-endpoint>:cancel?api-version=2022-05-01
 ```
 
 A successful response to a control operation should be a `200 OK` with a representation of the status monitor.
