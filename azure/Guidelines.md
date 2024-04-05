@@ -861,7 +861,7 @@ LROs are always started by 1 logical client and may be polled (have their status
 
 <a href="#lro-valid-inputs-synchronously" name="lro-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating an LRO operation to alert clients of errors early.
 
-<a href="#lro-returns-operation-location" name="lro-returns-operation-location">:white_check_make:</a> **DO** include an `operation-location` response header with the absolute URL of the status monitor for the operation.
+<a href="#lro-returns-operation-location" name="lro-returns-operation-location">:white_check_mark:</a> **DO** include an `operation-location` response header with the absolute URL of the status monitor for the operation.
 
 <a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `operation-location` response header with the same version passed on the initial request but expect a client to change the `api-version` value to whatever a new/different client desires it to be.
 
@@ -903,7 +903,7 @@ If the `Operation-Id` header is not specified, the service may create an operati
 
 <a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
 <a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
@@ -1022,6 +1022,10 @@ the operation result or error.
 Note: Since all request parameters must be present in the status monitor,
 the request and response body of the PUT can be defined with a single schema.
 
+<a href="#lro-put-action-status-monitor-url" name="lro-put-action-status-monitor-url">:ballot_box_with_check:</a> **YOU SHOULD**
+return the status monitor for an operation for a subsequent GET on the URL that initiates the LRO, and use this endpoint as
+the status monitor URL returned in the `operation-location` response header.
+
 #### The Status Monitor Resource
 
 All patterns that initiate a LRO either implicitly or explicitly create a [Status Monitor resource](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) in the service's `operations` collection.
@@ -1038,7 +1042,7 @@ Property | Type        | Required | Description
 additional<br/>properties | | | Additional named or dynamic properties of the operation
 
 (*): When a status monitor endpoint supports multiple operations with different result structures or additional properties,
-the status monitor *must be* polymorphic -- it **must** contain a `kind` property that indicates the kind of long-running operation.
+the status monitor **must** be polymorphic -- it **must** contain a `kind` property that indicates the kind of long-running operation.
 
 #### Obtaining status and results of long-running operations
 
@@ -1085,6 +1089,13 @@ Use the following patterns to allow clients to list Status Monitor resources.
 
 <a href="#lro-list-status-monitors-filter" name="lro-list-status-monitors-filter">:ballot_box_with_check:</a>
 **YOU SHOULD** support the `filter` query parameter on the list operation for any polymorphic status monitor collection and support filtering on the `kind` value of the status monitor.
+
+For example, the following request should returns all status monitor resources whose `kind` is either "VMInitializing" *or* "VMRebooting"
+and whose status is "NotStarted" *or* "Succeeded".
+
+```text
+GET /operations?filter=kind eq 'VMInitializing' or kind eq 'VMRebooting'&filter=status eq 'NotStarted' or status eq 'Succeeded'
+```
 
 <a href="#byos" name="byos"></a>
 ### Bring your own Storage (BYOS)

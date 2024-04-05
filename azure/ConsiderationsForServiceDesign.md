@@ -247,7 +247,7 @@ In this case:
 - The URL identifies resource being created or replaced.
 - The request and response body have identical schemas & represent the resource.
 - The request may contain an `Operation-Id` header that the service will use as
-  the ID of the status monitor created for the operation.
+the ID of the status monitor created for the operation.
 
 ```text
 PUT /items/FooBar&api-version=2022-05-01
@@ -362,8 +362,8 @@ An action operation that is also long-running combines the [Action Operations](#
 with the [Long Running Operations](#long-running-operations) pattern.
 
 The operation is initiated with a POST operation and the operation path ends in `:<action>`.
-A long-running POST should not be used for resource create -- use PUT as described above.
-PATCH must never be used for long-running operations -- it should be reserved for simple resource updates.
+A long-running POST should not be used for resource create: use PUT as described above.
+PATCH must never be used for long-running operations: it should be reserved for simple resource updates.
 If a long-running update is required it should be implemented with POST.
 
 ```text
@@ -466,8 +466,10 @@ and an `Operation-Location` response header that contains the absolute URL of th
 In this type of LRO, the status monitor should include any information from the request used to initiate the operation,
 so that a failed operation could be reissued if necessary.
 
+Since the HTTP semantic for PUT is to create a resource, a subsequent GET on the URL to initiate the LRO
+should return the same response as the PUT: the status monitor for the operation.
 Clients will use a GET on the status monitor URL to obtain the status and results of the operation.
-For this type of LRO, the status monitor URL will often be the same URL as the PUT operation.
+So ror this type of LRO, the status monitor URL should be the same URL as the PUT operation.
 
 The following examples illustrate this pattern.
 
