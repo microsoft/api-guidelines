@@ -1090,7 +1090,7 @@ Use the following patterns to allow clients to list Status Monitor resources.
 <a href="#lro-list-status-monitors-filter" name="lro-list-status-monitors-filter">:ballot_box_with_check:</a>
 **YOU SHOULD** support the `filter` query parameter on the list operation for any polymorphic status monitor collection and support filtering on the `kind` value of the status monitor.
 
-For example, the following request should returns all status monitor resources whose `kind` is either "VMInitializing" *or* "VMRebooting"
+For example, the following request should return all status monitor resources whose `kind` is either "VMInitializing" *or* "VMRebooting"
 and whose status is "NotStarted" *or* "Succeeded".
 
 ```text
