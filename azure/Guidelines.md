@@ -913,7 +913,7 @@ If the `Operation-Id` header is not specified, the service may create an operati
 
 <a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
 
-<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request.
 
 #### DELETE LRO pattern
 
@@ -948,10 +948,10 @@ Consistent with non-LRO DELETE operations, if a request body is specified, retur
 <a href="#lro-existing-resource" name="lro-existing-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action operating on an existing resource:
 
 ```text
-POST /UrlToExistingResource:<action>?api-version=<api-version>
+POST /UrlToExistingResource:<action>?api-version=<api-version>&<actionParamsGoHere>
 operation-id: <optionalStatusMonitorResourceId>`
 
-<JSON Action parameters in body>
+<JSON Action parameters can go in body if query params don't work>
 ```
 
 The response must look like this:
@@ -1094,7 +1094,7 @@ For example, the following request should return all status monitor resources wh
 and whose status is "NotStarted" *or* "Succeeded".
 
 ```text
-GET /operations?filter=kind eq 'VMInitializing' or kind eq 'VMRebooting'&filter=status eq 'NotStarted' or status eq 'Succeeded'
+GET /operations?filter=(kind eq 'VMInitializing' or kind eq 'VMRebooting') and (status eq 'NotStarted' or status eq 'Succeeded')
 ```
 
 <a href="#byos" name="byos"></a>

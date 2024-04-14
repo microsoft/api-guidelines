@@ -244,7 +244,7 @@ One example is a resource that requires physical resources (e.g. servers) to be 
 
 In this case:
 - The operation must use the PUT method (NOTE: PATCH is never allowed here)
-- The URL identifies resource being created or replaced.
+- The URL identifies the resource being created or replaced.
 - The request and response body have identical schemas & represent the resource.
 - The request may contain an `Operation-Id` header that the service will use as
 the ID of the status monitor created for the operation.
@@ -265,7 +265,7 @@ Operation-Id: 22
 In this case the response to the initial request is a `201 Created` to indicate that
 the resource has been created or `200 OK` when the resource was replaced.
 The response body should be a representation of the resource that was created,
-and should include a `status` field to indicate whether the additional processing has completed.
+and should include a `status` field indicating the current status of the resource.
 A status monitor is created to track the additional processing and the ID of the status monitor
 is returned in the `Operation-Id` header of the response.
 The response must also include an `Operation-Location` header for backward compatibility.
@@ -292,7 +292,7 @@ The client will issue a GET to the status monitor to obtain the status of the op
 GET https://items/operations/22?api-version=2022-05-01
 ```
 
-When the additional processing completes, the status monitor will indicate if it succeeded or failed.
+When the additional processing completes, the status monitor indicates if it succeeded or failed.
 
 ```text
 HTTP/1.1 200 OK
@@ -308,12 +308,11 @@ but should clearly document this behavior.
 
 ### Long-running delete operation
 
-A long-running delete operation follows the general pattern of a long-running operation --
-it returns a `202 Accepted` with a status monitor which the client uses to determine the outcome of the delete.
+A long-running delete operation returns a `202 Accepted` with a status monitor which the client uses to determine the outcome of the delete.
 
 The resource being deleted should remain visible (returned from a GET) until the delete operation completes successfully.
 
-When the delete operation completes successfully, a client must be able to create a new resource with same name without conflicts.
+When the delete operation completes successfully, a client must be able to create a new resource with the same name without conflicts.
 
 This diagram illustrates how a long-running DELETE operation is initiated and then how the client
 determines it has completed and obtains its results:
@@ -451,7 +450,7 @@ If the operation is still being processed, the status field will contain a "non-
 
 5. After the operation processing completes, a GET request to the status monitor returns the status monitor with a status field set to a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
 If the status is `Failed`, the status monitor resource contains an `error` field with a `code` and `message` that describes the failure.
-If the status is `Succeeded`, the operation results will be returned in the `result` field of the status monitor.
+If the status is `Succeeded`, the operation results (if any) are returned in the `result` field of the status monitor.
 
 6. There may be some cases where a long-running action operation can be completed before the response to the initial request.
 In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
@@ -462,7 +461,7 @@ The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
 ### Long-running action operation not related to a resource
 
-When an long-running action operation is not related to a specific resource (a batch operation is one example),
+When a long-running action operation is not related to a specific resource (a batch operation is one example),
 another approach is needed.
 
 This type of LRO should be initiated with a PUT method on a URL that represents the operation to be performed,
@@ -475,7 +474,7 @@ so that a failed operation could be reissued if necessary.
 Since the HTTP semantic for PUT is to create a resource, a subsequent GET on the URL to initiate the LRO
 should return the same response as the PUT: the status monitor for the operation.
 Clients will use a GET on the status monitor URL to obtain the status and results of the operation.
-So ror this type of LRO, the status monitor URL should be the same URL as the PUT operation.
+So for this type of LRO, the status monitor URL should be the same URL as the PUT operation.
 
 The following examples illustrate this pattern.
 
@@ -488,7 +487,7 @@ PUT /translate-operations/<operation-id>
 Note that the client specifies the operation id in the URL path.
 
 A successful response to the PUT operation should have a `201 Created` status and response body
-that contains a representation of the status monitor _and_ ny information from the request used to initiate the operation.
+that contains a representation of the status monitor _and_ any information from the request used to initiate the operation.
 
 The service is responsible for purging the status monitor after some period of time.
 It should auto-purge this resource after completion (at least 24 hours).
