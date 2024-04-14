@@ -340,7 +340,7 @@ The response body is the status monitor for the operation including the ID, eith
 When returning a status monitor whose status is not in a terminal state, the response must also include a `retry-after` header indicating the minimum number of seconds the client should wait
 before polling (GETing) the status monitor URL again for an update.
 For backward compatibility, the response must also include an `Operation-Location` header containing the absolute URL
-of the status monitor resource (without an api-version query parameter).
+of the status monitor resource, including an api-version query parameter.
 
 3. After waiting at least the amount of time specified by the previous response's `Retry-after` header,
 the client issues a GET request to the status monitor using the ID in the body of the initial response.
@@ -437,7 +437,7 @@ The response body is the status monitor for the operation including the ID, eith
 When returning a status monitor whose status is not in a terminal state, the response must also include a `retry-after` header indicating the minimum number of seconds the client should wait
 before polling (GETing) the status monitor URL again for an update.
 For backward compatibility, the response may also include an `Operation-Location` header containing the absolute URL
-of the status monitor resource (without an api-version query parameter).
+of the status monitor resource, including an api-version query parameter.
 
 3. After waiting at least the amount of time specified by the previous response's `Retry-after` header,
 the client issues a GET request to the status monitor using the ID in the body of the initial response.
