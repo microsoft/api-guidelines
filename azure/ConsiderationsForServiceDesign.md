@@ -250,7 +250,7 @@ In this case:
 the ID of the status monitor created for the operation.
 - If the `Operation-Id` matches an existing operation and the request content is the same,
 treat as a retry and return the same response as the earlier request.
-Otherwise fail the request with a `400-BadRequest`.
+Otherwise fail the request with a `409-Conflict`.
 
 ```text
 PUT /items/FooBar&api-version=2022-05-01
@@ -471,10 +471,10 @@ and an `Operation-Location` response header that contains the absolute URL of th
 In this type of LRO, the status monitor should include any information from the request used to initiate the operation,
 so that a failed operation could be reissued if necessary.
 
-Since the HTTP semantic for PUT is to create a resource, a subsequent GET on the URL to initiate the LRO
-should return the same response as the PUT: the status monitor for the operation.
 Clients will use a GET on the status monitor URL to obtain the status and results of the operation.
-So for this type of LRO, the status monitor URL should be the same URL as the PUT operation.
+Since the HTTP semantic for PUT is to create a resource, the same schema should be used for the PUT request body,
+the PUT response body, and the response body of the GET for the status monitor for the operation.
+For this type of LRO, the status monitor URL should be the same URL as the PUT operation.
 
 The following examples illustrate this pattern.
 

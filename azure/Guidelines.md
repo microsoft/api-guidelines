@@ -903,7 +903,7 @@ If the `Operation-Id` header is not specified, the service may create an operati
 
 <a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `409-Conflict` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
 <a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
@@ -976,7 +976,7 @@ For a non-idempotent POST, the service can treat the POST operation as idempoten
 
 <a href="#lro-operation-id-default-is-guid" name="lro-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `409-Conflict` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
 <a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
 
