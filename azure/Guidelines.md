@@ -849,7 +849,7 @@ https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#perfo
 
 ### Long-Running Operations & Jobs
 
-A _long-running operation (LRO)_ is typically an operation that should execute synchronously but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts the operation must execute asynchronously. For this pattern, the client initiates the operation on the service and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion.
+A _long-running operation (LRO)_ is typically an operation that should execute synchronously, but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts, the operation must execute asynchronously. For this pattern, the client initiates the operation on the service, and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion.
 
 LROs are always started by 1 logical client and may be polled (have their status checked) by the same client, another client, or even multiple clients/browsers. An example would be a dashboard or portal that shows all the operations along with their status.  See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in Considerations for Service Design for an introduction to the design of long-running operations.
 
@@ -882,9 +882,9 @@ operation-id: <optionalStatusMonitorResourceId>
 The response must look like this:
 
 ```text
-200 OK
+201 Created
 operation-id: <statusMonitorResourceId>
-operation-location: https://operations/<operation-id>
+operation-location: https://operations/<operation-id>?api-version=<api-version>
 
 <JSON Resource in body>
 ```
@@ -907,7 +907,7 @@ If the `Operation-Id` header is not specified, the service may create an operati
 
 <a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
 
-<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
+<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource, if the resource was created or replaced successfully.
 
 <a href="#lro-put-returns-operation-id-header" name="lro-put-returns-operation-id-header">:white_check_mark:</a> **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
 
@@ -978,7 +978,7 @@ For a non-idempotent POST, the service can treat the POST operation as idempoten
 
 <a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `409-Conflict` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
+<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO action on a resource if the processing of the operation was successfully initiated.
 
 <a href="#lro-returns-only-202" name="lro-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
@@ -989,7 +989,7 @@ For a non-idempotent POST, the service can treat the POST operation as idempoten
 <a href="#lro-action-no-resource" name="lro-action-no-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action not related to a specific resource (such as a batch operation):
 
 ```text
-PUT <operation-endpoint>/<operation-id>
+PUT <operation-endpoint>/<operation-id>?api-version=<api-version>
 
 <JSON body with parameters for the operation>>
 ```
@@ -1049,7 +1049,7 @@ the status monitor **must** be polymorphic -- it **must** contain a `kind` prope
 <a href="#lro-poll" name="lro-poll">:white_check_mark:</a> **DO** use the following pattern to allow clients to poll the current state of a Status Monitor resource:
 
 ```text
-GET /operations/<operation-id>?api-version=<api-version>
+GET <operation-endpoint>/<operation-id>?api-version=<api-version>
 ```
 
 The response must look like this:
@@ -1081,7 +1081,7 @@ retry-after: <delay-seconds>    (if status not terminal)
 
 Use the following patterns to allow clients to list Status Monitor resources.
 
-<a href="#lro-list-status-monitors" name="lro-list-status-monitors">:heavy_check_mark:</a>
+<a href="#lro-list-status-monitors" name="lro-list-status-monitors">:ballot_box_with_check:</a>
 **YOU MAY** support a GET method on any status monitor collection URL that returns a list of the status monitors in that collection.
 
 <a href="#lro-put-action-list-status-monitors" name="lro-put-action-list-status-monitors">:ballot_box_with_check:</a>

@@ -479,7 +479,7 @@ For this type of LRO, the status monitor URL should be the same URL as the PUT o
 The following examples illustrate this pattern.
 
 ```text
-PUT /translate-operations/<operation-id>
+PUT /translate-operations/<operation-id>?api-version=2022-05-01
 
 <JSON body with parameters for the operation>
 ```
@@ -489,8 +489,8 @@ Note that the client specifies the operation id in the URL path.
 A successful response to the PUT operation should have a `201 Created` status and response body
 that contains a representation of the status monitor _and_ any information from the request used to initiate the operation.
 
-The service is responsible for purging the status monitor after some period of time.
-It should auto-purge this resource after completion (at least 24 hours).
+The service is responsible for purging the status monitor after some period of time,
+but no earlier than 24 hours after the completion of the operation.
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
 ### Controlling a long-running operation
