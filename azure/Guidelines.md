@@ -1042,7 +1042,7 @@ Property | Type        | Required | Description
 additional<br/>properties | | | Additional named or dynamic properties of the operation
 
 (*): When a status monitor endpoint supports multiple operations with different result structures or additional properties,
-the status monitor **must** be polymorphic -- it **must** contain a `kind` property that indicates the kind of long-running operation.
+the status monitor **must** be polymorphic -- it **must** contain a required `kind` property that indicates the kind of long-running operation.
 
 #### Obtaining status and results of long-running operations
 
