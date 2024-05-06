@@ -35,8 +35,7 @@ _Note: Developing a new service requires the development of at least 1 (manageme
 
 A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used to provision and control the operational state of resources.
 A **data plane** API is used by developers to implement applications. Occasionally, some operations are useful for provisioning/control and applications. In this case, the operation can appear in both APIs.
-Although, best practices and patterns described in this document apply to all HTTP/REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on [the conventions of the Azure ARM](https://github.com/cloud-and-ai-microsoft/resource-provider-contract).
-
+Although, best practices and patterns described in this document apply to all HTTP/REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on the conventions of the [Azure RPC](https://aka.ms/azurerpc).
 
 ## Start with the Developer Experience
 A great API starts with a well thought out and designed service. Your service should define simple/understandable abstractions with each given a clear name that you use consistently throughout your API and documentation. There must also be an unambiguous relationship between these abstractions.
