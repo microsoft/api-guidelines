@@ -320,7 +320,7 @@ There are 2 kinds of errors:
 
 *NOTE: `x-ms-error-code` values are part of your API contract (because customer code is likely to do comparisons against them) and cannot change in the future.*
 
-<a href="#rest-error-code-enum" name="rest-error-code-enum">:heavy_check_mark:</a> **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
+<a href="#rest-error-code-enum" name="rest-error-code-enum">:heavy_check_mark:</a> **YOU MAY** implement the `x-ms-error-code` values as an enum with `"modelAsString": true` because it's possible to add new values over time.  In particular, it's only a breaking change if the same conditions result in a *different* top-level error code.
 
 <a href="#rest-add-codes-in-new-api-version" name="rest-add-codes-in-new-api-version">:warning:</a> **YOU SHOULD NOT** add new top-level error codes to an existing API without bumping the service version.
 
