@@ -566,6 +566,14 @@ Note: The service is responsible for performing any URL-encoding required on the
 
 <a href="#collections-nextlink-includes-all-query-params" name="collections-nextlink-includes-all-query-params">:white_check_mark:</a> **DO** include any query parameters required by the service in `nextLink`, including `api-version`.
 
+<a href="#collections-include-nextlink-header-for-more-results" name="collections-include-nextlink-header-for-more-results">:white_check_mark:</a> **DO** also include the same `nextLink` URL and query parameters in the [`Link` header](https://httpwg.org/specs/rfc8288.html#link-target) with `rel="next"`:
+
+```
+Link: <{opaqueUrl}>; rel="next"
+```
+
+This allows client libraries to provide abstractions to loop through results without having to spend computational resources to deserialize the response body just to get the `nextLink`.
+
 <a href="#collections-response-array-name" name="collections-response-array-name">:ballot_box_with_check:</a> **YOU SHOULD** use `value` as the name of the top-level array field unless a more appropriate name is available.
 
 <a href="#collections-no-nextlink-on-last-page" name="collections-no-nextlink-on-last-page">:no_entry:</a> **DO NOT** return the `nextLink` field at all when returning the last page of the collection.
