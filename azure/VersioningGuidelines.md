@@ -7,7 +7,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
-| 2024-Nov-14 | Updated LRO guidelines                                         |
+| 2024-Nov-14 | Azure Service Versioning & Breaking Change Guidelines       |
 
 </details>
 
@@ -16,14 +16,14 @@
 This document provides a "Dos and Don'ts" list for complying with the Azure Versioning and Breaking Change Policy,
 as documented [internally](aka.ms/AzBreakingChangesPolicy) and [externally](https://learn.microsoft.com/azure/developer/intro/azure-service-sdk-tool-versioning).
 
-:white_check_mark: **DO** thoroughly test the API as documented before merging to a production branch of the specs repo.
+:white_check_mark: **DO** thoroughly ensure/test the API contract is entirely correct before merging it into a production branch of the specs repo.
 
 Testing helps avoid "BugFix" changes to the API definition. Testing should be done at the HTTP level as well as through generated SDKs.
 
-:white_check_mark: **DO** retire all prior preview API versions when a new GA or preview API version is released.
+:white_check_mark: **DO** retire all prior preview API versions 90 days after a new GA or preview API version is released.
 
 :white_check_mark: **DO** contact the Azure Breaking Change Review board to coordinate communications to customers
-when releasing an API version that will require retiring a prior version.
+when releasing an API version requiring the retirement of a prior version.
 
 :white_check_mark: **DO** create a new preview API version for any features that should remain in preview following a new GA release.
 
