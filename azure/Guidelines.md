@@ -1292,6 +1292,52 @@ In addition to distributed tracing, Azure also uses a set of common correlation 
 |x-ms-client-request-id       |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** include this in their log entries to facilitate correlation of log entries for a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
 |x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoration such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this value is globally unique. Services should log this value with their traces to facilitate correlation of log entries for a single request.
 
+<a href="#RP-API-MSD" name="RP-API-MSD"></a>
+### RP API More Secure Defaults Guidance
+
+The RP API MSD Guidelines are designed to ensure that any new RP API being developed is deployed from the outset with secure parameter default values. This proactive approach helps prevent non-secure defaults and maintains a high security standard from the very beginning of the API development process.
+
+<a href="#rp-parameter-defining" name="rp-parameter-defining">:white_check_mark:</a> **DO** define parameters as explicit as possible:
+- Tagging parameters as required or not
+- If a parameter is not tagged as required and it has security implications, define a default value
+- Defining the default value as a `key: "value"` pair
+
+Example:
+
+```json
+"parameters": [
+	{
+		"name": "id",
+      "in": "path",
+      "required": true,
+      "type": "string"
+   },
+   {
+      "name": "requiredParam",
+      "in": "query",
+      "required": true,
+      "type": "string"
+   },
+   {
+      "name": "optionalParam",
+      "in": "query",
+      "required": false,
+      "type": "string"
+   },
+   {
+      "name": "paramWithDefault",
+	   "in": "query",
+      "required": false,
+      "type": "string",
+      "default": "defaultValue"
+   }
+],
+```
+
+<a href="#security-parameters-handling" name="security-parameters-handling">:ballot_box_with_check:</a> **YOU SHOULD** consider tagging a security parameter as required. If making it required is not feasible, refer to the Microsoft Cloud Security Benchmark in order to assign a meaningful value to avoid security gaps. If you need to deviate from this default value, discuss matter within your team and with the API Board to ensure awareness and understanding of the parameter.
+
+**Note**: Make sure the documentation and the spec files from [GitHub - Azure/azure-rest-api-specs: The source for REST API specifications for Microsoft Azure.](https://github.com/Azure/azure-rest-api-specs/tree/main) match and are kept up to date.
+
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
 
