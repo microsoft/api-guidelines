@@ -402,7 +402,7 @@ Services, and the clients that access them, may be written in multiple languages
  Number  | Signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
  String  | Used for everything else
 
-<a href="#json-null-response-values" name="json-null-response-values">:white_check_mark:</a> **DO NOT** send JSON fields with a null value from the service to the client. Instead, the service should just not send this field at all (this reduces payload size). Semantically, Azure services treat a missing field and a field with a value of null as identical. 
+<a href="#json-null-response-values" name="json-null-response-values">:no_entry:</a> **DO NOT** send JSON fields with a null value from the service to the client. Instead, the service should just not send this field at all (this reduces payload size). Semantically, Azure services treat a missing field and a field with a value of null as identical. 
 
 <a href="#json-null-request-values" name="json-null-resquest-values">:white_check_mark:</a> **DO** accept JSON fields with a null value only for a PATCH operation with a JSON Merge Patch payload. A field with a value of null instructs the service to delete the field. If the field cannot be deleted, then return 400-BadRequest, else return the resource with the deleted field missing from the response payload (see bullet above).
 
