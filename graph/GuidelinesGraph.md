@@ -277,6 +277,37 @@ Operation resources MUST have a binding parameter that matches the type of the b
 
 For an additional list of standard HTTP methods, see the [RFC7230](https://www.rfc-editor.org/rfc/rfc9112)).
 
+### HTTP Response Codes
+
+When designing Graph APIs, it is crucial to use appropriate HTTP response codes to ensure consistency and clarity for API consumers. The following table outlines the recommended HTTP response codes for various scenarios. All 4XX and 5XX error responses **MUST** include a JSON body as specified in the [Error Response Modeling](#error-handling) section. For further details, refer to [HTTP response status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status).
+
+| HTTP Code                 |  Description | Handled At         |
+|---------------------------|--------------|--------------------|
+| 200 OK                    | Indicates that the request was successful, and the response contains the requested data or confirmation.                                 | Service            |
+| 201 Created               | Indicates that a new resource has been successfully created. The `Location` header SHOULD contain the URI of the newly created resource. | Service            |
+| 202 Accepted              | Indicates that the request has been accepted for processing, but the processing is not yet complete. See [Long-Running operations](/graph/patterns/long-running-operations.md). | Service            |
+| 204 No Content            | Indicates that the request was successful, but there is no content to return in the response body.                                       | Service            |
+| 400 Bad Request           | Indicates that the request is malformed or contains invalid parameters. The response SHOULD include details about the error.             | Service            |
+| 401 Unauthorized          | Indicates that the request is unauthorized. The client MUST authenticate before making the request.                                      | Gateway            |
+| 403 Forbidden             | Indicates that the client is authenticated but does not have sufficient permissions in auth token to perform the requested operation.    | Gateway or Service |
+| 404 Not Found             | Indicates that the requested resource could not be found.                                                                                | Gateway or Service |
+| 422 Unprocessable Content | Indicates that a request is syntactically correct but semantically wrong per the business policy, server state or domain rules.          | Service            |
+| 429 Too Many Requests     | Indicates that the client has exceeded the rate limits or throttling thresholds.                                                         | Gateway            |
+| 500 Internal Server Error | Indicates an internal server error. This is a generic error message for unexpected failures.                                             | Service            |
+| 503 Service Unavailable   | Indicates that the service is temporarily unavailable, often due to maintenance or overload.                                             | Gateway or Service |
+
+#### Choosing Between 400 and 422 Response Codes
+
+When designing APIs, it's important to differentiate between client errors that are syntactically incorrect (400 Bad Request) and those that are semantically incorrect (422 Unprocessable Content). The following table provides guidance on when to use each response code, along with examples.
+
+|   | 400 Bad Request      | 422 Unprocessable Content     |
+| - |----------------------|-------------------------------|
+| **Request Syntax**       | The request is malformed or violates the API's syntax rules.                                     | The request is syntanctically correct but semantically wrong per the business policy, server state or domain rules.   |
+| **Validation Errors**    | Missing required fields, invalid JSON format, or unsupported query parameters.                   | Valid JSON structure but fails domain-specific validation, such as invalid state transitions or policy violations.|
+| **Validatation Point**   | Validation is typically performed in the shallower layer like Controllers.                       | Validation is typically performed deeper in the business service stacks.|
+| **Replayability**        | Retrying the request does not change outcome for same API version.                               | The request can be retried successfully at a later time when business conditions allow it.                      |
+| **Examples**             | - Missing mandatory file title.<br>- Exceeding the page size limit.<br>- Malformed JSON payload. | - Uploading a photo when storage quota is full.<br>- Moving a file into a folder not yet provisioned.<br>- Attempting to set a new password that matches one used within the past 12 months. |
+
 ### Error handling
 
  To improve API traceability and consistency you MUST use the recommended Microsoft Graph error model and the Microsoft Graph utilities library to provide a standard implementation for your service. The value for the "message" name/value pair MUST be a human-readable representation of the error, tailored to provide enough information for the developer to understand the error and take appropriate action. The message is intended only as an aid to developers and should not be exposed to end users.
@@ -321,17 +352,8 @@ The top-level error code MUST match the HTTP response status code description, c
     }
    ```
 
-| Microsoft Graph enforces the following error rules                                                                | 
-|-------------------------------------------------------------------------------------------------------------------|
-| :heavy_check_mark: **MUST** return an error property with a child code property in all error responses. |
-| :heavy_check_mark: **MUST** return a 403 Forbidden error when the application or signed-in user has insufficient permissions present in the auth token. |
-| :heavy_check_mark: **MUST** return a 429 Too Many Requests error when the client exceeded throttling limits, and a 503 Service Unavailable error when the service overloaded but the client is within throttling limits.|
-| :ballot_box_with_check: **SHOULD** return a 404 Not Found error if a 403 error would result in information disclosure. |
 
 For more detailed guidance, see the article on [Error condition responses](./articles/errorResponses.md).
-
-For a complete mapping of error codes to HTTP statuses, see
-[rfc7231 (ietf.org)](https://datatracker.ietf.org/doc/html/rfc7231#section-6).
 
 <a name="api-contract-and-non-backward-compatible-changes"></a>
 
