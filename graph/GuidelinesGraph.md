@@ -289,11 +289,11 @@ When designing Graph APIs, it is crucial to use appropriate HTTP response codes 
 | 202 Accepted              | Indicates that the request has been accepted for processing, but the processing is not yet complete. See [Long-Running operations](/graph/patterns/long-running-operations.md). | Service            |
 | 204 No Content            | Indicates that the request was successful, but there is no content to return in the response body.                                       | Service            |
 | 400 Bad Request           | Indicates that the request is malformed or contains invalid parameters. The response SHOULD include details about the error.             | Service            |
-| 401 Unauthorized          | Indicates that the request is unauthorized. The client MUST authenticate before making the request.                                      | Gateway            |
-| 403 Forbidden             | Indicates that the client is authenticated but does not have sufficient permissions in auth token to perform the requested operation.    | Gateway or Service |
+| 401 Unauthorized          | Indicates that the request is unauthenticated. The client MUST authenticate before making the request.                                      | Gateway            |
+| 403 Forbidden             | Indicates that the client is authenticated but does not have sufficient permissions to perform the requested operation.    | Gateway or Service |
 | 404 Not Found             | Indicates that the requested resource could not be found.                                                                                | Gateway or Service |
 | 422 Unprocessable Content | Indicates that a request is syntactically correct but semantically wrong per the business policy, server state or domain rules.          | Service            |
-| 429 Too Many Requests     | Indicates that the client has exceeded the rate limits or throttling thresholds.                                                         | Gateway            |
+| 429 Too Many Requests     | Indicates that the client has exceeded the rate limits or throttling thresholds.                                                         | Gateway or Service     |
 | 500 Internal Server Error | Indicates an internal server error. This is a generic error message for unexpected failures.                                             | Service            |
 | 503 Service Unavailable   | Indicates that the service is temporarily unavailable, often due to maintenance or overload.                                             | Gateway or Service |
 
