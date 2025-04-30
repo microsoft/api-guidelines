@@ -307,7 +307,7 @@ When designing APIs, it's important to differentiate between client errors that 
 | **Validation Errors**    | Missing required fields, invalid JSON format, or unsupported query parameters.                   | Valid JSON structure but fails domain-specific validation, such as invalid state transitions or policy violations.|
 | **Validatation Point**   | Validation is typically performed in the shallower layer like Controllers.                       | Validation is typically performed deeper in the business service stacks.|
 | **Replayability**        | Retrying the request does not change outcome for same API version.                               | The request can be retried successfully at a later time when business conditions allow it.                      |
-| **Examples**             | - Missing mandatory file title.<br>- Exceeding the page size limit.<br>- Malformed JSON payload. | - Uploading a photo when storage quota is full.<br>- Moving a file into a folder not yet provisioned.<br>- Attempting to set a new password that matches one used within the past 12 months. |
+| **Examples**             | - Missing mandatory file title.<br>- Exceeding the max page size limit.<br>- Malformed JSON payload. | - Uploading a photo when storage quota is full.<br>- Moving a file into a folder not yet provisioned.<br>- Attempting to set a new password that matches one used within the past 12 months. |
 
 ### Error handling
 
