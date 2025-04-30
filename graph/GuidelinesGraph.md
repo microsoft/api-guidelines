@@ -13,6 +13,7 @@ Table of contents
       - [Nullable properties](#nullable-properties)
     - [Query support](#query-support)
     - [Behavior modeling](#behavior-modeling)
+    - [HTTP Response Codes](#http-response-codes)
     - [Error handling](#error-handling)
     - [Limitations on core types](#limitations-on-core-types)
   - [External standards](#external-standards)
