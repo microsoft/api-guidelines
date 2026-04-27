@@ -56,7 +56,7 @@ presentation makes things simpler for our users and tooling chain.
 - For most implementations of the LRO pattern (like the example above), there will be 3 permissions necessary to comply with the principle of least privilege: `ArchiveOperation.ReadWrite.All` to create the `archiveOperation` entity, `ArchiveOperation.Read.All` to track the `archiveOperation` entity to completion, and `Archives.Read.All` to retrieve the `archive` that was created as a result of the operation.
 For APIs that would have been modeled as a simple `GET` on the resource URL, but that are modeled as long-running operations due to MSGraph performance requirements, only the `Archive.Read.All` permission is necessary as long as creating the `archiveOperation` entity is "safe".
 Here, "safe" means that there are no side effects of creating the `archiveOperation` entity that would change the functionality of any entities outside of the `archive` being retrieved.
-This requirment does not mean that the API must be idempotent, but an idempotent API is suffucient to meet this requirement.
+This requirement does not mean that the API must be idempotent, but an idempotent API is sufficient to meet this requirement.
 
 ## When to use this pattern
 
