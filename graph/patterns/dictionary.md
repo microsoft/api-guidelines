@@ -138,7 +138,7 @@ The following example defines a complex type **roleSettings**, an **assignedRole
     <Property Name ="domain" Type="Edm.String" Nullable="false" />
   </ComplexType>
 
-  <ComplexType Name="assignedRoleGroupDictionary" BaseType="microsoft.graph.Dictionary">
+  <ComplexType Name="assignedRoleGroupDictionary" OpenType="true" BaseType="microsoft.graph.Dictionary">
     <!-- Note: Strongly-typed dictionary of roleSettings keyed by name of roleGroup. -->
     of roleSettings
     keyed by name of roleGroup. -->
