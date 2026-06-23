@@ -204,11 +204,11 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 
 The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
 
-| API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction |
-|-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|
-| Type hierarchy          | yes                                           | no                                                | no                        |
-| Facets                  | partially                                     | yes                                               | yes                       |
-| Flat bag                | no                                            | no                                                | yes                       |
+| API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction | TypeSpec representation        |
+|-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|--------------------------------|
+| Type hierarchy          | yes                                           | no                                                | no                        | `@abstract` + `extends`        |
+| Facets                  | partially                                     | yes                                               | yes                       | —                              |
+| Flat bag                | no                                            | no                                                | yes                       | `@flatBag` + `@variant`        |
 
 #### Pros and cons
 
