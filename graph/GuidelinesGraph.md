@@ -206,9 +206,9 @@ The following table shows a summary of the main qualities for each pattern and c
 
 | API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction | TypeSpec representation |
 |-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|-------------------------|
-| Type hierarchy          | yes                                           | no                                                | no                        | `extends` (with `@abstract` base) |
+| Type hierarchy          | yes                                           | no                                                | no                        | `@abstract` + `extends` |
 | Facets                  | partially                                     | yes                                               | yes                       | `@facet` on a nullable `@complex` property |
-| Flat bag                | no                                            | no                                                | yes                       | plain entity properties (no dedicated decorator) |
+| Flat bag                | no                                            | no                                                | yes                       | `@flatBag` + `@variant` |
 
 #### Pros and cons
 

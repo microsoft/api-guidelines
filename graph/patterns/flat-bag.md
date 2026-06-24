@@ -49,3 +49,51 @@ The recurrencePattern has six variants expressed as six different values of the 
         <Property Name="type" Type="graph.recurrencePatternType" />
 </ComplexType>
 ```
+
+### TypeSpec representation
+
+The same `recurrencePattern` flat-bag is expressed in TypeSpec using the `@flatBag` decorator on the model plus `@variant` decorators on the variant-conditional sibling properties.
+The discriminator property is conventionally named `type`, and the discriminator enum must be closed (no `unknownFutureValue`).
+
+```TypeSpec
+enum recurrencePatternType {
+  daily: 0,
+  weekly: 1,
+  absoluteMonthly: 2,
+  relativeMonthly: 3,
+  absoluteYearly: 4,
+  relativeYearly: 5,
+}
+
+@flatBag("type")
+@complex model recurrencePattern {
+  type: recurrencePatternType | null;
+
+  // Shared property — meaningful for every variant
+  interval: int32;
+
+  // wire-fidelity: shipped as Nullable="false"; variant-conditional but non-nullable
+  @variant("absoluteMonthly", "absoluteYearly") dayOfMonth: int32;
+
+  @variant("weekly", "relativeMonthly", "relativeYearly") daysOfWeek: dayOfWeek[];
+
+  @variant("weekly") firstDayOfWeek: dayOfWeek | null;
+
+  @variant("relativeMonthly", "relativeYearly") index: weekIndex | null;
+
+  // wire-fidelity: shipped as Nullable="false"; variant-conditional but non-nullable
+  @variant("absoluteYearly", "relativeYearly") month: int32;
+}
+```
+
+The `@flatBag` and `@variant` decorators are pure semantic metadata — they do not change the compiled CSDL output, which matches the CSDL shown above.
+Their purpose is to enable validation that variant-conditional sibling properties target valid discriminator enum members, and to surface the pattern to downstream tooling.
+
+**Authoring rules:**
+
+- The discriminator property is typed as `<EnumName> | null` to match the shipped Graph CSDL convention.
+- Variant-conditional non-collection siblings are nullable (`T | null`).
+- Variant-conditional collection siblings use `T[]` rather than `T[] | null` — empty array signals absence per Graph wire convention.
+- Properties meaningful for every variant (`interval` above) remain unannotated.
+- Non-nullable variant-conditional siblings (like `dayOfMonth`, `month`) preserve the shipped Graph wire shape.
+  The inline `// wire-fidelity:` comment documents the exception, and a `#suppress` for `flat-bag-siblings-should-be-nullable` may be needed under stricter rulesets.
