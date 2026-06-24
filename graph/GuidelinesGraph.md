@@ -202,13 +202,13 @@ The three most often used patterns in Microsoft Graph today are type hierarchy, 
 
 - **[Enums](./patterns/enums.md)** represent a subset of the nominal type they rely on, and are especially useful in cases where certain properties have predefined, limited options.
 
-The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case.
+The following table shows a summary of the main qualities for each pattern and can help you select a pattern fit for your use case. The **TypeSpec representation** column shows how each pattern is authored with the [`@microsoft/typespec-msgraph`](https://aka.ms/typespec) library; see the [facets TypeSpec example](./patterns/facets.md#facets-in-typespec) for a worked sample.
 
-| API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction | TypeSpec representation        |
-|-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|--------------------------------|
-| Type hierarchy          | yes                                           | no                                                | no                        | `@abstract` + `extends`        |
-| Facets                  | partially                                     | yes                                               | yes                       | —                              |
-| Flat bag                | no                                            | no                                                | yes                       | `@flatBag` + `@variant`        |
+| API qualities\patterns  | Properties and behavior described in metadata | Supports combinations of properties and behaviors | Simple query construction | TypeSpec representation |
+|-------------------------|-----------------------------------------------|---------------------------------------------------|---------------------------|-------------------------|
+| Type hierarchy          | yes                                           | no                                                | no                        | `@abstract` + `extends` |
+| Facets                  | partially                                     | yes                                               | yes                       | `@facet` on a nullable `@complex` property |
+| Flat bag                | no                                            | no                                                | yes                       | `@flatBag` + `@variant` |
 
 #### Pros and cons
 
