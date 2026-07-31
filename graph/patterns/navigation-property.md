@@ -59,7 +59,7 @@ Use this behavior sparingly because it changes the default response shape and ca
   @key id: string;
 
   @autoExpand
-  @contains owner: person;
+  @references owner: person;
 
   @autoExpandReferences
   @references members: person[];
