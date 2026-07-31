@@ -44,6 +44,32 @@ Implementing support for accessing the "$ref" of a navigation property allows a 
 The strongly-typed nature of navigation properties is valuable for backend services and for client applications, when compared with the weakly-typed foreign key property.
 Strong typing allows some documentation and visualizations to be automatically generated, it allows SDK generation, and it allows some automated client code generation; it also prevents the need to store duplicate data on the service side and as a result has improved data consistency across APIs since the duplicate data does not need to be regularly refreshed. 
 
+### Automatic expansion
+
+A service can declare that it returns related data without requiring the caller to specify `$expand`.
+Use this behavior sparingly because it changes the default response shape and can increase response size and backend cost.
+
+| Behavior | CSDL annotation | TypeSpec | Recommended use |
+|:---|:---|:---|:---|
+| Return the full related entity | `Org.OData.Core.V1.AutoExpand` | `@autoExpand` | Small, bounded relationships that are intrinsic to the parent representation |
+| Return only entity references | `Org.OData.Core.V1.AutoExpandReferences` | `@autoExpandReferences` | Relationships where identity is required but full expansion is unnecessary or crosses workload boundaries |
+
+```typespec
+@entity model team {
+  @key id: string;
+
+  @autoExpand
+  @contains owner: person;
+
+  @autoExpandReferences
+  @references members: person[];
+}
+```
+
+Do not apply automatic expansion to direct or indirect recursive relationships.
+Avoid full automatic expansion of large or unbounded collections.
+Support for ordinary caller-requested `$expand` does not imply that a navigation property should be automatically expanded.
+
 ## When to Use this Pattern
 ------------------------
 
