@@ -37,30 +37,42 @@ For more information, see the [OData reference](https://github.com/oasis-tcs/oda
 
 ## Examples
 
-### Declaring a string dictionary
+### String dictionary
+
+#### CSDL declaration
 The following example demonstrates defining a dictionary that can contain string values.
 
 ```xml
-<ComplexType Name="stringDictionary" BaseType="graph.Dictionary">
-  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
-    <Collection>
-      <String>Edm.String</String>
-    </Collection>
-  </Annotation>
-</ComplexType>
+<Schema Namespace="microsoft.graph"> <!--NOTE: the namespace that declares the Dictionary complex type *must* be microsoft.graph-->
+  <ComplexType Name="Dictionary" OpenType="true">
+    <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
+  </ComplexType>
+</Schema>
+<Schema Namespace="WorkloadNamespace">
+  <ComplexType Name="stringDictionary" OpenType="true" BaseType="microsoft.graph.Dictionary">
+    <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
+      <Collection>
+        <String>Edm.String</String>
+      </Collection>
+    </Annotation>
+  </ComplexType>
+</Schema>
 ```
 
-### Defining a dictionary property
+Please note that schema validation will fail due to the casing of `Dictionary`.
+This warning should be suppressed.
+
+#### Defining a dictionary property
 The following example shows defining a dictionary property, "userTags", on the item entity type.
 
 ```xml
 <EntityType Name="item">
   ...
-  <Property Name="userTags" Type="self.stringDictionary"/>
+  <Property Name="userTags" Type="WorkloadNamespace.stringDictionary"/>
 </EntityType>
 ```
 
-### Reading a dictionary
+#### Reading a dictionary
 Dictionaries are represented in JSON payloads as a JSON object, where the property names are comprised of the keys and their values are the corresponding key values. 
 
 The following example shows reading an item with a dictionary property named "userTags":
@@ -80,7 +92,7 @@ Response:
 }
 ```
 
-### Setting a dictionary value
+#### Setting a dictionary value
 The following example shows setting a dictionary value.  If "hairColor" already exists, it is updated, otherwise it is added.
 
 ```http
@@ -92,7 +104,7 @@ PATCH /item/userTags
 }
 ```
 
-### Deleting a dictionary value
+#### Deleting a dictionary value
 A dictionary value can be removed by setting the value to null.
 ```http
 PATCH /item/userTags
@@ -103,34 +115,43 @@ PATCH /item/userTags
 }
 ```
 
-### Declaring a complex typed dictionary
+### Complex typed dictionary
+
+#### CSDL declaration
 Dictionaries can also contain complex types whose values may be constrained to a particular set of complex types.
 
 The following example defines a complex type **roleSettings**, an **assignedRoleGroupDictionary** that contains **roleSettings**, and an **assignedRoles** property that uses the dictionary..
 
 ```xml
-<EntityType Name="principal">
-  ...
-  <Property Name="assignedRoles" Type="self.assignedRoleGroupDictionary">
-</EntityType>
+<Schema Namespace="microsoft.graph"> <!--NOTE: the namespace that declares the Dictionary complex type *must* be microsoft.graph-->
+  <ComplexType Name="Dictionary" OpenType="true">
+    <Annotation Term="Core.Description" String="A dictionary of name-value pairs. Names must be valid property names, values may be restricted to a list of types via an annotation with term `Validation.OpenPropertyTypeConstraint`." />
+  </ComplexType>
+</Schema>
+<Schema Namespace="WorkloadNamespace">
+  <EntityType Name="principal">
+    ...
+    <Property Name="assignedRoles" Type="WorkloadNamespace.assignedRoleGroupDictionary">
+  </EntityType>
 
-<ComplexType Name="roleSettings">
-  <Property Name ="domain" Type="Edm.String" Nullable="false" />
-</ComplexType>
+  <ComplexType Name="roleSettings">
+    <Property Name ="domain" Type="Edm.String" Nullable="false" />
+  </ComplexType>
 
-<ComplexType Name="assignedRoleGroupDictionary" BaseType="graph.Dictionary">
-  <!-- Note: Strongly-typed dictionary
-  of roleSettings
-  keyed by name of roleGroup. -->
-  <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
-    <Collection>
-      <String>microsoft.graph.roleSettings</String>
-    </Collection>
-  </Annotation>
-</ComplexType>
+  <ComplexType Name="assignedRoleGroupDictionary" BaseType="microsoft.graph.Dictionary">
+    <!-- Note: Strongly-typed dictionary of roleSettings keyed by name of roleGroup. -->
+    of roleSettings
+    keyed by name of roleGroup. -->
+    <Annotation Term="Org.OData.Validation.V1.OpenPropertyTypeConstraint">
+      <Collection>
+        <String>microsoft.graph.roleSettings</String>
+      </Collection>
+    </Annotation>
+  </ComplexType>
+</Schema>
 ```
 
-### Reading a entity with a complex-typed dictionary
+#### Reading a entity with a complex-typed dictionary
 
 The following example illustrates reading an entity containing the complex-typed dictionary "assignedRoles".
 
@@ -158,7 +179,7 @@ Response:
 }
 ```
 
-### Reading the dictionary property
+#### Reading the dictionary property
 The following example shows getting just the "assignedRoles" dictionary property.
 
 ```HTTP

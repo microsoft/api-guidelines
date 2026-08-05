@@ -1,7 +1,7 @@
 # Microsoft Azure REST API Guidelines
 
 <!-- cspell:ignore autorest, BYOS, etag, idempotency, maxpagesize, innererror, trippable, nextlink, condreq, etags -->
-<!-- markdownlint-disable MD033 MD049 -->
+<!-- markdownlint-disable MD033 MD049 MD055 -->
 
 <!--
 Note to contributors: All guidelines now have an anchor tag to allow cross-referencing from associated tooling.
@@ -13,10 +13,14 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 <details>
   <summary>Expand change history</summary>
-  
+
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2025-Mar-28 | Added guidelines about JSON ID and null values                 |
+| 2024-Mar-17 | Updated LRO guidelines                                         |
+| 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2023-May-12 | Explain service response for missing/unsupported `api-version` |
+| 2023-Apr-21 | Update/clarify guidelines on POST method repeatability         |
 | 2023-Apr-07 | Update/clarify guidelines on polymorphism                      |
 | 2022-Sep-07 | Updated URL guidelines for DNS Done Right                      |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
@@ -41,9 +45,10 @@ These guidelines apply to Azure service teams implementing _data plane_ APIs. Th
 - Sustainable & versionable via clear API contracts with 2 requirements:
   1. Customer workloads must never break due to a service change
   2. Customers can adopt a version without requiring code changes
+
 Technology and software is constantly changing and evolving, and as such, this is intended to be a living document. [Open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose) to suggest a change or propose a new idea. Please read the [Considerations for Service Design](./ConsiderationsForServiceDesign.md) for an introduction to the topic of API design for Azure services. *For an existing GA'd service, don't change/break its existing API; instead, leverage these concepts for future APIs while prioritizing consistency within your existing service.*
 
-*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/Azure/azure-resource-manager-rpc).*
+*Note: If you are creating a management plane (ARM) API, please refer to the [Azure Resource Manager Resource Provider Contract](https://github.com/cloud-and-ai-microsoft/resource-provider-contract).*
 
 ### Prescriptive Guidance
 This document offers prescriptive guidance labeled as follows:
@@ -65,7 +70,7 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 
 <a href="#http" name="http"></a>
 ### HTTP
-Azure services must adhere to the HTTP specification, [RFC7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
+Azure services must adhere to the HTTP specification, [RFC 7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
 
 - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
 - [HTTP Request / Response Pattern](#http-request--response-pattern)
@@ -116,7 +121,7 @@ https://<tenant>-<service-root>.<service>.<cloud>/...
 
 Examples:
 - Request URL: `https://blobstore.azure.net/contoso.com/account1/container1/blob2`
-- Response header ([RFC2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
+- Response header ([RFC 2557](https://datatracker.ietf.org/doc/html/rfc2557#section-4)): `content-location : https://contoso-dot-com-account1.blobstore.azure.net/container1/blob2`
 - GUID format: `https://00000000-0000-0000-C000-000000000046-account1.blobstore.azure.net/container1/blob2`
 
 <a href="#http-url-return-consistent-form" name="http-url-return-consistent-form">:white_check_mark:</a> **DO** return URLs in response headers/bodies in a consistent form regardless of the URL used to reach the resource. Either always a UUID for `<tenant>` or always a single verified domain.
@@ -168,6 +173,11 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 <a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 #### HTTP Query Parameters and Header Values
+
+<a href="#http-query-names-casing" name="http-query-names-casing">:white_check_mark:</a> **DO** use camel case for query parameter names.
+
+Note: Certain legacy query parameter names use kebab-casing and are allowed only for backwards compatibility.
+
 Because information in the service URL, as well as the request / response, are strings, there must be a predictable, well-defined scheme to convert strings to their corresponding values.
 
 <a href="#http-parameter-validation" name="http-parameter-validation">:white_check_mark:</a> **DO** validate all query parameter and request header values and fail the operation with `400-Bad Request` if any value fails validation. Return an error response as described in the [Handling Errors](#handling-errors) section indicating what is wrong so customer can diagnose the issue and fix it themselves.
@@ -177,12 +187,12 @@ Because information in the service URL, as well as the request / response, are s
 Data type | Document that string must be
 --------- | -------
 Boolean   | true / false (all lowercase)
-Integer   | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON limits on integers [RFC8259](https://datatracker.ietf.org/doc/html/rfc8259))
+Integer   | -2<sup>53</sup>+1 to +2<sup>53</sup>-1 (for consistency with JSON limits on integers [RFC 8259](https://datatracker.ietf.org/doc/html/rfc8259))
 Float     | [IEEE-754 binary64](https://en.wikipedia.org/wiki/Double-precision_floating-point_format)
 String    | (Un)quoted?, max length, legal characters, case-sensitive, multiple delimiter
-UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122)
-Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
-Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339)
+UUID      | 123e4567-e89b-12d3-a456-426614174000 (no {}s, hyphens, case-insensitive) [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122)
+Date/Time (Header) | Sun, 06 Nov 1994 08:49:37 GMT [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1)
+Date/Time (Query parameter) | YYYY-MM-DDTHH:mm:ss.sssZ (with at most 3 digits of fractional seconds) [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339)
 Byte array | Base-64 encoded, max length
 Array      | One of a) a comma-separated list of values (preferred), or b) separate `name=value` parameter instances for each value of the array
 
@@ -200,7 +210,7 @@ If-Match            | Request    | "67ab43" or * (no quotes) (see [Conditional R
 If-None-Match       | Request    | "67ab43" or * (no quotes) (see [Conditional Requests](#conditional-requests))
 If-Modified-Since   | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#conditional-requests))
 If-Unmodified-Since | Request    | Sun, 06 Nov 1994 08:49:37 GMT (see [Conditional Requests](#conditional-requests))
-date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
+date                | Both       | Sun, 06 Nov 1994 08:49:37 GMT (see [RFC 7231, Section 7.1.1.2](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2))
 _content-type_      | Both       | application/merge-patch+json
 _content-length_    | Both       | 1024
 _x-ms-request-id_   | Response   | 4227cdc5-9f48-4e84-921a-10967cb785a0
@@ -218,9 +228,9 @@ retry-after         | Response   | 180 (see [RFC 7231, Section 7.1.3](https://da
 
 <a href="#http-header-values-case-sensitivity" name="http-header-values-case-sensitivity">:white_check_mark:</a> **DO** compare request header values using case-sensitivity if the header name requires it
 
-<a href="#http-header-date-values" name="http-header-date-values">:white_check_mark:</a> **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
+<a href="#http-header-date-values" name="http-header-date-values">:white_check_mark:</a> **DO** accept date values in headers in HTTP-Date format and return date values in headers in the IMF-fixdate format as defined in [RFC 7231, Section 7.1.1.1](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.1), e.g. "Sun, 06 Nov 1994 08:49:37 GMT".
 
-Note: The RFC 7321 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
+Note: The RFC 7231 IMF-fixdate format is a "fixed-length and single-zone subset" of the RFC 1123 / RFC 5822 format, which means: a) year must be four digits, b) the seconds component of time is required, and c) the timezone must be GMT.
 
 <a href="#http-header-request-id" name="http-header-request-id">:white_check_mark:</a> **DO** create an opaque value that uniquely identifies the request and return this value in the `x-ms-request-id` response header.
 
@@ -272,7 +282,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 <a href="#rest-get-returns-json-body" name="rest-get-returns-json-body">:white_check_mark:</a> **DO** use GET for resource retrieval and return JSON in the response body
 
-<a href="#rest-patch-use-merge-patch" name="rest-patch-use-merge-patch">:white_check_mark:</a> **DO** create and update resources using PATCH [RFC5789] with JSON Merge Patch [(RFC7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
+<a href="#rest-patch-use-merge-patch" name="rest-patch-use-merge-patch">:white_check_mark:</a> **DO** create and update resources using PATCH [RFC 5789] with JSON Merge Patch [(RFC 7396)](https://datatracker.ietf.org/doc/html/rfc7396) request body.
 
 <a href="#rest-put-for-create-or-replace" name="rest-put-for-create-or-replace">:white_check_mark:</a> **DO** use PUT with JSON for wholesale create/replace operations. **NOTE:** If a v1 client PUTs a resource; any fields introduced in V2+ should be reset to their default values (the equivalent to DELETE followed by PUT).
 
@@ -292,7 +302,7 @@ Because of this, required fields can only be introduced in the 1st version of a 
 
 When using this method | if this condition happens | use&nbsp;this&nbsp;response&nbsp;code
 ---------------------- | ------------------------- | ----------------------
-PATCH/PUT | Any JSON field name/value not known/valid | `400-Bad Request`
+PATCH/PUT | Any JSON field name/value not known/valid to the api-version | `400-Bad Request`
 PATCH/PUT | Any Read field passed (client can't set Read fields) | `400-Bad Request`
 | **If&nbsp;the&nbsp;resource&nbsp;does&nbsp;not&nbsp;exist** |
 PATCH/PUT | Any mandatory Create/Update field missing | `400-Bad Request`
@@ -380,7 +390,9 @@ Example:
 
 <a href="#json-field-names-case-sensitivity" name="json-field-names-case-sensitivity">:white_check_mark:</a> **DO** treat JSON field names with case-sensitivity.
 
-<a href="#json-field-values-case-sensitivity" name="json-field-values-case-sensitivity">:white_check_mark:</a> **DO** treat JSON field values with case-sensitivity. There may be some exceptions (e.g. GUIDs) but avoid if at all possible.
+<a href="#json-field-values-case-sensitivity" name="json-field-values-case-sensitivity">:white_check_mark:</a> **DO** treat JSON field values with case-sensitivity. There may be some exceptions but avoid if at all possible.
+
+<a href="#json-field-values-id" name="json-field-values-ids">:white_check_mark:</a> **DO** treat JSON field value representing a unique ID as an opaque string value and compare them with case-sensitivity. For example, IDs are frequently [UUIDs](https://en.wikipedia.org/wiki/Universally_unique_identifier), [CUIDs](https://github.com/paralleldrive/cuid2), [Nano ID](https://blog.openapihub.com/en-us/what-is-nano-id-its-difference-from-uuid-as-unique-identifiers/), or other formats. The choice of ID format is a service implementation detail. Customer code should only ever need to get, store, and send these values and should never perform any other kind of parsing or interpretation of ID values.
 
 Services, and the clients that access them, may be written in multiple languages. To ensure interoperability, JSON establishes the "lowest common denominator" type system, which is always sent over the wire as UTF-8 bytes. This system is very simple and consists of three types:
 
@@ -390,21 +402,25 @@ Services, and the clients that access them, may be written in multiple languages
  Number  | Signed floating point (IEEE-754 binary64; int range: -2<sup>53</sup>+1 to +2<sup>53</sup>-1)
  String  | Used for everything else
 
+<a href="#json-null-response-values" name="json-null-response-values">:no_entry:</a> **DO NOT** send JSON fields with a null value from the service to the client. Instead, the service should just not send this field at all (this reduces payload size). Semantically, Azure services treat a missing field and a field with a value of null as identical. 
+
+<a href="#json-null-request-values" name="json-null-resquest-values">:white_check_mark:</a> **DO** accept JSON fields with a null value only for a PATCH operation with a JSON Merge Patch payload. A field with a value of null instructs the service to delete the field. If the field cannot be deleted, then return 400-BadRequest, else return the resource with the deleted field missing from the response payload (see bullet above).
+
 <a href="#json-integer-values" name="json-integer-values">:white_check_mark:</a> **DO** use integers within the acceptable range of JSON number.
 
-<a href="#json-specify-string-constraints" name="json-specify-string-constraints">:white_check_mark:</a> **DO** establish a well-defined contract for the format of strings. For example, determine maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC3339 for date/time.
+<a href="#json-specify-string-constraints" name="json-specify-string-constraints">:white_check_mark:</a> **DO** establish a well-defined contract for the format of strings. For example, determine minimum length, maximum length, legal characters, case-(in)sensitive comparisons, etc. Where possible, use standard formats, e.g. RFC 3339 for date/time.
 
-<a href="#json-use-standard-string-formats" name="json-use-standard-string-formats">:white_check_mark:</a> **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC3339 for date/time.
+<a href="#json-use-standard-string-formats" name="json-use-standard-string-formats">:white_check_mark:</a> **DO** use strings formats that are well-known and easily parsable/formattable by many programming languages, e.g. RFC 3339 for date/time.
 
 <a href="#json-should-be-round-trippable" name="json-should-be-round-trippable">:white_check_mark:</a> **DO** ensure that information exchanged between your service and any client is "round-trippable" across multiple programming languages.
 
-<a href="#json-date-time-is-rfc3339" name="json-date-time-is-rfc3339">:white_check_mark:</a> **DO** use [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
+<a href="#json-date-time-is-rfc3339" name="json-date-time-is-rfc3339">:white_check_mark:</a> **DO** use [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339) for date/time.
 
 <a href="#json-durations-use-fixed-time-intervals" name="json-durations-use-fixed-time-intervals">:white_check_mark:</a> **DO** use a fixed time interval to express durations e.g., milliseconds, seconds, minutes, days, etc., and include the time unit in the property name e.g., `backupTimeInMinutes` or `ttlSeconds`.
 
-<a href="#json-rfc3339-time-intervals-allowed" name="json-rfc3339-time-intervals-allowed">:heavy_check_mark:</a> **YOU MAY** use [RFC3339 time intervals](https://wikipedia.org/wiki/ISO_8601#Durations) only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P3M" represents 3 months no matter how many days between the start and end dates, or "P1Y" represents 366 days on a leap year. The value must be round-trippable.
+<a href="#json-rfc3339-time-intervals-allowed" name="json-rfc3339-time-intervals-allowed">:heavy_check_mark:</a> **YOU MAY** use [RFC 3339 time intervals](https://wikipedia.org/wiki/ISO_8601#Durations) only when users must be able to specify a time interval that may change from month to month or year to year e.g., "P3M" represents 3 months no matter how many days between the start and end dates, or "P1Y" represents 366 days on a leap year. The value must be round-trippable.
 
-<a href="#json-uuid-is-rfc4412" name="json-uuid-is-rfc4412">:white_check_mark:</a> **DO** use [RFC4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
+<a href="#json-uuid-is-rfc4412" name="json-uuid-is-rfc4412">:white_check_mark:</a> **DO** use [RFC 4122](https://datatracker.ietf.org/doc/html/rfc4122) for UUIDs.
 
 <a href="#json-may-nest-for-grouping" name="json-may-nest-for-grouping">:heavy_check_mark:</a> **YOU MAY** use JSON objects to group sub-fields together.
 
@@ -432,7 +448,7 @@ This indicates to client libraries and customers that values of the enumeration 
 
 Polymorphism types in REST APIs refers to the possibility to use the same property of a request or response to have similar but different shapes. This is commonly expressed as a `oneOf` in JsonSchema or OpenAPI. In order to simplify how to determine which specific type a given request or response payload corresponds to, Azure requires the use of an explicit discriminator field.
 
-Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information. 
+Note: Polymorphic types can make your service more difficult for nominally typed languages to consume. See the corresponding section in the [Considerations for service design](./ConsiderationsForServiceDesign.md#avoid-surprises) for more information.
 
 <a href="#json-use-discriminator-for-polymorphism" name="json-use-discriminator-for-polymorphism">:white_check_mark:</a> **DO** define a discriminator field indicating the kind of the resource and include any kind-specific fields in the body.
 
@@ -455,7 +471,7 @@ Below is an example of JSON for a Rectangle and Circle with a discriminator fiel
 ```
 
 **Circle**
- ```json
+```json
 {
    "kind": "circle",
    "x": 100,
@@ -538,16 +554,16 @@ NOTE: It is a breaking change to add paging in the future
 ```json
 {
     "value": [
-       { "id": "Item 01", "etag": "0xabc", "price": 99.95, "sizes": null },
+       { "id": "Item 01", "etag": "\"abc\"", "price": 99.95, "size": "Medium" },
        { … },
        { … },
-       { "id": "Item 99", "etag": "0xdef", "price": 59.99, "sizes": null }
+       { "id": "Item 99", "etag": "\"def\"", "price": 59.99, "size": "Large" }
     ],
     "nextLink": "{opaqueUrl}"
  }
 ```
 
-<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation.
+<a href="#collections-items-have-id-and-etag" name="collections-items-have-id-and-etag">:white_check_mark:</a> **DO** include the _id_ field and _etag_ field (if supported) for each item as this allows the customer to modify the item in a future operation. Note that the etag field _must_ have escaped quotes embedded within it; for example, "\"abc\"" or W/"\"abc\"".
 
 <a href="#collections-document-pagination-reliability" name="collections-document-pagination-reliability">:white_check_mark:</a> **DO** clearly document that resources may be skipped or duplicated across pages of a paginated collection unless the operation has made special provisions to prevent this (like taking a time-expiring snapshot of the collection).
 
@@ -589,23 +605,23 @@ Parameter&nbsp;name | Type | Description
 
 <a href="#collections-query-options-no-dollar-sign" name="collections-query-options-no-dollar-sign">:no_entry:</a> **DO NOT** prefix any of these query parameter names with "$" (the convention in the [OData standard](http://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part1-protocol.html#sec_QueryingCollections)).
 
-#### `filter`
+#### filter
 
-<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support `filter`ing of the results of a list operation with the `filter` query parameter.
+<a href="#collections-filter-param" name="collections-filter-param">:heavy_check_mark:</a> **YOU MAY** support filtering of the results of a list operation with the `filter` query parameter.
 
-The value of the `filter` option is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
+The value of the `filter` query parameter is an expression involving the fields of the resource that produces a Boolean value. This expression is evaluated for each resource in the collection and only items where the expression evaluates to true are included in the response.
 
-<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the `filter` expression evaluates to false or to null, or references properties that are unavailable due to permissions.
+<a href="#collections-filter-behavior" name="collections-filter-behavior">:white_check_mark:</a> **DO** omit all resources from the collection for which the filter expression evaluates to false or to null, or references properties that are unavailable due to permissions.
 
 Example: return all Products whose Price is less than $10.00
 
 ```text
-GET https://api.contoso.com/products?`filter`=price lt 10.00
+GET https://api.contoso.com/products?filter=price lt 10.00
 ```
 
-##### `filter` operators
+##### filter operators
 
-:heavy_check_mark: **YOU MAY** support the following operators in `filter` expressions:
+:heavy_check_mark: **YOU MAY** support the following operators in filter expressions:
 
 Operator                 | Description           | Example
 --------------------     | --------------------- | -----------------------------------------------------
@@ -623,9 +639,9 @@ not                      | Logical negation      | not price le 3.5
 **Grouping Operators**   |                       |
 ( )                      | Precedence grouping   | (priority eq 1 or city eq 'Redmond') and price gt 100
 
-<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a `filter` expression that is not supported by the operation.
+<a href="#collections-filter-unknown-operator" name="collections-filter-unknown-operator">:white_check_mark:</a> **DO** respond with an error message as defined in the [Handling Errors](#handling-errors) section if a client includes an operator in a filter expression that is not supported by the operation.
 
-<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating `filter` expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
+<a href="#collections-filter-operator-ordering" name="collections-filter-operator-ordering">:white_check_mark:</a> **DO** use the following operator precedence for supported operators when evaluating filter expressions. Operators are listed by category in order of precedence from highest to lowest. Operators in the same category have equal precedence and should be evaluated left to right:
 
 | Group           | Operator | Description
 | ----------------|----------|------------
@@ -640,7 +656,7 @@ not                      | Logical negation      | not price le 3.5
 | Conditional AND | and      | Logical And           |
 | Conditional OR  | or       | Logical Or            |
 
-<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and `filter` functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
+<a href="#collections-filter-functions" name="collections-filter-functions">:heavy_check_mark:</a> **YOU MAY** support orderby and filter functions such as concat and contains. For more information, see [odata Canonical Functions](https://docs.oasis-open.org/odata/odata/v4.01/odata-v4.01-part2-url-conventions.html#_Toc31360979).
 
 ##### Operator examples
 The following examples illustrate the use and semantics of each of the logical operators.
@@ -648,31 +664,31 @@ The following examples illustrate the use and semantics of each of the logical o
 Example: all products with a name equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk'
+GET https://api.contoso.com/products?filter=name eq 'Milk'
 ```
 
 Example: all products with a name not equal to 'Milk'
 
 ```text
-GET https://api.contoso.com/products?`filter`=name ne 'Milk'
+GET https://api.contoso.com/products?filter=name ne 'Milk'
 ```
 
 Example: all products with the name 'Milk' that also have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' and price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' and price lt 2.55
 ```
 
 Example: all products that either have the name 'Milk' or have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=name eq 'Milk' or price lt 2.55
+GET https://api.contoso.com/products?filter=name eq 'Milk' or price lt 2.55
 ```
 
 Example: all products that have the name 'Milk' or 'Eggs' and have a price less than 2.55:
 
 ```text
-GET https://api.contoso.com/products?`filter`=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
+GET https://api.contoso.com/products?filter=(name eq 'Milk' or name eq 'Eggs') and price lt 2.55
 ```
 
 #### orderby
@@ -705,15 +721,15 @@ For example, to return all people sorted by name in descending order and a secon
 GET https://api.contoso.com/people?orderby=name desc,hireDate
 ```
 
-Sorting MUST compose with `filter`ing such that:
+Sorting MUST compose with filtering such that:
 ```text
-GET https://api.contoso.com/people?`filter`=name eq 'david'&orderby=hireDate
+GET https://api.contoso.com/people?filter=name eq 'david'&orderby=hireDate
 ```
 will return all people whose name is David sorted in ascending order by hireDate.
 
 ##### Considerations for sorting with pagination
 
-<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same `filter`ing options and sort order for all pages of a paginated list operation response.
+<a href="#collections-consistent-options-with-pagination" name="collections-consistent-options-with-pagination">:white_check_mark:</a> **DO** use the same filtering options and sort order for all pages of a paginated list operation response.
 
 ##### skip
 <a href="#collections-skip-param-definition" name="collections-skip-param-definition">:white_check_mark:</a> **DO** define the `skip` parameter as an integer with a default and minimum value of 0.
@@ -744,7 +760,7 @@ Azure services need to change over time. However, when changing a service, there
  1. Already-running customer workloads must not break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
 
-*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy/) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
+*NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 
 <a href="#versioning-review-required" name="versioning-review-required">:white_check_mark:</a> **DO** review any API changes with the Azure API Stewardship Board
 
@@ -795,7 +811,7 @@ While removing a value from an enum is a breaking change, adding value to an enu
 }
 ```
 
-<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **You SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
+<a href="#versioning-use-extensible-enums" name="versioning-use-extensible-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enums unless you are positive that the symbol set will **NEVER** change over time.
 
 <a href="#deprecation" name="deprecation"></a>
 ### Deprecating Behavior Notification
@@ -804,7 +820,7 @@ When the [API Versioning](#api-versioning) guidance above cannot be followed and
 
 The purpose is to inform customers (when debugging/logging responses) that they must take action to modify their call to the service's operation and use a newer API version or their call will soon stop working entirely. It is not expected that client code will examine/parse this header's value in any way; it is purely informational to a human being. The string is _not_ part of an API contract (except for the semi-colon delimiters) and may be changed/improved at any time without incurring a breaking change.
 
-<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working. 
+<a href="#deprecation-header" name="deprecation-header">:white_check_mark:</a> **DO** include the `azure-deprecating` header in the operation's response _only if_ the operation will stop working in the future and the client _must take_ action in order for it to keep working.
 > NOTE: We do not want to scare customers with this header.
 
 <a href="#deprecation-header-value" name="deprecation-header-value">:white_check_mark:</a> **DO** make the header's value a semicolon-delimited string indicating a set of deprecations where each one indicates what is deprecating, when it is deprecating, and a URL to more information.
@@ -831,118 +847,267 @@ For example:
 <a href="#repeatability" name="repeatability"></a>
 ### Repeatability of requests
 
-The ability to retry failed requests for which a client never received a response greatly simplifies the ability to write resilient distributed applications. While HTTP designates some methods as safe and/or idempotent (and thus retryable), being able to retry other operations such as create-using-POST-to-collection is desirable.
+Fault tolerant applications require that clients retry requests for which they never got a response, and services must handle these retried requests idempotently. In Azure, all HTTP operations are naturally idempotent except for POST used to create a resource and [POST when used to invoke an action](
+https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#performing-an-action).
 
-<a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests according as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html).
-
+<a href="#repeatability-headers" name="repeatability-headers">:ballot_box_with_check:</a> **YOU SHOULD** support repeatable requests as defined in [OASIS Repeatable Requests Version 1.0](https://docs.oasis-open.org/odata/repeatable-requests/v1.0/repeatable-requests-v1.0.html) for POST operations to make them retriable.
 - The tracked time window (difference between the `Repeatability-First-Sent` value and the current time) **MUST** be at least 5 minutes.
-- A service advertises support for repeatability requests by adding the `Repeatability-First-Sent` and `Repeatability-Request-ID` to the set of headers for a given operation.
-- When understood, all endpoints co-located behind a DNS name **MUST** understand the header. This means that a service **MUST NOT** ignore the presence of a header for any endpoints behind the DNS name, but rather fail the request containing a `Repeatability-Request-ID` header if that particular endpoint lacks support for repeatable requests. Such partial support **SHOULD** be avoided due to the confusion it causes for clients.
+- Document the POST operation's support for the `Repeatability-First-Sent`, `Repeatability-Request-ID`, and `Repeatability-Result` headers in the API contract and documentation.
+- Any operation that does not support repeatability headers should return a 501 (Not Implemented) response for any request that contains valid repeatability request headers.
 
-<a href="#lro" name="lro"></a>
 ### Long-Running Operations & Jobs
 
-When the processing for an operation may take a significant amount of time to complete, it should be
-implemented as a _long-running operation (LRO)_. This allows clients to continue running while the
-operation is being processed. The client obtains the outcome of the operation at some later time
-through another API call.
-See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in
-Considerations for Service Design for an introduction to the design of long-running operations.
+A _long-running operation (LRO)_ is typically an operation that should execute synchronously, but due to services not wanting to maintain long-lived connections (>1 seconds) and load-balancer timeouts, the operation must execute asynchronously. For this pattern, the client initiates the operation on the service, and then the client repeatedly polls the service (via another API call) to track the operation's progress/completion.
 
-<a href="#lro-response-time" name="lro-response-time">:white_check_mark:</a> **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1s.
+LROs are always started by 1 logical client and may be polled (have their status checked) by the same client, another client, or even multiple clients/browsers. An example would be a dashboard or portal that shows all the operations along with their status.  See the [Long Running Operations section](./ConsiderationsForServiceDesign.md#long-running-operations) in Considerations for Service Design for an introduction to the design of long-running operations.
 
-<a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO.  If LRO update is required it must be implemented with POST.
+<a href="#lro-response-time" name="lro-response-time">:white_check_mark:</a> **DO** implement an operation as an LRO if the 99th percentile response time is greater than 1 second and when the client should poll the operation before making more progress.
 
-In rare instances where an operation may take a _very long_ time to complete, e.g. longer than 15 minutes,
-it may be better to expose this as a first class resource of the API rather than as an operation on another resource.
+<a href="#lro-no-patch-lro" name="lro-no-patch-lro">:no_entry:</a> **DO NOT** implement PATCH as an LRO. If LRO update semantics are required, implement it using the [LRO POST action pattern](#lro-existing-resource) .
 
-There are two basic patterns for long-running operations in Azure. The first pattern is used for a POST and DELETE
-operations that initiate the LRO. These return a `202 Accepted` response with a JSON status monitor in the response body.
-The second pattern applies only in the case of a PUT operation to create a resource that also involves additional long-running processing.
-For guidance on when to use a specific pattern, please refer to [Considerations for Service Design, Long Running Operations](./ConsiderationsForServiceDesign.md#long-running-operations).
-These are described in the following two sections.
+#### Patterns to Initiate a Long-Running Operation
 
-#### POST or DELETE LRO pattern
+<a href="#lro-valid-inputs-synchronously" name="lro-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating an LRO operation to alert clients of errors early.
 
-A POST or DELETE long-running operation accepts a request from the client to initiate the operation processing and returns
-a [status monitor](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) that reports the operation's progress.
+<a href="#lro-returns-operation-location" name="lro-returns-operation-location">:white_check_mark:</a> **DO** include an `operation-location` response header with the absolute URL of the status monitor for the operation.
 
-<a href="#lro-no-post-create" name="lro-no-post-create">:no_entry:</a> **DO NOT** use a long-running POST to create a resource -- use PUT as described below.
+<a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `operation-location` response header with the same version passed on the initial request but expect a client to change the `api-version` value to whatever a new/different client desires it to be.
+
+<a href="#lro-put-response-headers" name="lro-put-response-headers">:white_check_mark:</a> **DO** include response headers with any additional values needed for a [GET polling request](#lro-poll) to the status monitor (e.g. location).
+
+#### Create or replace operation with additional long-running processing
+<a href="#put-operation-with-additional-long-running-processing" name="put-operation-with-additional-long-running-processing"></a>
+
+<a href="#lro-create-init" name="lro-create-init">:white_check_mark:</a> **DO** use the following pattern when implementing an operation that creates or replaces a resource that involves additional long-running processing:
+
+```text
+PUT /UrlToResourceBeingCreated?api-version=<api-version>
+operation-id: <optionalStatusMonitorResourceId>
+
+<JSON Resource in body>
+```
+
+The response must look like this:
+
+```text
+201 Created
+operation-id: <statusMonitorResourceId>
+operation-location: https://operations/<operation-id>?api-version=<api-version>
+
+<JSON Resource in body>
+```
+
+The request and response body schemas must be identical and represent the resource.
+
+The PUT creates or replaces the resource immediately and returns but the additional long-running processing can take time to complete.
+
+For an idempotent PUT (same `operation-id` or same request body within some short time window), the service should return the same response as shown above.
+
+For a non-idempotent PUT, the service can choose to overwrite the existing resource (as if the resource were deleted) or the service can return `409-Conflict` with the error's code property indicated why this PUT operation failed.
+
+<a href="#lro-put-operation-id-request-header" name="lro-put-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
+
+If the `Operation-Id` header is not specified, the service may create an operation-id (typically a GUID) and return it via the `operation-id` and `operation-location` response headers; in this case the service must figure out how to deal with retries/idempotency.
+
+<a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `409-Conflict` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+
+<a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+
+<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource, if the resource was created or replaced successfully.
+
+<a href="#lro-put-returns-operation-id-header" name="lro-put-returns-operation-id-header">:white_check_mark:</a> **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
+
+<a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+
+<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request.
+
+#### DELETE LRO pattern
+
+<a href="#lro-delete" name="lro-delete">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO operation to delete a resource:
+
+```text
+DELETE /UrlToResourceBeingDeleted?api-version=<api-version>
+operation-id: <optionalStatusMonitorResourceId>
+```
+
+The response must look like this:
+
+```text
+202 Accepted
+operation-id: <statusMonitorResourceId>
+operation-location: https://operations/<operation-id>
+```
+
+Consistent with non-LRO DELETE operations, if a request body is specified, return `400-Bad Request`.
+
+<a href="#lro-delete-operation-id-request-header" name="lro-delete-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
+
+<a href="#lro-delete-operation-id-default-is-guid" name="lro-delete-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+
+<a href="#lro-delete-returns-202" name="lro-delete-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated.
+
+<a href="#lro-delete-returns-only-202" name="lro-delete-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
+
+#### LRO action on a resource pattern
+<a href="#post-or-delete-lro-pattern" name="post-or-delete-lro-pattern"></a><!-- Preserve old header link -->
+
+<a href="#lro-existing-resource" name="lro-existing-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action operating on an existing resource:
+
+```text
+POST /UrlToExistingResource:<action>?api-version=<api-version>&<actionParamsGoHere>
+operation-id: <optionalStatusMonitorResourceId>`
+
+<JSON Action parameters can go in body if query params don't work>
+```
+
+The response must look like this:
+
+```text
+202 Accepted
+operation-id: <statusMonitorResourceId>
+operation-location: https://operations/<operation-id>
+
+<JSON Status Monitor Resource in body>
+```
+
+The request body contains information to be used to execute the action.
+
+For an idempotent POST (same `operation-id` and request body within some short time window), the service should return the same response as the initial request.
+
+For a non-idempotent POST, the service can treat the POST operation as idempotent (if performed within a short time window) or can treat the POST operation as initiating a brand new LRO action operation.
+
+<a href="#lro-no-post-create" name="lro-no-post-create">:no_entry:</a> **DO NOT** use a long-running POST to create a resource -- use PUT as described above.
 
 <a href="#lro-operation-id-request-header" name="lro-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with an ID for the operation's status monitor.
 
 <a href="#lro-operation-id-default-is-guid" name="lro-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
 
-<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<a href="#lro-operation-id-unique-except-retries" name="lro-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `409-Conflict` if the `Operation-Id` header matches an existing operation unless the request is identical to the prior request (a retry scenario).
 
-<a href="#lro-valid-inputs-synchronously" name="lro-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
-
-<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO if the processing of the operation was successfully initiated (except for "PUT with additional processing" type LRO).
+<a href="#lro-returns-202" name="lro-returns-202">:white_check_mark:</a> **DO** return a `202-Accepted` status code from the request that initiates an LRO action on a resource if the processing of the operation was successfully initiated.
 
 <a href="#lro-returns-only-202" name="lro-returns-only-202">:warning:</a> **YOU SHOULD NOT** return any other `2xx` status code from the initial request of an LRO -- return `202-Accepted` and a status monitor even if processing was completed before the initiating request returns.
 
 <a href="#lro-returns-status-monitor" name="lro-returns-status-monitor">:white_check_mark:</a> **DO** return a status monitor in the response body as described in [Obtaining status and results of long-running operations](#obtaining-status-and-results-of-long-running-operations).
 
-<a href="#lro-returns-operation-location" name="lro-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+#### LRO action with no related resource pattern
 
-<a href="#lro-operation-location-includes-api-version" name="lro-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+<a href="#lro-action-no-resource" name="lro-action-no-resource">:white_check_mark:</a> **DO** use the following pattern when implementing an LRO action not related to a specific resource (such as a batch operation):
 
-#### PUT operation with additional long-running processing
+```text
+PUT <operation-endpoint>/<operation-id>?api-version=<api-version>
 
-For a PUT (create or replace) with additional long-running processing:
+<JSON body with parameters for the operation>>
+```
 
-<a href="#lro-put-operation-id-request-header" name="lro-put-operation-id-request-header">:white_check_mark:</a> **DO** allow the client to pass an `Operation-Id` header with a ID for the status monitor for the operation.
+The response must look like this:
 
-<a href="#lro-put-operation-id-default-is-guid" name="lro-put-operation-id-default-is-guid">:white_check_mark:</a> **DO** generate an ID (typically a GUID) for the status monitor if the `Operation-Id` header was not passed by the client.
+```text
+201 Created
+operation-location: <absolute URL of status monitor>
 
-<a href="#lro-put-operation-id-unique-except-retries" name="lro-put-operation-id-unique-except-retries">:white_check_mark:</a> **DO** fail a request with a `400-BadRequest` if the `Operation-Id` header that matches an existing operation unless the request is identical to the prior request (a retry scenario).
+<JSON Status Monitor Resource in body>
+```
 
-<a href="#lro-put-valid-inputs-synchronously" name="lro-put-valid-inputs-synchronously">:white_check_mark:</a> **DO** perform as much validation as practical when initiating the operation to alert clients of errors early.
+<a href="#lro-put-action-operation-endpoint" name="lro-put-action-operation-endpoint">:ballot_box_with_check:</a> **YOU SHOULD**
+define a unique operation endpoint for each LRO action with no related resource.
 
-<a href="#lro-put-returns-200-or-201" name="lro-put-returns-200-or-201">:white_check_mark:</a> **DO** return a `201-Created` status code for create or `200-OK` for replace from the initial request with a representation of the resource if the resource was created successfully.
+<a href="#lro-put-action-operation-id" name="lro-put-action-operation-id-in-path">:white_check_mark:</a> **DO** require the
+`Operation-Id` as the final path segment in the URL.
 
-<a href="#lro-put-returns-operation-id-header" name="lro-put-returns-operation-id-header">:white_check_mark:</a> **DO** include an `Operation-Id` header in the response with the ID of the status monitor for the operation.
+Note: The `operation-id` URL segment (not header) is *required*, forcing the client to specify the status monitor's resource ID
+and is also used for retries/idempotency.
 
-<a href="#lro-put-response-headers" name="lro-put-response-headers">:white_check_mark:</a> **DO** include response headers with any additional values needed for a GET request to the status monitor (e.g. location).
+<a href="#lro-put-action-returns-201" name="lro-put-action-returns-201">:white_check_mark:</a> **DO** return a `201 Created` status code
+with an `operation-location` response header if the LRO Action operation was accepted for processing.
 
-<a href="#lro-put-returns-operation-location" name="lro-put-returns-operation-location">:ballot_box_with_check:</a> **YOU SHOULD** include an `Operation-Location` header in the response with the absolute URL of the status monitor for the operation.
+<a href="#lro-put-action-returns-status-monitor" name="lro-put-action-returns-status-monitor">:white_check_mark:</a> **DO** return a
+status monitor in the response body that contains the operation status, request parameters, and when the operation completes either
+the operation result or error.
 
-<a href="#lro-put-operation-location-includes-api-version" name="lro-put-operation-location-includes-api-version">:ballot_box_with_check:</a> **YOU SHOULD** include the `api-version` query parameter in the `Operation-Location` header with the same version passed on the initial request if it is required by the get operation on the status monitor.
+Note: Since all request parameters must be present in the status monitor,
+the request and response body of the PUT can be defined with a single schema.
 
-#### Obtaining status and results of long-running operations
+<a href="#lro-put-action-status-monitor-url" name="lro-put-action-status-monitor-url">:ballot_box_with_check:</a> **YOU SHOULD**
+return the status monitor for an operation for a subsequent GET on the URL that initiates the LRO, and use this endpoint as
+the status monitor URL returned in the `operation-location` response header.
 
-For all long-running operations, the client will issue a GET on a status monitor resource to obtain the current status of the operation.
+#### The Status Monitor Resource
 
-<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
-
-<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the get operation on the status monitor.
-
-Note: Clients may replace the value of `api-version` in the `Operation-Location` URI with a value appropriate for their application.
+All patterns that initiate a LRO either implicitly or explicitly create a [Status Monitor resource](https://datatracker.ietf.org/doc/html/rfc7231#section-6.3.3) in the service's `operations` collection.
 
 <a href="#lro-status-monitor-structure" name="lro-status-monitor-structure">:white_check_mark:</a> **DO** return a status monitor in the response body that conforms with the following structure:
-
-**OperationStatus** : Object
 
 Property | Type        | Required | Description
 -------- | ----------- | :------: | -----------
 `id`     | string      | true     | The unique id of the operation
-`status` | string      | true     | enum that includes values "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
-`error`  | ErrorDetail |          | Error object that describes the error when status is "Failed"
-`result` | object      |          | Only for POST action-type LRO, the results of the operation when completed successfully
-additional<br/>properties | |     | Additional named or dynamic properties of the operation
+`kind`   | string enum | true(*)  | The kind of operation
+`status` | string enum | true     | The operation's current status: "NotStarted", "Running", "Succeeded", "Failed", and "Canceled"
+`error`  | ErrorDetail |          | If `status`=="Failed", contains reason for failure
+`result` | object      |          | If `status`=="Succeeded" && Action LRO (POST or PUT), contains success result if needed
+additional<br/>properties | | | Additional named or dynamic properties of the operation
+
+(*): When a status monitor endpoint supports multiple operations with different result structures or additional properties,
+the status monitor **must** be polymorphic -- it **must** contain a required `kind` property that indicates the kind of long-running operation.
+
+#### Obtaining status and results of long-running operations
+
+<a href="#lro-poll" name="lro-poll">:white_check_mark:</a> **DO** use the following pattern to allow clients to poll the current state of a Status Monitor resource:
+
+```text
+GET <operation-endpoint>/<operation-id>?api-version=<api-version>
+```
+
+The response must look like this:
+
+```text
+200 OK
+retry-after: <delay-seconds>    (if status not terminal)
+
+<JSON Status Monitor Resource in body>
+```
+
+<a href="#lro-status-monitor-get-returns-200" name="lro-status-monitor-get-returns-200">:white_check_mark:</a> **DO** support the GET method on the status monitor endpoint that returns a `200-OK` response with the current state of the status monitor.
+
+<a href="#lro-status-monitor-accepts-any-api-version" name="lro-status-monitor-accepts-any-api-version">:ballot_box_with_check:</a> **YOU SHOULD** allow any valid value of the `api-version` query parameter to be used in the GET operation on the status monitor.
+
+- Note: Clients may replace the value of `api-version` in the `operation-location` URL with a value appropriate for their application. Remember that the client initiating the LRO may not be the same client polling the LRO's status.
 
 <a href="#lro-status-monitor-includes-all-fields" name="lro-status-monitor-includes-all-fields">:white_check_mark:</a> **DO** include the `id` of the operation and any other values needed for the client to form a GET request to the status monitor (e.g. a `location` path parameter).
 
-<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `Retry-After` header in the response to GET requests to the status monitor if the operation is not complete. The value of this header should be an integer number of seconds to wait before making the next request to the status monitor.
-
 <a href="#lro-status-monitor-post-action-result" name="lro-status-monitor-post-action-result">:white_check_mark:</a> **DO** include the `result` property (if any) in the status monitor for a POST action-type long-running operation when the operation completes successfully.
 
-<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not a POST action-type long-running operation.
+<a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not an action-type long-running operation.
+
+<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `retry-after` header in the response if the operation is not complete. The value of this header should be an integer number of seconds that the client should wait before polling the status monitor again.
 
 <a href="#lro-status-monitor-retention" name="lro-status-monitor-retention">:white_check_mark:</a> **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
+#### Pattern to List Status Monitors
+
+Use the following patterns to allow clients to list Status Monitor resources.
+
+<a href="#lro-list-status-monitors" name="lro-list-status-monitors">:ballot_box_with_check:</a>
+**YOU MAY** support a GET method on any status monitor collection URL that returns a list of the status monitors in that collection.
+
+<a href="#lro-put-action-list-status-monitors" name="lro-put-action-list-status-monitors">:ballot_box_with_check:</a>
+**YOU SHOULD** support a list operation for any status monitor collection that includes status monitors for LRO Actions with no related resource.
+
+<a href="#lro-list-status-monitors-filter" name="lro-list-status-monitors-filter">:ballot_box_with_check:</a>
+**YOU SHOULD** support the `filter` query parameter on the list operation for any polymorphic status monitor collection and support filtering on the `kind` value of the status monitor.
+
+For example, the following request should return all status monitor resources whose `kind` is either "VMInitializing" *or* "VMRebooting"
+and whose status is "NotStarted" *or* "Succeeded".
+
+```text
+GET /operations?filter=(kind eq 'VMInitializing' or kind eq 'VMRebooting') and (status eq 'NotStarted' or status eq 'Succeeded')
+```
+
 <a href="#byos" name="byos"></a>
 ### Bring your own Storage (BYOS)
+
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own
 storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer
 "owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service.
@@ -951,7 +1116,7 @@ While Azure Managed Storage may be easier to get started with, as your service e
 
 <a href="#byos-pattern" name="byos-pattern">:white_check_mark:</a> **DO** use the Bring Your Own Storage pattern.
 
-<a href="#byos-prefix-for-folder" name="byos-prefix-for-folder">:white_check_mark:</a> **DO** use a blob prefix for a logical folder (avoid terms such as ```directory```, ```folder```, or ```path```).
+<a href="#byos-prefix-for-folder" name="byos-prefix-for-folder">:white_check_mark:</a> **DO** use a blob prefix for a logical folder (avoid terms such as `directory`, `folder`, or `path`).
 
 <a href="#byos-allow-container-reuse" name="byos-allow-container-reuse">:no_entry:</a> **DO NOT** require a fresh container per operation.
 
@@ -983,7 +1148,7 @@ Designing an API for accessing a single file, depending on your scenario, is rel
 
 <a href="#byos-support-single-object" name="byos-support-single-object">:white_check_mark:</a> **DO** allow the customer to specify a URL path to a single Storage object if your service requires access to a single file.
 
-<a href="#byos-last-modified" name="byos-last-modified">:heavy_check_mark:</a> **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC1123 format) for read-only files. This allows the client to specify exactly which version of the files your service should use.
+<a href="#byos-last-modified" name="byos-last-modified">:heavy_check_mark:</a> **YOU MAY** allow the customer to provide a [last-modified](https://datatracker.ietf.org/doc/html/rfc7232#section-2.2) timestamp (in RFC 7231 format) for read-only files. This allows the client to specify exactly which version of the files your service should use.
 When reading a file, your service passes this timestamp to Azure Storage using the [if-unmodified-since](https://datatracker.ietf.org/doc/html/rfc7232#section-3.4) request header. If the Storage operation fails with 412, the Storage object was modified and your service operation should return an appropriate 4xx status code and return the Storage error in your operation's 'inner-error' (see guideline above).
 
 <a href="#byos-folder-support" name="byos-folder-support">:white_check_mark:</a> **DO** allow the customer to specify a URL path to a logical folder (via prefix and delimiter) if your service requires access to multiple files (within this folder). For more information, see [List Blobs API](https://docs.microsoft.com/rest/api/storageservices/list-blobs)
@@ -1092,8 +1257,28 @@ While it may be tempting to use a revision/version number for the resource as th
 
 <a href="#condreq-etag-depends-on-encoding" name="condreq-etag-depends-on-encoding">:white_check_mark:</a> **DO**, when supporting multiple representations (e.g. Content-Encodings) for the same resource, generate different ETag values for the different representations.
 
+<a href="#substrings" name="substrings"></a>
+### Returning String Offsets & Lengths (Substrings)
+
+All string values in JSON are inherently Unicode and UTF-8 encoded, but clients written in a high-level programming language must work with strings in that language's string encoding, which may be UTF-8, UTF-16, or CodePoints (UTF-32).
+When a service response includes a string offset or length value, it should specify these values in all 3 encodings to simplify client development and ensure customer success when isolating a substring.
+See the [Returning String Offsets & Lengths] section in Considerations for Service Design for more detail, including an example JSON response containing string offset and length fields.
+
+[Returning String Offsets & Lengths]: https://github.com/microsoft/api-guidelines/blob/vNext/azure/ConsiderationsForServiceDesign.md#returning-string-offsets--lengths-substrings
+
+<a href="#substrings-return-value-for-each-encoding" name="substrings-return-value-for-each-encoding">:white_check_mark:</a> **DO** include all 3 encodings (UTF-8, UTF-16, and CodePoint) for every string offset or length value in a service response.
+
+<a href="#substrings-return-value-structure" name="substrings-return-value-structure">:white_check_mark:</a> **DO** define every string offset or length value in a service response as an object with the following structure:
+
+| Property    | Type    | Required | Description |
+| ----------- | ------- | :------: | ----------- |
+| `utf8`      | integer | true     | The offset or length of the substring in UTF-8 encoding |
+| `utf16`     | integer | true     | The offset or length of the substring in UTF-16 encoding |
+| `codePoint` | integer | true     | The offset or length of the substring in CodePoint encoding |
+
 <a href="#telemetry" name="telemetry"></a>
 ### Distributed Tracing & Telemetry
+
 Azure SDK client guidelines specify that client libraries must send telemetry data through the `User-Agent` header, `X-MS-UserAgent` header, and Open Telemetry.
 Client libraries are required to send telemetry and distributed tracing information on every  request. Telemetry information is vital to the effective operation of your service and should be a consideration from the outset of design and implementation efforts.
 

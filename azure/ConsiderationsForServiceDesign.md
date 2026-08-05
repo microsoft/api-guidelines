@@ -1,13 +1,16 @@
 # Considerations for Service Design
 
-<!-- cspell:ignore autorest, etag, idempotency -->
+<!-- cspell:ignore autorest, etag, idempotency, maxpagesize, openapi -->
+<!-- markdownlint-disable MD033 -->
 
 ## History
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2024-Mar-17 | Updated LRO guidelines                                         |
+| 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
-| 2022-Feb-01 | Updated error guidance                                        |
+| 2022-Feb-01 | Updated error guidance                                         |
 | 2021-Sep-11 | Add long-running operations guidance                           |
 | 2021-Aug-06 | Updated Azure REST Guidelines per Azure API Stewardship Board. |
 
@@ -22,19 +25,18 @@ Azure Service teams should engage the Azure HTTP/REST Stewardship Board early in
 
 It is critically important to design your service to avoid disrupting users as the API evolves:
 
-:white_check_mark: **DO** implement API versioning starting with the very first release of the service.
+<a href="#principles-api-versioning" name="principles-api-versioning">:white_check_mark:</a> **DO** implement API versioning starting with the very first release of the service.
 
-:white_check_mark: **DO** ensure that customer workloads never break
+<a href="#principles-compatibility" name="principles-compatibility">:white_check_mark:</a> **DO** ensure that customer workloads never break
 
-:white_check_mark: **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
+<a href="#principles-backward-compatibility" name="principles-backward-compatibility">:white_check_mark:</a> **DO** ensure that customers are able to adopt a new version of service or SDK client library **without requiring code changes**
 
 ## Azure Management Plane vs Data Plane
 _Note: Developing a new service requires the development of at least 1 (management plane) API and potentially one or more additional (data plane) APIs.  When reviewing v1 service APIs, we see common advice provided during the review._
 
 A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used to provision and control the operational state of resources.
 A **data plane** API is used by developers to implement applications. Occasionally, some operations are useful for provisioning/control and applications. In this case, the operation can appear in both APIs.
-Although, best practices and patterns described in this document apply to all HTTP/REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on [the conventions of the Azure ARM](https://github.com/Azure/azure-resource-manager-rpc).
-
+Although, best practices and patterns described in this document apply to all HTTP/REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on the conventions of the [Azure RPC](https://aka.ms/azurerpc).
 
 ## Start with the Developer Experience
 A great API starts with a well thought out and designed service. Your service should define simple/understandable abstractions with each given a clear name that you use consistently throughout your API and documentation. There must also be an unambiguous relationship between these abstractions.
@@ -62,27 +64,27 @@ _For this reason, it is **much better** to ship with fewer features and only add
 
 Focusing on hero scenarios reduces development, support, and maintenance costs; enables teams to align and reach consensus faster; and accelerates the time to delivery. A telltale sign of a service that has not focused on hero scenarios is "API drift," where endpoints are inconsistent, incomplete, or juxtaposed to one another.
 
-:white_check_mark: **DO** define "hero scenarios" first including abstractions, naming, relationships, and then define the API describing the operations required
+<a href="#hero-scenarios-design" name="hero-scenarios-design">:white_check_mark:</a> **DO** define "hero scenarios" first including abstractions, naming, relationships, and then define the API describing the operations required.
 
-:white_check_mark: **DO** provide example code demonstrating the "Hero Scenarios"
+<a href="#hero-scenarios-examples" name="hero-scenarios-examples">:white_check_mark:</a> **DO** provide example code demonstrating the "Hero Scenarios".
 
-:white_check_mark: **DO** consider how your abstractions will be represented in different high-level languages.
+<a href="#hero-scenarios-high-level-languages" name="hero-scenarios-high-level-languages">:white_check_mark:</a> **DO** consider how your abstractions will be represented in different high-level languages.
 
-:white_check_mark: **DO** develop code examples in at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#) to illustrate your abstractions and high-level language representations.
+<a href="#hero-scenarios-hll-examples" name="hero-scenarios-hll-examples">:white_check_mark:</a> **DO** develop code examples in at least one dynamically typed language (for example, Python or JavaScript) and one statically typed language (for example, Java or C#) to illustrate your abstractions and high-level language representations.
 
-:no_entry: **DO NOT** proactively add APIs for speculative features customers might want
+<a href="#hero-scenarios-yagni" name="hero-scenarios-yagni">:no_entry:</a> **DO NOT** proactively add APIs for speculative features customers might want.
 
 ### Start with your API Definition
 Understanding how your service is used and defining its model and interaction patterns--its API--should be one of the earliest activities a service team undertakes. It reflects the abstractions & naming decisions and makes it easy for developers to implement the hero scenarios.
 
-:white_check_mark: **DO** create an [OpenAPI Definition](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) describing the service. The OpenAPI definition is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of services.
+<a href="#openapi-description" name="openapi-description">:white_check_mark:</a> **DO** create an [OpenAPI description](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/2.0.md) (with [autorest extensions](https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md)) for the service API. The OpenAPI description is a key element of the Azure SDK plan and is essential for documentation, usability and discoverability of service APIs.
 
 ## Design for Change Resiliency
 As you build out your service and API, there are a number of decisions that can be made up front that add resiliency to client implementations. Addressing these as early as possible will help you iterate faster and avoid breaking changes.
 
-:ballot_box_with_check: **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
+<a href="#resiliency-enums" name="resiliency-enums">:ballot_box_with_check:</a> **YOU SHOULD** use extensible enumerations. Extensible enumerations are modeled as strings - expanding an extensible enumeration is not a breaking change.
 
-:ballot_box_with_check: **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
+<a href="#resiliency-conditional-requests" name="resiliency-conditional-requests">:ballot_box_with_check:</a> **YOU SHOULD** implement [conditional requests](https://tools.ietf.org/html/rfc7232) early. This allows you to support concurrency, which tends to be a concern later on.
 
 ## Use Good Names
 
@@ -98,43 +100,43 @@ Use common patterns and standard conventions to aid developers in correctly gues
 Use verbose naming patterns and avoid abbreviations other than
 well-known acronyms in your service domain.
 
-:heavy_check_mark: **DO** use the same name for the same concept and different names for different concepts wherever possible.
+<a href="#naming-consistency" name="naming-consistency">:white_check_mark:</a> **DO** use the same name for the same concept and different names for different concepts wherever possible.
 
 ### Recommended Naming Conventions
 
 The following are recommended naming conventions for Azure services:
 
-:heavy_check_mark: **DO** name collections as plural nouns or plural noun phrases using correct English.
+<a href="#naming-collections" name="naming-collections">:white_check_mark:</a> **DO** name collections as plural nouns or plural noun phrases using correct English.
 
-:heavy_check_mark: **DO** name values that are not collections as singular nouns or singular noun phrases.
+<a href="#naming-values" name="naming-values">:white_check_mark:</a> **DO** name values that are not collections as singular nouns or singular noun phrases.
 
-:ballot_box_with_check: **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
+<a href="#naming-adjective-before-noun" name="naming-adjective-before-noun">:ballot_box_with_check:</a> **YOU SHOULD** should place the adjective before the noun in names that contain both a noun and an adjective.
 
 For example, `collectedItems` not `itemsCollected`
 
-:ballot_box_with_check: **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
+<a href="#naming-acronym-case" name="naming-acronym-case">:ballot_box_with_check:</a> **YOU SHOULD** case all acronyms as though they were regular words (i.e. lower camelCase).
 
 For example, `nextUrl` not `nextURL`.
 
-:ballot_box_with_check: **YOU SHOULD** use an "At" suffix in names of `date-time` values.
+<a href="#naming-date-time" name="naming-date-time">:ballot_box_with_check:</a> **YOU SHOULD** use an "At" suffix in names of `date-time` values.
 
 For example, `createdAt` not `created` or `createdDateTime`.
 
-:ballot_box_with_check: **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
+<a href="#naming-include-units" name="naming-include-units">:ballot_box_with_check:</a> **YOU SHOULD** use a suffix of the unit of measurement for values with a clear unit of measurement (such as bytes, miles, and so on). Use a generally accepted abbreviation for the units (e.g. "Km" rather than "Kilometers") when appropriate.
 
-:ballot_box_with_check: **YOU SHOULD** use an int for time durations and include the time units in the name.
+<a href="#naming-duration" name="naming-duration">:ballot_box_with_check:</a> **YOU SHOULD** use an int for time durations and include the time units in the name.
 
 For example, `expirationDays` as `int` and not `expiration` as `date-time`.
 
-:warning: **YOU SHOULD NOT** use brand names in resource or property names.
+<a href="#naming-brand-names" name="naming-brand-names">:warning:</a> **YOU SHOULD NOT** use brand names in resource or property names.
 
-:warning: **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
+<a href="#naming-avoid-acronyms" name="naming-avoid-acronyms">:warning:</a> **YOU SHOULD NOT** use acronyms or abbreviations unless they are broadly understood for example, "ID" or "URL", but not "Num" for "number".
 
-:warning: **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
+<a href="#naming-avoid-reserved-words" name="naming-avoid-reserved-words">:warning:</a> **YOU SHOULD NOT** use names that are reserved words in widely used programming languages (including C#, Java, JavaScript/TypeScript, Python, C++, and Go).
 
-:no_entry: **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
+<a href="#naming-boolean" name="naming-boolean">:no_entry:</a> **DO NOT** use "is" prefix in names of `boolean` values, e.g. "enabled" not "isEnabled".
 
-:no_entry: **DO NOT** use redundant words in names.
+<a href="#naming-avoid-redundancy" name="naming-avoid-redundancy">:no_entry:</a> **DO NOT** use redundant words in names.
 
 For example, `/phones/number` and not `phone/phoneNumber`.
 
@@ -152,22 +154,22 @@ The following are recommended names for properties that match the associated des
 
 ### `name` vs `id`
 
-:heavy_check_mark: **DO** use "Id" suffix for the name of the identifier of a resource.
+<a href="#naming-name-vs-id" name="naming-name-vs-id">:white_check_mark:</a> **DO** use "Id" suffix for the name of the identifier of a resource.
 
 This holds even in the case where the identifier is assigned by the user with a PUT/PATCH method.
 
 ## Use Previews to Iterate
 Before releasing your API plan to invest significant design effort, get customer feedback, & iterate through multiple preview releases. This is especially important for V1 as it establishes the abstractions and patterns that developers will use to interact with your service.
 
-:ballot_box_with_check: **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
+<a href="#previews-hypotheses" name="previews-hypotheses">:ballot_box_with_check:</a> **YOU SHOULD**  write and test hypotheses about how your customers will use the API.
 
-:ballot_box_with_check: **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.
+<a href="#previews-at-least-two" name="previews-at-least-two">:ballot_box_with_check:</a> **YOU SHOULD**  release and evaluate a minimum of 2 preview versions prior to the first GA release.
 
-:ballot_box_with_check: **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
+<a href="#previews-key-scenarios" name="previews-key-scenarios">:ballot_box_with_check:</a> **YOU SHOULD**  identify key scenarios or design decisions in your API that you want to test with customers, and ask customers for feedback and to share relevant code samples.
 
-:ballot_box_with_check: **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
+<a href="#previews-code-with" name="previews-code-with">:ballot_box_with_check:</a> **YOU SHOULD**  consider doing a _code with_ exercise in which you actively develop with the customer, observing and learning from their API usage.
 
-:ballot_box_with_check: **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
+<a href="#previews-share-results" name="previews-share-results">:ballot_box_with_check:</a> **YOU SHOULD**  capture what you have learned during the preview stage and share these findings with your team and with the API Stewardship Board.
 
 ## Communicate Deprecations
 As your service evolves over time, it will be natural that you want to remove operations that are no longer needed. For example, additional requirements or new capability in your service, may have resulted in a new operation that, effectively, replaces an old one.
@@ -186,12 +188,12 @@ Collections are another common area of friction for developers. It is important 
 
 An important consideration when defining a new service is support for pagination.
 
-:ballot_box_with_check: **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands. See [Collections](./Guidelines.md#collections) for specific guidance.
+<a href="#support-paging" name="support-paging">:ballot_box_with_check:</a> **YOU SHOULD** support server-side paging, even if your resource does not currently need paging. This avoids a breaking change when your service expands. See [Collections](./Guidelines.md#collections) for specific guidance.
 
 Another consideration for collections is support for sorting the set of returned items with the _orderby_ query parameter.
 Sorting collection results can be extremely expensive for a service to implement as it must retrieve all items to sort them. And if the operation supports paging (which is likely), then a client request to get another page may have to retrieve all items and sort them again to determine which items are on the desired page.
 
-:heavy_check_mark: **YOU MAY** support `orderby` if customer scenarios really demand it and the service is confident that it can support it in perpetuity (even if the backing storage service changes someday).
+<a href="#paging-orderby" name="paging-orderby">:heavy_check_mark:</a> **YOU MAY** support `orderby` if customer scenarios really demand it and the service is confident that it can support it in perpetuity (even if the backing storage service changes someday).
 
 Another important design pattern for avoiding surprises is idempotency. An operation is idempotent if it can be performed multiple times and have the same result as a single execution.
 HTTP requires certain operations like GET, PUT, and DELETE to be idempotent, but for cloud services it is important to make _all_ operations idempotent so that clients can use retry in failure scenarios without risk of unintended consequences.
@@ -206,7 +208,7 @@ It is good practice to define the path for action operations that is easily dist
 2) use a special character not in the set of valid characters for resource names to distinguish the "action" in the path.
 
 In Azure we recommend distinguishing action operations by appending a ':' followed by an action verb to the final path segment.  E.g.
-```http
+```text
 https://.../<resource-collection>/<resource-id>:<action>?<input parameters>
 ```
 
@@ -215,7 +217,7 @@ cannot collide with a resource path that contains user-specified resource ids.
 
 ## Long-Running Operations
 
-Long-running operations are an API design pattern that should be used when the processing of
+Long-running operations (LROs) are an API design pattern that should be used when the processing of
 an operation may take a significant amount of time -- longer than a client will want to block
 waiting for the result.
 
@@ -224,16 +226,95 @@ a _status monitor_, which is an ephemeral resource that will track the status an
 The status monitor resource is distinct from the target resource (if any) and specific to the individual
 operation request.
 
-A POST or DELETE operation returns a `202 Accepted` response with the status monitor in the response body.
-A long-running POST should not be used for resource create -- use PUT as described below.
-PATCH must never be used for long-running operations -- it should be reserved for simple resource updates.
-If a long-running update is required it should be implemented with POST.
+There are four types of LROs allowed in Azure REST APIs:
 
-There is a special form of long-running operation initiated with PUT that is described
-in [Create (PUT) with additional long-running processing](./Guidelines.md#put-operation-with-additional-long-running-processing).
-The remainder of this section describes the pattern for long-running POST and DELETE operations.
+1. An LRO to create or replace a resource that involves additional long-running processing.
+2. An LRO to delete a resource.
+3. An LRO to perform an action on or with an existing resource (or resource collection).
+4. An LRO to perform an action not related to an existing resource (or resource collection).
 
-This diagram illustrates how a long-running operation with a status monitor is initiated and then how the client
+The following sections describe these patterns in detail.
+
+### Create or replace a resource requiring additional long-running processing
+<a href="#put-with-additional-long-running-processing"></a> <!-- Preserve anchor of previous heading -->
+
+A special case of long-running operations that occurs often is a PUT operation to create or replace a resource
+that involves some additional long-running processing.
+One example is a resource that requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
+
+In this case:
+- The operation must use the PUT method (NOTE: PATCH is never allowed here)
+- The URL identifies the resource being created or replaced.
+- The request and response body have identical schemas & represent the resource.
+- The request may contain an `Operation-Id` header that the service will use as
+the ID of the status monitor created for the operation.
+- If the `Operation-Id` matches an existing operation and the request content is the same,
+treat as a retry and return the same response as the earlier request.
+Otherwise fail the request with a `409-Conflict`.
+
+```text
+PUT /items/FooBar&api-version=2022-05-01
+Operation-Id: 22
+
+{
+   "prop1": 555,
+   "prop2": "something"
+}
+```
+
+In this case the response to the initial request is a `201 Created` to indicate that
+the resource has been created or `200 OK` when the resource was replaced.
+The response body should be a representation of the resource that was created,
+and should include a `status` field indicating the current status of the resource.
+A status monitor is created to track the additional processing and the ID of the status monitor
+is returned in the `Operation-Id` header of the response.
+The response must also include an `Operation-Location` header for backward compatibility.
+If the resource supports ETags, the response may contain an `etag` header and possibly an `etag` property in the resource.
+
+```text
+HTTP/1.1 201 Created
+Operation-Id: 22
+Operation-Location: https://items/operations/22
+etag: "123abc"
+
+{
+  "id": "FooBar",
+  "status": "Provisioning",
+  "prop1": 555,
+  "prop2": "something",
+  "etag": "123abc"
+}
+```
+
+The client will issue a GET to the status monitor to obtain the status of the operation performing the additional processing.
+
+```text
+GET https://items/operations/22?api-version=2022-05-01
+```
+
+When the additional processing completes, the status monitor indicates if it succeeded or failed.
+
+```text
+HTTP/1.1 200 OK
+
+{
+   "id": "22",
+   "status": "Succeeded"
+}
+```
+
+If the additional processing failed, the service may delete the original resource if it is not usable in this state,
+but should clearly document this behavior.
+
+### Long-running delete operation
+
+A long-running delete operation returns a `202 Accepted` with a status monitor which the client uses to determine the outcome of the delete.
+
+The resource being deleted should remain visible (returned from a GET) until the delete operation completes successfully.
+
+When the delete operation completes successfully, a client must be able to create a new resource with the same name without conflicts.
+
+This diagram illustrates how a long-running DELETE operation is initiated and then how the client
 determines it has completed and obtains its results:
 
 ```mermaid
@@ -241,7 +322,7 @@ sequenceDiagram
     participant Client
     participant API Endpoint
     participant Status Monitor
-    Client->>API Endpoint: POST/DELETE
+    Client->>API Endpoint: DELETE
     API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>{ "id": "22", "status": "NotStarted" }
     Client->>Status Monitor: GET
     Status Monitor->>Client: HTTP/1.1 200 OK<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
@@ -249,8 +330,7 @@ sequenceDiagram
     Status Monitor->>Client: HTTP/1.1 200 OK<br/>{ "id": "22", "status": "Succeeded" }
 ```
 
-1. The client sends the request to initiate the long-running operation.
-The initial request could be a POST or DELETE method.
+1. The client sends the request to initiate the long-running DELETE operation.
 The request may contain an `Operation-Id` header that the service uses as the ID of the status monitor created for the operation.
 
 2. The service validates the request and initiates the operation processing.
@@ -259,8 +339,8 @@ Otherwise the service responds with a `202-Accepted` HTTP status code.
 The response body is the status monitor for the operation including the ID, either from the request header or generated by the service.
 When returning a status monitor whose status is not in a terminal state, the response must also include a `retry-after` header indicating the minimum number of seconds the client should wait
 before polling (GETing) the status monitor URL again for an update.
-For backward compatibility, the response may also include an `Operation-Location` header containing the absolute URL
-of the status monitor resource (without an api-version query parameter).
+For backward compatibility, the response must also include an `Operation-Location` header containing the absolute URL
+of the status monitor resource, including an api-version query parameter.
 
 3. After waiting at least the amount of time specified by the previous response's `Retry-after` header,
 the client issues a GET request to the status monitor using the ID in the body of the initial response.
@@ -273,14 +353,11 @@ If the operation is still being processed, the status field will contain a "non-
 
 5. After the operation processing completes, a GET request to the status monitor returns the status monitor with a status field set to a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
 If the status is `Failed`, the status monitor resource contains an `error` field with a `code` and `message` that describes the failure.
-If the status is `Succeeded` and the LRO is an Action operation, the operation results will be returned in the `result` field of the status monitor.
-If the status is `Succeeded` and the LRO is an operation on a resource, the client can perform a GET on the resource
-to observe the result of the operation if desired.
 
-6. There may be some cases where a long-running operation can be completed before the response to the initial request.
+6. There may be some cases where a long-running DELETE operation can be completed before the response to the initial request.
 In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
 
-7. The service is responsible for purging the status-monitor resource.
+7. The service is responsible for purging the status monitor resource.
 It should auto-purge the status monitor resource after completion (at least 24 hours).
 The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
@@ -290,23 +367,26 @@ An action operation that is also long-running combines the [Action Operations](#
 with the [Long Running Operations](#long-running-operations) pattern.
 
 The operation is initiated with a POST operation and the operation path ends in `:<action>`.
+A long-running POST should not be used for resource create: use PUT as described above.
+PATCH must never be used for long-running operations: it should be reserved for simple resource updates.
+If a long-running update is required it should be implemented with POST.
 
 ```text
 POST /<service-or-resource-url>:<action>?api-version=2022-05-01
-Operation-Id: 22 
- 
-{ 
-   "arg1": 123 
-   "arg2": "abc" 
-} 
+Operation-Id: 22
+
+{
+   "arg1": 123
+   "arg2": "abc"
+}
 ```
 
-The response is a `202 Accepted` as described above.
+A long-running action operation returns a `202 Accepted` response with the status monitor in the response body.
 
 ```text
 HTTP/1.1 202 Accepted
 Operation-Location: https://<status-monitor-endpoint>/22
- 
+
 {
    "id": "22",
    "status": "NotStarted"
@@ -323,7 +403,7 @@ When the operation completes successfully, the result (if there is one) will be 
 
 ```text
 HTTP/1.1 200 OK
- 
+
 {
    "id": "22",
    "status": "Succeeded",
@@ -331,74 +411,87 @@ HTTP/1.1 200 OK
 }
 ```
 
-### PUT with additional long-running processing
+This diagram illustrates how a long-running action operation is initiated and then how the client
+determines it has completed and obtains its results:
 
-A special case of long-running operation that occurs often is a PUT operation to create or replace a resource
-that involves some additional long-running processing.
-One example is a resource requires physical resources (e.g. servers) to be "provisioned" to make the resource functional.
-In this case, the request may contain an `Operation-Id` header that the service will use as
-the ID of the status monitor created for the operation.
-
-```text
-PUT /items/FooBar&api-version=2022-05-01
-Operation-Id: 22
-
-{
-   "prop1": 555, 
-   "prop2": "something"
-}
+```mermaid
+sequenceDiagram
+    participant Client
+    participant API Endpoint
+    participant Status Monitor
+    Client->>API Endpoint: POST
+    API Endpoint->>Client: HTTP/1.1 202 Accepted<br/>{ "id": "22", "status": "NotStarted" }
+    Client->>Status Monitor: GET
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>Retry-After: 5<br/>{ "id": "22", "status": "Running" }
+    Client->>Status Monitor: GET
+    Status Monitor->>Client: HTTP/1.1 200 OK<br/>{ "id": "22", "status": "Succeeded", "result": { ... } }
 ```
 
-In this case the response to the initial request is a `201 Created` to indicate that the resource has been created
-or `200 OK` when the resource was replaced.
-The response body contains a representation of the created resource, which is the standard pattern for a create operation.
-A status monitor is created to track the additional processing and the ID of the status monitor
-is returned in the `Operation-Id` header of the response.
-The response may also include an `Operation-Location` header for backward compatibility.
-If the resource supports ETags, the response may contain an `etag` header and possibly an `etag` property in the resource.
+1. The client sends the request to initiate the long-running action operation.
+The request may contain an `Operation-Id` header that the service uses as the ID of the status monitor created for the operation.
+
+2. The service validates the request and initiates the operation processing.
+If there are any problems with the request, the service responds with a `4xx` status code and error response body.
+Otherwise the service responds with a `202-Accepted` HTTP status code.
+The response body is the status monitor for the operation including the ID, either from the request header or generated by the service.
+When returning a status monitor whose status is not in a terminal state, the response must also include a `retry-after` header indicating the minimum number of seconds the client should wait
+before polling (GETing) the status monitor URL again for an update.
+For backward compatibility, the response may also include an `Operation-Location` header containing the absolute URL
+of the status monitor resource, including an api-version query parameter.
+
+3. After waiting at least the amount of time specified by the previous response's `Retry-after` header,
+the client issues a GET request to the status monitor using the ID in the body of the initial response.
+The GET operation for the status monitor is documented in the REST API definition and the ID
+is the last URL path segment.
+
+4. The status monitor responds with information about the operation including its current status,
+which should be represented as one of a fixed set of string values in a field named `status`.
+If the operation is still being processed, the status field will contain a "non-terminal" value, like `NotStarted` or `Running`.
+
+5. After the operation processing completes, a GET request to the status monitor returns the status monitor with a status field set to a terminal value -- `Succeeded`, `Failed`, or `Canceled` -- that indicates the result of the operation.
+If the status is `Failed`, the status monitor resource contains an `error` field with a `code` and `message` that describes the failure.
+If the status is `Succeeded`, the operation results (if any) are returned in the `result` field of the status monitor.
+
+6. There may be some cases where a long-running action operation can be completed before the response to the initial request.
+In these cases, the operation should still return a `202 Accepted` with the `status` property set to the appropriate terminal state.
+
+7. The service is responsible for purging the status monitor resource.
+It should auto-purge the status monitor resource after completion (at least 24 hours).
+The service may offer DELETE of the status monitor resource due to GDPR/privacy.
+
+### Long-running action operation not related to a resource
+
+When a long-running action operation is not related to a specific resource (a batch operation is one example),
+another approach is needed.
+
+This type of LRO should be initiated with a PUT method on a URL that represents the operation to be performed,
+and includes a final path parameter for the user-specified operation ID.
+The response of the PUT includes a response body containing a representation of the status monitor for the operation
+and an `Operation-Location` response header that contains the absolute URL of the status monitor.
+In this type of LRO, the status monitor should include any information from the request used to initiate the operation,
+so that a failed operation could be reissued if necessary.
+
+Clients will use a GET on the status monitor URL to obtain the status and results of the operation.
+Since the HTTP semantic for PUT is to create a resource, the same schema should be used for the PUT request body,
+the PUT response body, and the response body of the GET for the status monitor for the operation.
+For this type of LRO, the status monitor URL should be the same URL as the PUT operation.
+
+The following examples illustrate this pattern.
 
 ```text
-HTTP/1.1 201 Created 
-Operation-Id: 22
-Operation-Location: https://items/operations/22
-etag: "123abc"
+PUT /translate-operations/<operation-id>?api-version=2022-05-01
 
-{
-  "id": "FooBar", 
-  "etag": "123abc",
-  "prop1": 555,
-  "prop2": "something"
-}
+<JSON body with parameters for the operation>
 ```
 
-The client will issue a GET to the status monitor to obtain the status of the operation performing the additional processing.
+Note that the client specifies the operation id in the URL path.
 
-```text
-GET https://items/operations/22?api-version=2022-05-01
-```
+A successful response to the PUT operation should have a `201 Created` status and response body
+that contains a representation of the status monitor _and_ any information from the request used to initiate the operation.
 
-When the additional processing completes, the status monitor will indicate if it succeeded or failed.
-
-```text
-HTTP/1.1 200 OK
- 
-{
-   "id": "22",
-   "status": "Succeeded"
-}
-```
-
-If the additional processing failed, the service may delete the original resource if it is not usable in this state,
-but would have to clearly document this behavior.
-
-### Long-running delete operation
-
-A long-running delete operation follows the general pattern of a long-running operation --
-it returns a `202 Accepted` with a status monitor which the client uses to determine the outcome of the delete.
-
-The resource being deleted should remain visible (returned from a GET) until the delete operation completes successfully.
-
-When the delete operation completes successfully, a client must be able to create new resource with same name without conflicts.
+The service is responsible for purging the status monitor after some period of time,
+but no earlier than 24 hours after the completion of the operation.
+The service may offer DELETE of the status monitor resource due to GDPR/privacy.
 
 ### Controlling a long-running operation
 
@@ -406,14 +499,14 @@ It might be necessary to support some control action on a long-running operation
 This is implemented as a POST on the status monitor endpoint with `:<action>` added.
 
 ```text
-POST /<status-monitor-url>:cancel?api-version=2022-05-01
+POST /<status-monitor-endpoint>:cancel?api-version=2022-05-01
 ```
 
 A successful response to a control operation should be a `200 OK` with a representation of the status monitor.
 
 ```text
-HTTP/1.1 200 OK 
- 
+HTTP/1.1 200 OK
+
 {
    "id": "22",
    "status": "Canceled"
@@ -514,6 +607,61 @@ Clients can use ETags returned by the service to specify a _precondition_ for th
 For example, the client can specify an `If-Match` header with the last ETag value received by the client in an update request.
 The service processes the update only if the ETag value in the header matches the ETag of the current resource on the server.
 By computing and returning ETags for your resources, you enable clients to avoid using a strategy where the "last write always wins."
+
+## Returning String Offsets & Lengths (Substrings)
+
+Some Azure services return substring offset & length values within a string. For example, the offset & length within a string to a name, email address, or phone number.
+When a service response includes a string, the client's programming language deserializes that string into that language's internal string encoding. Below are the possible encodings and examples of languages that use each encoding:
+
+| Encoding    | Example languages |
+| -------- | ------- |
+| UTF-8 | Go, Rust, Ruby, PHP |
+| UTF-16 | JavaScript, Java, C# |
+| CodePoint (UTF-32) | Python |
+
+Because the service doesn't know in what language a client is written and what string encoding that language uses, the service can't return UTF-agnostic offset and length values that the client can use to index within the string. To address this, the service response must include offset & length values for all 3 possible encodings and then the client code must select the encoding required by its language's internal string encoding.
+
+For example, if a service response needed to identify offset & length values for "name" and "email" substrings, the JSON response would look like this:
+
+```text
+{
+  (... other properties not shown...)
+  "fullString": "(...some string containing a name and an email address...)",
+  "name": {
+    "offset": {
+      "utf8": 12,
+      "utf16": 10,
+      "codePoint": 4
+    },
+    "length": {
+      "uft8": 10,
+      "utf16": 8,
+      "codePoint": 2
+    }
+  },
+  "email": {
+    "offset": {
+      "utf8": 12,
+      "utf16": 10,
+      "codePoint": 4
+    },
+    "length": {
+      "uft8": 10,
+      "utf16": 8,
+      "codePoint": 4
+    }
+  }
+}
+```
+
+Then, the Go developer, for example, would get the substring containing the name using code like this:
+
+```go
+   var response := client.SomeMethodReturningJSONShownAbove(...)
+   name := response.fullString[ response.name.offset.utf8 : response.name.offset.utf8 + response.name.length.utf8]
+```
+
+The service must calculate the offset & length for all 3 encodings and return them because clients find it difficult working with Unicode encodings and how to convert from one encoding to another. In other words, we do this to simplify client development and ensure customer success when isolating a substring.
 
 ## Getting Help: The Azure REST API Stewardship Board
 The Azure REST API Stewardship board is a collection of dedicated architects that are passionate about helping Azure service teams build interfaces that are intuitive, maintainable, consistent, and most importantly, delight our customers. Because APIs affect nearly all downstream decisions, you are encouraged to reach out to the Stewardship board early in the development process. These architects will work with you to apply these guidelines and identify any hidden pitfalls in your design.
