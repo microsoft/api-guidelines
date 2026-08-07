@@ -101,7 +101,7 @@ Following is a short summary of the most often used conventions.
 | :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong:** msodsUrl or dlp |
 | :heavy_check_mark: **MUST** use singular nouns for non-enum type names.          | - **Right:** address  <BR> - **Wrong:** addresses  |
 | :heavy_check_mark: **MUST** use singular nouns for non-flags enum type names.          | - **Right:** color  <BR> - **Wrong:** colors  |
-| :heavy_check_mark: **MUST** use plural nouns for flags enum type names.          | - **Right:** diplayMethods  <BR> - **Wrong:** displayMethod  |
+| :heavy_check_mark: **MUST** use plural nouns for flags enum type names.          | - **Right:** displayMethods  <BR> - **Wrong:** displayMethod  |
 | :heavy_check_mark: **MUST** use plural nouns for collections (for listing type or collection properties). | - **Right:** addresses <BR> - **Wrong:** address |
 | :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
 | **CASING** | |
