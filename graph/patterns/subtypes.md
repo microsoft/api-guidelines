@@ -70,6 +70,47 @@ Groups and users are derived types and modeled as follows:
 </EntityType>
 ```
 
+### TypeSpec representation
+
+The same `directoryObject` hierarchy is expressed in TypeSpec using the `@abstract` decorator on the base type and the native `extends` keyword on each derived type.
+No purpose-built decorators are needed beyond `@abstract`, `@entity`, and `@key`.
+
+```TypeSpec
+@abstract
+@entity model entity {
+  @key id: string;
+}
+
+@abstract
+@entity model directoryObject extends entity {
+  deletedDateTime: utcDateTime | null;
+}
+
+@entity model group extends directoryObject {
+  description: string | null;
+  // ... other group-specific properties
+}
+
+@entity model user extends directoryObject {
+  jobTitle: string | null;
+  // ... other user-specific properties
+}
+```
+
+The `@abstract` decorator emits `Abstract="true"` in CSDL and marks the type as non-instantiable — consumers must POST or PATCH against a derived type.
+Each derived type inherits the base properties (including the key) via `extends` and adds only its own variant-specific properties.
+The TypeSpec compiler rejects redeclaration of base properties on derived types.
+
+**Authoring rules:**
+
+- The base type carries `@abstract` and the `@key` property; derived types inherit both via `extends`.
+- Derived types use `extends <BaseName>` and add only their own variant-specific properties.
+- Derived types do NOT redeclare base properties (compile error).
+- Hierarchy depth ≤ 3 levels — deeper hierarchies usually indicate wrong modeling.
+
+The compiled CSDL matches the structure shown above.
+URL and query semantics shown in the following sections apply regardless of authoring language.
+
 An API request to get members of a group returns a heterogeneous collection of
 users and groups where each element can be a user or a group, and has an
 additional `@odata.type` property that specifies the subtype:
