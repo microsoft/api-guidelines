@@ -7,6 +7,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2024-Jul-01 | Update service client structure guidance                       | 
 | 2024-Mar-17 | Updated LRO guidelines                                         |
 | 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
@@ -37,6 +38,21 @@ _Note: Developing a new service requires the development of at least 1 (manageme
 A **management plane** API is implemented through the Azure Resource Manager (ARM) and is used to provision and control the operational state of resources.
 A **data plane** API is used by developers to implement applications. Occasionally, some operations are useful for provisioning/control and applications. In this case, the operation can appear in both APIs.
 Although, best practices and patterns described in this document apply to all HTTP/REST APIs, they are especially important for **data plane** services because it is the primary interface for developers using your service. The **management plane** APIs may have other preferred practices based on the conventions of the [Azure RPC](https://aka.ms/azurerpc).
+
+## Service Client Structure
+The client structure of a service is not solely a decision for the SDK side; it is also closely related to the service's conceptual model, API complexity and size, and usage patterns. This decision should be made upfront to ensure the client structure accurately represents the service and provides the best user experience. As the service grows, the client structure should evolve accordingly. A well-considered client structure can also reduce communication efforts within the service's feature teams.  
+
+A client refers to a set of service APIs that share the same endpoint and can be uniformly versioned. A package can contain multiple clients, which can be organized in a parallel or hierarchical structure depending on the service's conceptual model. And a service can have multiple packages. Which leads to four kinds of different client structures: **Single Client in Single Package**, **Multiple Parallel Clients in Single Package**, **Multiple Hierarchy Clients in Single Package**, **Multiple Packages**. And for a given service, our considerations for choosing between different client structures are as following:
+
+1. If there’s not much new features to be added in the future for this service, and the expected customer number are equally distributed among all the scenarios, each APIs are equally important. **Single Client in Single Package** is a suitable choice for service like that.
+1. If a service has or will have several independent features and they should try their best to version uniformly.  
+   a. In the case, that those features can be version uniformly, the client structure for this service could be deferred to point 3, 4, 5.  
+   b. In the case, that those features are impossible to version uniformly, **Multiple Packages** would be a recommend pattern for them.
+1. If a service has multiple user scenarios that are relatively independent with each other, and each of their user scenarios have a relative large expected customer numbers that could entitle the each user scenarios to be independent single package, then **Multiple Packages** would be a better options for the overall service like that.
+1. If a service has multiple parallel relatively independent user scenarios. and there’s no dominant user scenario among all of them. and the expected customer number and API size for each user scenario is almost equally distributed, **Multiple Parallel Clients in Single Package** is a recommend pattern for service like that.
+1. If a service has one dominant scenario and some other less dominate ones that depends on the dominant one, and the dominant scenario has the majority percentage of their customers. **Multiple Hierarchy Clients in Single Package** is a better choice for service like that.
+
+In general, we should avoid a skewed structure: a client should not include too many APIs, a package should not contain too many clients, and a service should not have too many packages. If any of the above cases happen as the service grows, we should reconsider the service client structure that can best represent the service.
 
 ## Start with the Developer Experience
 A great API starts with a well thought out and designed service. Your service should define simple/understandable abstractions with each given a clear name that you use consistently throughout your API and documentation. There must also be an unambiguous relationship between these abstractions.
