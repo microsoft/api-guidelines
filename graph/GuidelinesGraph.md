@@ -37,7 +37,7 @@ ensure that Microsoft Graph has a consistent and easy-to-use API surface. A new 
 
 The Microsoft Graph REST API Guidelines consist of a concise overview document, a collection of articles on Graph standards, and a library of patterns that provide best practices for resolving common API design problems. Together, these documents serve as the means by which API teams discuss and come to consensus on API review requirements.
 
-Technology and software are constantly changing and evolving, and as such, this document is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface.Therefore, the general principles and directions that this document offers will be more stable than the specific recommendations for areas that are new or significantly different. The guidance might change as needed to address new scenarios and to clarify existing guidance. The guidance might change as needed to address new scenarios and to clarify existing guidance. To suggest a change or propose a new idea,
+Technology and software are constantly changing and evolving, and as such, this document is intended to be a living document. API guidelines that change frequently lead to an uneven and inconsistent API surface.Therefore, the general principles and directions that this document offers will be more stable than the specific recommendations for areas that are new or significantly different. The guidance might change as needed to address new scenarios and to clarify existing guidance. To suggest a change or propose a new idea,
 [open an issue](https://github.com/microsoft/api-guidelines/issues/new/choose).
 
 ### Legend
