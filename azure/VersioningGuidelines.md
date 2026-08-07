@@ -14,7 +14,7 @@
 ## Guidelines
 
 This document provides a "Dos and Don'ts" list for complying with the Azure Versioning and Breaking Change Policy,
-as documented [internally](aka.ms/AzBreakingChangesPolicy) and [externally](https://learn.microsoft.com/azure/developer/intro/azure-service-sdk-tool-versioning).
+as documented [internally](https://aka.ms/AzBreakingChangesPolicy) and [externally](https://learn.microsoft.com/azure/developer/intro/azure-service-sdk-tool-versioning).
 
 :white_check_mark: **DO** thoroughly ensure/test the API contract is entirely correct before merging it into a production branch of the specs repo.
 
