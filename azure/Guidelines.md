@@ -1081,7 +1081,7 @@ retry-after: <delay-seconds>    (if status not terminal)
 
 <a href="#lro-status-monitor-no-resource-result" name="lro-status-monitor-no-resource-result">:no_entry:</a> **DO NOT** include a `result` property in the status monitor for a long-running operation that is not an action-type long-running operation.
 
-<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `retry-after` header in the response if the operation is not complete. The value of this header should be an integer number of seconds that the client should wait before polling the status monitor again.
+<a href="#lro-status-monitor-retry-after" name="lro-status-monitor-retry-after">:white_check_mark:</a> **DO** include a `retry-after` header in the response if the operation is not complete. The value of this header must be a non-negative integer number of seconds that the client should wait before polling the status monitor again.  The value of this header must not be an `<http-date>` string, even though `<http-date>` is also allowed in the HTTP spec.
 
 <a href="#lro-status-monitor-retention" name="lro-status-monitor-retention">:white_check_mark:</a> **DO** retain the status monitor resource for some publicly documented period of time (at least 24 hours) after the operation completes.
 
