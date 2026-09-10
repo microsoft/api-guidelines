@@ -27,7 +27,6 @@ Use the optional `MsGraph.RevisionOptions` argument on `@deprecatedDefinition` a
   "groundingApi",
   "2025-07-01",
   "2026-07-01",
-  "contoso",
   #{ version: "2025-01/PrivatePreview:GroundingAPI" }
 )
 namespace microsoft.graph {}
@@ -46,4 +45,6 @@ namespace microsoft.graph {}
 - Do not parse or infer Category from the Version suffix.
 - Omitting `options.category` on `@deprecatedDefinition` preserves backward-compatible behavior by emitting the positional category.
 - `category: null` intentionally suppresses Category emission.
+- When private-preview owner metadata is absent, pass the options object directly as the fourth argument.
+- Explicit Version and non-null Category option values must not be empty strings.
 - The options object is optional; existing decorator calls remain valid.
