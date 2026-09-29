@@ -417,7 +417,7 @@ The guidelines in previous sections provide a brief overview and a quick start f
 | [Evolvable enums](./patterns/evolvable-enums.md) | Extend enumerated types without breaking changes.                          |
 | [Facets](./patterns/facets.md)                   | Model parent-child relationships.                                          |
 | [Flat bag](./patterns/flat-bag.md)               | Model variants of the same type.                                           |
-| [Long running operations](./patterns/longRunningOperations.md)| Model operations where processing a client request takes a long time. |
+| [Long running operations](./patterns/long-running-operations.md)| Model operations where processing a client request takes a long time. |
 | [Modeling subsets](./patterns/subsets.md)        | Model collection subsets for All, None, Included, or Excluded criteria.    |
 | [Namespace](./patterns/namespace.md)             | Organize resource definitions into a logical set.                          |
 | [Navigation properties](./patterns/navigation-property.md) | Model resource relationships                         |
