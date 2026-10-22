@@ -4,6 +4,8 @@ When building software components that will be used by developers to build other
 Designing powerful APIs with strong defaults, consistent behavior across related projects, and ease of use for developers arises from putting yourself in the shoes of the person using your interfaces, and taking their concerns to heart. The APIs you ship can have a dramatic long term effect on the health of your software product, and that is why the **REST API Stewardship Board** is here to help! We have published a collection of best practices, REST guidance, and OpenAPI style guidelines to help you create an amazing developer experience.
 * [Considerations for Service Design](ConsiderationsForServiceDesign.md)
 * [REST API Guidelines](Guidelines.md)
+* [Azure Versioning Guidelines](VersioningGuidelines.md)
+* [Azure Service Versioning Guideline](https://github.com/Azure/azure-rest-api-specs/wiki/Azure-Service-Versioning-Guideline)
 * [OpenAPI Style Guidelines](https://github.com/Azure/azure-api-style-guide/blob/main/README.md)
 * [Versioning policy for Azure services, SDKs, and CLI tools](https://learn.microsoft.com/en-us/azure/developer/intro/azure-service-sdk-tool-versioning)
 * [Breaking Changes](https://aka.ms/azapi/breakingchanges) <sub>Note: Internal Microsoft link</sub>

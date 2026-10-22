@@ -7,6 +7,7 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2026-Oct-22 | Add reference to the Azure Service Versioning Guideline        |
 | 2024-Mar-17 | Updated LRO guidelines                                         |
 | 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
 | 2022-Jul-15 | Update guidance on long-running operations                     |
@@ -25,7 +26,7 @@ Azure Service teams should engage the Azure HTTP/REST Stewardship Board early in
 
 It is critically important to design your service to avoid disrupting users as the API evolves:
 
-<a href="#principles-api-versioning" name="principles-api-versioning">:white_check_mark:</a> **DO** implement API versioning starting with the very first release of the service.
+<a href="#principles-api-versioning" name="principles-api-versioning">:white_check_mark:</a> **DO** implement API versioning starting with the very first release of the service. See the [API Versioning section of the Guidelines](./Guidelines.md#versioning), the [Azure Versioning Guidelines](./VersioningGuidelines.md), and the [Azure Service Versioning Guideline](https://github.com/Azure/azure-rest-api-specs/wiki/Azure-Service-Versioning-Guideline) for detailed guidance.
 
 <a href="#principles-compatibility" name="principles-compatibility">:white_check_mark:</a> **DO** ensure that customer workloads never break
 

@@ -16,6 +16,7 @@ Please ensure that you add an anchor tag to any new guidelines that you add and 
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2026-Oct-22 | Add reference to the Azure Service Versioning Guideline        |
 | 2025-Mar-28 | Added guidelines about JSON ID and null values                 |
 | 2024-Mar-17 | Updated LRO guidelines                                         |
 | 2024-Jan-17 | Added guidelines on returning string offsets & lengths         |
@@ -759,6 +760,8 @@ If supporting `top`:
 Azure services need to change over time. However, when changing a service, there are 2 requirements:
  1. Already-running customer workloads must not break due to a service change
  2. Customers can adopt a new service version without requiring any code changes (Of course, the customer must modify code to leverage any new service features.)
+
+See the [Azure Versioning Guidelines](./VersioningGuidelines.md) and the [Azure Service Versioning Guideline](https://github.com/Azure/azure-rest-api-specs/wiki/Azure-Service-Versioning-Guideline) for additional rules and guidance on versioning Azure services.
 
 *NOTE: the [Azure Breaking Change Policy](http://aka.ms/AzBreakingChangesPolicy) has tables (section 5) describing what kinds of changes are considered breaking. Breaking changes are allowable (due to security/compliance/etc.) if approved by the [Azure Breaking Change Reviewers](mailto:azbreakchangereview@microsoft.com) but only following ample communication to customers and a lengthy deprecation period.*
 

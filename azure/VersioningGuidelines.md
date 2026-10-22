@@ -7,13 +7,14 @@
 
 | Date        | Notes                                                          |
 | ----------- | -------------------------------------------------------------- |
+| 2026-Oct-22 | Add reference to the Azure Service Versioning Guideline        |
 | 2024-Nov-14 | Azure Service Versioning & Breaking Change Guidelines       |
 
 </details>
 
 ## Guidelines
 
-This document provides a "Dos and Don'ts" list for complying with the Azure Versioning and Breaking Change Policy,
+This document provides a "Dos and Don'ts" list for complying with the [Azure Service Versioning Guideline](https://github.com/Azure/azure-rest-api-specs/wiki/Azure-Service-Versioning-Guideline) and the Azure Versioning and Breaking Change Policy,
 as documented [internally](aka.ms/AzBreakingChangesPolicy) and [externally](https://learn.microsoft.com/azure/developer/intro/azure-service-sdk-tool-versioning).
 
 :white_check_mark: **DO** thoroughly ensure/test the API contract is entirely correct before merging it into a production branch of the specs repo.
