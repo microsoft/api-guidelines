@@ -71,7 +71,7 @@ The Microsoft Azure Cloud platform exposes its APIs through the core building bl
 
 <a href="#http" name="http"></a>
 ### HTTP
-Azure services must adhere to the HTTP specification, [RFC 7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementors should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
+Azure services must adhere to the HTTP specification, [RFC 7231](https://tools.ietf.org/html/rfc7231). This section further refines and constrains how service implementers should apply the constructs defined in the HTTP specification. It is therefore, important that you have a firm understanding of the following concepts:
 
 - [Uniform Resource Locators (URLs)](#uniform-resource-locators-urls)
 - [HTTP Request / Response Pattern](#http-request--response-pattern)
@@ -171,7 +171,7 @@ DELETE | Remove the resource | `204-No Content`\; avoid `404-Not Found`
 
 <a href="#http-return-403-vs-404" name="http-return-403-vs-404">:white_check_mark:</a> **DO** return a `403-Forbidden` when the user does not have access to the resource _unless_ this would leak information about the existence of the resource that should not be revealed for security/privacy reasons, in which case the response should be `404-Not Found`. [Rationale: a `403-Forbidden` is easier to debug for customers, but should not be used if even admitting the existence of things could potentially leak customer secrets.]
 
-<a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
+<a href="#http-support-optimistic-concurrency" name="http-support-optimistic-concurrency">:white_check_mark:</a> **DO** support caching and optimistic concurrency by honoring the `If-Match`, `If-None-Match`, if-modified-since, and if-unmodified-since request headers and by returning the ETag and last-modified response headers
 
 #### HTTP Query Parameters and Header Values
 
@@ -1113,7 +1113,7 @@ GET /operations?filter=(kind eq 'VMInitializing' or kind eq 'VMRebooting') and (
 
 Many services need to store and retrieve data files. For this scenario, the service should not implement its own
 storage APIs and should instead leverage the existing Azure Storage service. When doing this, the customer
-"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementors: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service.
+"owns" the storage account and just tells your service to use it. Colloquially, we call this <i>Bring Your Own Storage</i> as the customer is bringing their storage account to another service. BYOS provides significant benefits to service implementers: security, performance, uptime, etc. And, of course, most Azure customers are already familiar with the Azure Storage service.
 
 While Azure Managed Storage may be easier to get started with, as your service evolves and matures, BYOS provides the most flexibility and implementation choices. Further, when designing your APIs, be cognizant of expressing storage concepts and how clients will access your data. For example, if you are working with blobs, then you should not expose the concept of folders.
 
@@ -1300,7 +1300,7 @@ In addition to distributed tracing, Azure also uses a set of common correlation 
 |Name                         |Applies to|Description|
 |-----------------------------|----------|-----------|
 |x-ms-client-request-id       |Both      |Optional. Caller-specified value identifying the request, in the form of a GUID with no decoration such as curly braces (e.g. `x-ms-client-request-id: 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0`). If the caller provides this header the service **must** include this in their log entries to facilitate correlation of log entries for a single request. Because this header can be client-generated, it should not be assumed to be unique by the service implementation.
-|x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoration such as curly braces. In contrast to the the `x-ms-client-request-id`, the service **must** ensure that this value is globally unique. Services should log this value with their traces to facilitate correlation of log entries for a single request.
+|x-ms-request-id              |Response  |Required. Service generated correlation id identifying the request, in the form of a GUID with no decoration such as curly braces. In contrast to the `x-ms-client-request-id`, the service **must** ensure that this value is globally unique. Services should log this value with their traces to facilitate correlation of log entries for a single request.
 
 ## Final thoughts
 These guidelines describe the upfront design considerations, technology building blocks, and common patterns that Azure teams encounter when building an API for their service. There is a great deal of information in them that can be difficult to follow. Fortunately, at Microsoft, there is a team committed to ensuring your success.
