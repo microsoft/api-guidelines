@@ -119,6 +119,14 @@ Following is a short summary of the most often used conventions.
 | :ballot_box_with_check: **SHOULD** prefix Boolean properties with `is`, unless this leads to awkward or unnatural sounding names for Boolean properties. | - **Right:** isEnabled or isResourceAccount <BR>- **Wrong:** enabled or allowResourceAccount <BR>- **Right:** hasChildren or hasSubscriptions <BR>-  **Wrong:** isChildren or isSubscriptions <BR>- **Right:** allowNewTimeProposals or allowInvitesFrom (subjectively more natural than the following examples) <BR> - **Wrong:** isNewTimeProposalsAllowed or isInvitesFromAllowed (subjectively more awkward that the preceding examples) |
 | :no_entry: **MUST NOT** use collection, response, or request suffixes.  | - **Right:** addresses <BR> - **Wrong:** addressCollection |
 
+#### Input and output handling
+
+APIs sometimes need a permissive-in / strict-out policy during migrations or when preserving compatibility with older clients.
+
+- Services **SHOULD** accept the documented set of equivalent input forms when compatibility requires it, such as a legacy alias or a case-insensitive variant.
+- Services **MUST** emit a single canonical form in responses, notifications, and examples so customers see one stable shape on output.
+- Documentation **SHOULD** call out both the canonical output form and any accepted input variants whenever the service intentionally accepts more than one form.
+
 #### Tree and graph structures
 
 When a tree or graph structure is being modeled, the direct sub-nodes are usually named `children` or `members`. 
