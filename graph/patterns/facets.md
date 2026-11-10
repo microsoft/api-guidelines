@@ -107,3 +107,98 @@ Response shortened for readability:
         }
     ]
 ```
+
+## Facets in TypeSpec
+
+In [TypeSpec](https://aka.ms/typespec), the facets pattern is expressed with the `@facet` decorator from the `@microsoft/typespec-msgraph` library. A facet is a **nullable property** on an `@entity` model whose type is a `@complex` model. The `@facet` decorator marks the property as a variant facet so that authoring tooling and linters can validate it.
+
+The following TypeSpec models the same `driveItem` facets shown in the CSDL example above — each variant (`audio`, `file`, `folder`, `image`, `video`) is a complex type, and the entity carries one nullable facet property per variant:
+
+```typespec
+// One @complex type per variant facet
+@complex
+model audio {
+  @doc("The title of the album for this audio file.")
+  album: string | null;
+}
+
+@complex
+model file {
+  @doc("The MIME type for the file.")
+  mimeType: string | null;
+}
+
+@complex
+model folder {
+  @doc("Number of children contained immediately within this container.")
+  childCount: int32 | null;
+}
+
+@complex
+model image {
+  @doc("Width of the image, in pixels.")
+  width: int32 | null;
+
+  @doc("Height of the image, in pixels.")
+  height: int32 | null;
+}
+
+@complex
+model video {
+  @doc("Duration of the video, in milliseconds.")
+  duration: int64 | null;
+}
+
+// The entity declares one nullable facet property per variant
+@entity
+model driveItem {
+  @key id: string;
+
+  @doc("The name of the item (file name, folder name).")
+  displayName: string | null;
+
+  @doc("Audio facet. Present when the item is an audio file.")
+  @facet audio: audio | null;
+
+  @doc("File facet. Present when the item is a file.")
+  @facet file: file | null;
+
+  @doc("Folder facet. Present when the item is a folder.")
+  @facet folder: folder | null;
+
+  @doc("Image facet. Present when the item is an image.")
+  @facet image: image | null;
+
+  @doc("Video facet. Present when the item is a video.")
+  @facet video: video | null;
+}
+```
+
+### Rules for `@facet`
+
+The `@facet` decorator is validated by the `@microsoft/typespec-msgraph` linter:
+
+- The property type must be a `@complex` model — primitive, enum, and entity types are rejected.
+- The property must be **nullable** (`T | null`) — a variant may be absent.
+- The property must be declared on an `@entity` model — facets on `@complex` models are rejected.
+
+### Compiled CSDL
+
+`@facet` is an **authoring-time marker**: it carries no wire-format meaning, so a facet property compiles to a standard nullable complex-typed property — identical to what a hand-authored facet produces. The TypeSpec above emits:
+
+```xml
+<EntityType Name="driveItem">
+  <Key>
+    <PropertyRef Name="id"/>
+  </Key>
+  <Property Name="id" Type="Edm.String" Nullable="false"/>
+  <Property Name="displayName" Type="Edm.String" Nullable="true"/>
+  <Property Name="audio" Type="graph.audio" Nullable="true"/>
+  <Property Name="file" Type="graph.file" Nullable="true"/>
+  <Property Name="folder" Type="graph.folder" Nullable="true"/>
+  <Property Name="image" Type="graph.image" Nullable="true"/>
+  <Property Name="video" Type="graph.video" Nullable="true"/>
+</EntityType>
+```
+
+Because `@facet` adds no CSDL annotation, applying or omitting it produces byte-identical metadata; its value is the design intent it records and the linter checks it enables.
