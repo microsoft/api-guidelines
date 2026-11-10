@@ -162,7 +162,7 @@ Declare `mail` and `ssn` as alternate keys on an entity:
     {
         "error" : {
             "code" : "404",
-            "message": "No user with the the specified 'email' could be found."
+            "message": "No user with the specified 'email' could be found."
         }
     }
     ```
