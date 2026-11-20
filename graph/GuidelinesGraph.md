@@ -101,7 +101,7 @@ Following is a short summary of the most often used conventions.
 | :warning: **SHOULD NOT** use acronyms or abbreviations unless they are broadly understood. | - **Right:** url or htmlSignature <BR> - **Wrong:** msodsUrl or dlp |
 | :heavy_check_mark: **MUST** use singular nouns for non-enum type names.          | - **Right:** address  <BR> - **Wrong:** addresses  |
 | :heavy_check_mark: **MUST** use singular nouns for non-flags enum type names.          | - **Right:** color  <BR> - **Wrong:** colors  |
-| :heavy_check_mark: **MUST** use plural nouns for flags enum type names.          | - **Right:** diplayMethods  <BR> - **Wrong:** displayMethod  |
+| :heavy_check_mark: **MUST** use plural nouns for flags enum type names.          | - **Right:** displayMethods  <BR> - **Wrong:** displayMethod  |
 | :heavy_check_mark: **MUST** use plural nouns for collections (for listing type or collection properties). | - **Right:** addresses <BR> - **Wrong:** address |
 | :ballot_box_with_check: **SHOULD** pluralize the noun even when followed by an adjective (a *postpositive*).| - **Right:** passersby or mothersInLaw    <BR> -  **Wrong:** notaryPublics or motherInLaws |
 | **CASING** | |
@@ -346,7 +346,7 @@ More details and examples are available in [Core types](./articles/coreTypes.md)
 
 ## External standards
 
-For ease of client use and interoperatibility, some APIs might implement a standard that is defined external to Microsoft Graph and OData. 
+For ease of client use and interoperability, some APIs might implement a standard that is defined external to Microsoft Graph and OData. 
 Workloads SHOULD follow these standards exactly, even if they conflict with the OData standard and/or the Microsoft Graph guidelines. 
 Workloads SHOULD define these standards in their CSDL model if they do not conflict with the OData standard.
 Standards that *do* conflict with the OData standard might be defined in the CSDL in one of two ways:
